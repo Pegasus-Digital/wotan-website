@@ -11,6 +11,10 @@ const config = {
   ],
   prefix: '',
   theme: {
+    screens: {
+      tablet: '768px',
+      desktop: '1280px',
+    },
     container: {
       center: true,
       padding: '2rem',
@@ -98,6 +102,10 @@ const config = {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+      },
+      backgroundImage: {
+        wotan:
+          'linear-gradient(106deg, rgba(204,15,75,1) 20%, rgba(119,54,93,1) 80%)',
       },
     },
   },

@@ -1,0 +1,2556 @@
+type Query {
+  User(id: String!, draft: Boolean): User
+  Users(draft: Boolean, where: User_where, limit: Int, page: Int, sort: String): Users
+  docAccessUser(id: String!): usersDocAccess
+  meUser: usersMe
+  initializedUser: Boolean
+  PayloadPreference(id: String!, draft: Boolean): PayloadPreference
+  PayloadPreferences(draft: Boolean, where: PayloadPreference_where, limit: Int, page: Int, sort: String): PayloadPreferences
+  docAccessPayloadPreference(id: String!): payload_preferencesDocAccess
+  Setting(draft: Boolean): Setting
+  docAccessSetting: settingsDocAccess
+  Access: Access
+}
+
+type User {
+  id: String
+  name: String
+  roles: [User_roles!]
+  updatedAt: DateTime
+  createdAt: DateTime
+  email: EmailAddress!
+  resetPasswordToken: String
+  resetPasswordExpiration: DateTime
+  salt: String
+  hash: String
+  loginAttempts: Float
+  lockUntil: DateTime
+  password: String!
+}
+
+enum User_roles {
+  admin
+  user
+}
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
+"""
+A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
+"""
+scalar EmailAddress @specifiedBy(url: "https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address")
+
+type Users {
+  docs: [User]
+  hasNextPage: Boolean
+  hasPrevPage: Boolean
+  limit: Int
+  nextPage: Int
+  offset: Int
+  page: Int
+  pagingCounter: Int
+  prevPage: Int
+  totalDocs: Int
+  totalPages: Int
+}
+
+input User_where {
+  name: User_name_operator
+  roles: User_roles_operator
+  updatedAt: User_updatedAt_operator
+  createdAt: User_createdAt_operator
+  email: User_email_operator
+  id: User_id_operator
+  AND: [User_where_and]
+  OR: [User_where_or]
+}
+
+input User_name_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input User_roles_operator {
+  equals: User_roles_Input
+  not_equals: User_roles_Input
+  in: [User_roles_Input]
+  not_in: [User_roles_Input]
+  all: [User_roles_Input]
+  exists: Boolean
+}
+
+enum User_roles_Input {
+  admin
+  user
+}
+
+input User_updatedAt_operator {
+  equals: DateTime
+  not_equals: DateTime
+  greater_than_equal: DateTime
+  greater_than: DateTime
+  less_than_equal: DateTime
+  less_than: DateTime
+  like: DateTime
+  exists: Boolean
+}
+
+input User_createdAt_operator {
+  equals: DateTime
+  not_equals: DateTime
+  greater_than_equal: DateTime
+  greater_than: DateTime
+  less_than_equal: DateTime
+  less_than: DateTime
+  like: DateTime
+  exists: Boolean
+}
+
+input User_email_operator {
+  equals: EmailAddress
+  not_equals: EmailAddress
+  like: EmailAddress
+  contains: EmailAddress
+  in: [EmailAddress]
+  not_in: [EmailAddress]
+  all: [EmailAddress]
+}
+
+input User_id_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input User_where_and {
+  name: User_name_operator
+  roles: User_roles_operator
+  updatedAt: User_updatedAt_operator
+  createdAt: User_createdAt_operator
+  email: User_email_operator
+  id: User_id_operator
+  AND: [User_where_and]
+  OR: [User_where_or]
+}
+
+input User_where_or {
+  name: User_name_operator
+  roles: User_roles_operator
+  updatedAt: User_updatedAt_operator
+  createdAt: User_createdAt_operator
+  email: User_email_operator
+  id: User_id_operator
+  AND: [User_where_and]
+  OR: [User_where_or]
+}
+
+type usersDocAccess {
+  fields: UsersDocAccessFields
+  create: UsersCreateDocAccess
+  read: UsersReadDocAccess
+  update: UsersUpdateDocAccess
+  delete: UsersDeleteDocAccess
+  unlock: UsersUnlockDocAccess
+}
+
+type UsersDocAccessFields {
+  name: UsersDocAccessFields_name
+  roles: UsersDocAccessFields_roles
+  updatedAt: UsersDocAccessFields_updatedAt
+  createdAt: UsersDocAccessFields_createdAt
+  email: UsersDocAccessFields_email
+  password: UsersDocAccessFields_password
+}
+
+type UsersDocAccessFields_name {
+  create: UsersDocAccessFields_name_Create
+  read: UsersDocAccessFields_name_Read
+  update: UsersDocAccessFields_name_Update
+  delete: UsersDocAccessFields_name_Delete
+}
+
+type UsersDocAccessFields_name_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_name_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_name_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_name_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_roles {
+  create: UsersDocAccessFields_roles_Create
+  read: UsersDocAccessFields_roles_Read
+  update: UsersDocAccessFields_roles_Update
+  delete: UsersDocAccessFields_roles_Delete
+}
+
+type UsersDocAccessFields_roles_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_roles_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_roles_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_roles_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_updatedAt {
+  create: UsersDocAccessFields_updatedAt_Create
+  read: UsersDocAccessFields_updatedAt_Read
+  update: UsersDocAccessFields_updatedAt_Update
+  delete: UsersDocAccessFields_updatedAt_Delete
+}
+
+type UsersDocAccessFields_updatedAt_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_updatedAt_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_updatedAt_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_updatedAt_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_createdAt {
+  create: UsersDocAccessFields_createdAt_Create
+  read: UsersDocAccessFields_createdAt_Read
+  update: UsersDocAccessFields_createdAt_Update
+  delete: UsersDocAccessFields_createdAt_Delete
+}
+
+type UsersDocAccessFields_createdAt_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_createdAt_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_createdAt_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_createdAt_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_email {
+  create: UsersDocAccessFields_email_Create
+  read: UsersDocAccessFields_email_Read
+  update: UsersDocAccessFields_email_Update
+  delete: UsersDocAccessFields_email_Delete
+}
+
+type UsersDocAccessFields_email_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_email_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_email_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_email_Delete {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_password {
+  create: UsersDocAccessFields_password_Create
+  read: UsersDocAccessFields_password_Read
+  update: UsersDocAccessFields_password_Update
+  delete: UsersDocAccessFields_password_Delete
+}
+
+type UsersDocAccessFields_password_Create {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_password_Read {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_password_Update {
+  permission: Boolean!
+}
+
+type UsersDocAccessFields_password_Delete {
+  permission: Boolean!
+}
+
+type UsersCreateDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+"""
+The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSONObject
+
+type UsersReadDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type UsersUpdateDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type UsersDeleteDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type UsersUnlockDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type usersMe {
+  collection: String
+  exp: Int
+  token: String
+  user: User
+}
+
+type PayloadPreference {
+  id: String
+  user: PayloadPreference_User_Relationship!
+  key: String
+  value: JSON
+  updatedAt: DateTime
+  createdAt: DateTime
+}
+
+type PayloadPreference_User_Relationship {
+  relationTo: PayloadPreference_User_RelationTo
+  value: PayloadPreference_User
+}
+
+enum PayloadPreference_User_RelationTo {
+  users
+}
+
+union PayloadPreference_User = User
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+type PayloadPreferences {
+  docs: [PayloadPreference]
+  hasNextPage: Boolean
+  hasPrevPage: Boolean
+  limit: Int
+  nextPage: Int
+  offset: Int
+  page: Int
+  pagingCounter: Int
+  prevPage: Int
+  totalDocs: Int
+  totalPages: Int
+}
+
+input PayloadPreference_where {
+  user: PayloadPreference_user_Relation
+  key: PayloadPreference_key_operator
+  value: PayloadPreference_value_operator
+  updatedAt: PayloadPreference_updatedAt_operator
+  createdAt: PayloadPreference_createdAt_operator
+  id: PayloadPreference_id_operator
+  AND: [PayloadPreference_where_and]
+  OR: [PayloadPreference_where_or]
+}
+
+input PayloadPreference_user_Relation {
+  relationTo: PayloadPreference_user_Relation_RelationTo
+  value: JSON
+}
+
+enum PayloadPreference_user_Relation_RelationTo {
+  users
+}
+
+input PayloadPreference_key_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input PayloadPreference_value_operator {
+  equals: JSON
+  not_equals: JSON
+  like: JSON
+  contains: JSON
+  within: JSON
+  intersects: JSON
+  exists: Boolean
+}
+
+input PayloadPreference_updatedAt_operator {
+  equals: DateTime
+  not_equals: DateTime
+  greater_than_equal: DateTime
+  greater_than: DateTime
+  less_than_equal: DateTime
+  less_than: DateTime
+  like: DateTime
+  exists: Boolean
+}
+
+input PayloadPreference_createdAt_operator {
+  equals: DateTime
+  not_equals: DateTime
+  greater_than_equal: DateTime
+  greater_than: DateTime
+  less_than_equal: DateTime
+  less_than: DateTime
+  like: DateTime
+  exists: Boolean
+}
+
+input PayloadPreference_id_operator {
+  equals: String
+  not_equals: String
+  like: String
+  contains: String
+  in: [String]
+  not_in: [String]
+  all: [String]
+  exists: Boolean
+}
+
+input PayloadPreference_where_and {
+  user: PayloadPreference_user_Relation
+  key: PayloadPreference_key_operator
+  value: PayloadPreference_value_operator
+  updatedAt: PayloadPreference_updatedAt_operator
+  createdAt: PayloadPreference_createdAt_operator
+  id: PayloadPreference_id_operator
+  AND: [PayloadPreference_where_and]
+  OR: [PayloadPreference_where_or]
+}
+
+input PayloadPreference_where_or {
+  user: PayloadPreference_user_Relation
+  key: PayloadPreference_key_operator
+  value: PayloadPreference_value_operator
+  updatedAt: PayloadPreference_updatedAt_operator
+  createdAt: PayloadPreference_createdAt_operator
+  id: PayloadPreference_id_operator
+  AND: [PayloadPreference_where_and]
+  OR: [PayloadPreference_where_or]
+}
+
+type payload_preferencesDocAccess {
+  fields: PayloadPreferencesDocAccessFields
+  create: PayloadPreferencesCreateDocAccess
+  read: PayloadPreferencesReadDocAccess
+  update: PayloadPreferencesUpdateDocAccess
+  delete: PayloadPreferencesDeleteDocAccess
+}
+
+type PayloadPreferencesDocAccessFields {
+  user: PayloadPreferencesDocAccessFields_user
+  key: PayloadPreferencesDocAccessFields_key
+  value: PayloadPreferencesDocAccessFields_value
+  updatedAt: PayloadPreferencesDocAccessFields_updatedAt
+  createdAt: PayloadPreferencesDocAccessFields_createdAt
+}
+
+type PayloadPreferencesDocAccessFields_user {
+  create: PayloadPreferencesDocAccessFields_user_Create
+  read: PayloadPreferencesDocAccessFields_user_Read
+  update: PayloadPreferencesDocAccessFields_user_Update
+  delete: PayloadPreferencesDocAccessFields_user_Delete
+}
+
+type PayloadPreferencesDocAccessFields_user_Create {
+  permission: Boolean!
+}
+
+type PayloadPreferencesDocAccessFields_user_Read {
+  permission: Boolean!
+}
+
+type PayloadPreferencesDocAccessFields_user_Update {
+  permission: Boolean!
+}
+
+type PayloadPreferencesDocAccessFields_user_Delete {
+  permission: Boolean!
+}
+
+type PayloadPreferencesDocAccessFields_key {
+  create: PayloadPreferencesDocAccessFields_key_Create
+  read: PayloadPreferencesDocAccessFields_key_Read
+  update: PayloadPreferencesDocAccessFields_key_Update
+  delete: PayloadPreferencesDocAccessFields_key_Delete
+}
+
+type PayloadPreferencesDocAccessFields_key_Create {
+  permission: Boolean!
+}
+
+type PayloadPreferencesDocAccessFields_key_Read {
+  permission: Boolean!
+}
+
+type PayloadPreferencesDocAccessFields_key_Update {
+  permission: Boolean!
+}
+
+type PayloadPreferencesDocAccessFields_key_Delete {
+  permission: Boolean!
+}
+
+type PayloadPreferencesDocAccessFields_value {
+  create: PayloadPreferencesDocAccessFields_value_Create
+  read: PayloadPreferencesDocAccessFields_value_Read
+  update: PayloadPreferencesDocAccessFields_value_Update
+  delete: PayloadPreferencesDocAccessFields_value_Delete
+}
+
+type PayloadPreferencesDocAccessFields_value_Create {
+  permission: Boolean!
+}
+
+type PayloadPreferencesDocAccessFields_value_Read {
+  permission: Boolean!
+}
+
+type PayloadPreferencesDocAccessFields_value_Update {
+  permission: Boolean!
+}
+
+type PayloadPreferencesDocAccessFields_value_Delete {
+  permission: Boolean!
+}
+
+type PayloadPreferencesDocAccessFields_updatedAt {
+  create: PayloadPreferencesDocAccessFields_updatedAt_Create
+  read: PayloadPreferencesDocAccessFields_updatedAt_Read
+  update: PayloadPreferencesDocAccessFields_updatedAt_Update
+  delete: PayloadPreferencesDocAccessFields_updatedAt_Delete
+}
+
+type PayloadPreferencesDocAccessFields_updatedAt_Create {
+  permission: Boolean!
+}
+
+type PayloadPreferencesDocAccessFields_updatedAt_Read {
+  permission: Boolean!
+}
+
+type PayloadPreferencesDocAccessFields_updatedAt_Update {
+  permission: Boolean!
+}
+
+type PayloadPreferencesDocAccessFields_updatedAt_Delete {
+  permission: Boolean!
+}
+
+type PayloadPreferencesDocAccessFields_createdAt {
+  create: PayloadPreferencesDocAccessFields_createdAt_Create
+  read: PayloadPreferencesDocAccessFields_createdAt_Read
+  update: PayloadPreferencesDocAccessFields_createdAt_Update
+  delete: PayloadPreferencesDocAccessFields_createdAt_Delete
+}
+
+type PayloadPreferencesDocAccessFields_createdAt_Create {
+  permission: Boolean!
+}
+
+type PayloadPreferencesDocAccessFields_createdAt_Read {
+  permission: Boolean!
+}
+
+type PayloadPreferencesDocAccessFields_createdAt_Update {
+  permission: Boolean!
+}
+
+type PayloadPreferencesDocAccessFields_createdAt_Delete {
+  permission: Boolean!
+}
+
+type PayloadPreferencesCreateDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type PayloadPreferencesReadDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type PayloadPreferencesUpdateDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type PayloadPreferencesDeleteDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type Setting {
+  general: Setting_General
+  header: Setting_Header
+  updatedAt: DateTime
+  createdAt: DateTime
+}
+
+type Setting_General {
+  title: String
+}
+
+type Setting_Header {
+  navigation: Setting_Header_Navigation
+}
+
+type Setting_Header_Navigation {
+  style: Setting_Header_Navigation_style
+  links: [Setting_Header_Navigation_Links!]
+}
+
+enum Setting_Header_Navigation_style {
+  classic
+  dropdown
+  megaMenu
+}
+
+type Setting_Header_Navigation_Links {
+  title: String
+  onlyLink: Boolean
+  href: String
+  columns: [Setting_Header_Navigation_Links_Columns!]
+  subLinks: [Setting_Header_Navigation_Links_SubLinks!]
+  id: String
+}
+
+type Setting_Header_Navigation_Links_Columns {
+  type: Setting_Header_Navigation_Links_Columns_type
+  content: Setting_Header_Navigation_Links_Columns_Content
+  linkColumn: [Setting_Header_Navigation_Links_Columns_LinkColumn!]
+  id: String
+}
+
+enum Setting_Header_Navigation_Links_Columns_type {
+  linkCol
+  card
+}
+
+type Setting_Header_Navigation_Links_Columns_Content {
+  title: String
+  description: String
+}
+
+type Setting_Header_Navigation_Links_Columns_LinkColumn {
+  title: String
+  href: String
+  description: String
+  id: String
+}
+
+type Setting_Header_Navigation_Links_SubLinks {
+  title: String
+  href: String
+  description: String
+  id: String
+}
+
+type settingsDocAccess {
+  fields: SettingsDocAccessFields
+  read: SettingsReadDocAccess
+  update: SettingsUpdateDocAccess
+}
+
+type SettingsDocAccessFields {
+  title: SettingsDocAccessFields_title
+  navigation: SettingsDocAccessFields_navigation
+  updatedAt: SettingsDocAccessFields_updatedAt
+  createdAt: SettingsDocAccessFields_createdAt
+}
+
+type SettingsDocAccessFields_title {
+  create: SettingsDocAccessFields_title_Create
+  read: SettingsDocAccessFields_title_Read
+  update: SettingsDocAccessFields_title_Update
+  delete: SettingsDocAccessFields_title_Delete
+}
+
+type SettingsDocAccessFields_title_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_title_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_title_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_title_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation {
+  create: SettingsDocAccessFields_navigation_Create
+  read: SettingsDocAccessFields_navigation_Read
+  update: SettingsDocAccessFields_navigation_Update
+  delete: SettingsDocAccessFields_navigation_Delete
+  fields: SettingsDocAccessFields_navigation_Fields
+}
+
+type SettingsDocAccessFields_navigation_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_Fields {
+  style: SettingsDocAccessFields_navigation_style
+  links: SettingsDocAccessFields_navigation_links
+}
+
+type SettingsDocAccessFields_navigation_style {
+  create: SettingsDocAccessFields_navigation_style_Create
+  read: SettingsDocAccessFields_navigation_style_Read
+  update: SettingsDocAccessFields_navigation_style_Update
+  delete: SettingsDocAccessFields_navigation_style_Delete
+}
+
+type SettingsDocAccessFields_navigation_style_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_style_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_style_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_style_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links {
+  create: SettingsDocAccessFields_navigation_links_Create
+  read: SettingsDocAccessFields_navigation_links_Read
+  update: SettingsDocAccessFields_navigation_links_Update
+  delete: SettingsDocAccessFields_navigation_links_Delete
+  fields: SettingsDocAccessFields_navigation_links_Fields
+}
+
+type SettingsDocAccessFields_navigation_links_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_Fields {
+  title: SettingsDocAccessFields_navigation_links_title
+  onlyLink: SettingsDocAccessFields_navigation_links_onlyLink
+  href: SettingsDocAccessFields_navigation_links_href
+  columns: SettingsDocAccessFields_navigation_links_columns
+  subLinks: SettingsDocAccessFields_navigation_links_subLinks
+  id: SettingsDocAccessFields_navigation_links_id
+}
+
+type SettingsDocAccessFields_navigation_links_title {
+  create: SettingsDocAccessFields_navigation_links_title_Create
+  read: SettingsDocAccessFields_navigation_links_title_Read
+  update: SettingsDocAccessFields_navigation_links_title_Update
+  delete: SettingsDocAccessFields_navigation_links_title_Delete
+}
+
+type SettingsDocAccessFields_navigation_links_title_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_title_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_title_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_title_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_onlyLink {
+  create: SettingsDocAccessFields_navigation_links_onlyLink_Create
+  read: SettingsDocAccessFields_navigation_links_onlyLink_Read
+  update: SettingsDocAccessFields_navigation_links_onlyLink_Update
+  delete: SettingsDocAccessFields_navigation_links_onlyLink_Delete
+}
+
+type SettingsDocAccessFields_navigation_links_onlyLink_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_onlyLink_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_onlyLink_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_onlyLink_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_href {
+  create: SettingsDocAccessFields_navigation_links_href_Create
+  read: SettingsDocAccessFields_navigation_links_href_Read
+  update: SettingsDocAccessFields_navigation_links_href_Update
+  delete: SettingsDocAccessFields_navigation_links_href_Delete
+}
+
+type SettingsDocAccessFields_navigation_links_href_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_href_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_href_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_href_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns {
+  create: SettingsDocAccessFields_navigation_links_columns_Create
+  read: SettingsDocAccessFields_navigation_links_columns_Read
+  update: SettingsDocAccessFields_navigation_links_columns_Update
+  delete: SettingsDocAccessFields_navigation_links_columns_Delete
+  fields: SettingsDocAccessFields_navigation_links_columns_Fields
+}
+
+type SettingsDocAccessFields_navigation_links_columns_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_Fields {
+  type: SettingsDocAccessFields_navigation_links_columns_type
+  content: SettingsDocAccessFields_navigation_links_columns_content
+  linkColumn: SettingsDocAccessFields_navigation_links_columns_linkColumn
+  id: SettingsDocAccessFields_navigation_links_columns_id
+}
+
+type SettingsDocAccessFields_navigation_links_columns_type {
+  create: SettingsDocAccessFields_navigation_links_columns_type_Create
+  read: SettingsDocAccessFields_navigation_links_columns_type_Read
+  update: SettingsDocAccessFields_navigation_links_columns_type_Update
+  delete: SettingsDocAccessFields_navigation_links_columns_type_Delete
+}
+
+type SettingsDocAccessFields_navigation_links_columns_type_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_type_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_type_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_type_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_content {
+  create: SettingsDocAccessFields_navigation_links_columns_content_Create
+  read: SettingsDocAccessFields_navigation_links_columns_content_Read
+  update: SettingsDocAccessFields_navigation_links_columns_content_Update
+  delete: SettingsDocAccessFields_navigation_links_columns_content_Delete
+  fields: SettingsDocAccessFields_navigation_links_columns_content_Fields
+}
+
+type SettingsDocAccessFields_navigation_links_columns_content_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_content_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_content_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_content_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_content_Fields {
+  title: SettingsDocAccessFields_navigation_links_columns_content_title
+  description: SettingsDocAccessFields_navigation_links_columns_content_description
+}
+
+type SettingsDocAccessFields_navigation_links_columns_content_title {
+  create: SettingsDocAccessFields_navigation_links_columns_content_title_Create
+  read: SettingsDocAccessFields_navigation_links_columns_content_title_Read
+  update: SettingsDocAccessFields_navigation_links_columns_content_title_Update
+  delete: SettingsDocAccessFields_navigation_links_columns_content_title_Delete
+}
+
+type SettingsDocAccessFields_navigation_links_columns_content_title_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_content_title_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_content_title_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_content_title_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_content_description {
+  create: SettingsDocAccessFields_navigation_links_columns_content_description_Create
+  read: SettingsDocAccessFields_navigation_links_columns_content_description_Read
+  update: SettingsDocAccessFields_navigation_links_columns_content_description_Update
+  delete: SettingsDocAccessFields_navigation_links_columns_content_description_Delete
+}
+
+type SettingsDocAccessFields_navigation_links_columns_content_description_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_content_description_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_content_description_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_content_description_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn {
+  create: SettingsDocAccessFields_navigation_links_columns_linkColumn_Create
+  read: SettingsDocAccessFields_navigation_links_columns_linkColumn_Read
+  update: SettingsDocAccessFields_navigation_links_columns_linkColumn_Update
+  delete: SettingsDocAccessFields_navigation_links_columns_linkColumn_Delete
+  fields: SettingsDocAccessFields_navigation_links_columns_linkColumn_Fields
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_Fields {
+  title: SettingsDocAccessFields_navigation_links_columns_linkColumn_title
+  href: SettingsDocAccessFields_navigation_links_columns_linkColumn_href
+  description: SettingsDocAccessFields_navigation_links_columns_linkColumn_description
+  id: SettingsDocAccessFields_navigation_links_columns_linkColumn_id
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_title {
+  create: SettingsDocAccessFields_navigation_links_columns_linkColumn_title_Create
+  read: SettingsDocAccessFields_navigation_links_columns_linkColumn_title_Read
+  update: SettingsDocAccessFields_navigation_links_columns_linkColumn_title_Update
+  delete: SettingsDocAccessFields_navigation_links_columns_linkColumn_title_Delete
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_title_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_title_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_title_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_title_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_href {
+  create: SettingsDocAccessFields_navigation_links_columns_linkColumn_href_Create
+  read: SettingsDocAccessFields_navigation_links_columns_linkColumn_href_Read
+  update: SettingsDocAccessFields_navigation_links_columns_linkColumn_href_Update
+  delete: SettingsDocAccessFields_navigation_links_columns_linkColumn_href_Delete
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_href_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_href_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_href_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_href_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_description {
+  create: SettingsDocAccessFields_navigation_links_columns_linkColumn_description_Create
+  read: SettingsDocAccessFields_navigation_links_columns_linkColumn_description_Read
+  update: SettingsDocAccessFields_navigation_links_columns_linkColumn_description_Update
+  delete: SettingsDocAccessFields_navigation_links_columns_linkColumn_description_Delete
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_description_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_description_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_description_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_description_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_id {
+  create: SettingsDocAccessFields_navigation_links_columns_linkColumn_id_Create
+  read: SettingsDocAccessFields_navigation_links_columns_linkColumn_id_Read
+  update: SettingsDocAccessFields_navigation_links_columns_linkColumn_id_Update
+  delete: SettingsDocAccessFields_navigation_links_columns_linkColumn_id_Delete
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_id_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_id_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_id_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_linkColumn_id_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_id {
+  create: SettingsDocAccessFields_navigation_links_columns_id_Create
+  read: SettingsDocAccessFields_navigation_links_columns_id_Read
+  update: SettingsDocAccessFields_navigation_links_columns_id_Update
+  delete: SettingsDocAccessFields_navigation_links_columns_id_Delete
+}
+
+type SettingsDocAccessFields_navigation_links_columns_id_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_id_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_id_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_columns_id_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks {
+  create: SettingsDocAccessFields_navigation_links_subLinks_Create
+  read: SettingsDocAccessFields_navigation_links_subLinks_Read
+  update: SettingsDocAccessFields_navigation_links_subLinks_Update
+  delete: SettingsDocAccessFields_navigation_links_subLinks_Delete
+  fields: SettingsDocAccessFields_navigation_links_subLinks_Fields
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_Fields {
+  title: SettingsDocAccessFields_navigation_links_subLinks_title
+  href: SettingsDocAccessFields_navigation_links_subLinks_href
+  description: SettingsDocAccessFields_navigation_links_subLinks_description
+  id: SettingsDocAccessFields_navigation_links_subLinks_id
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_title {
+  create: SettingsDocAccessFields_navigation_links_subLinks_title_Create
+  read: SettingsDocAccessFields_navigation_links_subLinks_title_Read
+  update: SettingsDocAccessFields_navigation_links_subLinks_title_Update
+  delete: SettingsDocAccessFields_navigation_links_subLinks_title_Delete
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_title_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_title_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_title_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_title_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_href {
+  create: SettingsDocAccessFields_navigation_links_subLinks_href_Create
+  read: SettingsDocAccessFields_navigation_links_subLinks_href_Read
+  update: SettingsDocAccessFields_navigation_links_subLinks_href_Update
+  delete: SettingsDocAccessFields_navigation_links_subLinks_href_Delete
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_href_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_href_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_href_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_href_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_description {
+  create: SettingsDocAccessFields_navigation_links_subLinks_description_Create
+  read: SettingsDocAccessFields_navigation_links_subLinks_description_Read
+  update: SettingsDocAccessFields_navigation_links_subLinks_description_Update
+  delete: SettingsDocAccessFields_navigation_links_subLinks_description_Delete
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_description_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_description_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_description_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_description_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_id {
+  create: SettingsDocAccessFields_navigation_links_subLinks_id_Create
+  read: SettingsDocAccessFields_navigation_links_subLinks_id_Read
+  update: SettingsDocAccessFields_navigation_links_subLinks_id_Update
+  delete: SettingsDocAccessFields_navigation_links_subLinks_id_Delete
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_id_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_id_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_id_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_subLinks_id_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_id {
+  create: SettingsDocAccessFields_navigation_links_id_Create
+  read: SettingsDocAccessFields_navigation_links_id_Read
+  update: SettingsDocAccessFields_navigation_links_id_Update
+  delete: SettingsDocAccessFields_navigation_links_id_Delete
+}
+
+type SettingsDocAccessFields_navigation_links_id_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_id_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_id_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_navigation_links_id_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_updatedAt {
+  create: SettingsDocAccessFields_updatedAt_Create
+  read: SettingsDocAccessFields_updatedAt_Read
+  update: SettingsDocAccessFields_updatedAt_Update
+  delete: SettingsDocAccessFields_updatedAt_Delete
+}
+
+type SettingsDocAccessFields_updatedAt_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_updatedAt_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_updatedAt_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_updatedAt_Delete {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_createdAt {
+  create: SettingsDocAccessFields_createdAt_Create
+  read: SettingsDocAccessFields_createdAt_Read
+  update: SettingsDocAccessFields_createdAt_Update
+  delete: SettingsDocAccessFields_createdAt_Delete
+}
+
+type SettingsDocAccessFields_createdAt_Create {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_createdAt_Read {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_createdAt_Update {
+  permission: Boolean!
+}
+
+type SettingsDocAccessFields_createdAt_Delete {
+  permission: Boolean!
+}
+
+type SettingsReadDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type SettingsUpdateDocAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type Access {
+  canAccessAdmin: Boolean!
+  users: usersAccess
+  payload_preferences: payload_preferencesAccess
+  settings: settingsAccess
+}
+
+type usersAccess {
+  fields: UsersFields
+  create: UsersCreateAccess
+  read: UsersReadAccess
+  update: UsersUpdateAccess
+  delete: UsersDeleteAccess
+  unlock: UsersUnlockAccess
+}
+
+type UsersFields {
+  name: UsersFields_name
+  roles: UsersFields_roles
+  updatedAt: UsersFields_updatedAt
+  createdAt: UsersFields_createdAt
+  email: UsersFields_email
+  password: UsersFields_password
+}
+
+type UsersFields_name {
+  create: UsersFields_name_Create
+  read: UsersFields_name_Read
+  update: UsersFields_name_Update
+  delete: UsersFields_name_Delete
+}
+
+type UsersFields_name_Create {
+  permission: Boolean!
+}
+
+type UsersFields_name_Read {
+  permission: Boolean!
+}
+
+type UsersFields_name_Update {
+  permission: Boolean!
+}
+
+type UsersFields_name_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_roles {
+  create: UsersFields_roles_Create
+  read: UsersFields_roles_Read
+  update: UsersFields_roles_Update
+  delete: UsersFields_roles_Delete
+}
+
+type UsersFields_roles_Create {
+  permission: Boolean!
+}
+
+type UsersFields_roles_Read {
+  permission: Boolean!
+}
+
+type UsersFields_roles_Update {
+  permission: Boolean!
+}
+
+type UsersFields_roles_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_updatedAt {
+  create: UsersFields_updatedAt_Create
+  read: UsersFields_updatedAt_Read
+  update: UsersFields_updatedAt_Update
+  delete: UsersFields_updatedAt_Delete
+}
+
+type UsersFields_updatedAt_Create {
+  permission: Boolean!
+}
+
+type UsersFields_updatedAt_Read {
+  permission: Boolean!
+}
+
+type UsersFields_updatedAt_Update {
+  permission: Boolean!
+}
+
+type UsersFields_updatedAt_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_createdAt {
+  create: UsersFields_createdAt_Create
+  read: UsersFields_createdAt_Read
+  update: UsersFields_createdAt_Update
+  delete: UsersFields_createdAt_Delete
+}
+
+type UsersFields_createdAt_Create {
+  permission: Boolean!
+}
+
+type UsersFields_createdAt_Read {
+  permission: Boolean!
+}
+
+type UsersFields_createdAt_Update {
+  permission: Boolean!
+}
+
+type UsersFields_createdAt_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_email {
+  create: UsersFields_email_Create
+  read: UsersFields_email_Read
+  update: UsersFields_email_Update
+  delete: UsersFields_email_Delete
+}
+
+type UsersFields_email_Create {
+  permission: Boolean!
+}
+
+type UsersFields_email_Read {
+  permission: Boolean!
+}
+
+type UsersFields_email_Update {
+  permission: Boolean!
+}
+
+type UsersFields_email_Delete {
+  permission: Boolean!
+}
+
+type UsersFields_password {
+  create: UsersFields_password_Create
+  read: UsersFields_password_Read
+  update: UsersFields_password_Update
+  delete: UsersFields_password_Delete
+}
+
+type UsersFields_password_Create {
+  permission: Boolean!
+}
+
+type UsersFields_password_Read {
+  permission: Boolean!
+}
+
+type UsersFields_password_Update {
+  permission: Boolean!
+}
+
+type UsersFields_password_Delete {
+  permission: Boolean!
+}
+
+type UsersCreateAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type UsersReadAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type UsersUpdateAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type UsersDeleteAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type UsersUnlockAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type payload_preferencesAccess {
+  fields: PayloadPreferencesFields
+  create: PayloadPreferencesCreateAccess
+  read: PayloadPreferencesReadAccess
+  update: PayloadPreferencesUpdateAccess
+  delete: PayloadPreferencesDeleteAccess
+}
+
+type PayloadPreferencesFields {
+  user: PayloadPreferencesFields_user
+  key: PayloadPreferencesFields_key
+  value: PayloadPreferencesFields_value
+  updatedAt: PayloadPreferencesFields_updatedAt
+  createdAt: PayloadPreferencesFields_createdAt
+}
+
+type PayloadPreferencesFields_user {
+  create: PayloadPreferencesFields_user_Create
+  read: PayloadPreferencesFields_user_Read
+  update: PayloadPreferencesFields_user_Update
+  delete: PayloadPreferencesFields_user_Delete
+}
+
+type PayloadPreferencesFields_user_Create {
+  permission: Boolean!
+}
+
+type PayloadPreferencesFields_user_Read {
+  permission: Boolean!
+}
+
+type PayloadPreferencesFields_user_Update {
+  permission: Boolean!
+}
+
+type PayloadPreferencesFields_user_Delete {
+  permission: Boolean!
+}
+
+type PayloadPreferencesFields_key {
+  create: PayloadPreferencesFields_key_Create
+  read: PayloadPreferencesFields_key_Read
+  update: PayloadPreferencesFields_key_Update
+  delete: PayloadPreferencesFields_key_Delete
+}
+
+type PayloadPreferencesFields_key_Create {
+  permission: Boolean!
+}
+
+type PayloadPreferencesFields_key_Read {
+  permission: Boolean!
+}
+
+type PayloadPreferencesFields_key_Update {
+  permission: Boolean!
+}
+
+type PayloadPreferencesFields_key_Delete {
+  permission: Boolean!
+}
+
+type PayloadPreferencesFields_value {
+  create: PayloadPreferencesFields_value_Create
+  read: PayloadPreferencesFields_value_Read
+  update: PayloadPreferencesFields_value_Update
+  delete: PayloadPreferencesFields_value_Delete
+}
+
+type PayloadPreferencesFields_value_Create {
+  permission: Boolean!
+}
+
+type PayloadPreferencesFields_value_Read {
+  permission: Boolean!
+}
+
+type PayloadPreferencesFields_value_Update {
+  permission: Boolean!
+}
+
+type PayloadPreferencesFields_value_Delete {
+  permission: Boolean!
+}
+
+type PayloadPreferencesFields_updatedAt {
+  create: PayloadPreferencesFields_updatedAt_Create
+  read: PayloadPreferencesFields_updatedAt_Read
+  update: PayloadPreferencesFields_updatedAt_Update
+  delete: PayloadPreferencesFields_updatedAt_Delete
+}
+
+type PayloadPreferencesFields_updatedAt_Create {
+  permission: Boolean!
+}
+
+type PayloadPreferencesFields_updatedAt_Read {
+  permission: Boolean!
+}
+
+type PayloadPreferencesFields_updatedAt_Update {
+  permission: Boolean!
+}
+
+type PayloadPreferencesFields_updatedAt_Delete {
+  permission: Boolean!
+}
+
+type PayloadPreferencesFields_createdAt {
+  create: PayloadPreferencesFields_createdAt_Create
+  read: PayloadPreferencesFields_createdAt_Read
+  update: PayloadPreferencesFields_createdAt_Update
+  delete: PayloadPreferencesFields_createdAt_Delete
+}
+
+type PayloadPreferencesFields_createdAt_Create {
+  permission: Boolean!
+}
+
+type PayloadPreferencesFields_createdAt_Read {
+  permission: Boolean!
+}
+
+type PayloadPreferencesFields_createdAt_Update {
+  permission: Boolean!
+}
+
+type PayloadPreferencesFields_createdAt_Delete {
+  permission: Boolean!
+}
+
+type PayloadPreferencesCreateAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type PayloadPreferencesReadAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type PayloadPreferencesUpdateAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type PayloadPreferencesDeleteAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type settingsAccess {
+  fields: SettingsFields
+  read: SettingsReadAccess
+  update: SettingsUpdateAccess
+}
+
+type SettingsFields {
+  title: SettingsFields_title
+  navigation: SettingsFields_navigation
+  updatedAt: SettingsFields_updatedAt
+  createdAt: SettingsFields_createdAt
+}
+
+type SettingsFields_title {
+  create: SettingsFields_title_Create
+  read: SettingsFields_title_Read
+  update: SettingsFields_title_Update
+  delete: SettingsFields_title_Delete
+}
+
+type SettingsFields_title_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_title_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_title_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_title_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation {
+  create: SettingsFields_navigation_Create
+  read: SettingsFields_navigation_Read
+  update: SettingsFields_navigation_Update
+  delete: SettingsFields_navigation_Delete
+  fields: SettingsFields_navigation_Fields
+}
+
+type SettingsFields_navigation_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_Fields {
+  style: SettingsFields_navigation_style
+  links: SettingsFields_navigation_links
+}
+
+type SettingsFields_navigation_style {
+  create: SettingsFields_navigation_style_Create
+  read: SettingsFields_navigation_style_Read
+  update: SettingsFields_navigation_style_Update
+  delete: SettingsFields_navigation_style_Delete
+}
+
+type SettingsFields_navigation_style_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_style_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_style_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_style_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links {
+  create: SettingsFields_navigation_links_Create
+  read: SettingsFields_navigation_links_Read
+  update: SettingsFields_navigation_links_Update
+  delete: SettingsFields_navigation_links_Delete
+  fields: SettingsFields_navigation_links_Fields
+}
+
+type SettingsFields_navigation_links_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_Fields {
+  title: SettingsFields_navigation_links_title
+  onlyLink: SettingsFields_navigation_links_onlyLink
+  href: SettingsFields_navigation_links_href
+  columns: SettingsFields_navigation_links_columns
+  subLinks: SettingsFields_navigation_links_subLinks
+  id: SettingsFields_navigation_links_id
+}
+
+type SettingsFields_navigation_links_title {
+  create: SettingsFields_navigation_links_title_Create
+  read: SettingsFields_navigation_links_title_Read
+  update: SettingsFields_navigation_links_title_Update
+  delete: SettingsFields_navigation_links_title_Delete
+}
+
+type SettingsFields_navigation_links_title_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_title_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_title_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_title_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_onlyLink {
+  create: SettingsFields_navigation_links_onlyLink_Create
+  read: SettingsFields_navigation_links_onlyLink_Read
+  update: SettingsFields_navigation_links_onlyLink_Update
+  delete: SettingsFields_navigation_links_onlyLink_Delete
+}
+
+type SettingsFields_navigation_links_onlyLink_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_onlyLink_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_onlyLink_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_onlyLink_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_href {
+  create: SettingsFields_navigation_links_href_Create
+  read: SettingsFields_navigation_links_href_Read
+  update: SettingsFields_navigation_links_href_Update
+  delete: SettingsFields_navigation_links_href_Delete
+}
+
+type SettingsFields_navigation_links_href_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_href_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_href_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_href_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns {
+  create: SettingsFields_navigation_links_columns_Create
+  read: SettingsFields_navigation_links_columns_Read
+  update: SettingsFields_navigation_links_columns_Update
+  delete: SettingsFields_navigation_links_columns_Delete
+  fields: SettingsFields_navigation_links_columns_Fields
+}
+
+type SettingsFields_navigation_links_columns_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_Fields {
+  type: SettingsFields_navigation_links_columns_type
+  content: SettingsFields_navigation_links_columns_content
+  linkColumn: SettingsFields_navigation_links_columns_linkColumn
+  id: SettingsFields_navigation_links_columns_id
+}
+
+type SettingsFields_navigation_links_columns_type {
+  create: SettingsFields_navigation_links_columns_type_Create
+  read: SettingsFields_navigation_links_columns_type_Read
+  update: SettingsFields_navigation_links_columns_type_Update
+  delete: SettingsFields_navigation_links_columns_type_Delete
+}
+
+type SettingsFields_navigation_links_columns_type_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_type_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_type_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_type_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_content {
+  create: SettingsFields_navigation_links_columns_content_Create
+  read: SettingsFields_navigation_links_columns_content_Read
+  update: SettingsFields_navigation_links_columns_content_Update
+  delete: SettingsFields_navigation_links_columns_content_Delete
+  fields: SettingsFields_navigation_links_columns_content_Fields
+}
+
+type SettingsFields_navigation_links_columns_content_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_content_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_content_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_content_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_content_Fields {
+  title: SettingsFields_navigation_links_columns_content_title
+  description: SettingsFields_navigation_links_columns_content_description
+}
+
+type SettingsFields_navigation_links_columns_content_title {
+  create: SettingsFields_navigation_links_columns_content_title_Create
+  read: SettingsFields_navigation_links_columns_content_title_Read
+  update: SettingsFields_navigation_links_columns_content_title_Update
+  delete: SettingsFields_navigation_links_columns_content_title_Delete
+}
+
+type SettingsFields_navigation_links_columns_content_title_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_content_title_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_content_title_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_content_title_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_content_description {
+  create: SettingsFields_navigation_links_columns_content_description_Create
+  read: SettingsFields_navigation_links_columns_content_description_Read
+  update: SettingsFields_navigation_links_columns_content_description_Update
+  delete: SettingsFields_navigation_links_columns_content_description_Delete
+}
+
+type SettingsFields_navigation_links_columns_content_description_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_content_description_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_content_description_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_content_description_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn {
+  create: SettingsFields_navigation_links_columns_linkColumn_Create
+  read: SettingsFields_navigation_links_columns_linkColumn_Read
+  update: SettingsFields_navigation_links_columns_linkColumn_Update
+  delete: SettingsFields_navigation_links_columns_linkColumn_Delete
+  fields: SettingsFields_navigation_links_columns_linkColumn_Fields
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_Fields {
+  title: SettingsFields_navigation_links_columns_linkColumn_title
+  href: SettingsFields_navigation_links_columns_linkColumn_href
+  description: SettingsFields_navigation_links_columns_linkColumn_description
+  id: SettingsFields_navigation_links_columns_linkColumn_id
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_title {
+  create: SettingsFields_navigation_links_columns_linkColumn_title_Create
+  read: SettingsFields_navigation_links_columns_linkColumn_title_Read
+  update: SettingsFields_navigation_links_columns_linkColumn_title_Update
+  delete: SettingsFields_navigation_links_columns_linkColumn_title_Delete
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_title_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_title_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_title_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_title_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_href {
+  create: SettingsFields_navigation_links_columns_linkColumn_href_Create
+  read: SettingsFields_navigation_links_columns_linkColumn_href_Read
+  update: SettingsFields_navigation_links_columns_linkColumn_href_Update
+  delete: SettingsFields_navigation_links_columns_linkColumn_href_Delete
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_href_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_href_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_href_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_href_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_description {
+  create: SettingsFields_navigation_links_columns_linkColumn_description_Create
+  read: SettingsFields_navigation_links_columns_linkColumn_description_Read
+  update: SettingsFields_navigation_links_columns_linkColumn_description_Update
+  delete: SettingsFields_navigation_links_columns_linkColumn_description_Delete
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_description_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_description_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_description_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_description_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_id {
+  create: SettingsFields_navigation_links_columns_linkColumn_id_Create
+  read: SettingsFields_navigation_links_columns_linkColumn_id_Read
+  update: SettingsFields_navigation_links_columns_linkColumn_id_Update
+  delete: SettingsFields_navigation_links_columns_linkColumn_id_Delete
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_id_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_id_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_id_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_linkColumn_id_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_id {
+  create: SettingsFields_navigation_links_columns_id_Create
+  read: SettingsFields_navigation_links_columns_id_Read
+  update: SettingsFields_navigation_links_columns_id_Update
+  delete: SettingsFields_navigation_links_columns_id_Delete
+}
+
+type SettingsFields_navigation_links_columns_id_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_id_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_id_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_columns_id_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks {
+  create: SettingsFields_navigation_links_subLinks_Create
+  read: SettingsFields_navigation_links_subLinks_Read
+  update: SettingsFields_navigation_links_subLinks_Update
+  delete: SettingsFields_navigation_links_subLinks_Delete
+  fields: SettingsFields_navigation_links_subLinks_Fields
+}
+
+type SettingsFields_navigation_links_subLinks_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks_Fields {
+  title: SettingsFields_navigation_links_subLinks_title
+  href: SettingsFields_navigation_links_subLinks_href
+  description: SettingsFields_navigation_links_subLinks_description
+  id: SettingsFields_navigation_links_subLinks_id
+}
+
+type SettingsFields_navigation_links_subLinks_title {
+  create: SettingsFields_navigation_links_subLinks_title_Create
+  read: SettingsFields_navigation_links_subLinks_title_Read
+  update: SettingsFields_navigation_links_subLinks_title_Update
+  delete: SettingsFields_navigation_links_subLinks_title_Delete
+}
+
+type SettingsFields_navigation_links_subLinks_title_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks_title_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks_title_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks_title_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks_href {
+  create: SettingsFields_navigation_links_subLinks_href_Create
+  read: SettingsFields_navigation_links_subLinks_href_Read
+  update: SettingsFields_navigation_links_subLinks_href_Update
+  delete: SettingsFields_navigation_links_subLinks_href_Delete
+}
+
+type SettingsFields_navigation_links_subLinks_href_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks_href_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks_href_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks_href_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks_description {
+  create: SettingsFields_navigation_links_subLinks_description_Create
+  read: SettingsFields_navigation_links_subLinks_description_Read
+  update: SettingsFields_navigation_links_subLinks_description_Update
+  delete: SettingsFields_navigation_links_subLinks_description_Delete
+}
+
+type SettingsFields_navigation_links_subLinks_description_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks_description_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks_description_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks_description_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks_id {
+  create: SettingsFields_navigation_links_subLinks_id_Create
+  read: SettingsFields_navigation_links_subLinks_id_Read
+  update: SettingsFields_navigation_links_subLinks_id_Update
+  delete: SettingsFields_navigation_links_subLinks_id_Delete
+}
+
+type SettingsFields_navigation_links_subLinks_id_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks_id_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks_id_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_subLinks_id_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_id {
+  create: SettingsFields_navigation_links_id_Create
+  read: SettingsFields_navigation_links_id_Read
+  update: SettingsFields_navigation_links_id_Update
+  delete: SettingsFields_navigation_links_id_Delete
+}
+
+type SettingsFields_navigation_links_id_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_id_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_id_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_navigation_links_id_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_updatedAt {
+  create: SettingsFields_updatedAt_Create
+  read: SettingsFields_updatedAt_Read
+  update: SettingsFields_updatedAt_Update
+  delete: SettingsFields_updatedAt_Delete
+}
+
+type SettingsFields_updatedAt_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_updatedAt_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_updatedAt_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_updatedAt_Delete {
+  permission: Boolean!
+}
+
+type SettingsFields_createdAt {
+  create: SettingsFields_createdAt_Create
+  read: SettingsFields_createdAt_Read
+  update: SettingsFields_createdAt_Update
+  delete: SettingsFields_createdAt_Delete
+}
+
+type SettingsFields_createdAt_Create {
+  permission: Boolean!
+}
+
+type SettingsFields_createdAt_Read {
+  permission: Boolean!
+}
+
+type SettingsFields_createdAt_Update {
+  permission: Boolean!
+}
+
+type SettingsFields_createdAt_Delete {
+  permission: Boolean!
+}
+
+type SettingsReadAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type SettingsUpdateAccess {
+  permission: Boolean!
+  where: JSONObject
+}
+
+type Mutation {
+  createUser(data: mutationUserInput!, draft: Boolean): User
+  updateUser(id: String!, autosave: Boolean, data: mutationUserUpdateInput!, draft: Boolean): User
+  deleteUser(id: String!): User
+  refreshTokenUser(token: String): usersRefreshedUser
+  logoutUser: String
+  unlockUser(email: String!): Boolean!
+  loginUser(email: String, password: String): usersLoginResult
+  forgotPasswordUser(disableEmail: Boolean, email: String!, expiration: Int): Boolean!
+  resetPasswordUser(password: String, token: String): usersResetPassword
+  verifyEmailUser(token: String): Boolean
+  createPayloadPreference(data: mutationPayloadPreferenceInput!, draft: Boolean): PayloadPreference
+  updatePayloadPreference(id: String!, autosave: Boolean, data: mutationPayloadPreferenceUpdateInput!, draft: Boolean): PayloadPreference
+  deletePayloadPreference(id: String!): PayloadPreference
+  updateSetting(data: mutationSettingInput!, draft: Boolean): Setting
+}
+
+input mutationUserInput {
+  name: String
+  roles: [User_roles_MutationInput]
+  updatedAt: String
+  createdAt: String
+  email: String!
+  resetPasswordToken: String
+  resetPasswordExpiration: String
+  salt: String
+  hash: String
+  loginAttempts: Float
+  lockUntil: String
+  password: String!
+}
+
+enum User_roles_MutationInput {
+  admin
+  user
+}
+
+input mutationUserUpdateInput {
+  name: String
+  roles: [UserUpdate_roles_MutationInput]
+  updatedAt: String
+  createdAt: String
+  email: String
+  resetPasswordToken: String
+  resetPasswordExpiration: String
+  salt: String
+  hash: String
+  loginAttempts: Float
+  lockUntil: String
+  password: String
+}
+
+enum UserUpdate_roles_MutationInput {
+  admin
+  user
+}
+
+type usersRefreshedUser {
+  exp: Int
+  refreshedToken: String
+  user: usersJWT
+}
+
+type usersJWT {
+  email: EmailAddress!
+  collection: String!
+}
+
+type usersLoginResult {
+  exp: Int
+  token: String
+  user: User
+}
+
+type usersResetPassword {
+  token: String
+  user: User
+}
+
+input mutationPayloadPreferenceInput {
+  user: PayloadPreference_UserRelationshipInput
+  key: String
+  value: JSON
+  updatedAt: String
+  createdAt: String
+}
+
+input PayloadPreference_UserRelationshipInput {
+  relationTo: PayloadPreference_UserRelationshipInputRelationTo
+  value: JSON
+}
+
+enum PayloadPreference_UserRelationshipInputRelationTo {
+  users
+}
+
+input mutationPayloadPreferenceUpdateInput {
+  user: PayloadPreferenceUpdate_UserRelationshipInput
+  key: String
+  value: JSON
+  updatedAt: String
+  createdAt: String
+}
+
+input PayloadPreferenceUpdate_UserRelationshipInput {
+  relationTo: PayloadPreferenceUpdate_UserRelationshipInputRelationTo
+  value: JSON
+}
+
+enum PayloadPreferenceUpdate_UserRelationshipInputRelationTo {
+  users
+}
+
+input mutationSettingInput {
+  general: mutationSetting_GeneralInput
+  header: mutationSetting_HeaderInput
+  updatedAt: String
+  createdAt: String
+}
+
+input mutationSetting_GeneralInput {
+  title: String
+}
+
+input mutationSetting_HeaderInput {
+  navigation: mutationSetting_Header_NavigationInput!
+}
+
+input mutationSetting_Header_NavigationInput {
+  style: Setting_Header_Navigation_style_MutationInput!
+  links: [mutationSetting_Header_Navigation_LinksInput]
+}
+
+enum Setting_Header_Navigation_style_MutationInput {
+  classic
+  dropdown
+  megaMenu
+}
+
+input mutationSetting_Header_Navigation_LinksInput {
+  title: String
+  onlyLink: Boolean
+  href: String
+  columns: [mutationSetting_Header_Navigation_Links_ColumnsInput]
+  subLinks: [mutationSetting_Header_Navigation_Links_SubLinksInput]
+  id: String
+}
+
+input mutationSetting_Header_Navigation_Links_ColumnsInput {
+  type: Setting_Header_Navigation_Links_Columns_type_MutationInput
+  content: mutationSetting_Header_Navigation_Links_Columns_ContentInput
+  linkColumn: [mutationSetting_Header_Navigation_Links_Columns_LinkColumnInput]
+  id: String
+}
+
+enum Setting_Header_Navigation_Links_Columns_type_MutationInput {
+  linkCol
+  card
+}
+
+input mutationSetting_Header_Navigation_Links_Columns_ContentInput {
+  title: String
+  description: String
+}
+
+input mutationSetting_Header_Navigation_Links_Columns_LinkColumnInput {
+  title: String
+  href: String
+  description: String
+  id: String
+}
+
+input mutationSetting_Header_Navigation_Links_SubLinksInput {
+  title: String
+  href: String
+  description: String
+  id: String
+}
