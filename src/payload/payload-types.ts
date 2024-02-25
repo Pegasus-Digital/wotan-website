@@ -12,7 +12,9 @@ export interface Config {
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  globals: {};
+  globals: {
+    settings: Setting;
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -66,6 +68,55 @@ export interface PayloadMigration {
   batch?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings".
+ */
+export interface Setting {
+  id: string;
+  general: {
+    title?: string | null;
+  };
+  header: {
+    navigation: {
+      style: 'classic' | 'dropdown' | 'megaMenu';
+      links: {
+        title?: string | null;
+        onlyLink?: boolean | null;
+        href?: string | null;
+        columns?:
+          | {
+              type?: ('linkCol' | 'card') | null;
+              content?: {
+                title?: string | null;
+                description?: string | null;
+              };
+              linkColumn?:
+                | {
+                    title?: string | null;
+                    href?: string | null;
+                    description?: string | null;
+                    id?: string | null;
+                  }[]
+                | null;
+              id?: string | null;
+            }[]
+          | null;
+        subLinks?:
+          | {
+              title?: string | null;
+              href?: string | null;
+              description?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[];
+    };
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
 }
 
 
