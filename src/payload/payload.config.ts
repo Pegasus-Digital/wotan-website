@@ -6,6 +6,11 @@ import { webpackBundler } from '@payloadcms/bundler-webpack'
 import { Settings } from './settings'
 import Users from './users'
 import path from 'path'
+import { Media } from './media'
+import { Company } from './settings/company'
+import { Pages } from './settings/pages'
+import Products from './products'
+import Categories from './products/categories'
 
 export default buildConfig({
   admin: {
@@ -21,13 +26,16 @@ export default buildConfig({
     bundler: webpackBundler(), // or viteBundler()
   },
   serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL,
-  collections: [Users],
-  globals: [Settings],
+  collections: [Users, Media, Pages, Products, Categories],
+  globals: [Settings, Company],
   // database-adapter-config-start
   // Todo: env variable validation
   db: mongooseAdapter({
     url: String(process.env.DATABASE_URI),
   }),
+  graphQL: {
+    schemaOutputFile: path.resolve(__dirname, 'generated-schema.graphql'),
+  },
   editor: lexicalEditor(),
   typescript: {
     outputFile: path.resolve(__dirname, 'payload-types.ts'),

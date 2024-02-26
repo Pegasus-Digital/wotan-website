@@ -9,11 +9,16 @@
 export interface Config {
   collections: {
     users: User;
+    media: Media;
+    pages: Page;
+    products: Product;
+    categories: Category;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
   globals: {
     settings: Setting;
+    company: Company;
   };
 }
 /**
@@ -34,6 +39,90 @@ export interface User {
   loginAttempts?: number | null;
   lockUntil?: string | null;
   password: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: string;
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
+  id: string;
+  title: string;
+  publishedOn?: string | null;
+  carousel: {
+    image: string | Media;
+    id?: string | null;
+  }[];
+  layout: {
+    title?: string | null;
+    description?: string | null;
+    populateBy?: ('categories' | 'selection') | null;
+    categories?: (string | Category)[] | null;
+    limit?: number | null;
+    selectedDocs?:
+      | {
+          relationTo: 'products';
+          value: string | Product;
+        }[]
+      | null;
+    populatedDocs?:
+      | {
+          relationTo: 'products';
+          value: string | Product;
+        }[]
+      | null;
+    populatedDocsTotal?: number | null;
+    id?: string | null;
+    blockName?: string | null;
+    blockType: 'product-carousel';
+  }[];
+  slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: string;
+  title?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: string;
+  title: string;
+  publishedOn?: string | null;
+  sku?: string | null;
+  minimumQuantity?: number | null;
+  images?: string | Media | null;
+  categories?: (string | Category)[] | null;
+  relatedProducts?: (string | Product)[] | null;
+  slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -76,14 +165,15 @@ export interface PayloadMigration {
 export interface Setting {
   id: string;
   general: {
-    title?: string | null;
+    darkMode?: boolean | null;
   };
   header: {
     navigation: {
+      logo: string | Media;
       style: 'classic' | 'dropdown' | 'megaMenu';
       links: {
         title?: string | null;
-        onlyLink?: boolean | null;
+        onlyLink: boolean;
         href?: string | null;
         columns?:
           | {
@@ -114,6 +204,95 @@ export interface Setting {
         id?: string | null;
       }[];
     };
+  };
+  footer: {
+    logo: string | Media;
+    companyInfo?: {
+      showAddress?: boolean | null;
+      showPhone?: boolean | null;
+      showEmail?: boolean | null;
+      showSocial?: boolean | null;
+    };
+    columns?:
+      | {
+          title?: string | null;
+          href?: string | null;
+          links?:
+            | {
+                title?: string | null;
+                href?: string | null;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "company".
+ */
+export interface Company {
+  id: string;
+  general: {
+    name?: string | null;
+    founded?: string | null;
+    cnpj?: string | null;
+  };
+  adress: {
+    adress?: {
+      street?: string | null;
+      number?: string | null;
+      neighborhood?: string | null;
+      city?: string | null;
+      state?:
+        | (
+            | 'AC'
+            | 'AL'
+            | 'AP'
+            | 'AM'
+            | 'BA'
+            | 'CE'
+            | 'DF'
+            | 'ES'
+            | 'GO'
+            | 'MA'
+            | 'MS'
+            | 'MT'
+            | 'MG'
+            | 'PA'
+            | 'PB'
+            | 'PR'
+            | 'PE'
+            | 'PI'
+            | 'RJ'
+            | 'RN'
+            | 'RS'
+            | 'RO'
+            | 'RR'
+            | 'SC'
+            | 'SP'
+            | 'SE'
+            | 'TO'
+          )
+        | null;
+      cep?: string | null;
+    };
+    googleMaps?: string | null;
+  };
+  contact: {
+    email?: string | null;
+    phone?: string | null;
+    whatsapp?: string | null;
+  };
+  social: {
+    facebook?: string | null;
+    instagram?: string | null;
+    linkedin?: string | null;
+    twitter?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
