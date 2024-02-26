@@ -4,6 +4,8 @@ import { slugField } from '../../fields/slug'
 import { revalidatePage } from './hooks/revalidatePage'
 import { ProductCarousel } from '../../blocks/productCarousel'
 import { populateArchiveBlock } from '../../hooks/populateArchiveBlock'
+import { FeaturedSection } from '../../blocks/featuredSection'
+import { StatisticSection } from '../../blocks/statistics'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -90,7 +92,7 @@ export const Pages: CollectionConfig = {
               name: 'layout',
               type: 'blocks',
               required: true,
-              blocks: [ProductCarousel],
+              blocks: [ProductCarousel, FeaturedSection, StatisticSection],
             },
           ],
         },
