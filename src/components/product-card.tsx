@@ -1,13 +1,6 @@
-import { Heart, ShoppingCart, Eye } from 'lucide-react'
 import { Lead, P } from './typography/texts'
-import { Button } from './ui/button'
 import { Card, CardContent, CardFooter } from './ui/card'
-import {
-  Tooltip,
-  TooltipProvider,
-  TooltipTrigger,
-  TooltipContent,
-} from './ui/tooltip'
+import { ProductCardActions } from './product-card-actions'
 
 interface ProductCardProps {
   name: string
@@ -25,33 +18,9 @@ export function ProductCard() {
           src='https://source.unsplash.com/random/'
         />
 
+        {/* Actions Wrapper */}
         <div className='absolute bottom-2 flex w-full translate-y-10 items-center justify-center gap-2.5 opacity-0 transition duration-200 group-hover:translate-y-0 group-hover:opacity-100'>
-          <TooltipProvider delayDuration={150}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button className='bg-background hover:bg-wotanRed-500 hover:text-background text-foreground group m-0 h-10 w-10 rounded-full p-0'>
-                  <Heart className='h-5 w-5' />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Adicionar aos favoritos</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button className='bg-background hover:bg-wotanRed-500 hover:text-background text-foreground group m-0 h-10 w-10 rounded-full p-0'>
-                  <ShoppingCart className='h-5 w-5' />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Adicionar ao carrinho</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button className='bg-background hover:bg-wotanRed-500 hover:text-background text-foreground group m-0 h-10 w-10 rounded-full p-0'>
-                  <Eye className='h-5 w-5' />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Ver detalhes</TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <ProductCardActions />
         </div>
       </CardContent>
       <CardFooter className='z-10 flex flex-col items-start space-y-2.5 py-4'>
