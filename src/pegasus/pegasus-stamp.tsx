@@ -3,8 +3,8 @@ import Link from 'next/link'
 
 function PegasusStamp() {
   return (
-    <div className='bg-wotan flex h-16 w-full items-center justify-center gap-2 text-white'>
-      Developed by
+    <div className='bg-wotan flex h-16 w-full items-center justify-center gap-2 border-t  border-white border-opacity-10 text-white'>
+      Desenvolvido por
       <Link
         href='https://pegasusds.com.br'
         className='flex items-center gap-2 font-semibold  '

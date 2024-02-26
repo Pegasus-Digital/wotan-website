@@ -11,24 +11,24 @@ import { H1 } from './typography/headings'
 import { Lead } from './typography/texts'
 import { buttonVariants } from './ui/button'
 import Link from 'next/link'
+import { Page, Product } from '@/payload/payload-types'
 
-// Sugestao de props
-interface ProductSliderProps {
-  title: string
-  description: string
-  products: any[]
-}
+export type ProductSliderProps = Extract<
+  Page['layout'][0],
+  { blockType: 'product-carousel' }
+>
 
-export function ProductSlider() {
+export function ProductSlider({
+  title,
+  description,
+  selectedDocs,
+}: ProductSliderProps) {
   return (
-    <section className='my-6 w-full'>
+    <section className='my-6 w-full overflow-x-hidden'>
       <div className='container flex w-full flex-col space-y-2'>
         <div className='mb-3 flex flex-col gap-2 text-center'>
-          <H1 className='text-wotanRed-500'>Section title</H1>
-          <Lead>
-            This is the section description, make sure to leave a like and
-            subscribe!!
-          </Lead>
+          <H1 className='text-wotanRed-500'>{title}</H1>
+          <Lead>{description}</Lead>
         </div>
 
         <Carousel
@@ -36,11 +36,23 @@ export function ProductSlider() {
           opts={{ align: 'start', loop: true }}
         >
           <CarouselContent>
-            {Array.from({ length: 10 }).map((_, index) => (
+            {selectedDocs.map((doc, index) => {
+              if (typeof doc.value !== 'string') {
+                return (
+                  <CarouselItem className='max-w-[300px] shadow-sm' key={index}>
+                    <ProductCard
+                      title={doc.value.title}
+                      categories={doc.value.categories}
+                    />
+                  </CarouselItem>
+                )
+              }
+            })}
+            {/* {Array.from({ length: 10 }).map((_, index) => (
               <CarouselItem className='max-w-[300px] shadow-sm' key={index}>
                 <ProductCard />
               </CarouselItem>
-            ))}
+            ))} */}
           </CarouselContent>
           <CarouselPrevious className='desktop:flex hidden' />
           <CarouselNext className='desktop:flex hidden' />
