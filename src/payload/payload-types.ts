@@ -68,29 +68,69 @@ export interface Page {
     image: string | Media;
     id?: string | null;
   }[];
-  layout: {
-    title?: string | null;
-    description?: string | null;
-    populateBy?: ('categories' | 'selection') | null;
-    categories?: (string | Category)[] | null;
-    limit?: number | null;
-    selectedDocs?:
-      | {
-          relationTo: 'products';
-          value: string | Product;
-        }[]
-      | null;
-    populatedDocs?:
-      | {
-          relationTo: 'products';
-          value: string | Product;
-        }[]
-      | null;
-    populatedDocsTotal?: number | null;
-    id?: string | null;
-    blockName?: string | null;
-    blockType: 'product-carousel';
-  }[];
+  layout: (
+    | {
+        title?: string | null;
+        description?: string | null;
+        populateBy?: ('categories' | 'selection') | null;
+        categories?: (string | Category)[] | null;
+        limit?: number | null;
+        selectedDocs?:
+          | {
+              relationTo: 'products';
+              value: string | Product;
+            }[]
+          | null;
+        populatedDocs?:
+          | {
+              relationTo: 'products';
+              value: string | Product;
+            }[]
+          | null;
+        populatedDocsTotal?: number | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'product-carousel';
+      }
+    | {
+        title?: string | null;
+        description?: string | null;
+        cards?:
+          | {
+              title?: string | null;
+              description?: string | null;
+              image?: string | Media | null;
+              linkTo?:
+                | ({
+                    relationTo: 'categories';
+                    value: string | Category;
+                  } | null)
+                | ({
+                    relationTo: 'products';
+                    value: string | Product;
+                  } | null);
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'featured-section';
+      }
+    | {
+        title?: string | null;
+        description?: string | null;
+        statistics?:
+          | {
+              title?: string | null;
+              value?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'statistic-section';
+      }
+  )[];
   slug?: string | null;
   updatedAt: string;
   createdAt: string;

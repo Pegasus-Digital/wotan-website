@@ -2,11 +2,15 @@ import '../globals.css'
 import { cn } from '@/lib/utils'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
-import { H1 } from '@/components/typography/headings'
-import { P } from '@/components/typography/texts'
-import { SearchBar } from '@/components/search-bar'
+
+import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { SearchBar } from '@/components/search-bar'
 import { PegasusStamp } from '@/pegasus/pegasus-stamp'
+
+import { fetchCompany, fetchSettings } from '../_api/fetchGlobals'
+import { Company, Setting } from '@/payload/payload-types'
+import { header } from '@/payload/settings/header'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -15,26 +19,69 @@ export const metadata: Metadata = {
   description: 'Wotan Website',
 }
 
-interface RooyLayoutProps {
+interface RootLayoutProps {
   children: React.ReactNode
 }
 
-export default function RootLayout({ children }: Readonly<RooyLayoutProps>) {
+async function fetchConfigs() {
+  try {
+    const settings = await fetchSettings()
+    // console.log(settings)
+    return settings
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+async function fetchCompanyInfo() {
+  try {
+    const settings = await fetchCompany()
+    // console.log(settings)
+    return settings
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+export default async function RootLayout({
+  children,
+}: Readonly<RootLayoutProps>) {
+  let settings: Setting | null = await fetchConfigs()
+  let companyInfo: Company | null = await fetchCompanyInfo()
+
+  const { header, footer } = settings
+  const { adress, contact } = companyInfo
+
   return (
-    <html lang='pt-BR'>
+    <html lang='pt-BR' suppressHydrationWarning>
       <body
         className={cn(
           inter.className,
           'bg-background text-foreground antialiased',
         )}
       >
-        <H1>Wotan Website</H1>
-        <P className='text-xl'>Website institucional + eCommerce</P>
+        <Header
+          logo={header?.navigation?.logo}
+          links={header?.navigation?.links}
+          style={header?.navigation?.style}
+          phone={contact?.phone}
+        />
+        <main className='flex min-h-screen flex-col items-center'>
+          {/* Header */}
+          <SearchBar />
 
-        <SearchBar />
-        {children}
-        <Footer />
-        <PegasusStamp />
+          {children}
+
+          <Footer
+            logo={footer?.logo}
+            companyInfo={footer.companyInfo}
+            columns={footer.columns}
+            adress={adress}
+            contact={contact}
+          />
+          {/* Developed by Pegasus */}
+          <PegasusStamp />
+        </main>
       </body>
     </html>
   )

@@ -4,6 +4,9 @@ import { Page as PayloadPage } from '../../../payload/payload-types'
 import { fetchDoc } from '@/app/_api/fetchDoc'
 import { fetchDocs } from '@/app/_api/fetchDocs'
 import { notFound } from 'next/navigation'
+import { FeaturedGrid } from '@/components/featured-grid'
+import { Statistics } from '@/components/statistics'
+import { Sections } from '@/components/sections'
 
 async function fetchPage(slug: string) {
   try {
@@ -25,13 +28,9 @@ export default async function Page({ params: { slug = 'home' } }) {
   const { layout } = page
 
   return (
-    <main className='flex min-h-screen flex-col items-center'>
-      {layout.map((block, index) => {
-        if (block.blockType === 'product-carousel') {
-          return <ProductSlider key={index} />
-        }
-      })}
-    </main>
+    <>
+      <Sections sections={layout} />
+    </>
   )
 }
 
