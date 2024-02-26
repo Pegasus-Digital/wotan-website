@@ -48,6 +48,12 @@ export const header: Field[] = [
     type: 'group',
     fields: [
       {
+        name: 'logo',
+        type: 'upload',
+        relationTo: 'media',
+        required: true,
+      },
+      {
         name: 'style',
         type: 'select',
         options: [
