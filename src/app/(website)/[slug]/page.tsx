@@ -26,7 +26,7 @@ export default async function Page({ params: { slug = 'home' } }) {
   if (!page) return notFound()
 
   const { layout } = page
-  console.log(layout)
+  // console.log(layout)
   return (
     <>
       <Sections sections={layout} />

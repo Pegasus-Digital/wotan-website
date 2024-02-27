@@ -14,7 +14,18 @@ export const SETTINGS = `
           title
           onlyLink
           href
-          
+          columns {
+            type
+            content{
+              title
+              description
+            }
+            linkColumn{
+              title
+              href
+              description
+            }
+          }
         }
       }
     }

@@ -15,55 +15,100 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu'
 import { Lead } from './typography/texts'
+import { Setting } from '@/payload/payload-types'
 
-const components: { title: string; href: string; description: string }[] = [
-  {
-    title: 'Pegasus',
-    href: '/pegasus',
-    description:
-      'A Pegasus Digital Solutions é a parceira que irá impulsionar o sucesso digital da sua empresa.',
-  },
-  {
-    title: 'Digital',
-    href: '/pegasus',
-    description:
-      'A Pegasus Digital Solutions é a parceira que irá impulsionar o sucesso digital da sua empresa.',
-  },
-  {
-    title: 'Solutions',
-    href: '/pegasus',
-    description:
-      'A Pegasus Digital Solutions é a parceira que irá impulsionar o sucesso digital da sua empresa.',
-  },
-  {
-    title: 'A',
-    href: '/pegasus',
-    description:
-      'A Pegasus Digital Solutions é a parceira que irá impulsionar o sucesso digital da sua empresa.',
-  },
-  {
-    title: 'Software',
-    href: '/pegasus',
-    description:
-      'A Pegasus Digital Solutions é a parceira que irá impulsionar o sucesso digital da sua empresa.',
-  },
-  {
-    title: 'Company',
-    href: '/pegasus',
-    description:
-      'A Pegasus Digital Solutions é a parceira que irá impulsionar o sucesso digital da sua empresa.',
-  },
-]
+type HeaderNavigationProps = Pick<
+  Setting['header']['navigation'],
+  'links' | 'style'
+>
 
-interface LinkProps {
-  title: string
-  href: string
-  description: string
+type LinkProps = Pick<
+  HeaderNavigationProps['links'][0],
+  'href' | 'title' | 'onlyLink' | 'columns' | 'subLinks'
+>
+
+function MegaMenu({ title, href, columns }: LinkProps) {
+  return (
+    <NavigationMenuItem>
+      <NavigationMenuTrigger>{title}</NavigationMenuTrigger>
+      <NavigationMenuContent>
+        <ul className='grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]'>
+          {columns.map((column, index) => {
+            if (column.type === 'card') {
+              return (
+                <li key={index} className='row-span-3'>
+                  <MegaMenuCard
+                    title={column.content.title}
+                    description={column.content.description}
+                  />
+                </li>
+              )
+            } else if (column.type === 'linkCol') {
+              return (
+                <>
+                  {column.linkColumn.map((link, index) => (
+                    <ListItem
+                      key={link.title}
+                      title={link.title}
+                      href={link.href}
+                    >
+                      {link.description}
+                    </ListItem>
+                  ))}
+                </>
+              )
+            }
+          })}
+        </ul>
+      </NavigationMenuContent>
+    </NavigationMenuItem>
+  )
 }
 
-function MegaMenu() {}
+function MegaMenuCard({
+  title,
+  description,
+}: LinkProps['columns'][0]['content']) {
+  return (
+    <NavigationMenuLink asChild>
+      <a
+        className='bg-wotan text-primary-foreground flex h-full w-full select-none flex-col justify-end rounded-md p-6 text-center no-underline outline-none focus:shadow-md'
+        href='/quem-somos'
+      >
+        <img
+          className='h-fit w-full'
+          src={
+            'https://wotan-site.medialinesistemas.com.br/storage/company/footer/10051620230522646b688c4118c.png'
+          }
+        />
+        {/* <Image alt='' src='/' width={156} height={54} /> */}
+        <div className='mb-2 mt-4 text-lg font-medium'>{title}</div>
+        <Lead className='text-primary-foreground text-sm leading-tight'>
+          {description}
+        </Lead>
+      </a>
+    </NavigationMenuLink>
+  )
+}
 
-function Dropdown() {}
+function Dropdown({ title, href, subLinks }: LinkProps) {
+  return (
+    <NavigationMenuItem>
+      <NavigationMenuTrigger>{title}</NavigationMenuTrigger>
+      <NavigationMenuContent>
+        <ul className='grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] '>
+          {subLinks.map((link) => (
+            <ListItem
+              key={link.title}
+              title={link.title}
+              href={link.href}
+            ></ListItem>
+          ))}
+        </ul>
+      </NavigationMenuContent>
+    </NavigationMenuItem>
+  )
+}
 
 function Classic({ title, href }: LinkProps) {
   return (
@@ -77,81 +122,28 @@ function Classic({ title, href }: LinkProps) {
   )
 }
 
-// <NavigationMenuItem>
-//   <NavigationMenuTrigger>Home</NavigationMenuTrigger>
-//   <NavigationMenuContent></NavigationMenuContent>
-//   </NavigationMenuList>
-// </NavigationMenuItem>
+const menuTypes = {
+  classic: Classic,
+  dropdown: Dropdown,
+  megaMenu: MegaMenu,
+}
 
-export function HeaderNavigation() {
+export function HeaderNavigation({ links, style }: HeaderNavigationProps) {
+  const Menu = menuTypes[style || 'classic']
+
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        {/* Se link.onlyLink === true => return <Classic {...link} /> */}
-        {/* links.map((link) => link.type === 'megamenu' return <MegaMenu {...link} /> )*/}
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Home</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className='grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]'>
-              {/* Main card */}
-              <li className='row-span-3'>
-                <NavigationMenuLink asChild>
-                  <a
-                    className='bg-wotan text-primary-foreground flex h-full w-full select-none flex-col justify-end rounded-md p-6 text-center no-underline outline-none focus:shadow-md'
-                    href='/quem-somos'
-                  >
-                    <img
-                      className='h-fit w-full'
-                      src={
-                        'https://wotan-site.medialinesistemas.com.br/storage/company/footer/10051620230522646b688c4118c.png'
-                      }
-                    />
-                    {/* <Image alt='' src='/' width={156} height={54} /> */}
-                    <div className='mb-2 mt-4 text-lg font-medium'>
-                      Quem somos
-                    </div>
-                    <Lead className='text-primary-foreground text-sm leading-tight'>
-                      Na Wotan, somos apaixonados por conectar pessoas com
-                      lembranças autênticas.
-                    </Lead>
-                  </a>
-                </NavigationMenuLink>
-              </li>
-              <ListItem href='/cases' title='Cases'>
-                Em cada produto, criamos e contamos uma nova história.
-              </ListItem>
-              <ListItem href='/clientes' title='Clientes'>
-                Nossa inspiração é ajudar a celebrar suas experiências
-              </ListItem>
-              <ListItem href='/faq' title='FAQ'>
-                Respostas para suas perguntas mais usuais
-              </ListItem>
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Sobre nós</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className='grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] '>
-              {components.map((component) => (
-                <ListItem
-                  key={component.title}
-                  title={component.title}
-                  href={component.href}
-                >
-                  {component.description}
-                </ListItem>
-              ))}
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link href='/docs' legacyBehavior passHref>
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              Fale conosco
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
+        {/* links.map if style == classic => <Classic /> if style == megamenu => <MegaMenu /> if style == dropdown => <Dropdown />  */}
+        {/* link.onlyLink == true => <Classic /> else => style */}
+        {links.map((link, index) => {
+          // console.log(link.onlyLink)
+          if (link.onlyLink === false) {
+            // console.log('ta certo')
+            return <Menu key={index} {...link} />
+          }
+          return <Classic key={index} {...link} />
+        })}
       </NavigationMenuList>
     </NavigationMenu>
   )
@@ -173,12 +165,15 @@ const ListItem = React.forwardRef<
           {...props}
         >
           <div className='text-sm font-medium leading-none'>{title}</div>
-          <p className='text-muted-foreground line-clamp-2 text-sm leading-snug'>
-            {children}
-          </p>
+          {children && (
+            <p className='text-muted-foreground line-clamp-2 text-sm leading-snug'>
+              {children}
+            </p>
+          )}
         </a>
       </NavigationMenuLink>
     </li>
   )
 })
+
 ListItem.displayName = 'ListItem'

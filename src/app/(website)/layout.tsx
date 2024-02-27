@@ -52,6 +52,8 @@ export default async function RootLayout({
   const { header, footer } = settings
   const { adress, contact } = companyInfo
 
+  // console.log({ header })
+
   return (
     <html lang='pt-BR' suppressHydrationWarning>
       <body

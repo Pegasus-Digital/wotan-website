@@ -14,7 +14,7 @@ const sectionComponents = {
 export function Sections({ sections }: { sections: Page['layout'][0][] }) {
   const sectionsExist =
     sections && Array.isArray(sections) && sections.length > 0
-  console.log(sections)
+  // console.log(sections)
   if (sectionsExist) {
     return (
       <>

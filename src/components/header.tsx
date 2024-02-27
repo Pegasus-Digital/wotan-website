@@ -27,7 +27,7 @@ export function Header({ logo, links, style, staticImage, id, phone }: Props) {
         </div>
 
         <div>
-          <HeaderNavigation />
+          <HeaderNavigation links={links} style={style} />
         </div>
 
         <div className='h-full flex-1  justify-end'>
