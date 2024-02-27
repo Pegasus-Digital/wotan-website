@@ -1,6 +1,6 @@
 import { buildConfig } from 'payload/config'
 import { mongooseAdapter } from '@payloadcms/db-mongodb' // database-adapter-import
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { slateEditor } from '@payloadcms/richtext-slate'
 
 import { webpackBundler } from '@payloadcms/bundler-webpack'
 import { Settings } from './settings'
@@ -36,7 +36,7 @@ export default buildConfig({
   graphQL: {
     schemaOutputFile: path.resolve(__dirname, 'generated-schema.graphql'),
   },
-  editor: lexicalEditor(),
+  editor: slateEditor({}),
   typescript: {
     outputFile: path.resolve(__dirname, 'payload-types.ts'),
   },

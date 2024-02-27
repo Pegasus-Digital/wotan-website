@@ -130,6 +130,23 @@ export interface Page {
         blockName?: string | null;
         blockType: 'statistic-section';
       }
+    | {
+        invertBackground?: boolean | null;
+        title?: string | null;
+        description?: string | null;
+        columns?:
+          | {
+              size?: ('half' | 'full') | null;
+              text: {
+                [k: string]: unknown;
+              }[];
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'content-section';
+      }
   )[];
   slug?: string | null;
   updatedAt: string;

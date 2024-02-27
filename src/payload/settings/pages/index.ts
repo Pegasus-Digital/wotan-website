@@ -6,6 +6,7 @@ import { ProductCarousel } from '../../blocks/productCarousel'
 import { populateArchiveBlock } from '../../hooks/populateArchiveBlock'
 import { FeaturedSection } from '../../blocks/featuredSection'
 import { StatisticSection } from '../../blocks/statistics'
+import { Content } from '../../blocks/content'
 
 export const Pages: CollectionConfig = {
   slug: 'pages',
@@ -92,7 +93,12 @@ export const Pages: CollectionConfig = {
               name: 'layout',
               type: 'blocks',
               required: true,
-              blocks: [ProductCarousel, FeaturedSection, StatisticSection],
+              blocks: [
+                ProductCarousel,
+                FeaturedSection,
+                StatisticSection,
+                Content,
+              ],
             },
           ],
         },

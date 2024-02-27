@@ -55,3 +55,15 @@ export const QUERY_FEATURED_SECTION = `
   }
 }
 `
+export const QUERY_CONTENT_SECTION = `
+... on ContentSection {
+  title
+  description
+  columns {
+    text
+    size
+  }
+  blockName
+  blockType
+}
+`
