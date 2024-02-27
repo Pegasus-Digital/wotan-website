@@ -1,5 +1,5 @@
-import { H1 } from './typography/headings'
-import { Lead } from './typography/texts'
+import { H1 } from '../../components/typography/headings'
+import { Lead } from '../../components/typography/texts'
 
 export function FeaturedGrid() {
   return (
