@@ -320,6 +320,7 @@ export function ContactContent() {
 
               <div className='flex items-center'>
                 <Small className='mr-5 whitespace-nowrap'>Redes sociais</Small>
+
                 <div className='flex space-x-2'>
                   <LinkIcon href='/' Icon={InstagramLogoIcon} />
                   <LinkIcon href='/' Icon={LinkedInLogoIcon} />
