@@ -4,8 +4,12 @@ import { admins, anyone } from '../access'
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  admin: {
+    group: 'Files',
+  },
   upload: {
     staticDir: path.resolve(__dirname, '../../../media'),
+    mimeTypes: ['image/*', 'application/pdf'],
   },
   access: {
     read: anyone,

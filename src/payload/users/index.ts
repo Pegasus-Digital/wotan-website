@@ -11,6 +11,7 @@ const Users: CollectionConfig = {
     delete: admins,
   },
   admin: {
+    group: 'Settings',
     useAsTitle: 'name',
     defaultColumns: ['name', 'email'],
   },
