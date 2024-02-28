@@ -8,11 +8,13 @@
 
 export interface Config {
   collections: {
+    products: Product;
+    categories: Category;
+    atributes: Atribute;
+    budget: Budget;
     users: User;
     media: Media;
     pages: Page;
-    products: Product;
-    categories: Category;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
@@ -20,6 +22,81 @@ export interface Config {
     settings: Setting;
     company: Company;
   };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: string;
+  title: string;
+  publishedOn?: string | null;
+  sku?: string | null;
+  minimumQuantity?: number | null;
+  attributes?: (string | Atribute)[] | null;
+  featuredImage?: string | Media | null;
+  images?: string | Media | null;
+  categories?: (string | Category)[] | null;
+  relatedProducts?: (string | Product)[] | null;
+  slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "atributes".
+ */
+export interface Atribute {
+  id: string;
+  type?: ('color' | 'text') | null;
+  title?: string | null;
+  value?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: string;
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: string;
+  title?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "budget".
+ */
+export interface Budget {
+  id: string;
+  orderedBy?: (string | null) | User;
+  total: number;
+  items?:
+    | {
+        product: string | Product;
+        price?: number | null;
+        quantity?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -42,22 +119,6 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: string;
-  alt: string;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
 export interface Page {
@@ -68,57 +129,86 @@ export interface Page {
     image: string | Media;
     id?: string | null;
   }[];
-  layout: {
-    title?: string | null;
-    description?: string | null;
-    populateBy?: ('categories' | 'selection') | null;
-    categories?: (string | Category)[] | null;
-    limit?: number | null;
-    selectedDocs?:
-      | {
-          relationTo: 'products';
-          value: string | Product;
-        }[]
-      | null;
-    populatedDocs?:
-      | {
-          relationTo: 'products';
-          value: string | Product;
-        }[]
-      | null;
-    populatedDocsTotal?: number | null;
-    id?: string | null;
-    blockName?: string | null;
-    blockType: 'product-carousel';
-  }[];
-  slug?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories".
- */
-export interface Category {
-  id: string;
-  title?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "products".
- */
-export interface Product {
-  id: string;
-  title: string;
-  publishedOn?: string | null;
-  sku?: string | null;
-  minimumQuantity?: number | null;
-  images?: string | Media | null;
-  categories?: (string | Category)[] | null;
-  relatedProducts?: (string | Product)[] | null;
+  layout: (
+    | {
+        title?: string | null;
+        description?: string | null;
+        populateBy?: ('categories' | 'selection') | null;
+        categories?: (string | Category)[] | null;
+        limit?: number | null;
+        selectedDocs?:
+          | {
+              relationTo: 'products';
+              value: string | Product;
+            }[]
+          | null;
+        populatedDocs?:
+          | {
+              relationTo: 'products';
+              value: string | Product;
+            }[]
+          | null;
+        populatedDocsTotal?: number | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'product-carousel';
+      }
+    | {
+        title?: string | null;
+        description?: string | null;
+        cards?:
+          | {
+              title?: string | null;
+              description?: string | null;
+              image?: string | Media | null;
+              linkTo?:
+                | ({
+                    relationTo: 'categories';
+                    value: string | Category;
+                  } | null)
+                | ({
+                    relationTo: 'products';
+                    value: string | Product;
+                  } | null);
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'featured-section';
+      }
+    | {
+        title?: string | null;
+        description?: string | null;
+        statistics?:
+          | {
+              title?: string | null;
+              value?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'statistic-section';
+      }
+    | {
+        invertBackground?: boolean | null;
+        title?: string | null;
+        description?: string | null;
+        columns?:
+          | {
+              size?: ('half' | 'full') | null;
+              text: {
+                [k: string]: unknown;
+              }[];
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'content-section';
+      }
+  )[];
   slug?: string | null;
   updatedAt: string;
   createdAt: string;

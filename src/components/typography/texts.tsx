@@ -1,4 +1,6 @@
+import Link from 'next/link'
 import { cn } from '@/lib/utils'
+import { buttonVariants } from '../ui/button'
 
 type BlockquoteProps = React.ComponentProps<'blockquote'>
 
@@ -42,7 +44,7 @@ export function InlineCode({ className, ref, ...props }: CodeProps) {
   return (
     <code
       className={cn(
-        'relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold',
+        'bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold',
         className,
       )}
       ref={ref}
@@ -80,7 +82,7 @@ type MutedProps = React.ComponentProps<'p'>
 export function Muted({ className, ref, ...props }: MutedProps) {
   return (
     <p
-      className={cn('text-sm text-muted-foreground', className)}
+      className={cn('text-muted-foreground text-sm', className)}
       ref={ref}
       {...props}
     />
@@ -91,7 +93,42 @@ type LeadProps = React.ComponentProps<'p'>
 export function Lead({ className, ref, ...props }: LeadProps) {
   return (
     <p
-      className={cn('text-xl text-muted-foreground', className)}
+      className={cn('text-muted-foreground text-xl', className)}
+      ref={ref}
+      {...props}
+    />
+  )
+}
+
+interface LinkIconProps extends React.ComponentProps<typeof Link> {
+  Icon: React.ElementType
+}
+
+export function LinkIcon({ className, ref, Icon, ...props }: LinkIconProps) {
+  return (
+    <Link
+      className={cn(
+        buttonVariants({ size: 'icon', variant: 'ghost', className }),
+      )}
+      href={props.href}
+      ref={ref}
+      {...props}
+    >
+      <Icon className='h-5 w-5' />
+    </Link>
+  )
+}
+
+type NavLinkProps = React.ComponentProps<typeof Link>
+
+export function NavLink({ className, ref, ...props }: NavLinkProps) {
+  return (
+    <Link
+      className={cn(
+        'text-sm underline-offset-2 hover:text-blue-400 hover:underline',
+        className,
+      )}
+      href={props.href}
       ref={ref}
       {...props}
     />

@@ -1,3 +1,10 @@
+import {
+  QUERY_FEATURED_SECTION,
+  QUERY_PRODUCT_CAROUSEL,
+  QUERY_STATISTICS_SECTION,
+  QUERY_CONTENT_SECTION,
+} from './blocks'
+
 export const PAGES = `
   query Pages {
     Pages(limit: 300, where: { slug: { not_equals: "cart" } })  {
@@ -22,26 +29,10 @@ query Page($slug: String){
         }
       }
       layout{
-        ...on ProductCarousel{
-          blockType
-          limit
-          selectedDocs{
-            relationTo
-            value {
-              ...on Product{
-                id
-                slug
-                title
-                images {
-                  filename
-                }
-                categories {
-                  title
-                }
-              }
-            }
-          }
-        }
+       ${QUERY_PRODUCT_CAROUSEL}
+       ${QUERY_STATISTICS_SECTION}
+       ${QUERY_FEATURED_SECTION}
+       ${QUERY_CONTENT_SECTION}
       }
       publishedOn
     }
