@@ -8,11 +8,13 @@
 
 export interface Config {
   collections: {
+    products: Product;
+    categories: Category;
+    atributes: Atribute;
+    budget: Budget;
     users: User;
     media: Media;
     pages: Page;
-    products: Product;
-    categories: Category;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
@@ -20,6 +22,81 @@ export interface Config {
     settings: Setting;
     company: Company;
   };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: string;
+  title: string;
+  publishedOn?: string | null;
+  sku?: string | null;
+  minimumQuantity?: number | null;
+  attributes?: (string | Atribute)[] | null;
+  featuredImage?: string | Media | null;
+  images?: string | Media | null;
+  categories?: (string | Category)[] | null;
+  relatedProducts?: (string | Product)[] | null;
+  slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "atributes".
+ */
+export interface Atribute {
+  id: string;
+  type?: ('color' | 'text') | null;
+  title?: string | null;
+  value?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: string;
+  alt: string;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: string;
+  title?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "budget".
+ */
+export interface Budget {
+  id: string;
+  orderedBy?: (string | null) | User;
+  total: number;
+  items?:
+    | {
+        product: string | Product;
+        price?: number | null;
+        quantity?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -39,22 +116,6 @@ export interface User {
   loginAttempts?: number | null;
   lockUntil?: string | null;
   password: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: string;
-  alt: string;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -148,34 +209,6 @@ export interface Page {
         blockType: 'content-section';
       }
   )[];
-  slug?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories".
- */
-export interface Category {
-  id: string;
-  title?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "products".
- */
-export interface Product {
-  id: string;
-  title: string;
-  publishedOn?: string | null;
-  sku?: string | null;
-  minimumQuantity?: number | null;
-  images?: string | Media | null;
-  categories?: (string | Category)[] | null;
-  relatedProducts?: (string | Product)[] | null;
   slug?: string | null;
   updatedAt: string;
   createdAt: string;

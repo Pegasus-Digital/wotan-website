@@ -63,11 +63,23 @@ const Products: CollectionConfig = {
               label: 'Minimum Quantity',
               type: 'number',
             },
+            {
+              name: 'attributes',
+              type: 'relationship',
+              relationTo: 'atributes',
+              hasMany: true,
+              // filterOptions: ({}) => {
+              //   return { type: { equals: 'text' } }
+              // },
+            },
           ],
         },
         {
           label: 'Images',
-          fields: [{ name: 'images', type: 'upload', relationTo: 'media' }],
+          fields: [
+            { name: 'featuredImage', type: 'upload', relationTo: 'media' },
+            { name: 'images', type: 'upload', relationTo: 'media' },
+          ],
         },
       ],
     },

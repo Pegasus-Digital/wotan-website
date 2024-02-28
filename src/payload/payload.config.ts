@@ -11,6 +11,8 @@ import { Company } from './settings/company'
 import { Pages } from './settings/pages'
 import Products from './products'
 import Categories from './products/categories'
+import { Budget } from './budget'
+import Atributes from './products/atributes'
 
 export default buildConfig({
   admin: {
@@ -26,7 +28,7 @@ export default buildConfig({
     bundler: webpackBundler(), // or viteBundler()
   },
   serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL,
-  collections: [Users, Media, Pages, Products, Categories],
+  collections: [Products, Categories, Atributes, Budget, Users, Media, Pages],
   globals: [Settings, Company],
   // database-adapter-config-start
   // Todo: env variable validation
