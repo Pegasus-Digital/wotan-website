@@ -26,11 +26,11 @@ export function Header({ logo, links, style, staticImage, id, phone }: Props) {
           </Link>
         </div>
 
-        <div>
+        <div className='tablet:block hidden'>
           <HeaderNavigation links={links} style={style} />
         </div>
 
-        <div className='h-full flex-1  justify-end'>
+        <div className='tablet:block hidden  h-full flex-1 justify-end'>
           <div className='flex h-full w-full items-center justify-end font-semibold'>
             {phone && (
               <Link

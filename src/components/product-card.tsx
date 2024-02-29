@@ -17,7 +17,7 @@ export function ProductCard({ title, categories }: ProductCardProps) {
     typeof categories[0] === 'string' ? categories[0] : categories[0].title
 
   return (
-    <Card className='group my-3 shadow-md'>
+    <Card className='shadow-wotan-light group my-3'>
       <CardContent className='relative m-0 rounded-md p-0'>
         <img
           className='aspect-square h-full max-h-[300px] min-h-[300px] w-full rounded-t-md object-cover'
