@@ -67,3 +67,40 @@ export const QUERY_CONTENT_SECTION = `
   blockType
 }
 `
+export const QUERY_CLIENT_GRID = `
+... on ClientGrid{
+  title
+  description
+  clients{
+    logo{
+      mimeType
+      filename
+      width
+      height
+      alt
+    }
+  }
+  id
+  blockName
+  blockType
+}
+`
+
+export const QUERY_CONTENT_MEDIA = `
+... on ContentMedia{
+  title
+  description
+  invertBackground
+  mediaPosition
+  richText
+  media{
+    mimeType
+    filename
+    width
+    height
+    alt
+  }
+  blockName 
+  blockType
+}
+`

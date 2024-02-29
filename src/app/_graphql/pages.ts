@@ -3,6 +3,8 @@ import {
   QUERY_PRODUCT_CAROUSEL,
   QUERY_STATISTICS_SECTION,
   QUERY_CONTENT_SECTION,
+  QUERY_CLIENT_GRID,
+  QUERY_CONTENT_MEDIA,
 } from './blocks'
 
 export const PAGES = `
@@ -33,6 +35,8 @@ query Page($slug: String){
        ${QUERY_STATISTICS_SECTION}
        ${QUERY_FEATURED_SECTION}
        ${QUERY_CONTENT_SECTION}
+       ${QUERY_CLIENT_GRID}
+       ${QUERY_CONTENT_MEDIA}
       }
       publishedOn
     }

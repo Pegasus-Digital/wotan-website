@@ -1,14 +1,19 @@
 import type { Page } from '@/payload/payload-types'
-import { FeaturedGrid } from '../app/_sections/featured-grid'
 import { ProductSlider } from './product-slider'
-import { Statistics } from '../app/_sections/statistics'
-import { ContentSection } from '../app/_sections/content'
+
+import ContentSection from '../app/_sections/content'
+import FeaturedGrid from '../app/_sections/featured-grid'
+import Statistics from '../app/_sections/statistics'
+import ClientGrid from '../app/_sections/client-grid'
+import ContentMedia from '../app/_sections/content-media'
 
 const sectionComponents = {
   'product-carousel': ProductSlider,
   'featured-section': FeaturedGrid,
   'statistic-section': Statistics,
   'content-section': ContentSection,
+  'client-grid': ClientGrid,
+  'content-media': ContentMedia,
 }
 
 export function Sections({ sections }: { sections: Page['layout'][0][] }) {
@@ -26,7 +31,6 @@ export function Sections({ sections }: { sections: Page['layout'][0][] }) {
             if (Block) {
               // TODO: fix this
               // @ts-expect-error
-
               return <Block key={index} {...section} />
             }
           }
