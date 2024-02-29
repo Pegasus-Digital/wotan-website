@@ -7,7 +7,7 @@ type StatisticsProps = Extract<
   id?: string
 }
 
-export function Statistics({ statistics }: StatisticsProps) {
+export default function Statistics({ statistics }: StatisticsProps) {
   return (
     <section className='w-full'>
       <div className='container text-center'>

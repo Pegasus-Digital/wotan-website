@@ -7,7 +7,8 @@ import { populateArchiveBlock } from '../../hooks/populateArchiveBlock'
 import { FeaturedSection } from '../../blocks/featuredSection'
 import { StatisticSection } from '../../blocks/statistics'
 import { Content } from '../../blocks/content'
-
+import { ClientGrid } from '../../blocks/clientGrid'
+import { ContentMedia } from '../../blocks/contentMedia'
 export const Pages: CollectionConfig = {
   slug: 'pages',
   admin: {
@@ -21,7 +22,7 @@ export const Pages: CollectionConfig = {
     group: 'Settings',
   },
   hooks: {
-    // afterChange: [revalidatePage],
+    afterChange: [revalidatePage],
     afterRead: [populateArchiveBlock],
   },
   versions: {
@@ -98,6 +99,8 @@ export const Pages: CollectionConfig = {
                 FeaturedSection,
                 StatisticSection,
                 Content,
+                ClientGrid,
+                ContentMedia,
               ],
             },
           ],

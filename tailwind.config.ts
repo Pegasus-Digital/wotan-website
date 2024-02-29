@@ -14,13 +14,6 @@ const config = {
     container: {
       center: true,
       padding: '2rem',
-      screens: {
-        sm: '640px',
-        md: '768px',
-        lg: '1024px',
-        xl: '1280px',
-        '2xl': '1400px',
-      },
     },
     extend: {
       screens: {
@@ -110,6 +103,10 @@ const config = {
       backgroundImage: {
         wotan:
           'linear-gradient(106deg, rgba(204,15,75,1) 20%, rgba(119,54,93,1) 80%)',
+      },
+      boxShadow: {
+        'wotan-light':
+          '4px 4px 16px rgba(184, 184, 184, 1), -4px -4px 16px rgba(255, 255, 255, 1)',
       },
     },
   },

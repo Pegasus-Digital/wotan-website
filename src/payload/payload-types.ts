@@ -15,6 +15,7 @@ export interface Config {
     users: User;
     media: Media;
     pages: Page;
+    clients: Client;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
@@ -208,6 +209,32 @@ export interface Page {
         blockName?: string | null;
         blockType: 'content-section';
       }
+    | {
+        title?: string | null;
+        description?: string | null;
+        clients?:
+          | {
+              logo: string | Media;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'client-grid';
+      }
+    | {
+        title?: string | null;
+        description?: string | null;
+        invertBackground?: boolean | null;
+        mediaPosition?: ('left' | 'right') | null;
+        richText: {
+          [k: string]: unknown;
+        }[];
+        media: string | Media;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'content-media';
+      }
   )[];
   slug?: string | null;
   updatedAt: string;
@@ -216,14 +243,82 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clients".
+ */
+export interface Client {
+  id: string;
+  contact: {
+    name?: string | null;
+    type?: ('company' | 'individual') | null;
+    phone?: string | null;
+  };
+  address: {
+    adress?: {
+      street?: string | null;
+      number?: string | null;
+      neighborhood?: string | null;
+      city?: string | null;
+      state?:
+        | (
+            | 'AC'
+            | 'AL'
+            | 'AP'
+            | 'AM'
+            | 'BA'
+            | 'CE'
+            | 'DF'
+            | 'ES'
+            | 'GO'
+            | 'MA'
+            | 'MS'
+            | 'MT'
+            | 'MG'
+            | 'PA'
+            | 'PB'
+            | 'PR'
+            | 'PE'
+            | 'PI'
+            | 'RJ'
+            | 'RN'
+            | 'RS'
+            | 'RO'
+            | 'RR'
+            | 'SC'
+            | 'SP'
+            | 'SE'
+            | 'TO'
+          )
+        | null;
+      cep?: string | null;
+    };
+  };
+  roles?: ('active' | 'inactive' | 'prospective')[] | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  password: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
   id: string;
-  user: {
-    relationTo: 'users';
-    value: string | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: string | User;
+      }
+    | {
+        relationTo: 'clients';
+        value: string | Client;
+      };
   key?: string | null;
   value?:
     | {

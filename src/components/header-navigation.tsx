@@ -30,8 +30,12 @@ type LinkProps = Pick<
 function MegaMenu({ title, href, columns }: LinkProps) {
   return (
     <NavigationMenuItem>
-      <NavigationMenuTrigger>{title}</NavigationMenuTrigger>
-      <NavigationMenuContent>
+      <Link href={href} legacyBehavior passHref>
+        <NavigationMenuTrigger className={navigationMenuTriggerStyle()}>
+          {title}
+        </NavigationMenuTrigger>
+      </Link>
+      <NavigationMenuContent className='shadow-wotan-light'>
         <ul className='grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]'>
           {columns.map((column, index) => {
             if (column.type === 'card') {
@@ -45,7 +49,7 @@ function MegaMenu({ title, href, columns }: LinkProps) {
               )
             } else if (column.type === 'linkCol') {
               return (
-                <>
+                <React.Fragment key={index}>
                   {column.linkColumn.map((link, index) => (
                     <ListItem
                       key={link.title}
@@ -55,7 +59,7 @@ function MegaMenu({ title, href, columns }: LinkProps) {
                       {link.description}
                     </ListItem>
                   ))}
-                </>
+                </React.Fragment>
               )
             }
           })}
@@ -137,9 +141,7 @@ export function HeaderNavigation({ links, style }: HeaderNavigationProps) {
         {/* links.map if style == classic => <Classic /> if style == megamenu => <MegaMenu /> if style == dropdown => <Dropdown />  */}
         {/* link.onlyLink == true => <Classic /> else => style */}
         {links.map((link, index) => {
-          // console.log(link.onlyLink)
           if (link.onlyLink === false) {
-            // console.log('ta certo')
             return <Menu key={index} {...link} />
           }
           return <Classic key={index} {...link} />
