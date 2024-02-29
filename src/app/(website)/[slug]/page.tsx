@@ -4,9 +4,9 @@ import { Page as PayloadPage } from '../../../payload/payload-types'
 import { fetchDoc } from '@/app/_api/fetchDoc'
 import { fetchDocs } from '@/app/_api/fetchDocs'
 import { notFound } from 'next/navigation'
-import { FeaturedGrid } from '@/app/_sections/featured-grid'
-import { Statistics } from '@/app/_sections/statistics'
+
 import { Sections } from '@/components/sections'
+import Hero from '../../../app/_sections/hero'
 
 async function fetchPage(slug: string) {
   try {
@@ -29,6 +29,7 @@ export default async function Page({ params: { slug = 'home' } }) {
   // console.log(layout)
   return (
     <>
+      <Hero />
       <Sections sections={layout} />
     </>
   )
