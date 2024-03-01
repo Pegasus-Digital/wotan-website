@@ -20,6 +20,7 @@ const config = {
         tablet: '768px',
         desktop: '1280px',
       },
+
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -103,6 +104,7 @@ const config = {
       backgroundImage: {
         wotan:
           'linear-gradient(106deg, rgba(204,15,75,1) 20%, rgba(119,54,93,1) 80%)',
+        pattern: "url('/bg.png')",
       },
       boxShadow: {
         'wotan-light':

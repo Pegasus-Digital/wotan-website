@@ -7,6 +7,7 @@ import { notFound } from 'next/navigation'
 
 import { Sections } from '@/components/sections'
 import Hero from '../../../app/_sections/hero'
+import { HeroTest } from '@/app/_sections/hero-test'
 
 async function fetchPage(slug: string) {
   try {
@@ -29,7 +30,7 @@ export default async function Page({ params: { slug = 'home' } }) {
   // console.log(layout)
   return (
     <>
-      <Hero />
+      <HeroTest />
       <Sections sections={layout} />
     </>
   )

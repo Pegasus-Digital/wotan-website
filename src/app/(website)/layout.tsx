@@ -60,7 +60,7 @@ export default async function RootLayout({
       <body
         className={cn(
           inter.className,
-          'bg-background text-foreground antialiased',
+          'bg-pattern bg-right bg-repeat-y text-foreground antialiased',
         )}
       >
         <Header

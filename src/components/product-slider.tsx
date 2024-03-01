@@ -25,7 +25,7 @@ export function ProductSlider({
 }: ProductSliderProps) {
   return (
     <section className='my-6 w-full overflow-x-hidden'>
-      <div className='container flex w-full flex-col space-y-2'>
+      <div className='flex w-full flex-col space-y-2 desktop:container'>
         <div className='mb-3 flex flex-col gap-2 text-center'>
           <H1 className='text-wotanRed-500'>{title}</H1>
           <Lead>{description}</Lead>
@@ -33,7 +33,7 @@ export function ProductSlider({
 
         <Carousel
           className='w-full border-x'
-          opts={{ align: 'start', loop: true }}
+          opts={{ align: 'center', loop: true }}
         >
           <CarouselContent>
             {selectedDocs.map((doc, index) => {
@@ -54,8 +54,8 @@ export function ProductSlider({
               </CarouselItem>
             ))} */}
           </CarouselContent>
-          <CarouselPrevious className='desktop:flex hidden' />
-          <CarouselNext className='desktop:flex hidden' />
+          <CarouselPrevious className='hidden desktop:flex' />
+          <CarouselNext className='hidden desktop:flex' />
         </Carousel>
 
         <Link

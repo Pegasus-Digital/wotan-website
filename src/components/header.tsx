@@ -17,7 +17,7 @@ export function Header({ logo, links, style, staticImage, id, phone }: Props) {
   return (
     <header className='h-20 w-full'>
       <div className='container flex h-full items-center gap-4'>
-        <div className='flex-1 justify-start '>
+        <div className='flex-1 justify-start'>
           <Link
             href='/'
             className='flex h-20 w-60 items-center overflow-hidden'
@@ -26,11 +26,11 @@ export function Header({ logo, links, style, staticImage, id, phone }: Props) {
           </Link>
         </div>
 
-        <div className='tablet:block hidden'>
+        <div className='hidden tablet:block'>
           <HeaderNavigation links={links} style={style} />
         </div>
 
-        <div className='tablet:block hidden  h-full flex-1 justify-end'>
+        <div className='hidden h-full flex-1 justify-end tablet:block'>
           <div className='flex h-full w-full items-center justify-end font-semibold'>
             {phone && (
               <Link

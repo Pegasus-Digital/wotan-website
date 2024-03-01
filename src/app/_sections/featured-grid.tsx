@@ -20,7 +20,7 @@ export default function FeaturedGrid({
           <Lead>{description}</Lead>
         </div>
 
-        <div className='tablet:grid-cols-4 tablet:grid-rows-2 tablet:max-h-96 tablet:max-w-none grid max-w-96 grid-cols-1 grid-rows-4 gap-4'>
+        <div className='grid max-w-96 grid-cols-1 grid-rows-4 gap-4 tablet:max-h-96 tablet:max-w-none tablet:grid-cols-4 tablet:grid-rows-2'>
           <div className='tablet:col-span-2 tablet:row-span-2 '>
             <img
               className='aspect-square h-full w-full rounded-md object-cover'
