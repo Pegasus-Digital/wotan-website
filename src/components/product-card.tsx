@@ -17,7 +17,7 @@ export function ProductCard({ title, categories }: ProductCardProps) {
     typeof categories[0] === 'string' ? categories[0] : categories[0].title
 
   return (
-    <Card className='shadow-wotan-light group my-3'>
+    <Card className='group my-3 shadow-wotan-light'>
       <CardContent className='relative m-0 rounded-md p-0'>
         <img
           className='aspect-square h-full max-h-[300px] min-h-[300px] w-full rounded-t-md object-cover'
@@ -26,15 +26,15 @@ export function ProductCard({ title, categories }: ProductCardProps) {
         />
 
         {/* Actions Wrapper */}
-        <div className='absolute bottom-2 flex w-full translate-y-10 items-center justify-center gap-2.5 opacity-0 transition duration-200 group-hover:translate-y-0 group-hover:opacity-100'>
+        <div className='absolute bottom-2 flex w-full items-center justify-center gap-2.5 transition duration-200 tablet:translate-y-10 tablet:opacity-0 tablet:group-hover:translate-y-0 tablet:group-hover:opacity-100'>
           <ProductCardActions />
         </div>
       </CardContent>
       <CardFooter className='z-10 flex flex-col items-start space-y-2.5 py-4'>
-        <Lead className='text-wotanRed-500 text-sm font-bold'>
+        <Lead className='text-sm font-bold text-wotanRed-500'>
           {mainCategory}
         </Lead>
-        <P className='text-foreground text-base font-bold'>{title}</P>
+        <P className='text-base font-bold text-foreground'>{title}</P>
         <div className='flex items-center gap-1'>
           <div className='h-4 w-4 rounded-full bg-red-500' />
           <div className='h-4 w-4 rounded-full bg-green-500' />
