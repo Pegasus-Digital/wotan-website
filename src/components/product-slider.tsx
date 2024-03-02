@@ -26,7 +26,7 @@ export function ProductSlider({
 }: ProductSliderProps) {
   return (
     <section className='w-full overflow-x-hidden'>
-      <div className='container flex w-full flex-col space-y-2'>
+      <div className='flex w-full flex-col space-y-2 desktop:container'>
         <div className='mb-3 flex flex-col gap-2 text-center'>
           <Heading variant='h2'>{title}</Heading>
           <Lead>{description}</Lead>
@@ -34,7 +34,7 @@ export function ProductSlider({
 
         <Carousel
           className='w-full border-x'
-          opts={{ align: 'start', loop: true }}
+          opts={{ align: 'center', loop: true }}
         >
           <CarouselContent>
             {selectedDocs.map((doc, index) => {

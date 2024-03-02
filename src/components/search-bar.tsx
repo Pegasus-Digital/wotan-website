@@ -7,21 +7,21 @@ import { Button } from './ui/button'
 
 export function SearchBar() {
   return (
-    <div className='bg-wotan flex h-16 w-full items-center justify-between'>
+    <div className='flex h-16 w-full items-center justify-between bg-wotan'>
       <div className='container flex items-center justify-between'>
         {/* Shadcn Navigation Menu */}
-        <div className='text-primary-foreground flex items-center justify-center gap-2'>
+        <div className='flex items-center justify-center gap-2 text-primary-foreground'>
           <Menu className='h-5 w-5' />
           <Large>Produtos</Large>
         </div>
 
         <Input
-          className='max-w-[480px]'
+          className='mx-10 hidden max-w-[400px] tablet:flex'
           placeholder='Estou procurando por...'
         />
 
         {/* Actions */}
-        <div className='text-primary-foreground flex gap-2'>
+        <div className='flex gap-2 text-primary-foreground'>
           {/* Favorite items drawer */}
           <Button
             className='hover:bg-primary hover:text-primary-foreground'

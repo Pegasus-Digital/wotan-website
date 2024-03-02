@@ -11,6 +11,7 @@ import { PegasusStamp } from '@/pegasus/pegasus-stamp'
 import { fetchCompany, fetchSettings } from '../_api/fetchGlobals'
 import { Company, Setting } from '@/payload/payload-types'
 import { header } from '@/payload/settings/header'
+import { Toaster } from 'sonner'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -59,7 +60,7 @@ export default async function RootLayout({
       <body
         className={cn(
           inter.className,
-          'bg-background text-foreground antialiased',
+          'bg-pattern bg-right bg-repeat-y text-foreground antialiased',
         )}
       >
         <Header
@@ -84,6 +85,7 @@ export default async function RootLayout({
           {/* Developed by Pegasus */}
           <PegasusStamp />
         </main>
+        <Toaster richColors closeButton theme='light' />
       </body>
     </html>
   )
