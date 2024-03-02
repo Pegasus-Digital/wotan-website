@@ -8,6 +8,7 @@ import { Media } from '../../components/media'
 import RichText from '../../components/rickText'
 import { H1 } from '@/components/typography/headings'
 import { Lead } from '@/components/typography/texts'
+import { Heading } from '@/pegasus/heading'
 
 type ContentMediaProps = Extract<
   Page['layout'][0],
@@ -29,14 +30,14 @@ export default function ContentMedia({
     <section className='w-full'>
       <div className='container flex flex-col items-center justify-center'>
         <div className='mb-3 flex flex-col gap-2 text-center'>
-          <H1 className='text-wotanRed-500'>{title}</H1>
+          <Heading variant='h2'>{title}</Heading>
           <Lead>{description}</Lead>
         </div>
         <div
           className={[
-            'tablet:flex-row max-w-screen-desktop desktop:gap-8 relative flex w-full flex-col items-center justify-center gap-4',
+            'relative flex w-full max-w-screen-desktop flex-col items-center justify-center gap-4 tablet:flex-row desktop:gap-8',
             mediaPosition === 'left' &&
-              'tablet:flex-row-reverse flex-col-reverse',
+              'flex-col-reverse tablet:flex-row-reverse',
           ]
             .filter(Boolean)
             .join(' ')}
@@ -44,12 +45,12 @@ export default function ContentMedia({
           <div className='max-w-screen-tablet'>
             <RichText content={richText} />
           </div>
-          <div className='shadow-wotan-light m-2 rounded-md object-cover '>
+          <div className='m-2 rounded-md object-cover shadow-wotan-light '>
             <Media
               resource={media}
               // sizes='(max-width: 768px) 100vw, 30vw'
               src={staticImage}
-              className='desktop:min-w-80 min-w-72 max-w-96'
+              className='min-w-72 max-w-96 desktop:min-w-80'
             />
           </div>
         </div>

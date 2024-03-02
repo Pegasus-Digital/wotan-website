@@ -12,6 +12,7 @@ import { Lead } from './typography/texts'
 import { buttonVariants } from './ui/button'
 import Link from 'next/link'
 import { Page, Product } from '@/payload/payload-types'
+import { Heading } from '@/pegasus/heading'
 
 export type ProductSliderProps = Extract<
   Page['layout'][0],
@@ -24,10 +25,10 @@ export function ProductSlider({
   selectedDocs,
 }: ProductSliderProps) {
   return (
-    <section className='my-6 w-full overflow-x-hidden'>
+    <section className='w-full overflow-x-hidden'>
       <div className='container flex w-full flex-col space-y-2'>
         <div className='mb-3 flex flex-col gap-2 text-center'>
-          <H1 className='text-wotanRed-500'>{title}</H1>
+          <Heading variant='h2'>{title}</Heading>
           <Lead>{description}</Lead>
         </div>
 
@@ -54,8 +55,8 @@ export function ProductSlider({
               </CarouselItem>
             ))} */}
           </CarouselContent>
-          <CarouselPrevious className='desktop:flex hidden' />
-          <CarouselNext className='desktop:flex hidden' />
+          <CarouselPrevious className='hidden desktop:flex' />
+          <CarouselNext className='hidden desktop:flex' />
         </Carousel>
 
         <Link
