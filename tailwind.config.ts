@@ -103,6 +103,7 @@ const config = {
       backgroundImage: {
         wotan:
           'linear-gradient(106deg, rgba(204,15,75,1) 20%, rgba(119,54,93,1) 80%)',
+        gift: "linear-gradient(81deg, #ca004cc7, #77365df5), url('/gift.jpg') ",
       },
       boxShadow: {
         'wotan-light':

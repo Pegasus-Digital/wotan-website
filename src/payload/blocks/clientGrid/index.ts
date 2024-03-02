@@ -1,3 +1,4 @@
+import { invertBackground } from '../../fields/invertBackgroud'
 import { Block } from 'payload/types'
 
 export const ClientGrid: Block = {
@@ -7,6 +8,7 @@ export const ClientGrid: Block = {
     plural: 'Client Grids',
   },
   fields: [
+    invertBackground,
     {
       name: 'title',
       type: 'text',

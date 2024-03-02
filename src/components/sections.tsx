@@ -6,6 +6,7 @@ import FeaturedGrid from '../app/_sections/featured-grid'
 import Statistics from '../app/_sections/statistics'
 import ClientGrid from '../app/_sections/client-grid'
 import ContentMedia from '../app/_sections/content-media'
+import { Background } from './section-background'
 
 const sectionComponents = {
   'product-carousel': ProductSlider,
@@ -28,10 +29,18 @@ export function Sections({ sections }: { sections: Page['layout'][0][] }) {
           if (blockType && blockType in sectionComponents) {
             const Block = sectionComponents[blockType]
 
+            const isInvert = section.invertBackground
+              ? section.invertBackground
+              : false
+
             if (Block) {
               // TODO: fix this
-              // @ts-expect-error
-              return <Block key={index} {...section} />
+              return (
+                <Background key={index} invert={isInvert}>
+                  {/* @ts-ignore */}
+                  <Block {...section} />
+                </Background>
+              )
             }
           }
         })}

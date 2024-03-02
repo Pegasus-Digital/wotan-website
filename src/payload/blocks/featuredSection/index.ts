@@ -1,3 +1,4 @@
+import { invertBackground } from '../../fields/invertBackgroud'
 import type { Block } from 'payload/types'
 
 export const FeaturedSection: Block = {
@@ -7,6 +8,7 @@ export const FeaturedSection: Block = {
     plural: 'Featured Sections',
   },
   fields: [
+    invertBackground,
     {
       name: 'title',
       type: 'text',

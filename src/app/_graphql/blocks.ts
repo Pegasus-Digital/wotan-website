@@ -57,6 +57,7 @@ export const QUERY_FEATURED_SECTION = `
 `
 export const QUERY_CONTENT_SECTION = `
 ... on ContentSection {
+  invertBackground
   title
   description
   columns {
