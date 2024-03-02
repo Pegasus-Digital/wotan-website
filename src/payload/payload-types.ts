@@ -132,6 +132,7 @@ export interface Page {
   }[];
   layout: (
     | {
+        invertBackground?: boolean | null;
         title?: string | null;
         description?: string | null;
         populateBy?: ('categories' | 'selection') | null;
@@ -155,6 +156,7 @@ export interface Page {
         blockType: 'product-carousel';
       }
     | {
+        invertBackground?: boolean | null;
         title?: string | null;
         description?: string | null;
         cards?:
@@ -179,6 +181,7 @@ export interface Page {
         blockType: 'featured-section';
       }
     | {
+        invertBackground?: boolean | null;
         title?: string | null;
         description?: string | null;
         statistics?:
@@ -210,6 +213,7 @@ export interface Page {
         blockType: 'content-section';
       }
     | {
+        invertBackground?: boolean | null;
         title?: string | null;
         description?: string | null;
         clients?:

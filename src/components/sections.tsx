@@ -6,6 +6,8 @@ import FeaturedGrid from '../app/_sections/featured-grid'
 import Statistics from '../app/_sections/statistics'
 import ClientGrid from '../app/_sections/client-grid'
 import ContentMedia from '../app/_sections/content-media'
+import { Background } from './section-background'
+import { VerticalPadding } from '@/pegasus/padding'
 
 const sectionComponents = {
   'product-carousel': ProductSlider,
@@ -19,7 +21,7 @@ const sectionComponents = {
 export function Sections({ sections }: { sections: Page['layout'][0][] }) {
   const sectionsExist =
     sections && Array.isArray(sections) && sections.length > 0
-  // console.log(sections)
+
   if (sectionsExist) {
     return (
       <>
@@ -28,10 +30,28 @@ export function Sections({ sections }: { sections: Page['layout'][0][] }) {
           if (blockType && blockType in sectionComponents) {
             const Block = sectionComponents[blockType]
 
+            const isInvert = section.invertBackground
+              ? section.invertBackground
+              : false
+
+            let paddingTop = 'large'
+            let paddingBottom = 'large'
+
+            // if (index === sections.length - 1) {
+            //   paddingBottom = 'large'
+            // }
+
             if (Block) {
-              // TODO: fix this
-              // @ts-expect-error
-              return <Block key={index} {...section} />
+              // TODO: fix ts error
+              return (
+                <Background key={index} invert={isInvert}>
+                  {/* @ts-ignore */}
+                  <VerticalPadding top={paddingTop} bottom={paddingBottom}>
+                    {/* @ts-ignore */}
+                    <Block {...section} />
+                  </VerticalPadding>
+                </Background>
+              )
             }
           }
         })}

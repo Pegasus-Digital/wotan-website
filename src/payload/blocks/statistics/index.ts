@@ -1,3 +1,4 @@
+import { invertBackground } from '../../fields/invertBackgroud'
 import type { Block } from 'payload/types'
 
 export const StatisticSection: Block = {
@@ -7,6 +8,7 @@ export const StatisticSection: Block = {
     plural: 'Statistic Sections',
   },
   fields: [
+    invertBackground,
     {
       name: 'title',
       type: 'text',

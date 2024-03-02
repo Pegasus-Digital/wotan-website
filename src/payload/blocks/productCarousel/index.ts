@@ -1,3 +1,4 @@
+import { invertBackground } from '../../fields/invertBackgroud'
 import type { Block } from 'payload/types'
 
 export const ProductCarousel: Block = {
@@ -7,6 +8,7 @@ export const ProductCarousel: Block = {
     plural: 'Product Carousels',
   },
   fields: [
+    invertBackground,
     {
       name: 'title',
       type: 'text',
