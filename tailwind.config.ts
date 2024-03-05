@@ -16,6 +16,10 @@ const config = {
       padding: '2rem',
     },
     extend: {
+      gridTemplateColumns: {
+        dashboard: 'minmax(18rem, 20rem) 1fr',
+      },
+
       screens: {
         tablet: '768px',
         desktop: '1280px',
