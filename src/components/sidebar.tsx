@@ -10,6 +10,9 @@ import {
   PackageCheck,
   LayoutDashboard,
   MessageCircleMore,
+  FileUp,
+  UserCog,
+  LayoutTemplate,
 } from 'lucide-react'
 import { PegasusIcon } from '@/pegasus/pegasus-stamp'
 
@@ -26,13 +29,8 @@ export function Sidebar() {
         <Large className='text-2xl'>Wotan Brindes</Large>
       </div>
       <List className='ml-0 flex list-none flex-col gap-0.5 space-y-1 font-semibold'>
-        <div className='flex select-none items-center justify-between'>
-          <Muted className='text-sm font-semibold uppercase text-muted-foreground'>
-            Menu
-          </Muted>
+        <SidebarSeparator title='menu' />
 
-          <Separator className='w-4/5' />
-        </div>
         <SidebarNavigationItem
           href='/dashboard'
           icon={LayoutDashboard}
@@ -71,6 +69,29 @@ export function Sidebar() {
           href='/dashboard/customers'
           text='Clientes'
         />
+
+        <SidebarSeparator title='admin' />
+
+        <SidebarNavigationItem
+          icon={LayoutTemplate}
+          href='/dashboard/pages'
+          text='Páginas'
+        />
+        <SidebarNavigationItem
+          icon={UserCog}
+          href='/dashboard/users'
+          text='Usuários'
+        />
+        <SidebarNavigationItem
+          icon={FileUp}
+          href='/dashboard/files'
+          text='Arquivos'
+        />
+        <SidebarNavigationItem
+          icon={Settings}
+          href='/dashboard/settings'
+          text='Configurações'
+        />
       </List>
 
       <div className='flex-1' />
@@ -81,12 +102,23 @@ export function Sidebar() {
           href='/dashboard/feedback'
           text='Feedback'
         />
-        <SidebarNavigationItem
-          icon={Settings}
-          href='/dashboard/settings'
-          text='Configurações'
-        />
       </div>
     </aside>
+  )
+}
+
+interface SidebarSeparatorProps {
+  title: string
+}
+
+function SidebarSeparator({ title }: SidebarSeparatorProps) {
+  return (
+    <div className='flex select-none items-center justify-between'>
+      <Muted className='text-sm font-semibold uppercase text-muted-foreground'>
+        {title}
+      </Muted>
+
+      <Separator className='w-3/5' />
+    </div>
   )
 }
