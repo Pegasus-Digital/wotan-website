@@ -1,8 +1,8 @@
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
 import { ElementType } from 'react'
-
 import { usePathname } from 'next/navigation'
+
+import { cn } from '@/lib/utils'
 
 import { ChevronDown } from 'lucide-react'
 
@@ -28,7 +28,7 @@ export function SidebarNavigationItem({
   return (
     <Link
       className={cn(
-        `group mt-0 flex items-center justify-between rounded-sm px-1 py-2 font-medium text-muted-foreground transition-all hover:cursor-pointer hover:bg-secondary hover:text-foreground`,
+        `group mt-0 flex items-center justify-between rounded-sm border border-transparent px-1 py-2 font-medium text-muted-foreground transition-all hover:cursor-pointer hover:border-primary/10 hover:bg-secondary hover:text-foreground`,
         isActiveRoute ? activeRouteStyles : null,
       )}
       href={href}

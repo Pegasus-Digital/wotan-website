@@ -1,21 +1,20 @@
 'use client'
 
 import {
-  Box,
   LayoutDashboard,
-  ListOrdered,
   MessageCircleMore,
-  Package,
   PackageCheck,
   PackageOpen,
   ScanBarcode,
   Settings,
   Users,
 } from 'lucide-react'
+import { PegasusIcon } from '@/pegasus/pegasus-stamp'
+
 import { Large, List, Muted } from './typography/texts'
+
 import { Separator } from './ui/separator'
 import { SidebarNavigationItem } from './sidebar-navigation-item'
-import { PegasusIcon } from '@/pegasus/pegasus-stamp'
 
 export function Sidebar() {
   return (
