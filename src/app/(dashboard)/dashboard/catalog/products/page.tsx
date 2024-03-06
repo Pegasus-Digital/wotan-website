@@ -1,11 +1,11 @@
 import { Metadata } from 'next'
-import { CatalogContent } from './content'
+import { ProductsContent } from './content'
 import { Product } from '@/payload/payload-types'
 
 // This page is meant to be responsible for SEO, data fetching and/or other asynchronous functions
 
 export const metadata: Metadata = {
-  title: 'Catálogo',
+  title: 'Produtos',
 }
 
 // Mock data
@@ -32,8 +32,8 @@ async function getData(): Promise<Product[]> {
   ]
 }
 
-export default async function Catalog() {
+export default async function Products() {
   const products = await getData()
 
-  return <CatalogContent products={products} />
+  return <ProductsContent products={products} />
 }

@@ -1,20 +1,22 @@
 'use client'
 
 import {
-  LayoutDashboard,
-  MessageCircleMore,
-  PackageCheck,
+  Tag,
+  Boxes,
+  Users,
+  Settings,
   PackageOpen,
   ScanBarcode,
-  Settings,
-  Users,
+  PackageCheck,
+  LayoutDashboard,
+  MessageCircleMore,
 } from 'lucide-react'
 import { PegasusIcon } from '@/pegasus/pegasus-stamp'
 
 import { Large, List, Muted } from './typography/texts'
 
 import { Separator } from './ui/separator'
-import { SidebarNavigationItem } from './sidebar-navigation-item'
+import { SidebarCollapsible, SidebarNavigationItem } from './sidebar-navigation'
 
 export function Sidebar() {
   return (
@@ -36,11 +38,24 @@ export function Sidebar() {
           icon={LayoutDashboard}
           text='Dashboard'
         />
-        <SidebarNavigationItem
-          icon={ScanBarcode}
-          href='/dashboard/catalog'
+
+        <SidebarCollapsible
           text='Catálogo'
+          icon={ScanBarcode}
+          navItems={[
+            {
+              text: 'Produtos',
+              icon: Boxes,
+              href: '/dashboard/catalog/products',
+            },
+            {
+              text: 'Categorias',
+              icon: Tag,
+              href: '/dashboard/catalog/categories',
+            },
+          ]}
         />
+
         <SidebarNavigationItem
           icon={PackageOpen}
           href='/dashboard/estimates'

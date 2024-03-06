@@ -100,8 +100,24 @@ const config = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
+        'slide-down': {
+          from: {
+            height: '0px',
+            opacity: '0',
+            transform: 'translateY(-1rem)',
+          },
+        },
+        'slide-up': {
+          to: {
+            height: '0px',
+            opacity: '0',
+            transform: 'translateY(-1rem)',
+          },
+        },
       },
       animation: {
+        'slide-up': 'slide-up 0.2s ease-out',
+        'slide-down': 'slide-down 0.2s ease-out',
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
       },
