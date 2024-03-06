@@ -28,6 +28,7 @@ import { DataTablePagination } from '@/components/table/data-table-pagination'
 
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { NewEstimateDialog } from '../(dialogs)/new-estimate-dialog'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -64,17 +65,16 @@ export function DataTable<TData, TValue>({
       {/* Table interaction */}
       <div className='flex items-center justify-between'>
         <DataTableInputFilter
-          columnId='title'
-          title='nome'
+          columnId='clientName'
+          title='nome do cliente'
           plural={false}
           table={table}
         />
 
         {/* Actions */}
         <div className='space-x-2'>
-          <Button variant='outline' size='sm'>
-            Novo produto
-          </Button>
+          <NewEstimateDialog />
+
           <Button variant='outline' size='sm'>
             Exportar
           </Button>
