@@ -1,3 +1,4 @@
+import { footer } from '@/payload/settings/footer'
 import type { Config } from 'tailwindcss'
 
 const config = {
@@ -13,7 +14,11 @@ const config = {
   theme: {
     container: {
       center: true,
-      padding: '2rem',
+      padding: {
+        DEFAULT: '1rem',
+        tablet: '2rem',
+        desktop: '4rem',
+      },
     },
     extend: {
       screens: {
@@ -106,10 +111,12 @@ const config = {
           'linear-gradient(106deg, rgba(204,15,75,1) 20%, rgba(119,54,93,1) 80%)',
         pattern: "url('/bg.png')",
         gift: "linear-gradient(81deg, #ca004cc7, #77365df5), url('/gift.jpg') ",
+        footer:
+          'radial-gradient(at 10% 87%, #651B479C 0px, transparent 50%), radial-gradient(at 98% 96%, hsla(337,73%,49%,1) 0px, transparent 50%), radial-gradient(at 90% 20%, #651B479C 0px, transparent 50%), radial-gradient(at 13% 21%, hsla(337,100%,39%,1) 0px, transparent 50%)',
       },
       boxShadow: {
         'wotan-light':
-          '4px 4px 16px rgba(184, 184, 184, 1), -4px -4px 16px rgba(255, 255, 255, 1)',
+          '4px 4px 8px rgba(0, 0, 0, .2), -4px -4px 8px rgba(255, 255, 255, 1)',
       },
     },
   },
