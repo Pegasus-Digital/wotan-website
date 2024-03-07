@@ -1,6 +1,7 @@
 import { buildConfig } from 'payload/config'
 import { mongooseAdapter } from '@payloadcms/db-mongodb' // database-adapter-import
 import { slateEditor } from '@payloadcms/richtext-slate'
+import nestedDocs from '@payloadcms/plugin-nested-docs'
 
 import { webpackBundler } from '@payloadcms/bundler-webpack'
 import { Settings } from './settings'
@@ -52,4 +53,12 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(__dirname, 'payload-types.ts'),
   },
+  plugins: [
+    nestedDocs({
+      collections: ['categories'],
+      generateLabel: (_, doc) => doc.title as string,
+      generateURL: (docs) =>
+        docs.reduce((url, doc) => `${url}/${doc.slug}`, ''),
+    }),
+  ],
 })

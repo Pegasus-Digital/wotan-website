@@ -60,7 +60,7 @@ export default async function RootLayout({
       <body
         className={cn(
           inter.className,
-          'bg-pattern bg-right bg-repeat-y text-foreground antialiased',
+          'bg-pattern min-w-96 bg-right bg-repeat-y text-foreground antialiased',
         )}
       >
         <Header
@@ -82,8 +82,6 @@ export default async function RootLayout({
             adress={adress}
             contact={contact}
           />
-          {/* Developed by Pegasus */}
-          <PegasusStamp />
         </main>
         <Toaster richColors closeButton theme='light' />
       </body>
