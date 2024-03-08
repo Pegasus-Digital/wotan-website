@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 
 import { NewEstimateForm } from './new-estimate-form'
 import { Large } from '@/components/typography/texts'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 export function NewEstimateDialog() {
   return (
@@ -20,12 +21,16 @@ export function NewEstimateDialog() {
           Novo orçamento
         </Button>
       </DialogTrigger>
-      <DialogContent className='max-w-screen-lg'>
+      <DialogContent className='max-h-[832px] max-w-screen-lg'>
         <DialogHeader>
-          <DialogTitle>Criando novo orçamento</DialogTitle>
+          <DialogTitle className='text-xl font-semibold'>
+            Criando novo orçamento
+          </DialogTitle>
         </DialogHeader>
 
-        <NewEstimateForm />
+        <ScrollArea className='max-h-[736px] px-2'>
+          <NewEstimateForm />
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   )

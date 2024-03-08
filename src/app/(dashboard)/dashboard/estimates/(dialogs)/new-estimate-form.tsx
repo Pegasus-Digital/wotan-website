@@ -31,6 +31,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+
 import {
   Command,
   CommandEmpty,
@@ -41,20 +42,30 @@ import {
 
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
-
-import { Large, Lead } from '@/components/typography/texts'
-
-import { PlusCircle } from 'lucide-react'
-import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
-import { Card, CardContent } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
+import { Separator } from '@/components/ui/separator'
+import { Card, CardContent } from '@/components/ui/card'
+
+import { Large, Lead, P, Small } from '@/components/typography/texts'
+
+import { PlusCircle, Trash, X } from 'lucide-react'
+import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
+import { Product } from '@/payload/payload-types'
+
+const productSchema = z.object({
+  productId: z.string(),
+  amount: z.coerce.number().positive(),
+  details: z.string(),
+})
+
+type ProductProps = z.infer<typeof productSchema>
 
 const formSchema = z.object({
   id: z.string(),
   representative: z.string(),
   client: z.string(),
-  comment: z.string(),
+  details: z.string(),
+  products: z.array(productSchema),
 })
 
 export function NewEstimateForm() {
@@ -79,27 +90,38 @@ export function NewEstimateForm() {
     { label: 'Marcos', id: '9' },
   ] as const
 
-  const [products, setProducts] = useState([])
+  const [products, setProducts] = useState<ProductProps[]>([])
 
   function handleAddProduct(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
 
-    const newProduct = {
-      amount: null,
-      productName: '',
+    const newProduct: ProductProps = {
+      productId: '',
+      amount: 50,
+      details: '',
     }
 
     setProducts([...products, newProduct])
+  }
+
+  function handleRemoveProduct(idToRemove: string) {
+    const updatedProducts = products.filter(
+      (product) => product.productId !== idToRemove,
+    )
+
+    console.log(updatedProducts)
+
+    setProducts([...updatedProducts])
   }
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className='flex flex-col gap-4 overflow-y-scroll'
+        className='flex flex-col gap-4 '
       >
         {/* Form fields */}
-        <section className='space-y-2'>
+        <section className='space-y-2 px-2'>
           <FormField
             control={form.control}
             name='id'
@@ -130,7 +152,10 @@ export function NewEstimateForm() {
                   <Select onValueChange={field.onChange}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder='Selecione o representante' />
+                        <SelectValue
+                          className='font-bold'
+                          placeholder='Selecione o representante'
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -146,29 +171,6 @@ export function NewEstimateForm() {
                 </FormItem>
               )}
             />
-
-            {/* <FormField
-              name='client'
-              control={form.control}
-              render={({ field }) => (
-                <FormItem className='flex-1'>
-                  <FormLabel>Cliente</FormLabel>
-
-                  <Select onValueChange={field.onChange}>
-                    <FormControl>
-                      <SelectTrigger className='w-full'>
-                        <SelectValue placeholder='Selecione o cliente' />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value={'Vitor'}>Vitor</SelectItem>
-                      <SelectItem value={'Cleber'}>Cleber</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> */}
 
             <FormField
               control={form.control}
@@ -199,7 +201,7 @@ export function NewEstimateForm() {
                           placeholder='Procurar cliente...'
                           className='h-9'
                         />
-                        <CommandEmpty>No framework found.</CommandEmpty>
+                        <CommandEmpty>Cliente não encontrado.</CommandEmpty>
                         <CommandGroup>
                           {clients.map((client) => (
                             <CommandItem
@@ -232,33 +234,33 @@ export function NewEstimateForm() {
               )}
             />
           </div>
+        </section>
+        <section className='space-y-2 px-2'>
+          <div className='flex items-center justify-between'>
+            <Large className='text-lg font-semibold leading-none tracking-tight'>
+              Produtos
+            </Large>
 
-          <section className='space-y-2'>
-            <div className='flex items-center justify-between'>
-              <Large className='text-lg font-semibold leading-none tracking-tight'>
-                Produtos
-              </Large>
+            <Button
+              onClick={handleAddProduct}
+              variant='outline'
+              size='sm'
+              type='button'
+            >
+              <PlusCircle className='mr-2 h-5 w-5' />
+              Adicionar produto
+            </Button>
+          </div>
 
-              <Button
-                onClick={handleAddProduct}
-                variant='outline'
-                size='sm'
-                type='button'
-              >
-                <PlusCircle className='mr-2 h-5 w-5' />
-                Adicionar produto
-              </Button>
-            </div>
+          {products.length === 0 && (
+            <Lead className='text-center text-sm'>
+              Ainda não foi adicionado nenhum produto ao orçamento.
+            </Lead>
+          )}
 
-            {products.length === 0 && (
-              <Lead className='text-center text-sm'>
-                Ainda não foi adicionado nenhum produto ao orçamento.
-              </Lead>
-            )}
-            {products.map((product, index) => (
-              <NewProductCard key={index} />
-            ))}
-          </section>
+          {products.map((product, index) => (
+            <ProductCard key={index} removeProduct={handleRemoveProduct} />
+          ))}
         </section>
 
         <Separator />
@@ -278,6 +280,7 @@ function FormSubmitRow({ text }: FormSubmitRowProps) {
   return (
     <div className='flex items-center justify-between'>
       <div className='flex-1' />
+
       <Button className='w-1/3 self-end text-base font-bold' type='submit'>
         {text}
       </Button>
@@ -285,13 +288,121 @@ function FormSubmitRow({ text }: FormSubmitRowProps) {
   )
 }
 
-function NewProductCard() {
+interface ProductCardProps {
+  removeProduct: (id: string) => void
+}
+
+function ProductCard({ removeProduct }: ProductCardProps) {
+  const [open, setOpen] = useState<boolean>(false)
+  const [id, setId] = useState<string>('')
+
+  const products: Product[] = [
+    {
+      id: '728ed52f',
+      title: 'Camisa X',
+      createdAt: new Date().toString(),
+      updatedAt: null,
+      slug: 'camisa-x',
+      sku: '22435',
+      _status: 'draft',
+    },
+    {
+      id: '331cz95a',
+      title: 'Camisa Y',
+      createdAt: new Date().toString(),
+      updatedAt: null,
+      slug: 'camisa-y',
+      sku: '22436',
+      _status: 'published',
+    },
+  ]
+
+  const product = products.find((product) => product.id === id)
+
   return (
-    <Card className='flex items-center'>
-      <CardContent className='m-0 space-y-2 p-2'>
-        <Input placeholder='Selecione o produto' />
-        <Input placeholder='Selecione a quantidade' />
-        <Textarea maxLength={300} placeholder='Detalhes sobre o orçamento' />
+    <Card className='relative flex items-center'>
+      <CardContent className='m-0 flex gap-4 p-2'>
+        <div className='space-y-2'>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant='outline'
+                aria-expanded={open}
+                className='w-full justify-between'
+              >
+                {id
+                  ? products.find((product) => product.id === id).title
+                  : 'Selecione um produto.'}
+                <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+              </Button>
+            </PopoverTrigger>
+
+            <PopoverContent className='m-0 w-fit p-0'>
+              <Command>
+                <CommandInput placeholder='Procure por um produto...' />
+                <CommandEmpty>Produto não encontrado.</CommandEmpty>
+                <CommandGroup>
+                  {products.map((product) => (
+                    <CommandItem
+                      key={product.id}
+                      value={product.title}
+                      onSelect={(title) => {
+                        // Ler esse codigo vai te colocar mais proximo de Deus
+                        // Nao no bom sentido de ter mais conhecimento ou algo assim, mas sim de remover dias de vida
+                        // Foi mal
+                        setId(
+                          products.find(
+                            (product) => product.title.toLowerCase() === title,
+                          ).id,
+                        )
+                        setOpen(false)
+                      }}
+                    >
+                      {product.title}
+                      <CheckIcon
+                        className={cn(
+                          'ml-auto h-4 w-4',
+                          id === product.id ? 'opacity-100' : 'opacity-0',
+                        )}
+                      />
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </Command>
+            </PopoverContent>
+          </Popover>
+
+          <Input placeholder='Selecione a quantidade' />
+
+          <Textarea
+            className='resize-none'
+            maxLength={300}
+            placeholder='Detalhes sobre o orçamento'
+          />
+        </div>
+
+        <div>
+          {id !== '' && (
+            <div className='flex flex-col'>
+              <Small>id: {product.id}</Small>
+              <Small>title: {product.title}</Small>
+              <Small>
+                createdAt: {new Date(product.createdAt).toLocaleDateString()}
+              </Small>
+              <Small>sku: {product.sku}</Small>
+              <Small>_status: {product._status}</Small>
+            </div>
+          )}
+        </div>
+
+        <Button
+          variant='destructive'
+          size='icon'
+          type='button'
+          className='absolute bottom-2 right-2'
+        >
+          <Trash onClick={() => removeProduct(id)} className='h-5 w-5' />
+        </Button>
       </CardContent>
     </Card>
   )
