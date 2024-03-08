@@ -77,6 +77,15 @@ export interface Media {
 export interface Category {
   id: string;
   title?: string | null;
+  parent?: (string | null) | Category;
+  breadcrumbs?:
+    | {
+        doc?: (string | null) | Category;
+        url?: string | null;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -126,10 +135,10 @@ export interface Page {
   id: string;
   title: string;
   publishedOn?: string | null;
-  carousel: {
-    image: string | Media;
-    id?: string | null;
-  }[];
+  hero: {
+    type: 'none' | 'highImpact' | 'lowImpact' | 'slideshow';
+    media?: string | Media | null;
+  };
   layout: (
     | {
         invertBackground?: boolean | null;

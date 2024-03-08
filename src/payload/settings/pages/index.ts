@@ -1,14 +1,24 @@
 import { CollectionConfig } from 'payload/types'
+
+// Access
 import { admins, adminsOrPublished } from '../../access'
-import { slugField } from '../../fields/slug'
-import { revalidatePage } from './hooks/revalidatePage'
-import { ProductCarousel } from '../../blocks/productCarousel'
-import { populateArchiveBlock } from '../../hooks/populateArchiveBlock'
-import { FeaturedSection } from '../../blocks/featuredSection'
-import { StatisticSection } from '../../blocks/statistics'
-import { Content } from '../../blocks/content'
+
+// Blocks
 import { ClientGrid } from '../../blocks/clientGrid'
+import { Content } from '../../blocks/content'
 import { ContentMedia } from '../../blocks/contentMedia'
+import { FeaturedSection } from '../../blocks/featuredSection'
+import { ProductCarousel } from '../../blocks/productCarousel'
+import { StatisticSection } from '../../blocks/statistics'
+
+// Fields
+import { hero } from '../../fields/hero'
+import { slugField } from '../../fields/slug'
+
+// Hooks
+import { revalidatePage } from './hooks/revalidatePage'
+import { populateArchiveBlock } from '../../hooks/populateArchiveBlock'
+
 export const Pages: CollectionConfig = {
   slug: 'pages',
   admin: {
@@ -63,29 +73,33 @@ export const Pages: CollectionConfig = {
     {
       type: 'tabs',
       tabs: [
+        // {
+        //   label: 'Hero',
+        //   fields: [
+        //     {
+        //       name: 'carousel',
+        //       type: 'array',
+        //       required: true,
+        //       minRows: 1,
+        //       maxRows: 3,
+        //       fields: [
+        //         {
+        //           name: 'image',
+        //           type: 'upload',
+        //           relationTo: 'media',
+        //           required: true,
+        //         },
+        //       ],
+        //       admin: {
+        //         description:
+        //           'Image should be 1920x420 with the content centered around 1280x420',
+        //       },
+        //     },
+        //   ],
+        // },
         {
           label: 'Hero',
-          fields: [
-            {
-              name: 'carousel',
-              type: 'array',
-              required: true,
-              minRows: 1,
-              maxRows: 3,
-              fields: [
-                {
-                  name: 'image',
-                  type: 'upload',
-                  relationTo: 'media',
-                  required: true,
-                },
-              ],
-              admin: {
-                description:
-                  'Image should be 1920x420 with the content centered around 1280x420',
-              },
-            },
-          ],
+          fields: [hero],
         },
         {
           label: 'Content',

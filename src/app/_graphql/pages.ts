@@ -6,6 +6,7 @@ import {
   QUERY_CLIENT_GRID,
   QUERY_CONTENT_MEDIA,
 } from './blocks'
+import { MEDIA } from './media'
 
 export const PAGES = `
   query Pages {
@@ -24,11 +25,9 @@ query Page($slug: String){
       id
       title
       slug
-      carousel {
-        image {
-          alt
-          filename
-        }
+      hero{
+        type
+        ${MEDIA}
       }
       layout{
        ${QUERY_PRODUCT_CAROUSEL}
