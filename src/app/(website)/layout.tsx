@@ -10,7 +10,6 @@ import { PegasusStamp } from '@/pegasus/pegasus-stamp'
 
 import { fetchCompany, fetchSettings } from '../_api/fetchGlobals'
 import { Company, Setting } from '@/payload/payload-types'
-import { header } from '@/payload/settings/header'
 import { Toaster } from 'sonner'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -47,13 +46,15 @@ async function fetchCompanyInfo() {
 export default async function RootLayout({
   children,
 }: Readonly<RootLayoutProps>) {
-  let settings: Setting | null = await fetchConfigs()
-  let companyInfo: Company | null = await fetchCompanyInfo()
+  // let settings: Setting | null = await fetchConfigs()
+  // let companyInfo: Company | null = await fetchCompanyInfo()
 
-  const { header, footer } = settings
-  const { adress, contact } = companyInfo
+  // const { header, footer } = settings
+  // const { adress, contact } = companyInfo
 
   // console.log({ header })
+
+  // TODO: If data doesn't exist on Payload, it should not break the deployment.
 
   return (
     <html lang='pt-BR' suppressHydrationWarning>
@@ -63,25 +64,25 @@ export default async function RootLayout({
           'bg-pattern bg-right bg-repeat-y text-foreground antialiased',
         )}
       >
-        <Header
+        {/* <Header
           logo={header?.navigation?.logo}
           links={header?.navigation?.links}
           style={header?.navigation?.style}
           phone={contact?.phone}
-        />
+        /> */}
         <main className='flex min-h-screen flex-col items-center'>
           {/* Header */}
           <SearchBar />
 
           {children}
 
-          <Footer
+          {/* <Footer
             logo={footer?.logo}
             companyInfo={footer.companyInfo}
             columns={footer.columns}
             adress={adress}
             contact={contact}
-          />
+          /> */}
           {/* Developed by Pegasus */}
           <PegasusStamp />
         </main>

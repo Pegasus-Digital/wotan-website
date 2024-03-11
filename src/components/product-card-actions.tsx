@@ -38,7 +38,7 @@ export function ProductCardActions({ productId }: ProductCardActions) {
       <Tooltip>
         <TooltipTrigger asChild>
           <Link
-            href={`http://localhost:3000/produto/${productId}`}
+            href={`http://localhost:3000/produtos/${productId}`}
             className={cn(
               buttonVariants({
                 className:

@@ -140,3 +140,17 @@ This applies to each collection in the following ways:
 
 - `users`: Only admins and the user themselves can access their profile. Anyone can create a user but only admins can delete users.
 - `pages`: Everyone can access published pages, but only admins update delete them.
+
+---
+
+# Deploy com docker-compose
+
+0. Editar DATABASE_URI no .env pra apontar pro Mongo rodado pelo Docker - Normalmente é `mongodb://mongo:27017/` - `mongo` aponta pra instancia mongo criado no docker.
+
+1. Remove todos os arquivos de build locais na pasta (não tenho certeza se faz diferença, mas na dúvida faz isso)
+
+2. Usar o comando `docker compose up -d`
+
+Cuidados:
+
+- Em uma aplicação vazia (que não tenha nada criado no admin do Payload), cuidar pra não realizar fetch de dados que não existem, porque isso vai quebrar o deploy, sempre fazer uma validação se existe, e se existe, renderiza componente. Especialmente no caso de componentes globais.

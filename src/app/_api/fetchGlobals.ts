@@ -12,7 +12,7 @@ export async function fetchSettings(): Promise<Setting> {
       headers: {
         'Content-Type': 'application/json',
       },
-      cache: 'no-store',
+      // cache: 'no-store',
       body: JSON.stringify({
         query: SETTINGS_QUERY,
       }),
@@ -42,7 +42,7 @@ export async function fetchCompany() {
       headers: {
         'Content-Type': 'application/json',
       },
-      cache: 'no-store',
+      // cache: 'no-store',
       body: JSON.stringify({
         query: COMPANY_QUERY,
       }),
