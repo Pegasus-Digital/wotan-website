@@ -10,9 +10,9 @@ import type { Product } from '@/payload/payload-types'
 //   colors: any[]
 // }
 
-type ProductCardProps = Pick<Product, 'title' | 'categories'>
+type ProductCardProps = Pick<Product, 'title' | 'categories' | 'id'>
 
-export function ProductCard({ title, categories }: ProductCardProps) {
+export function ProductCard({ title, categories, id }: ProductCardProps) {
   const mainCategory =
     typeof categories[0] === 'string' ? categories[0] : categories[0].title
 
@@ -27,7 +27,7 @@ export function ProductCard({ title, categories }: ProductCardProps) {
 
         {/* Actions Wrapper */}
         <div className='absolute bottom-2 flex w-full items-center justify-center gap-2.5 transition duration-200 tablet:translate-y-10 tablet:opacity-0 tablet:group-hover:translate-y-0 tablet:group-hover:opacity-100'>
-          <ProductCardActions />
+          <ProductCardActions productId={id} />
         </div>
       </CardContent>
       <CardFooter className='z-10 flex flex-col items-start space-y-2.5 py-4'>

@@ -53,6 +53,7 @@ export async function CategoryPageContent({
           {products.map((product) => (
             <ProductCard
               key={product.id}
+              id={product.id}
               title={product.title}
               categories={product.categories.map(
                 (category: Category) => category.title,

@@ -7,15 +7,16 @@ import {
   TooltipContent,
 } from './ui/tooltip'
 
-import { Button } from './ui/button'
+import { Button, buttonVariants } from './ui/button'
 import { Heart, ShoppingCart, Eye } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import Link from 'next/link'
 
 interface ProductCardActions {
   productId: string
-  isFavorite: boolean
 }
 
-export function ProductCardActions() {
+export function ProductCardActions({ productId }: ProductCardActions) {
   return (
     <TooltipProvider delayDuration={150}>
       <Tooltip>
@@ -36,9 +37,17 @@ export function ProductCardActions() {
       </Tooltip>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button className='group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-wotanRed-500 hover:text-background'>
+          <Link
+            href={`http://localhost:3000/produto/${productId}`}
+            className={cn(
+              buttonVariants({
+                className:
+                  'group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-wotanRed-500 hover:text-background',
+              }),
+            )}
+          >
             <Eye className='h-5 w-5' />
-          </Button>
+          </Link>
         </TooltipTrigger>
         <TooltipContent>Ver detalhes</TooltipContent>
       </Tooltip>

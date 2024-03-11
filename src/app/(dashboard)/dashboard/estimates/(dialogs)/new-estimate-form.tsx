@@ -42,14 +42,13 @@ import {
 
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
 import { Separator } from '@/components/ui/separator'
-import { Card, CardContent } from '@/components/ui/card'
 
-import { Large, Lead, P, Small } from '@/components/typography/texts'
+import { Large, Lead } from '@/components/typography/texts'
 
-import { PlusCircle, Trash, X } from 'lucide-react'
+import { PlusCircle } from 'lucide-react'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
+
 import { Product } from '@/payload/payload-types'
 
 const productSchema = z.object({
@@ -91,9 +90,10 @@ export function NewEstimateForm() {
   ] as const
 
   const [products, setProducts] = useState<ProductProps[]>([])
+  const [selected, setSelected] = useState<string>('')
 
-  function handleAddProduct(e: React.MouseEvent<HTMLButtonElement>) {
-    e.preventDefault()
+  function handleNewProduct(productId: string) {
+    if (productId === '') return
 
     const newProduct: ProductProps = {
       productId: '',
@@ -108,8 +108,6 @@ export function NewEstimateForm() {
     const updatedProducts = products.filter(
       (product) => product.productId !== idToRemove,
     )
-
-    console.log(updatedProducts)
 
     setProducts([...updatedProducts])
   }
@@ -242,7 +240,7 @@ export function NewEstimateForm() {
             </Large>
 
             <Button
-              onClick={handleAddProduct}
+              onClick={() => handleNewProduct(selected)}
               variant='outline'
               size='sm'
               type='button'
@@ -258,9 +256,9 @@ export function NewEstimateForm() {
             </Lead>
           )}
 
-          {products.map((product, index) => (
-            <ProductCard key={index} removeProduct={handleRemoveProduct} />
-          ))}
+          {/* {products.map((product, index) => (
+            <NewProduct key={index} removeProduct={handleRemoveProduct} />
+          ))} */}
         </section>
 
         <Separator />
@@ -288,122 +286,7 @@ function FormSubmitRow({ text }: FormSubmitRowProps) {
   )
 }
 
-interface ProductCardProps {
+interface NewProductProps {
+  data: Product
   removeProduct: (id: string) => void
-}
-
-function ProductCard({ removeProduct }: ProductCardProps) {
-  const [open, setOpen] = useState<boolean>(false)
-  const [id, setId] = useState<string>('')
-
-  const products: Product[] = [
-    {
-      id: '728ed52f',
-      title: 'Camisa X',
-      createdAt: new Date().toString(),
-      updatedAt: null,
-      slug: 'camisa-x',
-      sku: '22435',
-      _status: 'draft',
-    },
-    {
-      id: '331cz95a',
-      title: 'Camisa Y',
-      createdAt: new Date().toString(),
-      updatedAt: null,
-      slug: 'camisa-y',
-      sku: '22436',
-      _status: 'published',
-    },
-  ]
-
-  const product = products.find((product) => product.id === id)
-
-  return (
-    <Card className='relative flex items-center'>
-      <CardContent className='m-0 flex gap-4 p-2'>
-        <div className='space-y-2'>
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button
-                variant='outline'
-                aria-expanded={open}
-                className='w-full justify-between'
-              >
-                {id
-                  ? products.find((product) => product.id === id).title
-                  : 'Selecione um produto.'}
-                <CaretSortIcon className='ml-2 h-4 w-4 shrink-0 opacity-50' />
-              </Button>
-            </PopoverTrigger>
-
-            <PopoverContent className='m-0 w-fit p-0'>
-              <Command>
-                <CommandInput placeholder='Procure por um produto...' />
-                <CommandEmpty>Produto não encontrado.</CommandEmpty>
-                <CommandGroup>
-                  {products.map((product) => (
-                    <CommandItem
-                      key={product.id}
-                      value={product.title}
-                      onSelect={(title) => {
-                        // Ler esse codigo vai te colocar mais proximo de Deus
-                        // Nao no bom sentido de ter mais conhecimento ou algo assim, mas sim de remover dias de vida
-                        // Foi mal
-                        setId(
-                          products.find(
-                            (product) => product.title.toLowerCase() === title,
-                          ).id,
-                        )
-                        setOpen(false)
-                      }}
-                    >
-                      {product.title}
-                      <CheckIcon
-                        className={cn(
-                          'ml-auto h-4 w-4',
-                          id === product.id ? 'opacity-100' : 'opacity-0',
-                        )}
-                      />
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </Command>
-            </PopoverContent>
-          </Popover>
-
-          <Input placeholder='Selecione a quantidade' />
-
-          <Textarea
-            className='resize-none'
-            maxLength={300}
-            placeholder='Detalhes sobre o orçamento'
-          />
-        </div>
-
-        <div>
-          {id !== '' && (
-            <div className='flex flex-col'>
-              <Small>id: {product.id}</Small>
-              <Small>title: {product.title}</Small>
-              <Small>
-                createdAt: {new Date(product.createdAt).toLocaleDateString()}
-              </Small>
-              <Small>sku: {product.sku}</Small>
-              <Small>_status: {product._status}</Small>
-            </div>
-          )}
-        </div>
-
-        <Button
-          variant='destructive'
-          size='icon'
-          type='button'
-          className='absolute bottom-2 right-2'
-        >
-          <Trash onClick={() => removeProduct(id)} className='h-5 w-5' />
-        </Button>
-      </CardContent>
-    </Card>
-  )
 }

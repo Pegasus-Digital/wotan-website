@@ -7,11 +7,10 @@ import {
 } from './ui/carousel'
 
 import { ProductCard } from './product-card'
-import { H1 } from './typography/headings'
 import { Lead } from './typography/texts'
 import { buttonVariants } from './ui/button'
 import Link from 'next/link'
-import { Page, Product } from '@/payload/payload-types'
+import { Page } from '@/payload/payload-types'
 import { Heading } from '@/pegasus/heading'
 
 export type ProductSliderProps = Extract<
@@ -42,6 +41,7 @@ export function ProductSlider({
                 return (
                   <CarouselItem className='max-w-[300px] shadow-sm' key={index}>
                     <ProductCard
+                      id={doc.value.id}
                       title={doc.value.title}
                       categories={doc.value.categories}
                     />
@@ -49,11 +49,6 @@ export function ProductSlider({
                 )
               }
             })}
-            {/* {Array.from({ length: 10 }).map((_, index) => (
-              <CarouselItem className='max-w-[300px] shadow-sm' key={index}>
-                <ProductCard />
-              </CarouselItem>
-            ))} */}
           </CarouselContent>
           <CarouselPrevious className='hidden desktop:flex' />
           <CarouselNext className='hidden desktop:flex' />

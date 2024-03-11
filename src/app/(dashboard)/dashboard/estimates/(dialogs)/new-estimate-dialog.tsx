@@ -1,5 +1,3 @@
-'use client'
-
 import {
   Dialog,
   DialogContent,
@@ -7,13 +5,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
 
-import { NewEstimateForm } from './new-estimate-form'
-import { Large } from '@/components/typography/texts'
+import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
-export function NewEstimateDialog() {
+import { NewEstimateForm } from './new-estimate-form'
+
+export async function NewEstimateDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
