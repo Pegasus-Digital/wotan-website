@@ -8,10 +8,10 @@ export const Budget: CollectionConfig = {
   slug: 'budget',
   admin: {
     useAsTitle: 'createdAt',
-    defaultColumns: ['createdAt', 'orderedBy'],
+    defaultColumns: ['createdAt'],
     group: 'Orders',
-    preview: (doc) =>
-      `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/budget/${doc.id}`,
+    // preview: (doc) =>
+    //   `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/budget/${doc.id}`,
   },
   // hooks: {
   //   afterChange: [updateUserPurchases, clearUserCart],
@@ -23,14 +23,14 @@ export const Budget: CollectionConfig = {
   //   delete: admins,
   // },
   fields: [
-    {
-      name: 'orderedBy',
-      type: 'relationship',
-      relationTo: 'users',
-      // hooks: {
-      //   beforeChange: [populateOrderedBy],
-      // },
-    },
+    // {
+    //   name: 'orderedBy',
+    //   type: 'relationship',
+    //   relationTo: 'clients',
+    //   // hooks: {
+    //   //   beforeChange: [populateOrderedBy],
+    //   // },
+    // },
     {
       name: 'total',
       type: 'number',
@@ -48,12 +48,18 @@ export const Budget: CollectionConfig = {
           required: true,
         },
         {
-          name: 'price',
-          type: 'number',
-          min: 0,
+          name: 'attributes',
+          type: 'relationship',
+          relationTo: 'attributes',
+          hasMany: true,
         },
         {
           name: 'quantity',
+          type: 'number',
+          min: 1,
+        },
+        {
+          name: 'price',
           type: 'number',
           min: 0,
         },

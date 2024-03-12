@@ -6,24 +6,28 @@ const Clients: CollectionConfig = {
   admin: {
     group: 'Clients',
     useAsTitle: 'name',
-    defaultColumns: ['name', 'email'],
+    defaultColumns: ['name', 'razaosocial'],
   },
   fields: [
     {
+      name: 'name',
+      type: 'text',
+    },
+    {
       type: 'tabs',
-
       tabs: [
         {
-          name: 'contact',
-          label: 'Contact',
+          label: 'Data',
           fields: [
             {
-              name: 'name',
+              name: 'razaosocial',
               type: 'text',
             },
             {
-              type: 'select',
+              type: 'radio',
               name: 'type',
+              required: true,
+              defaultValue: 'company',
               options: [
                 {
                   label: 'Pessoa Júridica',
@@ -36,19 +40,50 @@ const Clients: CollectionConfig = {
               ],
             },
             {
-              name: 'phone',
+              name: 'document',
               type: 'text',
             },
           ],
         },
-        { name: 'address', label: 'Address', fields: [adress] },
+        {
+          label: 'Contact',
+          fields: [
+            {
+              type: 'array',
+              name: 'contacts',
+              required: true,
+              fields: [
+                { type: 'text', name: 'name' },
+                { type: 'text', name: 'email' },
+                { type: 'text', name: 'phone' },
+                { type: 'text', name: 'whatsapp' },
+              ],
+            },
+          ],
+        },
       ],
+    },
+    {
+      name: 'clientSince',
+      type: 'date',
+      admin: {
+        date: {
+          pickerAppearance: 'dayOnly',
+          displayFormat: 'd/MM/yyy',
+        },
+      },
+    },
+    {
+      name: 'salesperson',
+      type: 'relationship',
+      relationTo: 'salespersons',
+      required: true,
     },
     {
       name: 'roles',
       type: 'select',
-      hasMany: true,
-      defaultValue: ['user'],
+      defaultValue: ['active'],
+      required: true,
       options: [
         {
           label: 'Active',
@@ -59,13 +94,12 @@ const Clients: CollectionConfig = {
           value: 'inactive',
         },
         {
-          label: 'Prospective',
-          value: 'prospective',
+          label: 'Prospect',
+          value: 'prospect',
         },
       ],
     },
   ],
-  auth: true,
 }
 
 export default Clients
