@@ -51,6 +51,17 @@ export const Pages: CollectionConfig = {
       required: true,
     },
     {
+      name: 'description',
+      type: 'text',
+      admin: {
+        condition: (data) => {
+          console.log('desc:')
+          console.log({ data })
+          return data.slug !== 'home'
+        },
+      },
+    },
+    {
       name: 'publishedOn',
       type: 'date',
       admin: {
@@ -70,57 +81,45 @@ export const Pages: CollectionConfig = {
         ],
       },
     },
+
     {
-      type: 'tabs',
-      tabs: [
-        // {
-        //   label: 'Hero',
-        //   fields: [
-        //     {
-        //       name: 'carousel',
-        //       type: 'array',
-        //       required: true,
-        //       minRows: 1,
-        //       maxRows: 3,
-        //       fields: [
-        //         {
-        //           name: 'image',
-        //           type: 'upload',
-        //           relationTo: 'media',
-        //           required: true,
-        //         },
-        //       ],
-        //       admin: {
-        //         description:
-        //           'Image should be 1920x420 with the content centered around 1280x420',
-        //       },
-        //     },
-        //   ],
-        // },
+      name: 'carousel',
+      type: 'array',
+      required: true,
+      minRows: 1,
+      maxRows: 3,
+      fields: [
         {
-          label: 'Hero',
-          fields: [hero],
-        },
-        {
-          label: 'Content',
-          fields: [
-            {
-              name: 'layout',
-              type: 'blocks',
-              required: true,
-              blocks: [
-                ProductCarousel,
-                FeaturedSection,
-                StatisticSection,
-                Content,
-                ClientGrid,
-                ContentMedia,
-              ],
-            },
-          ],
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
         },
       ],
+      admin: {
+        description:
+          'Image should be 1920x420 with the content centered around 1280x420',
+        condition: (data, siblingData) => {
+          console.log({ data, siblingData })
+          return data.slug === 'home'
+        },
+      },
     },
+
+    {
+      name: 'layout',
+      type: 'blocks',
+      required: true,
+      blocks: [
+        ProductCarousel,
+        FeaturedSection,
+        StatisticSection,
+        Content,
+        ClientGrid,
+        ContentMedia,
+      ],
+    },
+
     slugField(),
   ],
 }

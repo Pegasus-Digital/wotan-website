@@ -13,8 +13,9 @@ import { Pages } from './settings/pages'
 import Products from './products'
 import Categories from './products/categories'
 import { Budget } from './budget'
-import Atributes from './products/atributes'
+import { Attributes, AttributeTypes } from './products/atributes'
 import Clients from './clients'
+import Salespersons from './salespersons'
 
 export default buildConfig({
   admin: {
@@ -33,12 +34,14 @@ export default buildConfig({
   collections: [
     Products,
     Categories,
-    Atributes,
+    Attributes,
+    AttributeTypes,
     Budget,
     Users,
     Media,
     Pages,
     Clients,
+    Salespersons,
   ],
   globals: [Settings, Company],
   // database-adapter-config-start

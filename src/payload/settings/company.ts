@@ -1,4 +1,3 @@
-import { PatternField } from '@nouance/payload-better-fields-plugin'
 import type { GlobalConfig } from 'payload/types'
 
 import { admins } from '../access/admins'
@@ -19,7 +18,6 @@ export const Company: GlobalConfig = {
       type: 'tabs',
       tabs: [
         {
-          name: 'general',
           label: 'General',
           fields: [
             { type: 'text', name: 'name' },
@@ -33,27 +31,10 @@ export const Company: GlobalConfig = {
                 },
               },
             },
-            ...PatternField(
-              {
-                name: 'cnpj',
-                label: 'CNPJ',
-                type: 'text',
-                required: false,
-                admin: {
-                  placeholder: '% 20',
-                },
-              },
-              {
-                format: '##.###.###/####-##',
-                prefix: '% ',
-                allowEmptyFormatting: true,
-                mask: '_',
-              },
-            ),
+            { type: 'text', name: 'cnpj', label: 'CNPJ' },
           ],
         },
         {
-          name: 'adress',
           label: 'Adress',
           fields: [
             adress,
@@ -65,38 +46,8 @@ export const Company: GlobalConfig = {
           label: 'Contact',
           fields: [
             { type: 'text', name: 'email' },
-            ...PatternField(
-              {
-                name: 'phone',
-                type: 'text',
-                required: false,
-                admin: {
-                  placeholder: '% 20',
-                },
-              },
-              {
-                format: '(##) ####-####',
-                prefix: '% ',
-                allowEmptyFormatting: true,
-                mask: '_',
-              },
-            ),
-            ...PatternField(
-              {
-                name: 'whatsapp',
-                type: 'text',
-                required: false,
-                admin: {
-                  placeholder: '% 20',
-                },
-              },
-              {
-                format: '(##) ####-####',
-                prefix: '% ',
-                allowEmptyFormatting: true,
-                mask: '_',
-              },
-            ),
+            { type: 'text', name: 'phone' },
+            { type: 'text', name: 'whatsapp' },
           ],
         },
         {
@@ -106,7 +57,7 @@ export const Company: GlobalConfig = {
             { type: 'text', name: 'facebook' },
             { type: 'text', name: 'instagram' },
             { type: 'text', name: 'linkedin' },
-            { type: 'text', name: 'twitter' },
+            // { type: 'text', name: 'twitter' },
           ],
         },
       ],
