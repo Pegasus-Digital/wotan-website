@@ -1,9 +1,12 @@
 'use client'
 import { ImagesSlider } from '@/components/images-slider'
+import { Page } from '@/payload/payload-types'
 import { motion } from 'framer-motion'
 import React from 'react'
 
-export function SlideshowHero() {
+type SlideshowProps = Pick<Page, 'carousel'> & { id?: string }
+
+export function SlideshowHero({ carousel }: SlideshowProps) {
   const images = [
     'https://source.unsplash.com/random/1920x1080',
     'https://source.unsplash.com/random/1920x1070',
