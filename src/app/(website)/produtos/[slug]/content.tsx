@@ -1,18 +1,19 @@
 import Link from 'next/link'
-import { Category, Product } from '@/payload/payload-types'
-
 import { cn } from '@/lib/utils'
-
-import { P } from '@/components/typography/texts'
+import { Product } from '@/payload/payload-types'
 
 import { Heading } from '@/pegasus/heading'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { buttonVariants } from '@/components/ui/button'
+import { ProductInteraction } from './(components)/product-interaction'
+import { Media } from '@/components/media'
 
 interface ProductPageProps {
   product: Product | null
 }
 
 export function ProductPageContent({ product }: ProductPageProps) {
+  const related = product.relatedProducts
+
   if (!product) {
     return (
       <section className='relative flex w-full flex-1 items-center self-center px-6 text-primary-foreground'>
@@ -33,35 +34,21 @@ export function ProductPageContent({ product }: ProductPageProps) {
   }
 
   return (
-    <section className='relative my-6 w-full flex-1 px-6 text-primary-foreground'>
-      <div className='container grid grid-cols-2 text-foreground'>
-        <div className='flex h-full flex-col items-end bg-green-300'>
+    <section className='relative my-6 w-full flex-1 text-primary-foreground tablet:px-6'>
+      <main className='container grid grid-cols-1 gap-4 text-foreground tablet:grid-cols-2'>
+        <div className='flex h-full flex-col'>
           <img
             alt=''
-            className='max-h-96'
+            className='aspect-square h-full max-h-[768px] w-full flex-1 rounded-lg border object-cover shadow-md'
             src='https://source.unsplash.com/random/?Product&1'
           />
         </div>
 
-        <div className='bg-sky-300'>
-          <Heading variant='h2' className='max-h-96 text-foreground'>
-            {product.title}
-          </Heading>
-          <P>
-            {product.categories.map((category: Category) => (
-              <P key={category.id}>{category.title}</P>
-            ))}
-          </P>
+        <ProductInteraction product={product} />
+      </main>
 
-          <P>Quantidade mínima: {product.minimumQuantity}</P>
-          <P>Código de referência: {product.sku}</P>
-
-          {/* Cores */}
-          <div></div>
-
-          <Button>Adicionar ao carrinho</Button>
-        </div>
-      </div>
+      {/* Related products */}
+      {related && <div>Produtos relacionados:</div>}
     </section>
   )
 }

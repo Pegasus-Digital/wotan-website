@@ -12,8 +12,9 @@ import {
 } from '@/components/ui/pagination'
 
 import { Heading } from '@/pegasus/heading'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { ProductCard } from '@/components/product-card'
+import Link from 'next/link'
 
 interface PaginationParams {
   totalDocs: number
@@ -48,6 +49,20 @@ export async function CategoryPageContent({
           Categoria: <span className='capitalize'>{categoryName}</span>
         </Heading>
 
+        {products.length === 0 && (
+          <div className='my-12 flex flex-col items-center justify-center space-y-4 rounded-lg text-center text-foreground'>
+            <Heading variant='h2' className='text-foreground'>
+              Não encontramos produtos para essa categoria.
+            </Heading>
+
+            <Link
+              className={cn(buttonVariants(), 'text-lg font-medium')}
+              href='/'
+            >
+              Voltar para o início.
+            </Link>
+          </div>
+        )}
         {/* Products grid */}
         <div className='grid grid-flow-row grid-cols-5 gap-4'>
           {products.map((product) => (
