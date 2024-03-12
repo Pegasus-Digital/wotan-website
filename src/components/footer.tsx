@@ -37,7 +37,7 @@ export function Footer({
   contact,
 }: FooterProps) {
   return (
-    <footer className='bg-footer w-full bg-wotanRed-500  text-primary-foreground backdrop-blur	 desktop:min-h-96'>
+    <footer className='w-full bg-wotanRed-500 bg-footer  text-primary-foreground backdrop-blur	 desktop:min-h-96'>
       {/* Container */}
       <div className='container flex w-full max-w-screen-desktop flex-col items-center justify-center gap-4 py-6 tablet:flex-row desktop:gap-8 '>
         {/* Logo and Company Info */}
@@ -52,18 +52,18 @@ export function Footer({
             {companyInfo.showAddress === true && (
               <Small className='flex items-center whitespace-nowrap'>
                 <MapPin className='mr-2 h-5 w-5' />
-                {adress.adress.street}
+                {adress.street}
                 {', '}
-                {adress.adress.number}
+                {adress.number}
                 {' - '}
-                {adress.adress.neighborhood}
+                {adress.neighborhood}
                 {/* {', '} */}
                 <br />
-                {adress.adress.city}
+                {adress.city}
                 {' - '}
-                {adress.adress.state}
+                {adress.state}
                 {', '}
-                {adress.adress.cep}
+                {adress.cep}
               </Small>
             )}
 
