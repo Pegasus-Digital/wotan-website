@@ -1,8 +1,10 @@
+import link from '../../fields/link'
 import { invertBackground } from '../../fields/invertBackgroud'
 import type { Block } from 'payload/types'
 
 export const ProductCarousel: Block = {
   slug: 'product-carousel',
+  interfaceName: 'ProductCarousel',
   labels: {
     singular: 'Product Carousel',
     plural: 'Product Carousels',
@@ -85,5 +87,6 @@ export const ProductCarousel: Block = {
         condition: (_, siblingData) => siblingData.populateBy === 'categories',
       },
     },
+    link(),
   ],
 }

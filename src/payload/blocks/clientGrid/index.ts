@@ -3,6 +3,7 @@ import { Block } from 'payload/types'
 
 export const ClientGrid: Block = {
   slug: 'client-grid',
+  interfaceName: 'ClientGrid',
   labels: {
     singular: 'Client Grid',
     plural: 'Client Grids',

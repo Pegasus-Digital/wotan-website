@@ -3,6 +3,7 @@ import type { Block } from 'payload/types'
 
 export const FeaturedSection: Block = {
   slug: 'featured-section',
+  interfaceName: 'FeaturedSection',
   labels: {
     singular: 'Featured Section',
     plural: 'Featured Sections',

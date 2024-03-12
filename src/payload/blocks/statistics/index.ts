@@ -3,6 +3,7 @@ import type { Block } from 'payload/types'
 
 export const StatisticSection: Block = {
   slug: 'statistic-section',
+  interfaceName: 'StatisticSection',
   labels: {
     singular: 'Statistic Section',
     plural: 'Statistic Sections',

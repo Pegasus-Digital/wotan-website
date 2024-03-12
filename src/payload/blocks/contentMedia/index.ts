@@ -52,4 +52,5 @@ export const ContentMedia: Block = {
     },
   ],
   slug: 'content-media',
+  interfaceName: 'ContentMedia',
 }
