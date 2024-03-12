@@ -1,9 +1,9 @@
-import { PatternField } from '@nouance/payload-better-fields-plugin'
 import type { Field } from 'payload/types'
 
 export const adress: Field = {
   name: 'adress',
   type: 'group',
+  interfaceName: 'Address',
   fields: [
     {
       name: 'street',
@@ -54,21 +54,9 @@ export const adress: Field = {
         { value: 'TO', label: 'Tocantins' },
       ],
     },
-    ...PatternField(
-      {
-        name: 'cep',
-        type: 'text',
-        required: false,
-        admin: {
-          placeholder: '% 20',
-        },
-      },
-      {
-        format: '#####-###',
-        prefix: '% ',
-        allowEmptyFormatting: true,
-        mask: '_',
-      },
-    ),
+    {
+      name: 'cep',
+      type: 'text',
+    },
   ],
 }
