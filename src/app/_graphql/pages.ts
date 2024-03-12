@@ -25,10 +25,8 @@ query Page($slug: String){
       id
       title
       slug
-      hero{
-        type
-        ${MEDIA}
-      }
+      description
+
       layout{
        ${QUERY_PRODUCT_CAROUSEL}
        ${QUERY_STATISTICS_SECTION}

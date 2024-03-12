@@ -65,14 +65,14 @@ export const COMPANY_QUERY = `
 query Company{
   Company {
     adress{
-      adress{
+
         street
         number
         neighborhood
         city
         state
         cep
-      }
+      
     }
     contact{
       email

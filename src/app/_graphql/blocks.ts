@@ -88,7 +88,7 @@ export const QUERY_CLIENT_GRID = `
 `
 
 export const QUERY_CONTENT_MEDIA = `
-... on ContentMedia{
+... on ContentMediaSection{
   title
   description
   invertBackground
