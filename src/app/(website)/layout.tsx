@@ -60,7 +60,7 @@ export default async function RootLayout({
       <body
         className={cn(
           inter.className,
-          'bg-pattern min-w-96 bg-right bg-repeat-y text-foreground antialiased',
+          'min-w-96 bg-pattern bg-right bg-repeat-y text-foreground antialiased',
         )}
       >
         <Header
@@ -74,15 +74,14 @@ export default async function RootLayout({
           <SearchBar />
 
           {children}
-
-          <Footer
-            logo={footer?.logo}
-            companyInfo={footer.companyInfo}
-            columns={footer.columns}
-            adress={adress}
-            contact={contact}
-          />
         </main>
+        <Footer
+          logo={footer?.logo}
+          companyInfo={footer.companyInfo}
+          columns={footer.columns}
+          adress={adress}
+          contact={contact}
+        />
         <Toaster richColors closeButton theme='light' />
       </body>
     </html>
