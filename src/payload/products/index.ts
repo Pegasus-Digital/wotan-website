@@ -66,7 +66,7 @@ const Products: CollectionConfig = {
             {
               name: 'attributes',
               type: 'relationship',
-              relationTo: 'atributes',
+              relationTo: 'attributes',
               hasMany: true,
               // filterOptions: ({}) => {
               //   return { type: { equals: 'text' } }
