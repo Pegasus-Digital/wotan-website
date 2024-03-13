@@ -1,5 +1,12 @@
 'use client'
 
+import Link from 'next/link'
+import { cn } from '@/lib/utils'
+
+import { useCartStore } from './cart-store-provider'
+
+import { toast } from 'sonner'
+
 import {
   Tooltip,
   TooltipProvider,
@@ -8,15 +15,27 @@ import {
 } from './ui/tooltip'
 
 import { Button, buttonVariants } from './ui/button'
-import { Heart, ShoppingCart, Eye } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import Link from 'next/link'
+import { Heart, ShoppingCart, Eye, PlusCircle } from 'lucide-react'
 
 interface ProductCardActions {
   productId: string
 }
 
 export function ProductCardActions({ productId }: ProductCardActions) {
+  const { add } = useCartStore((state) => state)
+
+  function handleAddToCart() {
+    add({
+      productId,
+      amount: 0,
+      attributes: [],
+    })
+
+    toast('Produto adicionado ao carrinho.', {
+      icon: <PlusCircle className='h-5 w-5' />,
+    })
+  }
+
   return (
     <TooltipProvider delayDuration={150}>
       <Tooltip>
@@ -29,7 +48,10 @@ export function ProductCardActions({ productId }: ProductCardActions) {
       </Tooltip>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button className='group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-wotanRed-500 hover:text-background'>
+          <Button
+            onClick={handleAddToCart}
+            className='group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-wotanRed-500 hover:text-background'
+          >
             <ShoppingCart className='h-5 w-5' />
           </Button>
         </TooltipTrigger>
@@ -38,7 +60,7 @@ export function ProductCardActions({ productId }: ProductCardActions) {
       <Tooltip>
         <TooltipTrigger asChild>
           <Link
-            href={`http://localhost:3000/produtos/${productId}`}
+            href={`/produtos/${productId}`}
             className={cn(
               buttonVariants({
                 className:

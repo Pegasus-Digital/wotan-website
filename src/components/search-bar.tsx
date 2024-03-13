@@ -1,11 +1,19 @@
 'use client'
 
-import { Heart, Menu, ShoppingCart } from 'lucide-react'
+import Link from 'next/link'
+
+import { useCartStore } from './cart-store-provider'
+
 import { Input } from './ui/input'
+import { Button, buttonVariants } from './ui/button'
+
 import { Large } from './typography/texts'
-import { Button } from './ui/button'
+
+import { Heart, Menu, ShoppingCart } from 'lucide-react'
 
 export function SearchBar() {
+  const { cart } = useCartStore((state) => state)
+
   return (
     <div className='flex h-16 w-full items-center justify-between bg-wotan'>
       <div className='container flex items-center justify-between'>
@@ -30,14 +38,25 @@ export function SearchBar() {
           >
             <Heart className='h-6 w-6' />
           </Button>
+
           {/* Redirect to shopping cart */}
-          <Button
-            className='hover:bg-primary hover:text-primary-foreground'
-            size='icon'
-            variant='ghost'
+          <Link
+            href='/carrinho'
+            className={buttonVariants({
+              size: 'icon',
+              variant: 'ghost',
+              className:
+                'relative hover:bg-primary hover:text-primary-foreground',
+            })}
           >
             <ShoppingCart className='h-6 w-6' />
-          </Button>
+
+            {cart.length > 0 && (
+              <span className='absolute -right-2 -top-2 flex aspect-square min-h-5 w-fit items-center justify-center rounded-full bg-wotanRed-500 text-center leading-none'>
+                {cart.length}
+              </span>
+            )}
+          </Link>
         </div>
       </div>
     </div>

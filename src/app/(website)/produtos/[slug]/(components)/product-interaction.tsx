@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button'
 import { Heading } from '@/pegasus/heading'
 import { Large, Muted, Small } from '@/components/typography/texts'
 
-import { Heart, ShoppingCart } from 'lucide-react'
+import { Heart, PlusCircle, ShoppingCart } from 'lucide-react'
 
 import {
   Tooltip,
@@ -32,12 +32,16 @@ import {
   SelectContent,
 } from '@/components/ui/select'
 
+import { useCartStore } from '@/components/cart-store-provider'
+
 interface ProductInteractionProps {
   product: Product
 }
 
 export function ProductInteraction({ product }: ProductInteractionProps) {
   const [amount, setAmount] = useState(product.minimumQuantity)
+
+  const { add } = useCartStore((state) => state)
 
   function handleAmountChange(e: React.MouseEvent<HTMLButtonElement>) {
     const value = e.currentTarget.innerText
@@ -79,15 +83,30 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
       .replace(/^-+|-+$/g, '')
   }
 
+  function handleAddToCart() {
+    add({
+      productId: product.id,
+      amount,
+      attributes: [],
+    })
+
+    toast('Produto adicionado ao carrinho.', {
+      icon: <PlusCircle className='h-5 w-5' />,
+    })
+  }
+
   return (
     <div className='flex h-full flex-col space-y-2 px-4 py-2'>
       <Heading variant='h2'>{product.title}</Heading>
 
       <div className='flex flex-wrap items-center space-x-1 space-y-1'>
         <Label>Categoria(s):</Label>
-        {product.categories.map((category: Category) => (
+        {product.categories.map((category: Category, index) => (
           // TODO: Adicionar slug na categoria pra não precisar fazer slugify
-          <Link href={`/categorias/${slugify(category.title)}`}>
+          <Link
+            key={category.id + '-' + index}
+            href={`/categorias/${slugify(category.title)}`}
+          >
             <Badge className='w-fit px-2 py-1' key={category.id}>
               {category.title}
             </Badge>
@@ -111,24 +130,44 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
         <Label className='text-base font-semibold'>Quantidade:</Label>
 
         <div className='mt-1 flex items-center space-x-1'>
-          <Button variant='outline' size='sm' onClick={handleAmountChange}>
+          <Button
+            variant='outline'
+            size='sm'
+            onClick={handleAmountChange}
+            className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
+          >
             -10
           </Button>
-          <Button variant='outline' size='sm' onClick={handleAmountChange}>
+          <Button
+            variant='outline'
+            size='sm'
+            onClick={handleAmountChange}
+            className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
+          >
             -1
           </Button>
 
           <Input
-            className='pointer-events-none min-w-8 max-w-16 text-center'
+            className='pointer-events-none max-w-12 bg-wotanRed-400 px-0 text-center text-lg font-bold text-primary-foreground'
             min={product.minimumQuantity}
             value={amount}
             readOnly
           />
 
-          <Button variant='outline' size='sm' onClick={handleAmountChange}>
+          <Button
+            variant='outline'
+            size='sm'
+            onClick={handleAmountChange}
+            className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
+          >
             +1
           </Button>
-          <Button variant='outline' size='sm' onClick={handleAmountChange}>
+          <Button
+            variant='outline'
+            size='sm'
+            onClick={handleAmountChange}
+            className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
+          >
             +10
           </Button>
         </div>
@@ -176,6 +215,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
+                onClick={handleAddToCart}
                 size='lg'
                 className='space-x-2 bg-wotanRed-500 hover:bg-wotanRed-400'
               >

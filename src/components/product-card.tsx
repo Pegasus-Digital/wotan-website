@@ -1,18 +1,16 @@
 import { Lead, P } from './typography/texts'
 import { Card, CardContent, CardFooter } from './ui/card'
 import { ProductCardActions } from './product-card-actions'
-import { ProductSliderProps } from './product-slider'
 import type { Product } from '@/payload/payload-types'
 
-// interface ProductCardProps {
-//   name: string
-//   category: string
-//   colors: any[]
-// }
+type ProductCardProps = Pick<
+  Product,
+  'title' | 'categories' | 'id' | 'minimumQuantity'
+>
 
-type ProductCardProps = Pick<Product, 'title' | 'categories' | 'id'>
+const attributes = ['#F00', '#0F0', '#00F']
 
-export function ProductCard({ title, categories, id }: ProductCardProps) {
+export function ProductCard({ id, title, categories }: ProductCardProps) {
   const mainCategory =
     typeof categories[0] === 'string' ? categories[0] : categories[0].title
 
@@ -30,15 +28,22 @@ export function ProductCard({ title, categories, id }: ProductCardProps) {
           <ProductCardActions productId={id} />
         </div>
       </CardContent>
+
       <CardFooter className='z-10 flex flex-col items-start space-y-2.5 py-4'>
         <Lead className='text-sm font-bold text-wotanRed-500'>
           {mainCategory}
         </Lead>
+
         <P className='text-base font-bold text-foreground'>{title}</P>
+
         <div className='flex items-center gap-1'>
-          <div className='h-4 w-4 rounded-full bg-red-500' />
-          <div className='h-4 w-4 rounded-full bg-green-500' />
-          <div className='h-4 w-4 rounded-full bg-blue-500' />
+          {attributes.map((attribute) => (
+            <div
+              key={attribute}
+              style={{ backgroundColor: attribute }}
+              className='h-4 w-4 rounded-full border'
+            />
+          ))}
         </div>
       </CardFooter>
     </Card>

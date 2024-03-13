@@ -11,6 +11,7 @@ import { PegasusStamp } from '@/pegasus/pegasus-stamp'
 import { fetchCompany, fetchSettings } from '../_api/fetchGlobals'
 import { Company, Setting } from '@/payload/payload-types'
 import { Toaster } from 'sonner'
+import { CartStoreProvider } from '@/components/cart-store-provider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -70,22 +71,25 @@ export default async function RootLayout({
           style={header?.navigation?.style}
           phone={contact?.phone}
         /> */}
-        <main className='flex min-h-screen flex-col items-center'>
-          {/* Header */}
-          <SearchBar />
+        <CartStoreProvider>
+          <main className='flex min-h-screen flex-col items-center'>
+            {/* Header */}
+            <SearchBar />
 
-          {children}
+            {children}
 
-          {/* <Footer
+            {/* <Footer
             logo={footer?.logo}
             companyInfo={footer.companyInfo}
             columns={footer.columns}
             adress={adress}
             contact={contact}
           /> */}
-          {/* Developed by Pegasus */}
-          <PegasusStamp />
-        </main>
+            {/* Developed by Pegasus */}
+            <PegasusStamp />
+          </main>
+        </CartStoreProvider>
+
         <Toaster richColors closeButton theme='light' />
       </body>
     </html>
