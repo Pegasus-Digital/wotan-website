@@ -40,6 +40,7 @@ export const Budget: CollectionConfig = {
     {
       name: 'items',
       type: 'array',
+      required: true,
       fields: [
         {
           name: 'product',
@@ -57,6 +58,7 @@ export const Budget: CollectionConfig = {
           name: 'quantity',
           type: 'number',
           min: 1,
+          required: true,
         },
         {
           name: 'price',

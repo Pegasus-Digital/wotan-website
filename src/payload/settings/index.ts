@@ -1,7 +1,8 @@
 import { Field, GlobalConfig } from 'payload/types'
 import { admins, anyone } from '../access'
-import { header } from './header'
-import { footer } from './footer'
+import { header } from '../fields/header'
+import { footer } from '../fields/footer'
+import { company } from '../fields/company'
 
 export const Settings: GlobalConfig = {
   slug: 'settings',
@@ -17,16 +18,22 @@ export const Settings: GlobalConfig = {
     {
       type: 'tabs',
       tabs: [
-        { name: 'general', fields: [{ name: 'darkMode', type: 'checkbox' }] },
         {
-          name: 'header',
+          name: 'general',
+          label: 'General',
+          fields: [{ name: 'enableDarkMode', type: 'checkbox' }],
+        },
+        {
           label: 'Header',
           fields: header,
         },
         {
-          name: 'footer',
           label: 'Footer',
           fields: footer,
+        },
+        {
+          label: 'Company',
+          fields: company,
         },
       ],
     },

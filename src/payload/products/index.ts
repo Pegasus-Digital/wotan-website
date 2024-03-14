@@ -62,7 +62,16 @@ const Products: CollectionConfig = {
               name: 'minimumQuantity',
               label: 'Minimum Quantity',
               type: 'number',
+              defaultValue: 50,
+              required: true,
             },
+            {
+              name: 'stockQuantity',
+              label: 'Stock Quantity',
+              type: 'number',
+            },
+            { type: 'checkbox', name: 'active', required: true },
+
             {
               name: 'attributes',
               type: 'relationship',
@@ -72,13 +81,36 @@ const Products: CollectionConfig = {
               //   return { type: { equals: 'text' } }
               // },
             },
+            { name: 'price', type: 'number' },
+            { name: 'description', type: 'textarea' },
           ],
         },
         {
           label: 'Images',
           fields: [
-            { name: 'featuredImage', type: 'upload', relationTo: 'media' },
-            { name: 'images', type: 'upload', relationTo: 'media' },
+            {
+              name: 'featuredImage',
+              type: 'upload',
+              relationTo: 'media',
+              required: true,
+            },
+            {
+              name: 'images',
+              type: 'array',
+              required: true,
+              minRows: 1,
+              maxRows: 6,
+              fields: [
+                {
+                  name: 'image',
+                  type: 'upload',
+                  relationTo: 'media',
+                  filterOptions: {
+                    mimeType: { contains: 'image' },
+                  },
+                },
+              ],
+            },
           ],
         },
       ],
