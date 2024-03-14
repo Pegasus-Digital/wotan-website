@@ -8,9 +8,9 @@ import { Footer } from '@/components/footer'
 import { SearchBar } from '@/components/search-bar'
 import { PegasusStamp } from '@/pegasus/pegasus-stamp'
 
-import { fetchCompany, fetchSettings } from '../_api/fetchGlobals'
+import { fetchSettings } from '../_api/fetchGlobals'
 import { Company, Setting } from '@/payload/payload-types'
-import { header } from '@/payload/settings/header'
+import { header } from '@/payload/fields/header'
 import { Toaster } from 'sonner'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -34,39 +34,26 @@ async function fetchConfigs() {
   }
 }
 
-async function fetchCompanyInfo() {
-  try {
-    const settings = await fetchCompany()
-    // console.log(settings)
-    return settings
-  } catch (error) {
-    console.error(error)
-  }
-}
-
 export default async function RootLayout({
   children,
 }: Readonly<RootLayoutProps>) {
   let settings: Setting | null = await fetchConfigs()
-  let companyInfo: Company | null = await fetchCompanyInfo()
 
-  const { header, footer } = settings
-  const { adress, contact } = companyInfo
-
-  // console.log({ header })
+  // console.log({ settings })
+  const { header, footer, company } = settings
+  const { adress, contact } = company
 
   return (
     <html lang='pt-BR' suppressHydrationWarning>
       <body
         className={cn(
           inter.className,
-          'bg-background text-foreground antialiased',
+          'min-w-96 bg-pattern bg-right bg-repeat-y text-foreground antialiased',
         )}
       >
         <Header
-          logo={header?.navigation?.logo}
-          links={header?.navigation?.links}
-          style={header?.navigation?.style}
+          logo={header?.logo}
+          navigation={header?.navigation}
           phone={contact?.phone}
         />
         <main className='flex min-h-screen flex-col items-center'>
@@ -74,17 +61,14 @@ export default async function RootLayout({
           <SearchBar />
 
           {children}
-
-          <Footer
-            logo={footer?.logo}
-            companyInfo={footer.companyInfo}
-            columns={footer.columns}
-            adress={adress}
-            contact={contact}
-          />
-          {/* Developed by Pegasus */}
-          <PegasusStamp />
         </main>
+        <Footer
+          logo={footer?.logo}
+          companyInfo={footer.companyInfo}
+          columns={footer.columns}
+          adress={adress}
+          contact={contact}
+        />
         <Toaster richColors closeButton theme='light' />
       </body>
     </html>

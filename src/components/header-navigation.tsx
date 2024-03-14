@@ -15,24 +15,22 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu'
 import { Lead } from './typography/texts'
-import { Setting } from '@/payload/payload-types'
+import { Header } from '@/payload/payload-types'
+import { getHref } from './link'
 
-type HeaderNavigationProps = Pick<
-  Setting['header']['navigation'],
-  'links' | 'style'
->
+type HeaderNavigationProps = Pick<Header['navigation'], 'links' | 'style'>
 
 type LinkProps = Pick<
   HeaderNavigationProps['links'][0],
-  'href' | 'title' | 'onlyLink' | 'columns' | 'subLinks'
+  'linkTo' | 'onlyLink' | 'columns' | 'subLinks'
 >
 
-function MegaMenu({ title, href, columns }: LinkProps) {
+function MegaMenu({ linkTo, columns }: LinkProps) {
   return (
     <NavigationMenuItem>
-      <Link href={href} legacyBehavior passHref>
+      <Link href={getHref({ ...linkTo })} legacyBehavior passHref>
         <NavigationMenuTrigger className={navigationMenuTriggerStyle()}>
-          {title}
+          {linkTo.label}
         </NavigationMenuTrigger>
       </Link>
       <NavigationMenuContent className='shadow-wotan-light'>
@@ -50,13 +48,13 @@ function MegaMenu({ title, href, columns }: LinkProps) {
             } else if (column.type === 'linkCol') {
               return (
                 <React.Fragment key={index}>
-                  {column.linkColumn.map((link, index) => (
+                  {column.linkColumn.map((child, index) => (
                     <ListItem
-                      key={link.title}
-                      title={link.title}
-                      href={link.href}
+                      key={index}
+                      title={child.link.label}
+                      href={getHref({ ...child.link })}
                     >
-                      {link.description}
+                      {child.description}
                     </ListItem>
                   ))}
                 </React.Fragment>
@@ -76,7 +74,7 @@ function MegaMenuCard({
   return (
     <NavigationMenuLink asChild>
       <a
-        className='bg-wotan text-primary-foreground flex h-full w-full select-none flex-col justify-end rounded-md p-6 text-center no-underline outline-none focus:shadow-md'
+        className='flex h-full w-full select-none flex-col justify-end rounded-md bg-wotan p-6 text-center text-primary-foreground no-underline outline-none focus:shadow-md'
         href='/quem-somos'
       >
         <img
@@ -87,7 +85,7 @@ function MegaMenuCard({
         />
         {/* <Image alt='' src='/' width={156} height={54} /> */}
         <div className='mb-2 mt-4 text-lg font-medium'>{title}</div>
-        <Lead className='text-primary-foreground text-sm leading-tight'>
+        <Lead className='text-sm leading-tight text-primary-foreground'>
           {description}
         </Lead>
       </a>
@@ -95,17 +93,21 @@ function MegaMenuCard({
   )
 }
 
-function Dropdown({ title, href, subLinks }: LinkProps) {
+function Dropdown({ linkTo, subLinks }: LinkProps) {
   return (
     <NavigationMenuItem>
-      <NavigationMenuTrigger>{title}</NavigationMenuTrigger>
+      <Link href={getHref({ ...linkTo })} legacyBehavior passHref>
+        <NavigationMenuTrigger className={navigationMenuTriggerStyle()}>
+          {linkTo.label}
+        </NavigationMenuTrigger>
+      </Link>
       <NavigationMenuContent>
         <ul className='grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] '>
-          {subLinks.map((link) => (
+          {subLinks.map((child, index) => (
             <ListItem
-              key={link.title}
-              title={link.title}
-              href={link.href}
+              key={index}
+              title={child.link.label}
+              href={getHref({ ...child.link })}
             ></ListItem>
           ))}
         </ul>
@@ -114,12 +116,12 @@ function Dropdown({ title, href, subLinks }: LinkProps) {
   )
 }
 
-function Classic({ title, href }: LinkProps) {
+function Classic({ linkTo }: LinkProps) {
   return (
     <NavigationMenuItem>
-      <Link href={href} legacyBehavior passHref>
+      <Link href={getHref({ ...linkTo })} legacyBehavior passHref>
         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-          {title}
+          {linkTo.label}
         </NavigationMenuLink>
       </Link>
     </NavigationMenuItem>
@@ -161,14 +163,14 @@ const ListItem = React.forwardRef<
         <a
           ref={ref}
           className={cn(
-            'hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors',
+            'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
             className,
           )}
           {...props}
         >
           <div className='text-sm font-medium leading-none'>{title}</div>
           {children && (
-            <p className='text-muted-foreground line-clamp-2 text-sm leading-snug'>
+            <p className='line-clamp-2 text-sm leading-snug text-muted-foreground'>
               {children}
             </p>
           )}

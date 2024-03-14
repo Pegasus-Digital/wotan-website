@@ -1,19 +1,20 @@
 import { buildConfig } from 'payload/config'
 import { mongooseAdapter } from '@payloadcms/db-mongodb' // database-adapter-import
 import { slateEditor } from '@payloadcms/richtext-slate'
+import nestedDocs from '@payloadcms/plugin-nested-docs'
 
 import { webpackBundler } from '@payloadcms/bundler-webpack'
 import { Settings } from './settings'
 import Users from './users'
 import path from 'path'
 import { Media } from './media'
-import { Company } from './settings/company'
 import { Pages } from './settings/pages'
 import Products from './products'
 import Categories from './products/categories'
 import { Budget } from './budget'
-import Atributes from './products/atributes'
+import { Attributes, AttributeTypes } from './products/atributes'
 import Clients from './clients'
+import Salespersons from './salespersons'
 
 export default buildConfig({
   admin: {
@@ -32,14 +33,16 @@ export default buildConfig({
   collections: [
     Products,
     Categories,
-    Atributes,
+    Attributes,
+    AttributeTypes,
     Budget,
     Users,
     Media,
     Pages,
     Clients,
+    Salespersons,
   ],
-  globals: [Settings, Company],
+  globals: [Settings],
   // database-adapter-config-start
   // Todo: env variable validation
   db: mongooseAdapter({
@@ -52,4 +55,12 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(__dirname, 'payload-types.ts'),
   },
+  plugins: [
+    nestedDocs({
+      collections: ['categories'],
+      generateLabel: (_, doc) => doc.title as string,
+      generateURL: (docs) =>
+        docs.reduce((url, doc) => `${url}/${doc.slug}`, ''),
+    }),
+  ],
 })

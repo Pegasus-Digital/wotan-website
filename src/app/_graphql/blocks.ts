@@ -4,7 +4,6 @@ export const QUERY_PRODUCT_CAROUSEL = `
   title
   description
   populateBy
-  limit
   selectedDocs{
     relationTo
     value {
@@ -12,9 +11,7 @@ export const QUERY_PRODUCT_CAROUSEL = `
         id
         slug
         title
-        images {
-          filename
-        }
+
         categories {
           title
         }
@@ -57,6 +54,7 @@ export const QUERY_FEATURED_SECTION = `
 `
 export const QUERY_CONTENT_SECTION = `
 ... on ContentSection {
+  invertBackground
   title
   description
   columns {
@@ -87,7 +85,7 @@ export const QUERY_CLIENT_GRID = `
 `
 
 export const QUERY_CONTENT_MEDIA = `
-... on ContentMedia{
+... on ContentMediaSection{
   title
   description
   invertBackground
