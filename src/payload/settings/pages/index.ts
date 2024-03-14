@@ -10,6 +10,7 @@ import { ContentMedia } from '../../blocks/contentMedia'
 import { FeaturedSection } from '../../blocks/featuredSection'
 import { ProductCarousel } from '../../blocks/productCarousel'
 import { StatisticSection } from '../../blocks/statistics'
+import { FAQ } from '../../blocks/faq'
 
 // Fields
 import { hero } from '../../fields/hero'
@@ -117,6 +118,7 @@ export const Pages: CollectionConfig = {
         Content,
         ClientGrid,
         ContentMedia,
+        FAQ,
       ],
     },
 
