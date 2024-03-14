@@ -52,7 +52,7 @@ export default async function RootLayout({
       <body
         className={cn(
           inter.className,
-          'min-w-96 bg-pattern bg-right bg-repeat-y text-foreground antialiased',
+          'flex min-h-screen min-w-96 flex-col bg-pattern bg-right bg-repeat-y text-foreground antialiased',
         )}
       >
         <CartStoreProvider>
@@ -61,10 +61,9 @@ export default async function RootLayout({
             navigation={header?.navigation}
             phone={contact?.phone}
           />
-          <main className='flex min-h-screen flex-col items-center'>
+          <main className='flex   flex-col items-center '>
             {/* Header */}
             <SearchBar />
-
             {children}
           </main>
           <Footer

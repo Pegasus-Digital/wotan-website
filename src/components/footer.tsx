@@ -28,7 +28,7 @@ export function Footer({
   contact,
 }: FooterProps) {
   return (
-    <footer className='w-full bg-wotanRed-500 bg-footer  text-primary-foreground backdrop-blur	 desktop:min-h-96'>
+    <footer className=' mt-auto w-full  bg-wotanRed-500 bg-footer	 text-primary-foreground backdrop-blur desktop:min-h-96'>
       {/* Container */}
       <div className='container flex w-full max-w-screen-desktop flex-col items-center justify-center gap-4 py-6 tablet:flex-row desktop:gap-8 '>
         {/* Logo and Company Info */}
