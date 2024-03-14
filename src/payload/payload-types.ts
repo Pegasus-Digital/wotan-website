@@ -6,6 +6,18 @@
  * and re-run `payload generate:types` to regenerate this file.
  */
 
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NavLinkColumn".
+ */
+export type NavLinkColumn =
+  | {
+      link: Link;
+      description?: string | null;
+      id?: string | null;
+    }[]
+  | null;
+
 export interface Config {
   collections: {
     products: Product;
@@ -23,7 +35,6 @@ export interface Config {
   };
   globals: {
     settings: Setting;
-    company: Company;
   };
 }
 /**
@@ -35,10 +46,17 @@ export interface Product {
   title: string;
   publishedOn?: string | null;
   sku?: string | null;
-  minimumQuantity?: number | null;
+  minimumQuantity: number;
+  stockQuantity?: number | null;
+  active: boolean;
   attributes?: (string | Attribute)[] | null;
-  featuredImage?: string | Media | null;
-  images?: string | Media | null;
+  price?: number | null;
+  description?: string | null;
+  featuredImage: string | Media;
+  images: {
+    image?: string | Media | null;
+    id?: string | null;
+  }[];
   categories?: (string | Category)[] | null;
   relatedProducts?: (string | Product)[] | null;
   slug?: string | null;
@@ -90,6 +108,7 @@ export interface Media {
 export interface Category {
   id: string;
   title?: string | null;
+  slug?: string | null;
   parent?: (string | null) | Category;
   breadcrumbs?:
     | {
@@ -109,15 +128,13 @@ export interface Category {
 export interface Budget {
   id: string;
   total: number;
-  items?:
-    | {
-        product: string | Product;
-        attributes?: (string | Attribute)[] | null;
-        quantity?: number | null;
-        price?: number | null;
-        id?: string | null;
-      }[]
-    | null;
+  items: {
+    product: string | Product;
+    attributes?: (string | Attribute)[] | null;
+    quantity: number;
+    price?: number | null;
+    id?: string | null;
+  }[];
   updatedAt: string;
   createdAt: string;
 }
@@ -155,7 +172,7 @@ export interface Page {
         id?: string | null;
       }[]
     | null;
-  layout: (ProductCarousel | FeaturedSection | StatisticSection | ContentSection | ClientGrid | ContentMedia)[];
+  layout: (ProductCarousel | FeaturedSection | StatisticSection | ContentSection | ClientGrid | ContentMedia | FAQ)[];
   slug?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -169,9 +186,8 @@ export interface ProductCarousel {
   invertBackground?: boolean | null;
   title?: string | null;
   description?: string | null;
-  populateBy?: ('categories' | 'selection') | null;
+  populateBy: 'categories' | 'selection';
   categories?: (string | Category)[] | null;
-  limit?: number | null;
   selectedDocs?:
     | {
         relationTo: 'products';
@@ -184,21 +200,34 @@ export interface ProductCarousel {
         value: string | Product;
       }[]
     | null;
-  populatedDocsTotal?: number | null;
-  link: {
-    type?: ('reference' | 'custom') | null;
-    newTab?: boolean | null;
-    reference?: {
-      relationTo: 'pages';
-      value: string | Page;
-    } | null;
-    url?: string | null;
-    label: string;
-    appearance?: ('default' | 'primary' | 'secondary') | null;
-  };
+  seeMore: boolean;
+  seeMoreLink: Link;
   id?: string | null;
   blockName?: string | null;
   blockType: 'product-carousel';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Link".
+ */
+export interface Link {
+  type?: ('reference' | 'custom') | null;
+  newTab: boolean;
+  reference?:
+    | ({
+        relationTo: 'pages';
+        value: string | Page;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: string | Product;
+      } | null)
+    | ({
+        relationTo: 'categories';
+        value: string | Category;
+      } | null);
+  url?: string | null;
+  label: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -208,23 +237,21 @@ export interface FeaturedSection {
   invertBackground?: boolean | null;
   title?: string | null;
   description?: string | null;
-  cards?:
-    | {
-        title?: string | null;
-        description?: string | null;
-        image?: string | Media | null;
-        linkTo?:
-          | ({
-              relationTo: 'categories';
-              value: string | Category;
-            } | null)
-          | ({
-              relationTo: 'products';
-              value: string | Product;
-            } | null);
-        id?: string | null;
-      }[]
-    | null;
+  cards: {
+    title: string;
+    description: string;
+    image: string | Media;
+    linkTo:
+      | {
+          relationTo: 'categories';
+          value: string | Category;
+        }
+      | {
+          relationTo: 'products';
+          value: string | Product;
+        };
+    id?: string | null;
+  }[];
   id?: string | null;
   blockName?: string | null;
   blockType: 'featured-section';
@@ -237,13 +264,11 @@ export interface StatisticSection {
   invertBackground?: boolean | null;
   title?: string | null;
   description?: string | null;
-  statistics?:
-    | {
-        title?: string | null;
-        value?: string | null;
-        id?: string | null;
-      }[]
-    | null;
+  statistics: {
+    title: string;
+    value: string;
+    id?: string | null;
+  }[];
   id?: string | null;
   blockName?: string | null;
   blockType: 'statistic-section';
@@ -256,15 +281,13 @@ export interface ContentSection {
   invertBackground?: boolean | null;
   title?: string | null;
   description?: string | null;
-  columns?:
-    | {
-        size?: ('half' | 'full') | null;
-        text: {
-          [k: string]: unknown;
-        }[];
-        id?: string | null;
-      }[]
-    | null;
+  columns: {
+    size: 'half' | 'full';
+    text: {
+      [k: string]: unknown;
+    }[];
+    id?: string | null;
+  }[];
   id?: string | null;
   blockName?: string | null;
   blockType: 'content-section';
@@ -277,12 +300,10 @@ export interface ClientGrid {
   invertBackground?: boolean | null;
   title?: string | null;
   description?: string | null;
-  clients?:
-    | {
-        logo: string | Media;
-        id?: string | null;
-      }[]
-    | null;
+  clients: {
+    logo: string | Media;
+    id?: string | null;
+  }[];
   id?: string | null;
   blockName?: string | null;
   blockType: 'client-grid';
@@ -292,10 +313,10 @@ export interface ClientGrid {
  * via the `definition` "ContentMedia".
  */
 export interface ContentMedia {
+  invertBackground?: boolean | null;
   title?: string | null;
   description?: string | null;
-  invertBackground?: boolean | null;
-  mediaPosition?: ('left' | 'right') | null;
+  mediaPosition: 'left' | 'right';
   richText: {
     [k: string]: unknown;
   }[];
@@ -303,6 +324,23 @@ export interface ContentMedia {
   id?: string | null;
   blockName?: string | null;
   blockType: 'content-media';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FAQ".
+ */
+export interface FAQ {
+  invertBackground?: boolean | null;
+  title?: string | null;
+  description?: string | null;
+  questions: {
+    question: string;
+    answer: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'faq';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -392,95 +430,97 @@ export interface PayloadMigration {
 export interface Setting {
   id: string;
   general: {
-    darkMode?: boolean | null;
+    enableDarkMode?: boolean | null;
   };
-  header: {
-    navigation: {
-      logo: string | Media;
-      style: 'classic' | 'dropdown' | 'megaMenu';
-      links: {
-        title?: string | null;
-        onlyLink: boolean;
-        href?: string | null;
-        columns?:
-          | {
-              type?: ('linkCol' | 'card') | null;
-              content?: {
-                title?: string | null;
-                description?: string | null;
-              };
-              linkColumn?:
-                | {
-                    title?: string | null;
-                    href?: string | null;
-                    description?: string | null;
-                    id?: string | null;
-                  }[]
-                | null;
-              id?: string | null;
-            }[]
-          | null;
-        subLinks?:
-          | {
-              title?: string | null;
-              href?: string | null;
-              description?: string | null;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-      }[];
-    };
-  };
-  footer: {
-    logo: string | Media;
-    companyInfo?: {
-      showAddress?: boolean | null;
-      showPhone?: boolean | null;
-      showEmail?: boolean | null;
-      showSocial?: boolean | null;
-    };
-    columns?:
-      | {
-          title?: string | null;
-          href?: string | null;
-          links?:
-            | {
-                title?: string | null;
-                href?: string | null;
-                id?: string | null;
-              }[]
-            | null;
-          id?: string | null;
-        }[]
-      | null;
-  };
+  header: Header;
+  footer: Footer;
+  company: Company;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "company".
+ * via the `definition` "Header".
+ */
+export interface Header {
+  logo: string | Media;
+  navigation: Navigation;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Navigation".
+ */
+export interface Navigation {
+  style: 'classic' | 'dropdown' | 'megaMenu';
+  links: {
+    linkTo: Link;
+    onlyLink: boolean;
+    columns?:
+      | {
+          type: 'linkCol' | 'card';
+          content?: CardNav;
+          linkColumn?: NavLinkColumn;
+          id?: string | null;
+        }[]
+      | null;
+    subLinks?:
+      | {
+          link: Link;
+          id?: string | null;
+        }[]
+      | null;
+    id?: string | null;
+  }[];
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CardNav".
+ */
+export interface CardNav {
+  title?: string | null;
+  description?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Footer".
+ */
+export interface Footer {
+  logo: string | Media;
+  companyInfo: {
+    showAddress: boolean;
+    showPhone: boolean;
+    showEmail: boolean;
+    showSocial: boolean;
+  };
+  columns: {
+    title: Link;
+    links: {
+      link: Link;
+      id?: string | null;
+    }[];
+    id?: string | null;
+  }[];
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Company".
  */
 export interface Company {
-  id: string;
-  name?: string | null;
+  name: string;
   founded?: string | null;
-  cnpj?: string | null;
+  cnpj: string;
   adress?: Address;
-  googleMaps?: string | null;
+  googleMaps: string;
   contact: {
-    email?: string | null;
-    phone?: string | null;
-    whatsapp?: string | null;
+    email: string;
+    phone: string;
+    whatsapp: string;
   };
   social: {
     facebook?: string | null;
     instagram?: string | null;
     linkedin?: string | null;
   };
-  updatedAt?: string | null;
-  createdAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

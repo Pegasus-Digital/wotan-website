@@ -8,7 +8,6 @@ import { Settings } from './settings'
 import Users from './users'
 import path from 'path'
 import { Media } from './media'
-import { Company } from './settings/company'
 import { Pages } from './settings/pages'
 import Products from './products'
 import Categories from './products/categories'
@@ -43,7 +42,7 @@ export default buildConfig({
     Clients,
     Salespersons,
   ],
-  globals: [Settings, Company],
+  globals: [Settings],
   // database-adapter-config-start
   // Todo: env variable validation
   db: mongooseAdapter({
