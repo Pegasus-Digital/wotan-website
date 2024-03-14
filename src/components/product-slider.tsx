@@ -10,7 +10,7 @@ import { ProductCard } from './product-card'
 import { Lead } from './typography/texts'
 import { buttonVariants } from './ui/button'
 import Link from 'next/link'
-import { Page, Product } from '@/payload/payload-types'
+import { Page } from '@/payload/payload-types'
 import { Heading } from '@/pegasus/heading'
 import { Button } from '@/pegasus/button'
 import { ArrowRight } from 'lucide-react'
@@ -43,6 +43,7 @@ export function ProductSlider({
                 return (
                   <CarouselItem className='max-w-[300px]' key={index}>
                     <ProductCard
+                      id={doc.value.id}
                       title={doc.value.title}
                       categories={doc.value.categories}
                     />

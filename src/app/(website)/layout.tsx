@@ -10,8 +10,10 @@ import { PegasusStamp } from '@/pegasus/pegasus-stamp'
 
 import { fetchSettings } from '../_api/fetchGlobals'
 import { Company, Setting } from '@/payload/payload-types'
+
 import { header } from '@/payload/fields/header'
 import { Toaster } from 'sonner'
+import { CartStoreProvider } from '@/components/cart-store-provider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -37,11 +39,14 @@ async function fetchConfigs() {
 export default async function RootLayout({
   children,
 }: Readonly<RootLayoutProps>) {
+
   let settings: Setting | null = await fetchConfigs()
 
   // console.log({ settings })
   const { header, footer, company } = settings
   const { adress, contact } = company
+
+  // TODO: If data doesn't exist on Payload, it should not break the deployment.
 
   return (
     <html lang='pt-BR' suppressHydrationWarning>
@@ -55,10 +60,12 @@ export default async function RootLayout({
           logo={header?.logo}
           navigation={header?.navigation}
           phone={contact?.phone}
-        />
-        <main className='flex min-h-screen flex-col items-center'>
-          {/* Header */}
-          <SearchBar />
+        /> */}
+        <CartStoreProvider>
+          <main className='flex min-h-screen flex-col items-center'>
+            {/* Header */}
+            <SearchBar />
+
 
           {children}
         </main>

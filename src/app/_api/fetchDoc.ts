@@ -29,7 +29,7 @@ export const fetchDoc = async <T>(args: {
       headers: {
         'Content-Type': 'application/json',
       },
-      cache: 'no-store',
+      // cache: 'no-store',
       next: { tags: [`${collection}_${slug}`] },
       body: JSON.stringify({
         query: querys[collection].query,

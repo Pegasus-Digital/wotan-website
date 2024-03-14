@@ -65,7 +65,6 @@ export function ContactContent() {
   })
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
     if (!values.acceptPrivacyPolicy) {
       toast.warning(
         'Formulário não enviado, é necessário aceitar os termos da Política de Privacidade.',

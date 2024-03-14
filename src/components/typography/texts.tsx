@@ -44,7 +44,7 @@ export function InlineCode({ className, ref, ...props }: CodeProps) {
   return (
     <code
       className={cn(
-        'bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold',
+        'relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold',
         className,
       )}
       ref={ref}
@@ -82,7 +82,7 @@ type MutedProps = React.ComponentProps<'p'>
 export function Muted({ className, ref, ...props }: MutedProps) {
   return (
     <p
-      className={cn('text-muted-foreground text-sm', className)}
+      className={cn('text-sm text-muted-foreground', className)}
       ref={ref}
       {...props}
     />
@@ -93,7 +93,7 @@ type LeadProps = React.ComponentProps<'p'>
 export function Lead({ className, ref, ...props }: LeadProps) {
   return (
     <p
-      className={cn('text-muted-foreground text-xl', className)}
+      className={cn('text-xl text-muted-foreground', className)}
       ref={ref}
       {...props}
     />

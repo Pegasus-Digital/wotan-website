@@ -3,20 +3,23 @@ import Link from 'next/link'
 
 function PegasusStamp() {
   return (
+
     <div className='bottom-0 z-50 flex h-16 w-full items-center justify-center gap-2 border-t border-white border-opacity-10 bg-transparent text-white'>
       Desenvolvido por
       <Link
         href='https://pegasusds.com.br'
         className='flex items-center gap-2 font-semibold  '
       >
-        <PegasusIcon />
+        <PegasusIcon className='h-8 w-8' />
         Pegasus Digital Solutions
       </Link>
     </div>
   )
 }
 
-function PegasusIcon() {
+type SVGProps = React.ComponentProps<'svg'>
+
+function PegasusIcon(props: SVGProps) {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
@@ -25,8 +28,7 @@ function PegasusIcon() {
       version='1.1'
       viewBox='0 0 32 32'
       xmlSpace='preserve'
-      width='32'
-      height='32'
+      {...props}
     >
       <path
         d='M20.1 29.4c-.5.2-1.1.3-1.7.4.4.6.8 1.1 1.2 1.6h.7c1.1-.3 2.1-.7 3.1-1.2-1-.1-2.1-.4-3.3-.8zM8.7 4c2.1-1.3 4.6-2 7.3-2 7.7 0 14 6.3 14 14 0 2.1-.5 4.1-1.3 5.9.1.2.1.3.2.5.4.7.6 1.5.6 2.3 1.6-2.5 2.5-5.4 2.5-8.6 0-8.8-7.2-16-16-16C10.4 0 5.5 2.8 2.7 7.2c1.8-1.4 3.8-2.5 6-3.2z'
@@ -43,4 +45,4 @@ function PegasusIcon() {
     </svg>
   )
 }
-export { PegasusStamp }
+export { PegasusStamp, PegasusIcon }
