@@ -1,3 +1,4 @@
+import { titleAndDesc } from '../../fields/titleAndDesc'
 import { invertBackground } from '../../fields/invertBackgroud'
 import { Block } from 'payload/types'
 
@@ -10,18 +11,13 @@ export const ClientGrid: Block = {
   },
   fields: [
     invertBackground,
-    {
-      name: 'title',
-      type: 'text',
-    },
-    {
-      name: 'description',
-      type: 'text',
-    },
+    ...titleAndDesc,
     {
       name: 'clients',
       type: 'array',
       minRows: 10,
+      maxRows: 50,
+      required: true,
       fields: [
         {
           name: 'logo',

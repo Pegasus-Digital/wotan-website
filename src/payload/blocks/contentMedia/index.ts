@@ -2,18 +2,12 @@ import type { Block } from 'payload/types'
 
 import { invertBackground } from '../../fields/invertBackgroud'
 import { slateEditor } from '@payloadcms/richtext-slate'
+import { titleAndDesc } from '../../fields/titleAndDesc'
 
 export const ContentMedia: Block = {
   fields: [
-    {
-      name: 'title',
-      type: 'text',
-    },
-    {
-      name: 'description',
-      type: 'text',
-    },
     invertBackground,
+    ...titleAndDesc,
     {
       name: 'mediaPosition',
       options: [
@@ -27,6 +21,8 @@ export const ContentMedia: Block = {
         },
       ],
       type: 'radio',
+      defaultValue: 'left',
+      required: true,
     },
     {
       name: 'richText', // required

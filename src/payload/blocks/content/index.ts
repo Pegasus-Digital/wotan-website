@@ -2,12 +2,14 @@ import type { Block, Field } from 'payload/types'
 
 import { invertBackground } from '../../fields/invertBackgroud'
 import { slateEditor } from '@payloadcms/richtext-slate'
+import { titleAndDesc } from '../../fields/titleAndDesc'
 
 const columnFields: Field[] = [
   {
     name: 'size',
     type: 'select',
     defaultValue: 'half',
+    required: true,
     options: [
       // {
       //   value: 'oneThird',
@@ -54,18 +56,12 @@ export const Content: Block = {
   },
   fields: [
     invertBackground,
-    {
-      name: 'title',
-      type: 'text',
-    },
-    {
-      name: 'description',
-      type: 'text',
-    },
+    ...titleAndDesc,
     {
       name: 'columns',
       type: 'array',
       fields: columnFields,
+      required: true,
     },
   ],
 }

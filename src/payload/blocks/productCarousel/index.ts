@@ -1,6 +1,8 @@
 import link from '../../fields/link'
 import { invertBackground } from '../../fields/invertBackgroud'
 import type { Block } from 'payload/types'
+import { titleAndDesc } from '../../fields/titleAndDesc'
+import { Label } from '@radix-ui/react-label'
 
 export const ProductCarousel: Block = {
   slug: 'product-carousel',
@@ -11,18 +13,12 @@ export const ProductCarousel: Block = {
   },
   fields: [
     invertBackground,
-    {
-      name: 'title',
-      type: 'text',
-    },
-    {
-      name: 'description',
-      type: 'text',
-    },
+    ...titleAndDesc,
     {
       name: 'populateBy',
       type: 'select',
       defaultValue: 'categories',
+      required: true,
       options: [
         {
           label: 'Categories',
@@ -45,21 +41,12 @@ export const ProductCarousel: Block = {
       },
     },
     {
-      type: 'number',
-      name: 'limit',
-      label: 'Limit',
-      defaultValue: 10,
-      admin: {
-        condition: (_, siblingData) => siblingData.populateBy === 'categories',
-        step: 1,
-      },
-    },
-    {
       type: 'relationship',
       name: 'selectedDocs',
       label: 'Selection',
       relationTo: ['products'],
       hasMany: true,
+      maxRows: 4,
       admin: {
         condition: (_, siblingData) => siblingData.populateBy === 'selection',
       },
@@ -77,16 +64,12 @@ export const ProductCarousel: Block = {
       },
     },
     {
-      type: 'number',
-      name: 'populatedDocsTotal',
-      label: 'Populated Docs Total',
-      admin: {
-        step: 1,
-        disabled: true,
-        description: 'This field is auto-populated after-read',
-        condition: (_, siblingData) => siblingData.populateBy === 'categories',
-      },
+      name: 'seeMore',
+      type: 'checkbox',
+      required: true,
+      defaultValue: true,
     },
-    link(),
+
+    link({ overrides: { name: 'seeMoreLink' } }),
   ],
 }
