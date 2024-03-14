@@ -1,13 +1,13 @@
 'use client'
 
-import { Atribute } from '@/payload/payload-types'
+import { Attribute } from '@/payload/payload-types'
 
 import { createStore } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
 export interface CartItem {
   productId: string
-  attributes: Atribute[]
+  attributes: Attribute[]
   amount: number
 }
 
@@ -18,6 +18,7 @@ interface State {
 interface Actions {
   add: (item: CartItem) => void
   remove: (item: CartItem) => void
+  update: (item: CartItem, newData: Partial<CartItem>) => void
 }
 
 export type Store = State & Actions
@@ -55,6 +56,22 @@ export const createCartStore = (initState: State = defaultInitState) => {
                 existingItem.attributes === item.attributes
               ),
           )
+
+          set({ cart: updatedCart })
+        },
+
+        update: (item, newData: CartItem) => {
+          const { cart } = get()
+
+          const updatedCart = cart.map((current) => {
+            if (
+              current.productId === item.productId &&
+              current.amount === item.amount &&
+              current.attributes === item.attributes
+            ) {
+              return { ...current, ...newData }
+            } else return current
+          })
 
           set({ cart: updatedCart })
         },

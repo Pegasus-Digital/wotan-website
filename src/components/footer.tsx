@@ -99,7 +99,7 @@ export function Footer({
               {'Facebook'}
             </Lead>
 
-            <iframe
+            {/* <iframe
               src='https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fwotanbrindes%2F&tabs=timeline&width=340&height=271&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=true&appId=1385369231684652'
               // style='border:none;overflow:hidden'
               scrolling='no'
@@ -109,7 +109,7 @@ export function Footer({
               height={271}
               allow='autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share'
               className='h-full w-full'
-            ></iframe>
+            /> */}
           </div>
         </div>
       </div>

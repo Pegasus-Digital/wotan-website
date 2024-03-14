@@ -31,7 +31,7 @@ export function ProductCardActions({ productId }: ProductCardActions) {
       attributes: [],
     })
 
-    toast('Produto adicionado ao carrinho.', {
+    toast.success('Produto adicionado ao carrinho.', {
       icon: <PlusCircle className='h-5 w-5' />,
     })
   }
