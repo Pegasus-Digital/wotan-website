@@ -1,32 +1,28 @@
 import { invertBackground } from '../../fields/invertBackgroud'
-import type { Block } from 'payload/types'
 import { titleAndDesc } from '../../fields/titleAndDesc'
+import { Block } from 'payload/types'
 
-export const StatisticSection: Block = {
-  slug: 'statistic-section',
-  interfaceName: 'StatisticSection',
-  labels: {
-    singular: 'Statistic Section',
-    plural: 'Statistic Sections',
-  },
+export const FAQ: Block = {
+  slug: 'faq',
+  interfaceName: 'FAQ',
   fields: [
     invertBackground,
     ...titleAndDesc,
     {
-      name: 'statistics',
+      name: 'questions',
       type: 'array',
+      minRows: 1,
+      maxRows: 10,
       required: true,
-      minRows: 2,
-      maxRows: 4,
       fields: [
         {
-          name: 'title',
+          name: 'question',
           type: 'text',
           required: true,
         },
         {
-          name: 'value',
-          type: 'text',
+          name: 'answer',
+          type: 'textarea',
           required: true,
         },
       ],

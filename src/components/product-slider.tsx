@@ -12,6 +12,8 @@ import { buttonVariants } from './ui/button'
 import Link from 'next/link'
 import { Page } from '@/payload/payload-types'
 import { Heading } from '@/pegasus/heading'
+import { Button } from '@/pegasus/button'
+import { ArrowRight } from 'lucide-react'
 
 export type ProductSliderProps = Extract<
   Page['layout'][0],
@@ -25,21 +27,21 @@ export function ProductSlider({
 }: ProductSliderProps) {
   return (
     <section className='w-full overflow-x-hidden'>
-      <div className='flex w-full flex-col space-y-2 desktop:container'>
-        <div className='mb-3 flex flex-col gap-2 text-center'>
+      <div className='flex w-full flex-col gap-4 desktop:container'>
+        <div className='flex flex-col gap-2 text-center'>
           <Heading variant='h2'>{title}</Heading>
           <Lead>{description}</Lead>
         </div>
 
         <Carousel
-          className='w-full border-x'
+          className=' w-full border-x'
           opts={{ align: 'center', loop: true }}
         >
           <CarouselContent>
             {selectedDocs.map((doc, index) => {
               if (typeof doc.value !== 'string') {
                 return (
-                  <CarouselItem className='max-w-[300px] shadow-sm' key={index}>
+                  <CarouselItem className='max-w-[300px]' key={index}>
                     <ProductCard
                       id={doc.value.id}
                       title={doc.value.title}
@@ -54,15 +56,16 @@ export function ProductSlider({
           <CarouselNext className='hidden desktop:flex' />
         </Carousel>
 
-        <Link
-          href='/see-more'
-          className={buttonVariants({
-            size: 'lg',
-            className: 'self-center',
-          })}
+        <Button
+          className='self-center'
+          size='lg'
+          variant='expandIcon'
+          Icon={ArrowRight}
+          iconPlacement='right'
+          asChild
         >
-          Ver mais
-        </Link>
+          <Link href='/see-more'>Ver mais</Link>
+        </Button>
       </div>
     </section>
   )

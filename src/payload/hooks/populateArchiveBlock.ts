@@ -30,7 +30,7 @@ export const populateArchiveBlock: AfterReadHook = async ({
           const res: { totalDocs: number; docs: Product[] } =
             await payload.find({
               collection: 'products',
-              limit: archiveBlock.limit || 10,
+              limit: 10,
               context: {
                 isPopulatingArchiveBlock: true,
               },

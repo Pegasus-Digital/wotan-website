@@ -1501,6 +1501,11 @@
     prompts "2.4.2"
     uuid "9.0.0"
 
+"@payloadcms/plugin-nested-docs@^1.0.12":
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/@payloadcms/plugin-nested-docs/-/plugin-nested-docs-1.0.12.tgz#57723fdd1eec3c26a69f0662ee9b05d2ca0269c7"
+  integrity sha512-CZcfGjN3nUtlAHHlbjgnmiB+lPCw3X7CNN2t2IL5+n94OH98Kwfnu+qhPV/ALm1JAWMY0sQ46kRIwWHij016Nw==
+
 "@payloadcms/richtext-lexical@^0.7.0":
   version "0.7.0"
   resolved "https://registry.npmjs.org/@payloadcms/richtext-lexical/-/richtext-lexical-0.7.0.tgz"

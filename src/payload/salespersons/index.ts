@@ -1,9 +1,9 @@
 import { CollectionConfig } from 'payload/types'
 import { adminsOrLoggedIn, admins, adminsOrSelf } from '../access'
-import { ensureFirstUserIsAdmin } from './hooks/ensureFirstUserIsAdmin'
+// import { ensureFirstUserIsAdmin } from './hooks/ensureFirstUserIsAdmin'
 
-const Users: CollectionConfig = {
-  slug: 'users',
+const Salespersons: CollectionConfig = {
+  slug: 'salespersons',
   access: {
     read: adminsOrLoggedIn,
     create: admins,
@@ -11,7 +11,7 @@ const Users: CollectionConfig = {
     delete: admins,
   },
   admin: {
-    group: 'Settings',
+    group: 'Vendors',
     useAsTitle: 'name',
     defaultColumns: ['name', 'email'],
   },
@@ -20,26 +20,20 @@ const Users: CollectionConfig = {
     {
       name: 'name',
       type: 'text',
+      required: true,
     },
     {
       name: 'roles',
       type: 'select',
-      hasMany: true,
       required: true,
-      defaultValue: ['user'],
+      defaultValue: ['representative'],
       options: [
-        {
-          label: 'admin',
-          value: 'admin',
-        },
-        {
-          label: 'user',
-          value: 'user',
-        },
+        { label: 'internal', value: 'internal' },
+        { label: 'representative', value: 'representative' },
       ],
-      hooks: {
-        beforeChange: [ensureFirstUserIsAdmin],
-      },
+      // hooks: {
+      //   beforeChange: [ensureFirstUserIsAdmin],
+      // },
       access: {
         read: admins,
         create: admins,
@@ -54,4 +48,4 @@ const Users: CollectionConfig = {
   timestamps: true,
 }
 
-export default Users
+export default Salespersons

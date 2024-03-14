@@ -1,14 +1,25 @@
 import { CollectionConfig } from 'payload/types'
+
+// Access
 import { admins, adminsOrPublished } from '../../access'
-import { slugField } from '../../fields/slug'
-import { revalidatePage } from './hooks/revalidatePage'
-import { ProductCarousel } from '../../blocks/productCarousel'
-import { populateArchiveBlock } from '../../hooks/populateArchiveBlock'
-import { FeaturedSection } from '../../blocks/featuredSection'
-import { StatisticSection } from '../../blocks/statistics'
-import { Content } from '../../blocks/content'
+
+// Blocks
 import { ClientGrid } from '../../blocks/clientGrid'
+import { Content } from '../../blocks/content'
 import { ContentMedia } from '../../blocks/contentMedia'
+import { FeaturedSection } from '../../blocks/featuredSection'
+import { ProductCarousel } from '../../blocks/productCarousel'
+import { StatisticSection } from '../../blocks/statistics'
+import { FAQ } from '../../blocks/faq'
+
+// Fields
+import { hero } from '../../fields/hero'
+import { slugField } from '../../fields/slug'
+
+// Hooks
+import { revalidatePage } from './hooks/revalidatePage'
+import { populateArchiveBlock } from '../../hooks/populateArchiveBlock'
+
 export const Pages: CollectionConfig = {
   slug: 'pages',
   admin: {
@@ -41,6 +52,17 @@ export const Pages: CollectionConfig = {
       required: true,
     },
     {
+      name: 'description',
+      type: 'text',
+      admin: {
+        condition: (data) => {
+          console.log('desc:')
+          console.log({ data })
+          return data.slug !== 'home'
+        },
+      },
+    },
+    {
       name: 'publishedOn',
       type: 'date',
       admin: {
@@ -60,53 +82,46 @@ export const Pages: CollectionConfig = {
         ],
       },
     },
+
     {
-      type: 'tabs',
-      tabs: [
+      name: 'carousel',
+      type: 'array',
+      required: true,
+      minRows: 1,
+      maxRows: 3,
+      fields: [
         {
-          label: 'Hero',
-          fields: [
-            {
-              name: 'carousel',
-              type: 'array',
-              required: true,
-              minRows: 1,
-              maxRows: 3,
-              fields: [
-                {
-                  name: 'image',
-                  type: 'upload',
-                  relationTo: 'media',
-                  required: true,
-                },
-              ],
-              admin: {
-                description:
-                  'Image should be 1920x420 with the content centered around 1280x420',
-              },
-            },
-          ],
-        },
-        {
-          label: 'Content',
-          fields: [
-            {
-              name: 'layout',
-              type: 'blocks',
-              required: true,
-              blocks: [
-                ProductCarousel,
-                FeaturedSection,
-                StatisticSection,
-                Content,
-                ClientGrid,
-                ContentMedia,
-              ],
-            },
-          ],
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          required: true,
         },
       ],
+      admin: {
+        description:
+          'Image should be 1920x420 with the content centered around 1280x420',
+        condition: (data, siblingData) => {
+          console.log({ data, siblingData })
+          return data.slug === 'home'
+        },
+      },
     },
+
+    {
+      name: 'layout',
+      type: 'blocks',
+      required: true,
+      blocks: [
+        ProductCarousel,
+        FeaturedSection,
+        StatisticSection,
+        Content,
+        ClientGrid,
+        ContentMedia,
+        FAQ,
+      ],
+    },
+
     slugField(),
   ],
 }

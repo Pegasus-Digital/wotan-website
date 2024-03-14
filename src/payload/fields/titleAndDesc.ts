@@ -1,13 +1,8 @@
 import { Field } from 'payload/types'
 
-export const navLink: Field[] = [
+export const titleAndDesc: Field[] = [
   {
     name: 'title',
-    type: 'text',
-  },
-  {
-    //todo: change to relation to page
-    name: 'href',
     type: 'text',
   },
   {

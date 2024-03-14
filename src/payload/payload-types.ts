@@ -6,22 +6,35 @@
  * and re-run `payload generate:types` to regenerate this file.
  */
 
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NavLinkColumn".
+ */
+export type NavLinkColumn =
+  | {
+      link: Link;
+      description?: string | null;
+      id?: string | null;
+    }[]
+  | null;
+
 export interface Config {
   collections: {
     products: Product;
     categories: Category;
-    atributes: Atribute;
+    attributes: Attribute;
+    'attribute-types': AttributeType;
     budget: Budget;
     users: User;
     media: Media;
     pages: Page;
     clients: Client;
+    salespersons: Salesperson;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
   globals: {
     settings: Setting;
-    company: Company;
   };
 }
 /**
@@ -33,10 +46,17 @@ export interface Product {
   title: string;
   publishedOn?: string | null;
   sku?: string | null;
-  minimumQuantity?: number | null;
-  attributes?: (string | Atribute)[] | null;
-  featuredImage?: string | Media | null;
-  images?: string | Media | null;
+  minimumQuantity: number;
+  stockQuantity?: number | null;
+  active: boolean;
+  attributes?: (string | Attribute)[] | null;
+  price?: number | null;
+  description?: string | null;
+  featuredImage: string | Media;
+  images: {
+    image?: string | Media | null;
+    id?: string | null;
+  }[];
   categories?: (string | Category)[] | null;
   relatedProducts?: (string | Product)[] | null;
   slug?: string | null;
@@ -46,13 +66,24 @@ export interface Product {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "atributes".
+ * via the `definition` "attributes".
  */
-export interface Atribute {
+export interface Attribute {
   id: string;
-  type?: ('color' | 'text') | null;
-  title?: string | null;
-  value?: string | null;
+  name: string;
+  value: string;
+  type: string | AttributeType;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "attribute-types".
+ */
+export interface AttributeType {
+  id: string;
+  name: string;
+  type: 'label' | 'color';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -77,6 +108,16 @@ export interface Media {
 export interface Category {
   id: string;
   title?: string | null;
+  slug?: string | null;
+  parent?: (string | null) | Category;
+  breadcrumbs?:
+    | {
+        doc?: (string | null) | Category;
+        url?: string | null;
+        label?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -86,16 +127,14 @@ export interface Category {
  */
 export interface Budget {
   id: string;
-  orderedBy?: (string | null) | User;
   total: number;
-  items?:
-    | {
-        product: string | Product;
-        price?: number | null;
-        quantity?: number | null;
-        id?: string | null;
-      }[]
-    | null;
+  items: {
+    product: string | Product;
+    attributes?: (string | Attribute)[] | null;
+    quantity: number;
+    price?: number | null;
+    id?: string | null;
+  }[];
   updatedAt: string;
   createdAt: string;
 }
@@ -106,7 +145,7 @@ export interface Budget {
 export interface User {
   id: string;
   name?: string | null;
-  roles?: ('admin' | 'user')[] | null;
+  roles: ('admin' | 'user')[];
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -125,121 +164,15 @@ export interface User {
 export interface Page {
   id: string;
   title: string;
+  description?: string | null;
   publishedOn?: string | null;
-  carousel: {
-    image: string | Media;
-    id?: string | null;
-  }[];
-  layout: (
+  carousel?:
     | {
-        invertBackground?: boolean | null;
-        title?: string | null;
-        description?: string | null;
-        populateBy?: ('categories' | 'selection') | null;
-        categories?: (string | Category)[] | null;
-        limit?: number | null;
-        selectedDocs?:
-          | {
-              relationTo: 'products';
-              value: string | Product;
-            }[]
-          | null;
-        populatedDocs?:
-          | {
-              relationTo: 'products';
-              value: string | Product;
-            }[]
-          | null;
-        populatedDocsTotal?: number | null;
+        image: string | Media;
         id?: string | null;
-        blockName?: string | null;
-        blockType: 'product-carousel';
-      }
-    | {
-        invertBackground?: boolean | null;
-        title?: string | null;
-        description?: string | null;
-        cards?:
-          | {
-              title?: string | null;
-              description?: string | null;
-              image?: string | Media | null;
-              linkTo?:
-                | ({
-                    relationTo: 'categories';
-                    value: string | Category;
-                  } | null)
-                | ({
-                    relationTo: 'products';
-                    value: string | Product;
-                  } | null);
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'featured-section';
-      }
-    | {
-        invertBackground?: boolean | null;
-        title?: string | null;
-        description?: string | null;
-        statistics?:
-          | {
-              title?: string | null;
-              value?: string | null;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'statistic-section';
-      }
-    | {
-        invertBackground?: boolean | null;
-        title?: string | null;
-        description?: string | null;
-        columns?:
-          | {
-              size?: ('half' | 'full') | null;
-              text: {
-                [k: string]: unknown;
-              }[];
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'content-section';
-      }
-    | {
-        invertBackground?: boolean | null;
-        title?: string | null;
-        description?: string | null;
-        clients?:
-          | {
-              logo: string | Media;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'client-grid';
-      }
-    | {
-        title?: string | null;
-        description?: string | null;
-        invertBackground?: boolean | null;
-        mediaPosition?: ('left' | 'right') | null;
-        richText: {
-          [k: string]: unknown;
-        }[];
-        media: string | Media;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'content-media';
-      }
-  )[];
+      }[]
+    | null;
+  layout: (ProductCarousel | FeaturedSection | StatisticSection | ContentSection | ClientGrid | ContentMedia | FAQ)[];
   slug?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -247,56 +180,199 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProductCarousel".
+ */
+export interface ProductCarousel {
+  invertBackground?: boolean | null;
+  title?: string | null;
+  description?: string | null;
+  populateBy: 'categories' | 'selection';
+  categories?: (string | Category)[] | null;
+  selectedDocs?:
+    | {
+        relationTo: 'products';
+        value: string | Product;
+      }[]
+    | null;
+  populatedDocs?:
+    | {
+        relationTo: 'products';
+        value: string | Product;
+      }[]
+    | null;
+  seeMore: boolean;
+  seeMoreLink: Link;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'product-carousel';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Link".
+ */
+export interface Link {
+  type?: ('reference' | 'custom') | null;
+  newTab: boolean;
+  reference?:
+    | ({
+        relationTo: 'pages';
+        value: string | Page;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: string | Product;
+      } | null)
+    | ({
+        relationTo: 'categories';
+        value: string | Category;
+      } | null);
+  url?: string | null;
+  label: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeaturedSection".
+ */
+export interface FeaturedSection {
+  invertBackground?: boolean | null;
+  title?: string | null;
+  description?: string | null;
+  cards: {
+    title: string;
+    description: string;
+    image: string | Media;
+    linkTo:
+      | {
+          relationTo: 'categories';
+          value: string | Category;
+        }
+      | {
+          relationTo: 'products';
+          value: string | Product;
+        };
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'featured-section';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "StatisticSection".
+ */
+export interface StatisticSection {
+  invertBackground?: boolean | null;
+  title?: string | null;
+  description?: string | null;
+  statistics: {
+    title: string;
+    value: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'statistic-section';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContentSection".
+ */
+export interface ContentSection {
+  invertBackground?: boolean | null;
+  title?: string | null;
+  description?: string | null;
+  columns: {
+    size: 'half' | 'full';
+    text: {
+      [k: string]: unknown;
+    }[];
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'content-section';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ClientGrid".
+ */
+export interface ClientGrid {
+  invertBackground?: boolean | null;
+  title?: string | null;
+  description?: string | null;
+  clients: {
+    logo: string | Media;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'client-grid';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ContentMedia".
+ */
+export interface ContentMedia {
+  invertBackground?: boolean | null;
+  title?: string | null;
+  description?: string | null;
+  mediaPosition: 'left' | 'right';
+  richText: {
+    [k: string]: unknown;
+  }[];
+  media: string | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'content-media';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FAQ".
+ */
+export interface FAQ {
+  invertBackground?: boolean | null;
+  title?: string | null;
+  description?: string | null;
+  questions: {
+    question: string;
+    answer: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'faq';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "clients".
  */
 export interface Client {
   id: string;
-  contact: {
+  name?: string | null;
+  razaosocial?: string | null;
+  type: 'company' | 'individual';
+  document?: string | null;
+  contacts: {
     name?: string | null;
-    type?: ('company' | 'individual') | null;
+    email?: string | null;
     phone?: string | null;
-  };
-  address: {
-    adress?: {
-      street?: string | null;
-      number?: string | null;
-      neighborhood?: string | null;
-      city?: string | null;
-      state?:
-        | (
-            | 'AC'
-            | 'AL'
-            | 'AP'
-            | 'AM'
-            | 'BA'
-            | 'CE'
-            | 'DF'
-            | 'ES'
-            | 'GO'
-            | 'MA'
-            | 'MS'
-            | 'MT'
-            | 'MG'
-            | 'PA'
-            | 'PB'
-            | 'PR'
-            | 'PE'
-            | 'PI'
-            | 'RJ'
-            | 'RN'
-            | 'RS'
-            | 'RO'
-            | 'RR'
-            | 'SC'
-            | 'SP'
-            | 'SE'
-            | 'TO'
-          )
-        | null;
-      cep?: string | null;
-    };
-  };
-  roles?: ('active' | 'inactive' | 'prospective')[] | null;
+    whatsapp?: string | null;
+    id?: string | null;
+  }[];
+  clientSince?: string | null;
+  salesperson: string | Salesperson;
+  roles: 'active' | 'inactive' | 'prospect';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "salespersons".
+ */
+export interface Salesperson {
+  id: string;
+  name: string;
+  roles: 'internal' | 'representative';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -320,8 +396,8 @@ export interface PayloadPreference {
         value: string | User;
       }
     | {
-        relationTo: 'clients';
-        value: string | Client;
+        relationTo: 'salespersons';
+        value: string | Salesperson;
       };
   key?: string | null;
   value?:
@@ -354,137 +430,139 @@ export interface PayloadMigration {
 export interface Setting {
   id: string;
   general: {
-    darkMode?: boolean | null;
+    enableDarkMode?: boolean | null;
   };
-  header: {
-    navigation: {
-      logo: string | Media;
-      style: 'classic' | 'dropdown' | 'megaMenu';
-      links: {
-        title?: string | null;
-        onlyLink: boolean;
-        href?: string | null;
-        columns?:
-          | {
-              type?: ('linkCol' | 'card') | null;
-              content?: {
-                title?: string | null;
-                description?: string | null;
-              };
-              linkColumn?:
-                | {
-                    title?: string | null;
-                    href?: string | null;
-                    description?: string | null;
-                    id?: string | null;
-                  }[]
-                | null;
-              id?: string | null;
-            }[]
-          | null;
-        subLinks?:
-          | {
-              title?: string | null;
-              href?: string | null;
-              description?: string | null;
-              id?: string | null;
-            }[]
-          | null;
-        id?: string | null;
-      }[];
-    };
-  };
-  footer: {
-    logo: string | Media;
-    companyInfo?: {
-      showAddress?: boolean | null;
-      showPhone?: boolean | null;
-      showEmail?: boolean | null;
-      showSocial?: boolean | null;
-    };
-    columns?:
-      | {
-          title?: string | null;
-          href?: string | null;
-          links?:
-            | {
-                title?: string | null;
-                href?: string | null;
-                id?: string | null;
-              }[]
-            | null;
-          id?: string | null;
-        }[]
-      | null;
-  };
+  header: Header;
+  footer: Footer;
+  company: Company;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "company".
+ * via the `definition` "Header".
+ */
+export interface Header {
+  logo: string | Media;
+  navigation: Navigation;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Navigation".
+ */
+export interface Navigation {
+  style: 'classic' | 'dropdown' | 'megaMenu';
+  links: {
+    linkTo: Link;
+    onlyLink: boolean;
+    columns?:
+      | {
+          type: 'linkCol' | 'card';
+          content?: CardNav;
+          linkColumn?: NavLinkColumn;
+          id?: string | null;
+        }[]
+      | null;
+    subLinks?:
+      | {
+          link: Link;
+          id?: string | null;
+        }[]
+      | null;
+    id?: string | null;
+  }[];
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CardNav".
+ */
+export interface CardNav {
+  title?: string | null;
+  description?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Footer".
+ */
+export interface Footer {
+  logo: string | Media;
+  companyInfo: {
+    showAddress: boolean;
+    showPhone: boolean;
+    showEmail: boolean;
+    showSocial: boolean;
+  };
+  columns: {
+    title: Link;
+    links: {
+      link: Link;
+      id?: string | null;
+    }[];
+    id?: string | null;
+  }[];
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Company".
  */
 export interface Company {
-  id: string;
-  general: {
-    name?: string | null;
-    founded?: string | null;
-    cnpj?: string | null;
-  };
-  adress: {
-    adress?: {
-      street?: string | null;
-      number?: string | null;
-      neighborhood?: string | null;
-      city?: string | null;
-      state?:
-        | (
-            | 'AC'
-            | 'AL'
-            | 'AP'
-            | 'AM'
-            | 'BA'
-            | 'CE'
-            | 'DF'
-            | 'ES'
-            | 'GO'
-            | 'MA'
-            | 'MS'
-            | 'MT'
-            | 'MG'
-            | 'PA'
-            | 'PB'
-            | 'PR'
-            | 'PE'
-            | 'PI'
-            | 'RJ'
-            | 'RN'
-            | 'RS'
-            | 'RO'
-            | 'RR'
-            | 'SC'
-            | 'SP'
-            | 'SE'
-            | 'TO'
-          )
-        | null;
-      cep?: string | null;
-    };
-    googleMaps?: string | null;
-  };
+  name: string;
+  founded?: string | null;
+  cnpj: string;
+  adress?: Address;
+  googleMaps: string;
   contact: {
-    email?: string | null;
-    phone?: string | null;
-    whatsapp?: string | null;
+    email: string;
+    phone: string;
+    whatsapp: string;
   };
   social: {
     facebook?: string | null;
     instagram?: string | null;
     linkedin?: string | null;
-    twitter?: string | null;
   };
-  updatedAt?: string | null;
-  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Address".
+ */
+export interface Address {
+  street?: string | null;
+  number?: string | null;
+  neighborhood?: string | null;
+  city?: string | null;
+  state?:
+    | (
+        | 'AC'
+        | 'AL'
+        | 'AP'
+        | 'AM'
+        | 'BA'
+        | 'CE'
+        | 'DF'
+        | 'ES'
+        | 'GO'
+        | 'MA'
+        | 'MS'
+        | 'MT'
+        | 'MG'
+        | 'PA'
+        | 'PB'
+        | 'PR'
+        | 'PE'
+        | 'PI'
+        | 'RJ'
+        | 'RN'
+        | 'RS'
+        | 'RO'
+        | 'RR'
+        | 'SC'
+        | 'SP'
+        | 'SE'
+        | 'TO'
+      )
+    | null;
+  cep?: string | null;
 }
 
 

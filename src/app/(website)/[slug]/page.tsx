@@ -6,8 +6,8 @@ import { fetchDocs } from '@/app/_api/fetchDocs'
 import { notFound } from 'next/navigation'
 
 import { Sections } from '@/components/sections'
-import Hero from '../../../app/_sections/hero'
-import { HeroTest } from '@/app/_sections/hero-test'
+import { Hero } from '@/components/heros'
+import { SlideshowHero } from '@/app/_sections/heros/slideshow'
 
 async function fetchPage(slug: string) {
   try {
@@ -26,11 +26,15 @@ export default async function Page({ params: { slug = 'home' } }) {
 
   if (!page) return notFound()
 
-  const { layout } = page
+  const { title, description, layout } = page
   // console.log(layout)
   return (
     <>
-      <HeroTest />
+      {slug === 'home' ? (
+        <SlideshowHero />
+      ) : (
+        <Hero title={title} description={description} />
+      )}
       <Sections sections={layout} />
     </>
   )

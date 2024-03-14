@@ -8,8 +8,10 @@ import { Footer } from '@/components/footer'
 import { SearchBar } from '@/components/search-bar'
 import { PegasusStamp } from '@/pegasus/pegasus-stamp'
 
-import { fetchCompany, fetchSettings } from '../_api/fetchGlobals'
+import { fetchSettings } from '../_api/fetchGlobals'
 import { Company, Setting } from '@/payload/payload-types'
+
+import { header } from '@/payload/fields/header'
 import { Toaster } from 'sonner'
 import { CartStoreProvider } from '@/components/cart-store-provider'
 
@@ -34,26 +36,15 @@ async function fetchConfigs() {
   }
 }
 
-async function fetchCompanyInfo() {
-  try {
-    const settings = await fetchCompany()
-    // console.log(settings)
-    return settings
-  } catch (error) {
-    console.error(error)
-  }
-}
-
 export default async function RootLayout({
   children,
 }: Readonly<RootLayoutProps>) {
-  // let settings: Setting | null = await fetchConfigs()
-  // let companyInfo: Company | null = await fetchCompanyInfo()
 
-  // const { header, footer } = settings
-  // const { adress, contact } = companyInfo
+  let settings: Setting | null = await fetchConfigs()
 
-  // console.log({ header })
+  // console.log({ settings })
+  const { header, footer, company } = settings
+  const { adress, contact } = company
 
   // TODO: If data doesn't exist on Payload, it should not break the deployment.
 
@@ -62,13 +53,12 @@ export default async function RootLayout({
       <body
         className={cn(
           inter.className,
-          'bg-pattern bg-right bg-repeat-y text-foreground antialiased',
+          'min-w-96 bg-pattern bg-right bg-repeat-y text-foreground antialiased',
         )}
       >
-        {/* <Header
-          logo={header?.navigation?.logo}
-          links={header?.navigation?.links}
-          style={header?.navigation?.style}
+        <Header
+          logo={header?.logo}
+          navigation={header?.navigation}
           phone={contact?.phone}
         /> */}
         <CartStoreProvider>
@@ -76,20 +66,16 @@ export default async function RootLayout({
             {/* Header */}
             <SearchBar />
 
-            {children}
 
-            {/* <Footer
-            logo={footer?.logo}
-            companyInfo={footer.companyInfo}
-            columns={footer.columns}
-            adress={adress}
-            contact={contact}
-          /> */}
-            {/* Developed by Pegasus */}
-            <PegasusStamp />
-          </main>
-        </CartStoreProvider>
-
+          {children}
+        </main>
+        <Footer
+          logo={footer?.logo}
+          companyInfo={footer.companyInfo}
+          columns={footer.columns}
+          adress={adress}
+          contact={contact}
+        />
         <Toaster richColors closeButton theme='light' />
       </body>
     </html>

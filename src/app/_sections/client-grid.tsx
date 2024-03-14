@@ -1,13 +1,10 @@
 import { Media } from '@/components/media'
 import { H1 } from '@/components/typography/headings'
 import { Lead } from '@/components/typography/texts'
-import { Page } from '@/payload/payload-types'
+import { Page, ClientGrid as ClientGridType } from '@/payload/payload-types'
 import { Heading } from '@/pegasus/heading'
 
-type ClientGridProps = Extract<
-  Page['layout'][0],
-  { blockType: 'client-grid' }
-> & {
+type ClientGridProps = ClientGridType & {
   id?: string
 }
 

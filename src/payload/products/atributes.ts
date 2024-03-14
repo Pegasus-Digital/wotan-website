@@ -1,42 +1,61 @@
 import { CollectionConfig } from 'payload/types'
-import { ColourTextField } from '@nouance/payload-better-fields-plugin'
 
-const Atributes: CollectionConfig = {
-  slug: 'atributes',
+const AttributeTypes: CollectionConfig = {
+  slug: 'attribute-types',
   admin: {
     group: 'Catalogue',
-    useAsTitle: 'value',
-    listSearchableFields: ['title', 'value'],
-    defaultColumns: ['title', 'type', 'value'],
+    useAsTitle: 'name',
   },
   fields: [
     {
-      type: 'select',
+      name: 'name',
+      type: 'text',
+      label: 'Name',
+      required: true,
+    },
+    {
       name: 'type',
-      label: 'Type',
+      type: 'select',
+      required: true,
       options: [
+        {
+          label: 'Label',
+          value: 'label',
+        },
         {
           label: 'Color',
           value: 'color',
         },
-        {
-          label: 'Text',
-          value: 'text',
-        },
       ],
-    },
-    {
-      name: 'title',
-      type: 'text',
-      label: 'Name',
-    },
-    {
-      name: 'value',
-      type: 'text',
-      label: 'Value',
     },
   ],
   timestamps: false,
 }
 
-export default Atributes
+const Attributes: CollectionConfig = {
+  slug: 'attributes',
+  admin: {
+    group: 'Catalogue',
+    useAsTitle: 'name',
+  },
+  fields: [
+    {
+      name: 'name',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'value',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'type',
+      type: 'relationship',
+      relationTo: 'attribute-types',
+      required: true,
+    },
+  ],
+}
+
+export { AttributeTypes, Attributes }
