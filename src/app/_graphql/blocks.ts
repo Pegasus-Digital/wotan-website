@@ -4,7 +4,6 @@ export const QUERY_PRODUCT_CAROUSEL = `
   title
   description
   populateBy
-  limit
   selectedDocs{
     relationTo
     value {
@@ -12,9 +11,7 @@ export const QUERY_PRODUCT_CAROUSEL = `
         id
         slug
         title
-        images {
-          filename
-        }
+
         categories {
           title
         }

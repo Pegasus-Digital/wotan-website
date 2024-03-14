@@ -27,14 +27,7 @@ query Page($slug: String){
       slug
       description
 
-      layout{
-       ${QUERY_PRODUCT_CAROUSEL}
-       ${QUERY_STATISTICS_SECTION}
-       ${QUERY_FEATURED_SECTION}
-       ${QUERY_CONTENT_SECTION}
-       ${QUERY_CLIENT_GRID}
-       ${QUERY_CONTENT_MEDIA}
-      }
+
       publishedOn
     }
   }
