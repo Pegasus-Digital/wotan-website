@@ -66,7 +66,7 @@ export const QUERY_CONTENT_SECTION = `
 }
 `
 export const QUERY_CLIENT_GRID = `
-... on ClientGrid{
+... on ClientGrid {
   title
   description
   clients{
@@ -85,7 +85,7 @@ export const QUERY_CLIENT_GRID = `
 `
 
 export const QUERY_CONTENT_MEDIA = `
-... on ContentMediaSection{
+... on ContentMedia {
   title
   description
   invertBackground

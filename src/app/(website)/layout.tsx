@@ -39,7 +39,6 @@ async function fetchConfigs() {
 export default async function RootLayout({
   children,
 }: Readonly<RootLayoutProps>) {
-
   let settings: Setting | null = await fetchConfigs()
 
   // console.log({ settings })
@@ -56,26 +55,26 @@ export default async function RootLayout({
           'min-w-96 bg-pattern bg-right bg-repeat-y text-foreground antialiased',
         )}
       >
-        <Header
-          logo={header?.logo}
-          navigation={header?.navigation}
-          phone={contact?.phone}
-        /> */}
         <CartStoreProvider>
+          <Header
+            logo={header?.logo}
+            navigation={header?.navigation}
+            phone={contact?.phone}
+          />
           <main className='flex min-h-screen flex-col items-center'>
             {/* Header */}
             <SearchBar />
 
-
-          {children}
-        </main>
-        <Footer
-          logo={footer?.logo}
-          companyInfo={footer.companyInfo}
-          columns={footer.columns}
-          adress={adress}
-          contact={contact}
-        />
+            {children}
+          </main>
+          <Footer
+            logo={footer?.logo}
+            companyInfo={footer.companyInfo}
+            columns={footer.columns}
+            adress={adress}
+            contact={contact}
+          />
+        </CartStoreProvider>
         <Toaster richColors closeButton theme='light' />
       </body>
     </html>

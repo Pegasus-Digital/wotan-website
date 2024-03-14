@@ -46,7 +46,8 @@ export const ProductCarousel: Block = {
       label: 'Selection',
       relationTo: ['products'],
       hasMany: true,
-      maxRows: 4,
+      minRows: 6,
+      maxRows: 10,
       admin: {
         condition: (_, siblingData) => siblingData.populateBy === 'selection',
       },
