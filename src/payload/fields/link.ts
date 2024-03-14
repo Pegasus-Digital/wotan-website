@@ -25,10 +25,15 @@ type LinkType = (options?: {
   overrides?: Record<string, unknown>
 }) => Field
 
-const link: LinkType = ({ appearances, disableLabel = false, overrides = {} } = {}) => {
+const link: LinkType = ({
+  appearances,
+  disableLabel = false,
+  overrides = {},
+} = {}) => {
   const linkResult: Field = {
     name: 'link',
     type: 'group',
+    interfaceName: 'Link',
     admin: {
       hideGutter: true,
     },
@@ -59,6 +64,8 @@ const link: LinkType = ({ appearances, disableLabel = false, overrides = {} } = 
             name: 'newTab',
             label: 'Open in new tab',
             type: 'checkbox',
+            required: true,
+            defaultValue: false,
             admin: {
               width: '50%',
               style: {
@@ -76,7 +83,7 @@ const link: LinkType = ({ appearances, disableLabel = false, overrides = {} } = 
       name: 'reference',
       label: 'Document to link to',
       type: 'relationship',
-      relationTo: ['pages'],
+      relationTo: ['pages', 'products', 'categories'],
       required: true,
       maxDepth: 1,
       admin: {
@@ -95,7 +102,7 @@ const link: LinkType = ({ appearances, disableLabel = false, overrides = {} } = 
   ]
 
   if (!disableLabel) {
-    linkTypes.map(linkType => ({
+    linkTypes.map((linkType) => ({
       ...linkType,
       admin: {
         ...linkType.admin,
@@ -123,25 +130,25 @@ const link: LinkType = ({ appearances, disableLabel = false, overrides = {} } = 
   }
 
   if (appearances !== false) {
-    let appearanceOptionsToUse = [
-      appearanceOptions.default,
-      appearanceOptions.primary,
-      appearanceOptions.secondary,
-    ]
-
-    if (appearances) {
-      appearanceOptionsToUse = appearances.map(appearance => appearanceOptions[appearance])
-    }
-
-    linkResult.fields.push({
-      name: 'appearance',
-      type: 'select',
-      defaultValue: 'default',
-      options: appearanceOptionsToUse,
-      admin: {
-        description: 'Choose how the link should be rendered.',
-      },
-    })
+    // let appearanceOptionsToUse = [
+    //   appearanceOptions.default,
+    //   appearanceOptions.primary,
+    //   appearanceOptions.secondary,
+    // ]
+    // if (appearances) {
+    //   appearanceOptionsToUse = appearances.map(
+    //     (appearance) => appearanceOptions[appearance],
+    //   )
+    // }
+    // linkResult.fields.push({
+    //   name: 'appearance',
+    //   type: 'select',
+    //   defaultValue: 'default',
+    //   options: appearanceOptionsToUse,
+    //   admin: {
+    //     description: 'Choose how the link should be rendered.',
+    //   },
+    // })
   }
 
   return deepMerge(linkResult, overrides)

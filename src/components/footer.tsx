@@ -6,23 +6,14 @@ import {
 } from '@radix-ui/react-icons'
 
 import { Lead, LinkIcon, NavLink, Small } from './typography/texts'
-import { Company, Setting } from '@/payload/payload-types'
+import { Company, Footer as FooterType, Setting } from '@/payload/payload-types'
 import { StaticImageData } from 'next/image'
 import { Button } from '@/pegasus/button'
 import Link from 'next/link'
 import { PegasusStamp } from '@/pegasus/pegasus-stamp'
+import CMSLink, { getHref } from './link'
 
-// interface FooterProps {
-//   logo?: string
-//   address?: string
-//   email?: string | null
-//   phone?: string
-// }
-
-type FooterProps = Pick<
-  Setting['footer'],
-  'logo' | 'companyInfo' | 'columns'
-> & {
+type FooterProps = FooterType & {
   staticImage?: StaticImageData
   id?: string
 } & Pick<Company, 'adress' | 'contact'>
@@ -49,7 +40,7 @@ export function Footer({
               className='max-h-[200px] w-full max-w-80 px-4'
             />
 
-            {companyInfo.showAddress === true && (
+            {companyInfo.showAddress === true && adress && (
               <Small className='flex items-center whitespace-nowrap'>
                 <MapPin className='mr-2 h-5 w-5' />
                 {adress.street}
@@ -95,12 +86,12 @@ export function Footer({
 
         {/* Columns */}
         <div className='flex w-4/5 flex-col gap-4 text-start tablet:w-3/5 tablet:flex-row desktop:w-3/4'>
-          {columns.map((column) => (
+          {columns.map((column, index) => (
             <div
               className='flex w-full justify-center tablet:w-1/2 desktop:w-1/3 '
-              key={column.title}
+              key={index}
             >
-              <FooterColumn title={column.title} links={column.links} />
+              <FooterColumn {...column} />
             </div>
           ))}
           <div className='hidden w-1/3 flex-col space-y-1 text-center desktop:flex desktop:text-start'>
@@ -127,28 +118,23 @@ export function Footer({
   )
 }
 
-interface FooterColumnProps {
-  title: string
-  links: { title?: string; href?: string; id?: string }[]
-}
+// interface FooterColumnProps {
+//   title: string
+//   links: { title?: string; href?: string; id?: string }[]
+// }
 
-// type FooterColumnProps = Pick<FooterProps, 'title' | 'links'>
+type FooterColumnProps = Pick<FooterProps['columns'][0], 'title' | 'links'>
 
 function FooterColumn({ title, links }: FooterColumnProps) {
   return (
     <nav className='flex shrink flex-col space-y-1 text-start'>
       <Lead className='my-3 whitespace-nowrap text-base font-bold text-primary-foreground tablet:text-xl'>
-        {title}
+        {title.label}
       </Lead>
 
-      {links.map((link) => (
-        <Button
-          variant='linkHover2'
-          key={link.title}
-          asChild
-          className='self-start'
-        >
-          <Link href={link.href}>{link.title}</Link>
+      {links.map((child, index) => (
+        <Button variant='linkHover2' key={index} asChild className='self-start'>
+          <Link href={getHref({ ...child.link })}>{child.link.label}</Link>
         </Button>
       ))}
     </nav>

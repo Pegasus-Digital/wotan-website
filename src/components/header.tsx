@@ -1,19 +1,16 @@
 import Link from 'next/link'
 import { Media } from './media'
-import { Company, Setting } from '@/payload/payload-types'
+import { Company, Header as HeaderType } from '@/payload/payload-types'
 import { StaticImageData } from 'next/image'
 import Phone from './icons/phone'
 import { HeaderNavigation } from './header-navigation'
 
-type Props = Pick<
-  Setting['header']['navigation'],
-  'links' | 'logo' | 'style'
-> & {
+type Props = HeaderType & {
   staticImage?: StaticImageData
   id?: string
 } & Pick<Company['contact'], 'phone'>
 
-export function Header({ logo, links, style, staticImage, id, phone }: Props) {
+export function Header({ logo, navigation, staticImage, id, phone }: Props) {
   return (
     <header className='h-20 w-full bg-background'>
       <div className='container flex h-full items-center gap-4'>
@@ -27,7 +24,7 @@ export function Header({ logo, links, style, staticImage, id, phone }: Props) {
         </div>
 
         <div className='hidden tablet:block'>
-          <HeaderNavigation links={links} style={style} />
+          <HeaderNavigation {...navigation} />
         </div>
 
         <div className='hidden h-full flex-1 justify-end tablet:block'>
