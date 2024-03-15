@@ -49,6 +49,7 @@ export function ProductSlider({
                       id={doc.value.id}
                       title={doc.value.title}
                       categories={doc.value.categories}
+                      featuredImage={doc.value.featuredImage}
                     />
                   </CarouselItem>
                 )

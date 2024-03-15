@@ -40,7 +40,7 @@ export function ProductCardActions({ productId }: ProductCardActions) {
     <TooltipProvider delayDuration={150}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button className='group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-wotanRed-500 hover:text-background'>
+          <Button className='group m-0 h-10 w-10 rounded-full bg-background p-0 text-wotanRed-500 shadow-wotan-light hover:bg-wotanRed-500 hover:text-background'>
             <Heart className='h-5 w-5' />
           </Button>
         </TooltipTrigger>
@@ -50,9 +50,9 @@ export function ProductCardActions({ productId }: ProductCardActions) {
         <TooltipTrigger asChild>
           <Button
             onClick={handleAddToCart}
-            className='group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-wotanRed-500 hover:text-background'
+            className='group m-0 h-10 w-10 rounded-full bg-background p-0 text-wotanRed-500 shadow-wotan-light hover:bg-wotanRed-500 hover:text-background'
           >
-            <ShoppingCart className='h-5 w-5' />
+            <ShoppingCart className='h-5 w-5 ' />
           </Button>
         </TooltipTrigger>
         <TooltipContent>Adicionar ao carrinho</TooltipContent>
@@ -64,7 +64,7 @@ export function ProductCardActions({ productId }: ProductCardActions) {
             className={cn(
               buttonVariants({
                 className:
-                  'group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-wotanRed-500 hover:text-background',
+                  'group m-0 h-10 w-10 rounded-full bg-background p-0 text-wotanRed-500 shadow-wotan-light  hover:bg-wotanRed-500 hover:text-background',
               }),
             )}
           >

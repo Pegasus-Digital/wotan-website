@@ -2,29 +2,34 @@ import { Lead, P } from './typography/texts'
 import { Card, CardContent, CardFooter } from './ui/card'
 import { ProductCardActions } from './product-card-actions'
 import type { Product } from '@/payload/payload-types'
+import { Image } from './media/image'
 
 type ProductCardProps = Pick<
   Product,
-  'title' | 'categories' | 'id' | 'minimumQuantity'
+  'title' | 'categories' | 'id' | 'minimumQuantity' | 'featuredImage'
 >
 
 const attributes = ['#F00', '#0F0', '#00F']
 
-export function ProductCard({ id, title, categories }: ProductCardProps) {
+export function ProductCard({
+  id,
+  title,
+  categories,
+  featuredImage,
+}: ProductCardProps) {
   const mainCategory =
     typeof categories[0] === 'string' ? categories[0] : categories[0].title
 
   return (
     <Card className='group my-3 aspect-[16/10] shadow-wotan-light'>
-      <CardContent className='relative m-0 rounded-md p-0'>
-        <img
-          className='aspect-square h-full  w-full rounded-t-md object-cover'
-          alt='random'
-          src='https://source.unsplash.com/random/'
+      <CardContent className='relative m-0 overflow-hidden  rounded-md border-b p-0'>
+        <Image
+          resource={featuredImage}
+          imgClassName='bg-white w-full h-full aspect-square rounded-t-md'
         />
 
         {/* Actions Wrapper */}
-        <div className='absolute bottom-2 flex w-full items-center justify-center gap-2.5 transition duration-200 tablet:translate-y-10 tablet:opacity-0 tablet:group-hover:translate-y-0 tablet:group-hover:opacity-100'>
+        <div className='absolute bottom-2  flex w-full items-center justify-center gap-2.5 transition duration-200 tablet:translate-y-10 tablet:opacity-0 tablet:group-hover:translate-y-0 tablet:group-hover:opacity-100'>
           <ProductCardActions productId={id} />
         </div>
       </CardContent>

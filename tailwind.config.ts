@@ -135,8 +135,7 @@ const config = {
           'radial-gradient(at 10% 87%, #651B479C 0px, transparent 50%), radial-gradient(at 98% 96%, hsla(337,73%,49%,1) 0px, transparent 50%), radial-gradient(at 90% 20%, #651B479C 0px, transparent 50%), radial-gradient(at 13% 21%, hsla(337,100%,39%,1) 0px, transparent 50%)',
       },
       boxShadow: {
-        'wotan-light':
-          '4px 4px 8px rgba(0, 0, 0, .2), -4px -4px 8px rgba(255, 255, 255, 1)',
+        'wotan-light': '4px 4px 8px rgba(0, 0, 0, .2)',
       },
     },
   },

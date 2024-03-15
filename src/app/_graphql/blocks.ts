@@ -13,7 +13,14 @@ export const QUERY_PRODUCT_CAROUSEL = `
         id
         slug
         title
-
+        minimumQuantity
+        featuredImage {
+          mimeType
+          filename
+          width
+          height
+          alt
+        }
         categories {
           title
         }
@@ -45,12 +52,21 @@ export const QUERY_FEATURED_SECTION = `
     title
     description
     image {
+      mimeType
       filename
+      width
+      height
+      alt
     }
     linkTo {
       relationTo
       value {
-        __typename
+        ...on Product {
+          slug
+        }
+        ...on Category {
+          slug
+        }
       }
     }
   }
