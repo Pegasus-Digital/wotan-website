@@ -15,13 +15,18 @@ import { Button, buttonVariants } from '@/components/ui/button'
 
 export function CartDisplay() {
   const { cart } = useCartStore((state) => state)
+  const [hasCartLoaded, sethasCartLoaded] = useState<boolean>(false)
 
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   useEffect(() => {
-    console.log('useEffect triggered.')
+    if (cart) {
+      sethasCartLoaded(true)
+    }
+  }, [cart])
 
+  useEffect(() => {
     // Route handler to fetch product data
     const fetchCartProducts = async () => {
       try {
@@ -42,7 +47,7 @@ export function CartDisplay() {
 
     fetchCartProducts()
     setIsLoading(false)
-  }, [])
+  }, [hasCartLoaded])
 
   if (isLoading) {
     return <H2>Carregando produtos...</H2>

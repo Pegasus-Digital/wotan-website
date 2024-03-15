@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import { Product } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
@@ -20,13 +19,15 @@ import { Media } from '@/components/media'
 
 interface CartCardProps {
   cartItem: CartItem
-  product?: Product
+  product: Product
 }
 
 export function CartCard({ cartItem, product }: CartCardProps) {
   const { remove, incrementAmount, decrementAmount } = useCartStore(
     (state) => state,
   )
+
+  console.log(product)
 
   function onCartRemove() {
     remove(cartItem.id)
@@ -56,7 +57,12 @@ export function CartCard({ cartItem, product }: CartCardProps) {
     }
   }
 
-  if (!product) return <Heading variant='h3'>Carregando item...</Heading>
+  if (!product)
+    return (
+      <Heading variant='h3' className='text-center'>
+        Carregando item...
+      </Heading>
+    )
 
   return (
     <Card>

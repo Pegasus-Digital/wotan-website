@@ -8,6 +8,8 @@ export function CartContent() {
         <Heading>Carrinho</Heading>
 
         <CartDisplay />
+
+        {/* Mostrar outros produtos? */}
       </div>
     </section>
   )
