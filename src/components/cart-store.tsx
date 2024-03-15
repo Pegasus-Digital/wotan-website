@@ -6,6 +6,8 @@ import { createStore } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
 export interface CartItem {
+  id: string
+
   productId: string
   attributes: Attribute[]
   amount: number
@@ -17,8 +19,9 @@ interface State {
 
 interface Actions {
   add: (item: CartItem) => void
-  remove: (item: CartItem) => void
-  update: (item: CartItem, newData: Partial<CartItem>) => void
+  remove: (id: string) => void
+  incrementAmount: (id: string, quantity: number) => void
+  decrementAmount: (id: string, quantity: number) => void
 }
 
 export type Store = State & Actions
@@ -43,34 +46,37 @@ export const createCartStore = (initState: State = defaultInitState) => {
           set({ cart: updatedCart })
         },
 
-        remove: (item) => {
+        remove: (id) => {
           const { cart } = get()
 
-          // Remove item validations (ex.: can only remove 1 item at a time)
-          const updatedCart = cart.filter(
-            // placeholder verification, existingItem must deeply equal item
-            (existingItem) =>
-              !(
-                existingItem.productId === item.productId &&
-                existingItem.amount === item.amount &&
-                existingItem.attributes === item.attributes
-              ),
-          )
+          const updatedCart = cart.filter((item) => item.id !== id)
 
           set({ cart: updatedCart })
         },
 
-        update: (item, newData: CartItem) => {
+        incrementAmount: (id, quantity) => {
           const { cart } = get()
 
-          const updatedCart = cart.map((current) => {
-            if (
-              current.productId === item.productId &&
-              current.amount === item.amount &&
-              current.attributes === item.attributes
-            ) {
-              return { ...current, ...newData }
-            } else return current
+          const updatedCart = cart.map((item) => {
+            if (item.id === id) {
+              item.amount += quantity
+            }
+
+            return item
+          })
+
+          set({ cart: updatedCart })
+        },
+
+        decrementAmount: (id, quantity) => {
+          const { cart } = get()
+
+          const updatedCart = cart.map((item) => {
+            if (item.id === id) {
+              item.amount -= quantity
+            }
+
+            return item
           })
 
           set({ cart: updatedCart })

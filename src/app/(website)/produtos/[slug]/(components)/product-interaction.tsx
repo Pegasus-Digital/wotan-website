@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { v4 as uuidv4 } from 'uuid'
 import { Category, Product } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
@@ -43,37 +44,27 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
 
   const { add } = useCartStore((state) => state)
 
-  function handleAmountChange(e: React.MouseEvent<HTMLButtonElement>) {
-    const value = e.currentTarget.innerText
+  function onAmountChange(e: React.MouseEvent<HTMLButtonElement>) {
+    const type = e.currentTarget.value
+    const quantity = Math.abs(parseInt(e.currentTarget.innerText))
 
-    switch (value) {
-      case '-10':
-        if (amount - 10 < product.minimumQuantity) {
-          toast.warning(
-            `Quantidade mínima deste produto é de ${product.minimumQuantity} unidades.`,
-          )
-          return
-        }
-        setAmount(amount - 10)
+    switch (type) {
+      case 'increment':
+        setAmount(amount + quantity)
+
         break
-      case '-1':
-        if (amount - 1 < product.minimumQuantity) {
-          toast.warning(
-            `Quantidade mínima deste produto é de ${product.minimumQuantity} unidades.`,
-          )
-          return
-        }
-        setAmount(amount - 1)
+      case 'decrement':
+        amount - quantity >= product.minimumQuantity
+          ? setAmount(amount - quantity)
+          : toast.warning(
+              `A quantidade mínima deste produto é de ${product.minimumQuantity}`,
+            )
         break
-      case '+1':
-        setAmount(amount + 1)
-        break
-      case '+10':
-        setAmount(amount + 10)
+      default:
+        toast.error('Ocorreu algum erro.')
         break
     }
   }
-
   function slugify(str: string): string {
     return str
       .toLowerCase()
@@ -85,6 +76,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
 
   function handleAddToCart() {
     add({
+      id: uuidv4(),
       productId: product.id,
       amount,
       attributes: [],
@@ -131,17 +123,19 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
 
         <div className='mt-1 flex items-center space-x-1'>
           <Button
+            value='decrement'
             variant='outline'
             size='sm'
-            onClick={handleAmountChange}
+            onClick={onAmountChange}
             className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
           >
             -10
           </Button>
           <Button
+            value='decrement'
             variant='outline'
             size='sm'
-            onClick={handleAmountChange}
+            onClick={onAmountChange}
             className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
           >
             -1
@@ -155,17 +149,19 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
           />
 
           <Button
+            value='increment'
             variant='outline'
             size='sm'
-            onClick={handleAmountChange}
+            onClick={onAmountChange}
             className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
           >
             +1
           </Button>
           <Button
+            value='increment'
             variant='outline'
             size='sm'
-            onClick={handleAmountChange}
+            onClick={onAmountChange}
             className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
           >
             +10

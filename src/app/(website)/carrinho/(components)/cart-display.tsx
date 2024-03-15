@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react'
 import { Product } from '@/payload/payload-types'
 
 import { Heading } from '@/pegasus/heading'
-import { H1 } from '@/components/typography/headings'
+import { H1, H2 } from '@/components/typography/headings'
 
 import { CartCard } from './cart-card'
 import { useCartStore } from '@/components/cart-store-provider'
@@ -19,34 +19,38 @@ export function CartDisplay() {
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
-  // TODO: For product in cart, fetch product data, including all possible attributes, so that we can render and select them
   useEffect(() => {
-    if (cart.length === 0) return
+    console.log('useEffect triggered.')
 
-    const fetchProduct = async () => {
-      const response = await fetch(`/api/cart`, {
-        body: JSON.stringify({
-          productIds: cart.map((item) => item.productId),
-        }),
-        method: 'POST',
-      })
+    // Route handler to fetch product data
+    const fetchCartProducts = async () => {
+      try {
+        const response = await fetch(`/api/cart`, {
+          body: JSON.stringify({
+            productIds: cart.map((item) => item.productId),
+          }),
+          method: 'POST',
+        })
 
-      const data = await response.json()
+        const data = await response.json()
 
-      setProducts(data.docs)
-      setIsLoading(false)
+        setProducts(data.docs)
+      } catch (error) {
+        console.error(error)
+      }
     }
 
-    fetchProduct()
-  }, [cart])
+    fetchCartProducts()
+    setIsLoading(false)
+  }, [])
 
-  if (!products || !cart) {
-    return <H1>Carregando carrinho...</H1>
+  if (isLoading) {
+    return <H2>Carregando produtos...</H2>
   }
 
   return (
     <div className='my-12 w-full space-y-2'>
-      {cart.length === 0 && isLoading === false && (
+      {cart.length === 0 && !isLoading && (
         <div className='flex flex-col items-center justify-center space-y-4 rounded-lg text-center text-foreground'>
           <Heading variant='h2' className='text-foreground'>
             Não encontramos produtos no carrinho.

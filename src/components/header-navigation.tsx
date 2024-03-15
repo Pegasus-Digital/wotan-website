@@ -108,7 +108,7 @@ function Dropdown({ linkTo, subLinks }: LinkProps) {
               key={index}
               title={child.link.label}
               href={getHref({ ...child.link })}
-            ></ListItem>
+            />
           ))}
         </ul>
       </NavigationMenuContent>
@@ -140,8 +140,6 @@ export function HeaderNavigation({ links, style }: HeaderNavigationProps) {
   return (
     <NavigationMenu>
       <NavigationMenuList>
-        {/* links.map if style == classic => <Classic /> if style == megamenu => <MegaMenu /> if style == dropdown => <Dropdown />  */}
-        {/* link.onlyLink == true => <Classic /> else => style */}
         {links.map((link, index) => {
           if (link.onlyLink === false) {
             return <Menu key={index} {...link} />
@@ -170,7 +168,7 @@ const ListItem = React.forwardRef<
         >
           <div className='text-sm font-medium leading-none'>{title}</div>
           {children && (
-            <p className='line-clamp-2 text-sm leading-snug text-muted-foreground'>
+            <p className='line-clamp-2 text-sm leading-snug hover:text-muted'>
               {children}
             </p>
           )}

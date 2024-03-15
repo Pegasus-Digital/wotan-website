@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import { Product } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
@@ -16,7 +16,7 @@ import { Heading } from '@/pegasus/heading'
 import { Lead, Muted } from '@/components/typography/texts'
 
 import { Trash } from 'lucide-react'
-import { H2 } from '@/components/typography/headings'
+import { Media } from '@/components/media'
 
 interface CartCardProps {
   cartItem: CartItem
@@ -24,114 +24,90 @@ interface CartCardProps {
 }
 
 export function CartCard({ cartItem, product }: CartCardProps) {
-  const { remove, update } = useCartStore((state) => state)
+  const { remove, incrementAmount, decrementAmount } = useCartStore(
+    (state) => state,
+  )
 
-  const [amount, setAmount] = useState(cartItem.amount)
-  const [attributes, setAttributes] = useState(cartItem.attributes)
+  function onCartRemove() {
+    remove(cartItem.id)
 
-  function handleRemoveFromCart() {
-    remove({ productId: cartItem.productId, amount, attributes })
-
-    toast('Item removido do carrinho.', {
+    toast.error('Item removido do carrinho.', {
       icon: <Trash className='h-5 w-5' />,
     })
   }
 
-  // Eu odeio essa função na mesma intensidade que eu odeio contato social.
-  // obs.: muito
-  function handleAmountChange(e: React.MouseEvent<HTMLButtonElement>) {
-    const value = e.currentTarget.innerText
+  function onAmountChange(e: React.MouseEvent<HTMLButtonElement>) {
+    const type = e.currentTarget.value
 
-    switch (value) {
-      case '-10':
-        if (amount - 10 < product.minimumQuantity) {
-          toast.warning(
-            `Quantidade mínima deste produto é de ${product.minimumQuantity} unidades.`,
-          )
-          return
-        }
-        setAmount(amount - 10)
-        update(cartItem, { ...cartItem, amount: amount - 10 })
+    switch (type) {
+      case 'increment':
+        incrementAmount(cartItem.id, 1)
         break
-      case '-1':
-        if (amount - 1 < product.minimumQuantity) {
-          toast.warning(
-            `Quantidade mínima deste produto é de ${product.minimumQuantity} unidades.`,
-          )
-          return
-        }
-        setAmount(amount - 1)
-        update(cartItem, { ...cartItem, amount: amount - 1 })
+      case 'decrement':
+        cartItem.amount - 1 >= product.minimumQuantity
+          ? decrementAmount(cartItem.id, 1)
+          : toast.warning(
+              `A quantidade mínima deste produto é de ${product.minimumQuantity}`,
+            )
         break
-      case '+1':
-        setAmount(amount + 1)
-        update(cartItem, { ...cartItem, amount: amount + 1 })
-        break
-      case '+10':
-        setAmount(amount + 10)
-        update(cartItem, { ...cartItem, amount: amount + 10 })
+      default:
+        toast.error('Ocorreu algum erro.')
         break
     }
   }
 
-  if (!product) return <H2>Carregando item...</H2>
+  if (!product) return <Heading variant='h3'>Carregando item...</Heading>
 
   return (
     <Card>
       <CardHeader>
         <Heading variant='h3'>{product.title}</Heading>
+        {product.featuredImage && (
+          <Media
+            imgClassName='rounded-md aspect-square'
+            resource={product.featuredImage}
+            className='aspect-square max-w-48 rounded-full'
+          />
+        )}
+
         <Muted>Código: {product.sku}</Muted>
       </CardHeader>
 
       <CardContent>
         <div className='flex items-center space-x-1 transition-all'>
           <Button
+            value='decrement'
             variant='outline'
             size='sm'
-            onClick={handleAmountChange}
-            className='hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
+            onClick={onAmountChange}
+            className='aspect-square text-lg font-semibold hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
           >
-            -10
-          </Button>
-          <Button
-            variant='outline'
-            size='sm'
-            onClick={handleAmountChange}
-            className='hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
-          >
-            -1
+            -
           </Button>
 
           <Input
             className='pointer-events-none max-w-12 bg-wotanRed-400 px-0 text-center text-lg font-bold text-primary-foreground'
-            value={amount}
+            value={cartItem.amount}
             readOnly
           />
 
           <Button
+            value='increment'
             variant='outline'
             size='sm'
-            onClick={handleAmountChange}
-            className='hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
+            onClick={onAmountChange}
+            className='aspect-square text-lg font-semibold hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
           >
-            +1
-          </Button>
-          <Button
-            variant='outline'
-            size='sm'
-            onClick={handleAmountChange}
-            className='hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
-          >
-            +10
+            +
           </Button>
         </div>
 
         <div>
-          {attributes.length > 0 ? (
+          {cartItem.attributes.length > 0 ? (
             <>
               <Lead>Attributes:</Lead>
 
-              {attributes.map((attribute, index) => (
+              {cartItem.attributes.map((attribute, index) => (
                 <div key={attribute.id + '-' + index} className='mt-4'>
                   <Lead>Attribute ID: {attribute.id}</Lead>
                   <Lead>Attribute Title: {attribute.name}</Lead>
@@ -149,7 +125,7 @@ export function CartCard({ cartItem, product }: CartCardProps) {
       </CardContent>
 
       <CardFooter>
-        <Button variant='destructive' onClick={handleRemoveFromCart} size='sm'>
+        <Button variant='destructive' onClick={onCartRemove} size='sm'>
           <Trash className='mr-2 h-5 w-5' /> Remover
         </Button>
       </CardFooter>

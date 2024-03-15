@@ -19,7 +19,7 @@ export function Header({ logo, navigation, staticImage, id, phone }: Props) {
             href='/'
             className='flex h-16 w-48 items-center overflow-hidden desktop:h-20 desktop:w-60'
           >
-            <Media resource={logo} src={staticImage} />
+            <Media priority resource={logo} src={staticImage} />
           </Link>
         </div>
 

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
+import { v4 as uuidv4 } from 'uuid'
 
 import { useCartStore } from './cart-store-provider'
 
@@ -26,6 +27,7 @@ export function ProductCardActions({ productId }: ProductCardActions) {
 
   function handleAddToCart() {
     add({
+      id: uuidv4(),
       productId,
       amount: 0,
       attributes: [],

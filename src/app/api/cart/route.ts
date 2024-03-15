@@ -13,9 +13,5 @@ export async function POST(request: NextRequest, response: NextResponse) {
     },
   })
 
-  console.log(
-    `should contain: ${data.productIds.length}, contains ${products.docs.length}`,
-  )
-
   return Response.json(products)
 }

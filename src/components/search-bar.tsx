@@ -42,6 +42,7 @@ export function SearchBar() {
           {/* Redirect to shopping cart */}
           <Link
             href='/carrinho'
+            prefetch={true}
             className={buttonVariants({
               size: 'icon',
               variant: 'ghost',
