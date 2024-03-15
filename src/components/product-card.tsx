@@ -15,10 +15,10 @@ export function ProductCard({ id, title, categories }: ProductCardProps) {
     typeof categories[0] === 'string' ? categories[0] : categories[0].title
 
   return (
-    <Card className='group my-3 shadow-wotan-light'>
+    <Card className='group my-3 aspect-[16/10] shadow-wotan-light'>
       <CardContent className='relative m-0 rounded-md p-0'>
         <img
-          className='aspect-square h-full max-h-[300px] min-h-[300px] w-full rounded-t-md object-cover'
+          className='aspect-square h-full  w-full rounded-t-md object-cover'
           alt='random'
           src='https://source.unsplash.com/random/'
         />

@@ -14,6 +14,7 @@ import { Page } from '@/payload/payload-types'
 import { Heading } from '@/pegasus/heading'
 import { Button } from '@/pegasus/button'
 import { ArrowRight } from 'lucide-react'
+import { getHref } from './link'
 
 export type ProductSliderProps = Extract<
   Page['layout'][0],
@@ -24,6 +25,8 @@ export function ProductSlider({
   title,
   description,
   selectedDocs,
+  seeMore,
+  seeMoreLink,
 }: ProductSliderProps) {
   return (
     <section className='w-full overflow-x-hidden'>
@@ -64,7 +67,9 @@ export function ProductSlider({
           iconPlacement='right'
           asChild
         >
-          <Link href='/see-more'>Ver mais</Link>
+          {seeMore && (
+            <Link href={getHref(seeMoreLink)}>{seeMoreLink.label}</Link>
+          )}
         </Button>
       </div>
     </section>

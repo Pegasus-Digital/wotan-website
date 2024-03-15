@@ -32,7 +32,7 @@ export function Header({ logo, navigation, staticImage, id, phone }: Props) {
             {phone && (
               <Link
                 href={`tel: ${phone}`}
-                className='flex items-center gap-2 whitespace-nowrap text-sm desktop:text-base'
+                className='flex items-center gap-2 whitespace-nowrap text-sm leading-tight desktop:text-base'
               >
                 <Phone className='mr-2 inline h-6 w-6' />
                 Precisa de ajuda?

@@ -41,7 +41,7 @@ export function Footer({
             />
 
             {companyInfo.showAddress === true && adress && (
-              <Small className='flex items-center whitespace-nowrap'>
+              <Small className='flex items-center whitespace-nowrap leading-snug'>
                 <MapPin className='mr-2 h-5 w-5' />
                 {adress.street}
                 {', '}

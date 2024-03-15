@@ -34,11 +34,13 @@ function MegaMenu({ linkTo, columns }: LinkProps) {
         </NavigationMenuTrigger>
       </Link>
       <NavigationMenuContent className='shadow-wotan-light'>
-        <ul className='grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]'>
+        <ul
+          className={`grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-${columns.length} grid-flow-col	 `}
+        >
           {columns.map((column, index) => {
             if (column.type === 'card') {
               return (
-                <li key={index} className='row-span-3'>
+                <li key={index} className={``}>
                   <MegaMenuCard
                     title={column.content.title}
                     description={column.content.description}
@@ -47,7 +49,7 @@ function MegaMenu({ linkTo, columns }: LinkProps) {
               )
             } else if (column.type === 'linkCol') {
               return (
-                <React.Fragment key={index}>
+                <div className='grid grid-flow-row' key={index}>
                   {column.linkColumn.map((child, index) => (
                     <ListItem
                       key={index}
@@ -57,7 +59,7 @@ function MegaMenu({ linkTo, columns }: LinkProps) {
                       {child.description}
                     </ListItem>
                   ))}
-                </React.Fragment>
+                </div>
               )
             }
           })}
