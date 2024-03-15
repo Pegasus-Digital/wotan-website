@@ -340,7 +340,7 @@ export interface FAQ {
   }[];
   id?: string | null;
   blockName?: string | null;
-  blockType: 'faq';
+  blockType: 'faq-section';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

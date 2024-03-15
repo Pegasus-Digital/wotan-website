@@ -3,7 +3,7 @@ import { titleAndDesc } from '../../fields/titleAndDesc'
 import { Block } from 'payload/types'
 
 export const FAQ: Block = {
-  slug: 'faq',
+  slug: 'faq-section',
   interfaceName: 'FAQ',
   fields: [
     invertBackground,

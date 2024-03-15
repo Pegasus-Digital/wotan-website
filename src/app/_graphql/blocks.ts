@@ -1,3 +1,5 @@
+import { LINK_FIELDS } from './link'
+
 export const QUERY_PRODUCT_CAROUSEL = `
 ...on ProductCarousel{
   blockType
@@ -18,6 +20,8 @@ export const QUERY_PRODUCT_CAROUSEL = `
       }
     }
   }
+  seeMore
+  seeMoreLink ${LINK_FIELDS}
 }
 `
 export const QUERY_STATISTICS_SECTION = `
@@ -97,6 +101,20 @@ export const QUERY_CONTENT_MEDIA = `
     width
     height
     alt
+  }
+  blockName 
+  blockType
+}
+`
+
+export const QUERY_FAQ = `
+... on FAQ {
+  title
+  description
+  invertBackground
+  questions {
+    question
+    answer
   }
   blockName 
   blockType
