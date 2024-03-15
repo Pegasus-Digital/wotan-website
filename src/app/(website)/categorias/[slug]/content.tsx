@@ -15,6 +15,8 @@ import { Heading } from '@/pegasus/heading'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { ProductCard } from '@/components/product-card'
 import Link from 'next/link'
+import { Hero } from '@/components/heros'
+import { LowImpactHero } from '@/app/_sections/heros/lowImpact'
 
 interface PaginationParams {
   totalDocs: number
@@ -45,10 +47,7 @@ export async function CategoryPageContent({
   return (
     <section className='relative mt-6 w-full px-6 text-primary-foreground'>
       <div className='container flex flex-col items-center rounded-lg text-center text-foreground'>
-        <Heading variant='h2' className='text-foreground'>
-          Categoria: <span className='capitalize'>{categoryName}</span>
-        </Heading>
-
+        <LowImpactHero title={categoryName} />
         {products.length === 0 && (
           <div className='my-12 flex flex-col items-center justify-center space-y-4 rounded-lg text-center text-foreground'>
             <Heading variant='h2' className='text-foreground'>
