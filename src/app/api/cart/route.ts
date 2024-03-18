@@ -11,6 +11,7 @@ export async function POST(request: NextRequest, response: NextResponse) {
     where: {
       id: { in: data.productIds.join(',') },
     },
+    depth: 2,
   })
 
   return Response.json(products)

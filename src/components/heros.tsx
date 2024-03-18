@@ -8,7 +8,7 @@ const heroes = {
   highImpact: HighImpactHero,
   slideshow: SlideshowHero,
 }
-export function Hero({ type, ...props }: Page['hero']) {
+export function Hero({ type, ...props }) {
   if (!type || type === 'none') return null
 
   const HeroToRender = heroes[type]

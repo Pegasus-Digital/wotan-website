@@ -7,11 +7,12 @@ import { useEffect, useState } from 'react'
 import { Product } from '@/payload/payload-types'
 
 import { Heading } from '@/pegasus/heading'
-import { H1, H2 } from '@/components/typography/headings'
+import { H2 } from '@/components/typography/headings'
 
 import { CartCard } from './cart-card'
 import { useCartStore } from '@/components/cart-store-provider'
-import { Button, buttonVariants } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/pegasus/button'
+import { ArrowRight } from 'lucide-react'
 
 export function CartDisplay() {
   const { cart } = useCartStore((state) => state)
@@ -54,9 +55,9 @@ export function CartDisplay() {
   }
 
   return (
-    <div className='my-12 w-full space-y-2'>
+    <div className='mt-12 w-full'>
       {cart.length === 0 && !isLoading && (
-        <div className='flex flex-col items-center justify-center space-y-4 rounded-lg text-center text-foreground'>
+        <div className='flex flex-col items-center justify-center space-y-8 rounded-lg text-center text-foreground'>
           <Heading variant='h2' className='text-foreground'>
             Não encontramos produtos no carrinho.
           </Heading>
@@ -80,8 +81,17 @@ export function CartDisplay() {
         ))}
 
       {cart.length > 0 && (
-        <div className='flex justify-end'>
-          <Button className='self-end'>Enviar orçamento</Button>
+        <div className='py-6 tablet:pt-12'>
+          <Button
+            asChild
+            className='w-full'
+            variant='expandIcon'
+            size='lg'
+            Icon={ArrowRight}
+            iconPlacement='right'
+          >
+            <div className='cursor-pointer'>Enviar orçamento</div>
+          </Button>
         </div>
       )}
     </div>

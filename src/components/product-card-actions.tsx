@@ -20,16 +20,20 @@ import { Heart, ShoppingCart, Eye, PlusCircle } from 'lucide-react'
 
 interface ProductCardActions {
   productId: string
+  minimumQuantity: number
 }
 
-export function ProductCardActions({ productId }: ProductCardActions) {
+export function ProductCardActions({
+  productId,
+  minimumQuantity,
+}: ProductCardActions) {
   const { add } = useCartStore((state) => state)
 
   function handleAddToCart() {
     add({
       id: uuidv4(),
       productId,
-      amount: 0,
+      amount: minimumQuantity,
       attributes: [],
     })
 

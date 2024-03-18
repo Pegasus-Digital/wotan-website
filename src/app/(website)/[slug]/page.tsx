@@ -30,7 +30,7 @@ export default async function Page({ params: { slug = 'home' } }) {
       {slug === 'home' ? (
         <SlideshowHero />
       ) : (
-        <Hero title={title} description={description} />
+        <Hero title={title} description={description} type={'highImpact'} />
       )}
       <Sections sections={layout} />
     </>

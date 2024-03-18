@@ -1,4 +1,3 @@
-import { footer } from '@/payload/settings/footer'
 import type { Config } from 'tailwindcss'
 
 const config = {

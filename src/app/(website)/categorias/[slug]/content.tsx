@@ -70,6 +70,7 @@ export async function CategoryPageContent({
               key={product.id}
               id={product.id}
               title={product.title}
+              minimumQuantity={product.minimumQuantity}
               categories={product.categories.map(
                 (category: Category) => category.title,
               )}

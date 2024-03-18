@@ -11,6 +11,7 @@ export const QUERY_PRODUCT_CAROUSEL = `
         id
         slug
         title
+        minimumQuantity
 
         categories {
           title

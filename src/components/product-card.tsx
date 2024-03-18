@@ -10,7 +10,12 @@ type ProductCardProps = Pick<
 
 const attributes = ['#F00', '#0F0', '#00F']
 
-export function ProductCard({ id, title, categories }: ProductCardProps) {
+export function ProductCard({
+  id,
+  title,
+  categories,
+  minimumQuantity,
+}: ProductCardProps) {
   const mainCategory =
     typeof categories[0] === 'string' ? categories[0] : categories[0].title
 
@@ -25,7 +30,10 @@ export function ProductCard({ id, title, categories }: ProductCardProps) {
 
         {/* Actions Wrapper */}
         <div className='absolute bottom-2 flex w-full items-center justify-center gap-2.5 transition duration-200 tablet:translate-y-10 tablet:opacity-0 tablet:group-hover:translate-y-0 tablet:group-hover:opacity-100'>
-          <ProductCardActions productId={id} />
+          <ProductCardActions
+            productId={id}
+            minimumQuantity={minimumQuantity}
+          />
         </div>
       </CardContent>
 

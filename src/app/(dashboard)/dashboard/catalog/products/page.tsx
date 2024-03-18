@@ -5,6 +5,8 @@ import { ProductsContent } from './content'
 
 // This page is meant to be responsible for SEO, data fetching and/or other asynchronous functions
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Produtos',
 }

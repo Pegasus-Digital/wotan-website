@@ -18,8 +18,9 @@ interface SidebarNavItem {
 }
 
 const activeRouteStyles =
-  'bg-primary dark:bg-secondary text-primary-foreground dark:text-primary group-hover:text-foreground hover:bg-primary-foreground hover:dark:brightness-150'
-const activeRouteIconStyle = 'text-primary-foreground stroke-2'
+  'bg-primary text-primary-foreground group-hover:text-primary-foreground group-hover:bg-accent'
+const activeRouteIconStyle =
+  'text-primary-foreground stroke-primary-foreground stroke-2'
 
 export function SidebarNavigationItem({
   text,
@@ -34,7 +35,7 @@ export function SidebarNavigationItem({
     <Link
       aria-disabled={isActiveRoute}
       className={cn(
-        `group mt-0 flex items-center justify-between rounded-sm border border-transparent px-1 py-2 font-medium text-muted-foreground transition-all hover:cursor-pointer hover:border-primary/10 hover:bg-secondary hover:text-foreground`,
+        `group mt-0 flex items-center justify-between rounded-sm border border-transparent px-1 py-2 font-medium text-muted-foreground transition-all hover:cursor-pointer hover:border-primary/10 hover:bg-secondary hover:text-primary-foreground`,
         isActiveRoute ? activeRouteStyles : null,
       )}
       href={href}
@@ -42,7 +43,7 @@ export function SidebarNavigationItem({
       <div className='flex items-center gap-2'>
         <Icon
           className={cn(
-            'h-5 w-5 stroke-2 text-muted-foreground group-hover:text-foreground',
+            'h-5 w-5 stroke-2 text-muted-foreground group-hover:text-primary-foreground',
             isActiveRoute ? activeRouteIconStyle : null,
           )}
         />
@@ -76,12 +77,12 @@ export function SidebarCollapsible({
             isActive ? 'border-border' : null,
           )}
         >
-          <div className='flex items-center gap-2'>
-            <Icon className='h-5 w-5 stroke-2 text-muted-foreground group-hover:text-foreground' />
+          <div className='flex items-center gap-2 group-hover:text-primary-foreground'>
+            <Icon className='h-5 w-5 stroke-2' />
             <span>{text}</span>
           </div>
 
-          <ChevronDown className='h-5 w-5 stroke-1 text-muted-foreground transition group-hover:scale-125 group-hover:text-foreground group-data-[state=open]:rotate-180' />
+          <ChevronDown className='h-5 w-5 stroke-1 transition group-hover:scale-125 group-hover:text-primary-foreground group-data-[state=open]:rotate-180' />
         </button>
       </CollapsibleTrigger>
       <CollapsibleContent className='ml-2 mt-1 space-y-1 rounded-b-md border-l pl-2'>
