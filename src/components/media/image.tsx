@@ -51,7 +51,7 @@ export const Image: React.FC<MediaProps> = (props) => {
 
   return (
     <NextImage
-      className={[isLoading && 'bg-black', 'object-cover', imgClassName]
+      className={[isLoading && 'bg-transparent', 'object-cover', imgClassName]
         .filter(Boolean)
         .join(' ')}
       src={src}

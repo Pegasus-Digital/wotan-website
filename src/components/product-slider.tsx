@@ -45,6 +45,7 @@ export function ProductSlider({
                     <ProductCard
                       id={doc.value.id}
                       title={doc.value.title}
+                      minimumQuantity={doc.value.minimumQuantity}
                       categories={doc.value.categories}
                     />
                   </CarouselItem>

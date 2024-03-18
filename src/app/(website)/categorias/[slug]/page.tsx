@@ -1,4 +1,5 @@
 import payload from 'payload'
+import { Metadata } from 'next'
 
 import { CategoryPageContent } from './content'
 
@@ -24,4 +25,8 @@ export default async function CategoryPage({ params, searchParams }) {
       categoryName={category}
     />
   )
+}
+
+export async function generateMetadata({ params }): Promise<Metadata> {
+  return { title: `Buscando por '${params.slug}'` }
 }

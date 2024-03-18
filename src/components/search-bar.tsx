@@ -42,6 +42,7 @@ export function SearchBar() {
           {/* Redirect to shopping cart */}
           <Link
             href='/carrinho'
+            prefetch={true}
             className={buttonVariants({
               size: 'icon',
               variant: 'ghost',
@@ -52,7 +53,7 @@ export function SearchBar() {
             <ShoppingCart className='h-6 w-6' />
 
             {cart.length > 0 && (
-              <span className='absolute -right-2 -top-2 flex aspect-square min-h-5 w-fit items-center justify-center rounded-full bg-wotanRed-500 text-center leading-none'>
+              <span className='absolute -right-2 -top-2 flex aspect-square min-h-5 w-fit items-center justify-center rounded-full bg-wotanRed-400 text-center leading-none'>
                 {cart.length}
               </span>
             )}

@@ -65,8 +65,8 @@ export function DataTable<TData, TValue>({
       {/* Table interaction */}
       <div className='flex items-center justify-between'>
         <DataTableInputFilter
-          columnId='clientName'
-          title='nome do cliente'
+          columnId='id'
+          title='id'
           plural={false}
           table={table}
         />

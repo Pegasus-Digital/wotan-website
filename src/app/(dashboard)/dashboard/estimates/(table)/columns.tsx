@@ -1,9 +1,15 @@
 'use client'
 
-import { ColumnDef } from '@tanstack/react-table'
-import { Estimate, EstimateItem } from '../content'
+import { Budget } from '@/payload/payload-types'
 
-import { MoreHorizontal, Search } from 'lucide-react'
+import { ColumnDef } from '@tanstack/react-table'
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 import {
   DropdownMenu,
@@ -17,18 +23,14 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Card, CardContent } from '@/components/ui/card'
 
 import { Small } from '@/components/typography/texts'
-import { Card, CardContent } from '@/components/ui/card'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+
+import { MoreHorizontal } from 'lucide-react'
 import { MagnifyingGlassIcon } from '@radix-ui/react-icons'
 
-export const columns: ColumnDef<Estimate>[] = [
+export const columns: ColumnDef<Budget>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -57,14 +59,24 @@ export const columns: ColumnDef<Estimate>[] = [
     header: 'ID',
   },
   {
-    accessorKey: 'clientName',
-    header: 'Nome do cliente',
+    accessorKey: 'total',
+    header: 'Total R$',
+    cell: ({ row }) => {
+      const total: number = Number.parseInt(row.getValue('total'))
+
+      const formattedTotal = new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+      }).format(total)
+
+      return <span>{formattedTotal}</span>
+    },
   },
   {
     accessorKey: 'items',
     header: 'Produtos',
     cell: ({ row }) => {
-      const items: EstimateItem[] = row.getValue('items')
+      const items: any[] = row.getValue('items')
 
       return (
         <TooltipProvider>
@@ -72,14 +84,14 @@ export const columns: ColumnDef<Estimate>[] = [
             <TooltipTrigger>
               <Card className='w-fit cursor-pointer border-transparent p-2 hover:border-border'>
                 <CardContent className='m-0 space-y-2 p-0'>
-                  {items.map((item) => {
+                  {items.map((item, index) => {
                     return (
                       <div
-                        key={item.product.title}
+                        key={item.id + '-' + index}
                         className='flex items-center'
                       >
                         <Small className='mr-2 font-semibold'>
-                          {item.amount}x
+                          {item.quantity}x
                         </Small>
                         <Badge className='w-fit'>{item.product.title}</Badge>
                       </div>

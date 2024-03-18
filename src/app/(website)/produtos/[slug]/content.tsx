@@ -5,7 +5,6 @@ import { Product } from '@/payload/payload-types'
 import { Heading } from '@/pegasus/heading'
 import { buttonVariants } from '@/components/ui/button'
 import { ProductInteraction } from './(components)/product-interaction'
-import { Media } from '@/components/media'
 
 interface ProductPageProps {
   product: Product | null

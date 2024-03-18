@@ -1,31 +1,16 @@
+import { Budget } from '@/payload/payload-types'
+
+import { columns } from './(table)/columns'
+import { DataTable } from './(table)/data-table'
+
 import { Small } from '@/components/typography/texts'
 
 import { Separator } from '@/components/ui/separator'
 import { Content, ContentHeader } from '@/components/content'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Product } from '@/payload/payload-types'
-import { DataTable } from './(table)/data-table'
-import { columns } from './(table)/columns'
-
-export interface EstimateItem {
-  amount: number
-  product: Product
-}
-
-export interface Estimate {
-  id: string
-
-  items: EstimateItem[]
-
-  clientName: string
-  clientId: string
-
-  representativeName: string
-  representativeId: string
-}
 
 interface EstimatesContentProps {
-  estimates: Estimate[]
+  estimates: Budget[]
 }
 
 export function EstimatesContent({ estimates }: EstimatesContentProps) {
@@ -51,14 +36,12 @@ export function EstimatesContent({ estimates }: EstimatesContentProps) {
         </TabsContent>
 
         <TabsContent value='interactive'>
-          <div className='grid grid-cols-dashboard gap-2'>
-            {/* Select */}
+          {/* <div className='grid grid-cols-dashboard gap-2'>
             <div className='rounded-sm border'>
               <EstimateCard />
             </div>
-            {/*  */}
             <div className='flex-1 bg-blue-300'>b</div>
-          </div>
+          </div> */}
         </TabsContent>
       </Tabs>
     </Content>

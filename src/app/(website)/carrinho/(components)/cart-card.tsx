@@ -1,70 +1,221 @@
 'use client'
 
+import { Product } from '@/payload/payload-types'
+
 import { toast } from 'sonner'
 
 import { CartItem } from '@/components/cart-store'
 import { useCartStore } from '@/components/cart-store-provider'
 
-import { Button } from '@/components/ui/button'
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+
+import { Media } from '@/components/media'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 
 import { Heading } from '@/pegasus/heading'
-import { Lead } from '@/components/typography/texts'
 
 import { Trash } from 'lucide-react'
 
-export function CartCard({ productId, amount, attributes }: CartItem) {
-  const { remove } = useCartStore((state) => state)
+interface CartCardProps {
+  cartItem: CartItem
+  product: Product
+}
 
-  function handleRemoveFromCart() {
-    remove({ productId, amount, attributes })
+interface Color {
+  name: string
+  value: string
+}
 
-    toast('Item removido do carrinho.', {
+export function CartCard({ cartItem, product }: CartCardProps) {
+  const { remove, incrementAmount, decrementAmount } = useCartStore(
+    (state) => state,
+  )
+
+  // TODO: Melhorar essa bosta
+  const attributes = product
+    ? // @ts-ignore
+      product.attributes.filter((attr) => (attr.type ? attr.type : null))
+    : null
+
+  // ALGUEM ME MATA
+
+  const colors: Color[] = attributes
+    ? attributes.map((attr) => {
+        // @ts-ignore
+
+        if (attr.type !== 'color') {
+          return {
+            // @ts-ignore
+            name: attr.name,
+            // @ts-ignore
+            value: attr.value,
+          }
+        }
+      })
+    : []
+
+  if (!product)
+    return (
+      <Heading variant='h3' className='text-center'>
+        Carregando item...
+      </Heading>
+    )
+
+  return (
+    <Card className='tablet:flex'>
+      <CardHeader className='text-center'>
+        <Heading variant='h3'>{product.title}</Heading>
+        <Media
+          className='rounded-md shadow-2xl'
+          resource={product.featuredImage}
+          imgClassName='rounded-md aspect-square shadow-lg object-contain w-auto h-auto'
+        />
+      </CardHeader>
+
+      <CardContent className='flex w-full flex-col space-y-2 tablet:p-6'>
+        <div className='space-y-1'>
+          <Label>Atributos:</Label>
+
+          <Select>
+            <SelectTrigger>
+              <SelectValue placeholder='Selecione um atributo' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='a'>Atributo X</SelectItem>
+              <SelectItem value='b'>Atributo Y</SelectItem>
+              <SelectItem value='c'>Atributo Z</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className='space-y-1'>
+          <Label>Cores:</Label>
+
+          <RadioGroup className='flex gap-1'>
+            {colors.length > 0 &&
+              colors.map((color, index) => (
+                <RadioGroupItem
+                  key={color.name + '-' + index}
+                  value={color.name}
+                  style={{ backgroundColor: color.value }}
+                  className='h-6 w-6 rounded-full text-white'
+                />
+              ))}
+          </RadioGroup>
+        </div>
+
+        <div className='space-y-1'>
+          <Label>Observações</Label>
+          <Textarea
+            className='resize-none'
+            placeholder='Adicione observações ou comentários para que nossa equipe faça a análise da melhor maneira possível.'
+          />
+        </div>
+
+        <div className='flex-1' />
+
+        <CartInteraction
+          item={cartItem}
+          minimumQuantity={product.minimumQuantity}
+          decrementAmount={decrementAmount}
+          incrementAmount={incrementAmount}
+          remove={remove}
+        />
+      </CardContent>
+    </Card>
+  )
+}
+
+interface CartInteractionProps {
+  item: CartItem
+  minimumQuantity: number
+  incrementAmount: (id: string, quantity: number) => void
+  decrementAmount: (id: string, quantity: number) => void
+  remove: (id: string) => void
+}
+
+function CartInteraction({
+  item,
+  minimumQuantity,
+  incrementAmount,
+  decrementAmount,
+  remove,
+}: CartInteractionProps) {
+  function onCartRemove() {
+    remove(item.id)
+
+    toast.error('Item removido do carrinho.', {
       icon: <Trash className='h-5 w-5' />,
     })
   }
 
+  function onAmountChange(e: React.MouseEvent<HTMLButtonElement>) {
+    const type = e.currentTarget.value
+
+    switch (type) {
+      case 'increment':
+        incrementAmount(item.id, 1)
+        break
+      case 'decrement':
+        item.amount - 1 >= minimumQuantity
+          ? decrementAmount(item.id, 1)
+          : toast.warning(
+              `A quantidade mínima deste produto é de ${minimumQuantity}`,
+            )
+        break
+      default:
+        toast.error('Ocorreu algum erro.')
+        break
+    }
+  }
+
   return (
-    <Card>
-      <CardHeader>
-        <Heading variant='h3'>{productId}</Heading>
-      </CardHeader>
-      <CardContent>
-        <Lead>Amount: {amount}</Lead>
+    <div className='flex w-full flex-col space-y-2'>
+      <div className='flex flex-col items-center space-y-1 self-center'>
+        <Label>Quantidade:</Label>
+        <div className='flex items-center space-x-1 transition-all'>
+          <Button
+            value='decrement'
+            variant='ghost'
+            size='sm'
+            onClick={onAmountChange}
+            className='aspect-square text-lg font-semibold hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
+          >
+            -
+          </Button>
 
-        <div>
-          {attributes.length > 0 ? (
-            <>
-              <Lead>Attributes:</Lead>
+          <Input
+            className='pointer-events-none max-w-12 bg-wotanRed-400 px-0 text-center text-lg font-bold text-primary-foreground'
+            value={item.amount}
+            readOnly
+          />
 
-              {attributes.map((attribute, index) => (
-                <div key={attribute.id + '-' + index} className='mt-4'>
-                  <Lead>Attribute ID: {attribute.id}</Lead>
-                  <Lead>Attribute Title: {attribute.title}</Lead>
-                  <Lead>Attribute Type: {attribute.type}</Lead>
-                  <Lead>Attribute Value: {attribute.value}</Lead>
-                </div>
-              ))}
-            </>
-          ) : (
-            <>
-              <Lead>No attributes selected.</Lead>
-            </>
-          )}
+          <Button
+            value='increment'
+            variant='ghost'
+            size='sm'
+            onClick={onAmountChange}
+            className='aspect-square text-lg font-semibold hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
+          >
+            +
+          </Button>
         </div>
-      </CardContent>
-
-      <CardFooter>
-        <Button variant='destructive' onClick={handleRemoveFromCart} size='sm'>
-          <Trash className='mr-2 h-5 w-5' /> Remover
-        </Button>
-      </CardFooter>
-    </Card>
+      </div>
+      <Button variant='outline' className='w-full' onClick={onCartRemove}>
+        <Trash className='mr-2 h-5 w-5' />
+        Remover
+      </Button>
+    </div>
   )
 }

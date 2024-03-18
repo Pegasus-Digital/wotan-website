@@ -15,7 +15,7 @@ interface ContentHeaderProps {
 
 export function ContentHeader({ title, description }: ContentHeaderProps) {
   return (
-    <section className='mb-1 flex flex-col'>
+    <section className='mb-1 flex flex-col text-primary'>
       <H1>{title}</H1>
       <Lead className='text-lg'>{description}</Lead>
     </section>

@@ -1,5 +1,3 @@
-import { H1 } from '@/components/typography/headings'
-import { Lead, P } from '@/components/typography/texts'
 import {
   Card,
   CardContent,

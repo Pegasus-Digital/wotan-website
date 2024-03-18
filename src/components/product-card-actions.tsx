@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
+import { v4 as uuidv4 } from 'uuid'
 
 import { useCartStore } from './cart-store-provider'
 
@@ -19,19 +20,24 @@ import { Heart, ShoppingCart, Eye, PlusCircle } from 'lucide-react'
 
 interface ProductCardActions {
   productId: string
+  minimumQuantity: number
 }
 
-export function ProductCardActions({ productId }: ProductCardActions) {
+export function ProductCardActions({
+  productId,
+  minimumQuantity,
+}: ProductCardActions) {
   const { add } = useCartStore((state) => state)
 
   function handleAddToCart() {
     add({
+      id: uuidv4(),
       productId,
-      amount: 0,
+      amount: minimumQuantity,
       attributes: [],
     })
 
-    toast('Produto adicionado ao carrinho.', {
+    toast.success('Produto adicionado ao carrinho.', {
       icon: <PlusCircle className='h-5 w-5' />,
     })
   }

@@ -1,12 +1,10 @@
-import { ProductSlider } from '@/components/product-slider'
-
 import { Page as PayloadPage } from '../../../payload/payload-types'
 import { fetchDoc } from '@/app/_api/fetchDoc'
 import { fetchDocs } from '@/app/_api/fetchDocs'
 import { notFound } from 'next/navigation'
 
-import { Sections } from '@/components/sections'
 import { Hero } from '@/components/heros'
+import { Sections } from '@/components/sections'
 import { SlideshowHero } from '@/app/_sections/heros/slideshow'
 
 async function fetchPage(slug: string) {
@@ -27,13 +25,12 @@ export default async function Page({ params: { slug = 'home' } }) {
   if (!page) return notFound()
 
   const { title, description, layout } = page
-  // console.log(layout)
   return (
     <>
       {slug === 'home' ? (
         <SlideshowHero />
       ) : (
-        <Hero title={title} description={description} />
+        <Hero title={title} description={description} type={'highImpact'} />
       )}
       <Sections sections={layout} />
     </>
@@ -43,7 +40,7 @@ export default async function Page({ params: { slug = 'home' } }) {
 export async function generateStaticParams() {
   try {
     const pages = await fetchDocs<PayloadPage>('pages')
-    // console.log(pages)
+
     return pages?.map(({ slug }) => slug)
   } catch (error) {
     return []

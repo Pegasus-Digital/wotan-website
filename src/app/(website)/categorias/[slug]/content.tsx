@@ -70,70 +70,73 @@ export async function CategoryPageContent({
               key={product.id}
               id={product.id}
               title={product.title}
+              minimumQuantity={product.minimumQuantity}
               categories={product.categories.map(
                 (category: Category) => category.title,
               )}
             />
           ))}
         </div>
-        <Pagination className='sticky w-full py-6'>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                className={cn(
-                  prevPage === ''
-                    ? 'pointer-events-none text-muted-foreground'
-                    : null,
-                )}
-                href={prevPage}
-              />
-            </PaginationItem>
-
-            {pagination.hasPrevPage ? (
+        {products.length > 0 && (
+          <Pagination className='sticky w-full py-6'>
+            <PaginationContent>
               <PaginationItem>
-                <PaginationLink href={prevPage}>
-                  {pagination.prevPage}
+                <PaginationPrevious
+                  className={cn(
+                    prevPage === ''
+                      ? 'pointer-events-none text-muted-foreground'
+                      : null,
+                  )}
+                  href={prevPage}
+                />
+              </PaginationItem>
+
+              {pagination.hasPrevPage ? (
+                <PaginationItem>
+                  <PaginationLink href={prevPage}>
+                    {pagination.prevPage}
+                  </PaginationLink>
+                </PaginationItem>
+              ) : (
+                <Button variant='ghost' size='icon' disabled>
+                  -
+                </Button>
+              )}
+
+              <PaginationItem>
+                <PaginationLink
+                  className='bg-wotanRed-500 text-primary-foreground hover:bg-wotanRed-300 hover:text-primary-foreground'
+                  href='?page=1'
+                >
+                  {pagination.page}
                 </PaginationLink>
               </PaginationItem>
-            ) : (
-              <Button variant='ghost' size='icon' disabled>
-                -
-              </Button>
-            )}
 
-            <PaginationItem>
-              <PaginationLink
-                className='bg-wotanRed-500 text-primary-foreground hover:bg-wotanRed-300 hover:text-primary-foreground'
-                href='?page=1'
-              >
-                {pagination.page}
-              </PaginationLink>
-            </PaginationItem>
+              {pagination.hasNextPage ? (
+                <PaginationItem>
+                  <PaginationLink href={nextPage}>
+                    {pagination.nextPage}
+                  </PaginationLink>
+                </PaginationItem>
+              ) : (
+                <Button variant='ghost' size='icon' disabled>
+                  -
+                </Button>
+              )}
 
-            {pagination.hasNextPage ? (
               <PaginationItem>
-                <PaginationLink href={nextPage}>
-                  {pagination.nextPage}
-                </PaginationLink>
+                <PaginationNext
+                  className={cn(
+                    nextPage === ''
+                      ? 'pointer-events-none text-muted-foreground'
+                      : null,
+                  )}
+                  href={nextPage}
+                />
               </PaginationItem>
-            ) : (
-              <Button variant='ghost' size='icon' disabled>
-                -
-              </Button>
-            )}
-
-            <PaginationItem>
-              <PaginationNext
-                className={cn(
-                  nextPage === ''
-                    ? 'pointer-events-none text-muted-foreground'
-                    : null,
-                )}
-                href={nextPage}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+            </PaginationContent>
+          </Pagination>
+        )}
       </div>
     </section>
   )
