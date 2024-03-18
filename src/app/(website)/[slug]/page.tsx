@@ -26,12 +26,12 @@ export default async function Page({ params: { slug = 'home' } }) {
 
   if (!page) return notFound()
 
-  const { title, description, layout } = page
+  const { title, description, layout, carousel } = page
   // console.log(page)
   return (
     <>
       {slug === 'home' ? (
-        <SlideshowHero />
+        <SlideshowHero carousel={carousel} />
       ) : (
         <LowImpactHero title={title} description={description} />
       )}
