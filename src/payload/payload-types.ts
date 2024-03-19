@@ -53,10 +53,12 @@ export interface Product {
   price?: number | null;
   description?: string | null;
   featuredImage: string | Media;
-  images: {
-    image?: string | Media | null;
-    id?: string | null;
-  }[];
+  images?:
+    | {
+        image?: string | Media | null;
+        id?: string | null;
+      }[]
+    | null;
   categories?: (string | Category)[] | null;
   relatedProducts?: (string | Product)[] | null;
   slug?: string | null;

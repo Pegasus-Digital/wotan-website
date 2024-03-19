@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { v4 as uuidv4 } from 'uuid'
 
-import { Category, Product } from '@/payload/payload-types'
+import { Attribute, Category, Product } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
 
@@ -30,13 +30,13 @@ import {
 import {
   Select,
   SelectItem,
-  SelectLabel,
   SelectValue,
   SelectTrigger,
   SelectContent,
 } from '@/components/ui/select'
 
 import { useCartStore } from '@/components/cart-store-provider'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 interface ProductInteractionProps {
   product: Product
@@ -52,6 +52,38 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
   )
 
   const isFavorite = favorites.some((id) => id === product.id)
+
+  // TODO: Melhorar essa bosta
+  // TODO: Colocar num hook
+  const attributes = product
+    ? // @ts-ignore
+      product.attributes?.filter((attr: Attribute) =>
+        attr.type ? attr.type : null,
+      )
+    : null
+
+  const colors = attributes
+    ? // @ts-ignore
+      attributes.filter((attr: Attribute) => attr.type.type === 'color')
+    : []
+
+  const otherAttributes = attributes
+    ? // @ts-ignore
+      attributes.filter((attr: Attribute) => attr.type.type !== 'color')
+    : []
+
+  function getUniqueTypes(): string[] {
+    const types = new Set<string>()
+
+    otherAttributes.forEach((item: Attribute) => {
+      // @ts-ignore
+      types.add(item.type.name)
+    })
+
+    return Array.from(types)
+  }
+
+  const types = getUniqueTypes()
 
   function onAmountChange(e: React.MouseEvent<HTMLButtonElement>) {
     const type = e.currentTarget.value
@@ -74,6 +106,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
         break
     }
   }
+
   function slugify(str: string): string {
     return str
       .toLowerCase()
@@ -109,8 +142,9 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
   }
 
   return (
-    <div className='flex h-full flex-col space-y-2 px-4 py-2'>
+    <div className='flex h-full flex-col space-y-2 px-4'>
       <Heading variant='h2'>{product.title}</Heading>
+      <Muted>Código: {product.sku}</Muted>
 
       <div className='flex flex-wrap items-center space-x-1 space-y-1'>
         <Label>Categoria(s):</Label>
@@ -139,7 +173,66 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
         placeat fugit nisi iusto saepe nemo. A possimus dolore dolores aut.
       </Small>
 
+      <div>
+        {colors.length > 0 ? (
+          <div className='space-y-1'>
+            <Label>Cores:</Label>
+
+            <RadioGroup className='flex gap-1'>
+              {colors.map((color: Attribute, index) => (
+                <RadioGroupItem
+                  key={color.name + '-' + index}
+                  value={color.name}
+                  style={{ backgroundColor: color.value }}
+                  className='h-6 w-6 rounded-full text-white'
+                />
+              ))}
+            </RadioGroup>
+          </div>
+        ) : (
+          <Small className='w-full py-2'>Não há cores para selecionar</Small>
+        )}
+      </div>
+
       <div className='w-full font-medium'>
+        <Label className='text-base font-semibold'>Atributos:</Label>
+        <div className='mt-1 space-y-2'>
+          {types.length > 0 ? (
+            types.map((type) => {
+              return (
+                <div key={type} className='w-full tablet:max-w-64'>
+                  <Label>{type}:</Label>
+
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder={`Selecione um...`} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {otherAttributes
+                        // @ts-ignore
+                        .filter((attr: Attribute) => attr.type.name === type)
+                        .map((attr: Attribute) => (
+                          <SelectItem key={attr.id} value={attr.value}>
+                            {attr.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )
+            })
+          ) : (
+            <Small className='w-full py-2'>
+              Não há atributos para selecionar
+            </Small>
+          )}
+        </div>
+      </div>
+
+      {/* Space filler */}
+      {/* <div className='flex-1' /> */}
+
+      <div className='flex w-full flex-col items-center font-medium tablet:items-start'>
         <Label className='text-base font-semibold'>Quantidade:</Label>
 
         <div className='mt-1 flex items-center space-x-1'>
@@ -190,29 +283,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
         </div>
       </div>
 
-      <div className='w-full font-medium'>
-        <Label className='text-base font-semibold'>Atributos:</Label>
-        {/* TODO: Renderizar atributos dinamicamente como select - BASE */}
-        {/* <div className='mt-1 space-y-2'>
-          {product.attributes.map((attribute: Atribute) => (
-          <Select key={attribute.id}>
-          <SelectTrigger>
-          <SelectValue placeholder='Selecione um valor' />
-          </SelectTrigger>
-          <SelectContent>
-          <SelectItem value='a'>Value 1</SelectItem>
-          <SelectItem value='b'>Value 2</SelectItem>
-          </SelectContent>
-          </Select>
-        ))}
-        </div> */}
-      </div>
-
-      {/* Space filler */}
-      <div className='flex-1' />
-
-      <Muted>Código: {product.sku}</Muted>
-      <div className='flex items-center gap-2'>
+      <div className='flex items-center justify-around gap-2 tablet:justify-start'>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -227,9 +298,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
                     isFavorite ? favoriteIconStyles : null,
                   )}
                 />
-                <span className='ml-2 hidden text-base tablet:inline'>
-                  Favoritos
-                </span>
+                <span className='ml-2 text-base tablet:inline'>Favoritos</span>
               </Button>
             </TooltipTrigger>
             <TooltipContent>Adicionar aos favoritos</TooltipContent>

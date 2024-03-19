@@ -83,7 +83,7 @@ export function CartCard({ cartItem, product }: CartCardProps) {
         <Media
           className='rounded-md shadow-2xl'
           resource={product.featuredImage}
-          imgClassName='rounded-md aspect-square shadow-lg object-contain w-auto h-auto'
+          imgClassName='rounded-md aspect-square shadow-lg object-contain'
         />
       </CardHeader>
 
@@ -100,9 +100,7 @@ export function CartCard({ cartItem, product }: CartCardProps) {
 
                     <Select>
                       <SelectTrigger>
-                        <SelectValue
-                          placeholder={`Selecione um ${type.toLowerCase()}`}
-                        />
+                        <SelectValue placeholder={`Selecione um...`} />
                       </SelectTrigger>
                       <SelectContent>
                         {otherAttributes
@@ -148,14 +146,6 @@ export function CartCard({ cartItem, product }: CartCardProps) {
         ) : (
           <Small className='w-full py-2'>Não há cores para selecionar</Small>
         )}
-
-        <div className='space-y-1'>
-          <Label>Observações</Label>
-          <Textarea
-            className='resize-none'
-            placeholder='Adicione observações ou comentários para que nossa equipe faça a análise da melhor maneira possível.'
-          />
-        </div>
 
         <div className='flex-1' />
 

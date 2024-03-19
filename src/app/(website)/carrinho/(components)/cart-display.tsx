@@ -13,6 +13,7 @@ import { CartCard } from './cart-card'
 import { useCartStore } from '@/components/cart-store-provider'
 import { Button, buttonVariants } from '@/pegasus/button'
 import { ArrowRight } from 'lucide-react'
+import { Label } from '@/components/ui/label'
 
 export function CartDisplay() {
   const { cart } = useCartStore((state) => state)
@@ -71,11 +72,11 @@ export function CartDisplay() {
         </div>
       )}
 
-      <div className='space-y-4'>
+      <div className='flex flex-col items-center space-y-4'>
         {cart &&
-          cart.map((item, index) => (
+          cart.map((item) => (
             <CartCard
-              key={item.productId + '-' + index}
+              key={item.id}
               cartItem={item}
               product={products.find(
                 (product) => product.id === item.productId,

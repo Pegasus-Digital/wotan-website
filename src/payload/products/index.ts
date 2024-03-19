@@ -97,8 +97,6 @@ const Products: CollectionConfig = {
             {
               name: 'images',
               type: 'array',
-              required: true,
-              minRows: 1,
               maxRows: 6,
               fields: [
                 {
