@@ -15,6 +15,7 @@ export interface CartItem {
 
 interface State {
   cart: CartItem[]
+  favorites: string[]
 }
 
 interface Actions {
@@ -22,12 +23,16 @@ interface Actions {
   remove: (id: string) => void
   incrementAmount: (id: string, quantity: number) => void
   decrementAmount: (id: string, quantity: number) => void
+
+  addFavorite: (productId: string) => void
+  removeFavorite: (productId: string) => void
 }
 
 export type Store = State & Actions
 
 export const defaultInitState: State = {
   cart: [],
+  favorites: [],
 }
 
 // Gerenciamento do carrinho acontece aqui
@@ -80,6 +85,22 @@ export const createCartStore = (initState: State = defaultInitState) => {
           })
 
           set({ cart: updatedCart })
+        },
+
+        addFavorite(item) {
+          const { favorites } = get()
+
+          const updatedFavorites = [...favorites, item]
+
+          set({ favorites: updatedFavorites })
+        },
+
+        removeFavorite(productId) {
+          const { favorites } = get()
+
+          const updatedFavorites = favorites.filter((id) => id !== productId)
+
+          set({ favorites: updatedFavorites })
         },
       }),
       {

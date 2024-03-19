@@ -1,6 +1,6 @@
 'use client'
 
-import { Product } from '@/payload/payload-types'
+import { Attribute, AttributeType, Product } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
 
@@ -26,15 +26,11 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { Heading } from '@/pegasus/heading'
 
 import { Trash } from 'lucide-react'
+import { Small } from '@/components/typography/texts'
 
 interface CartCardProps {
   cartItem: CartItem
   product: Product
-}
-
-interface Color {
-  name: string
-  value: string
 }
 
 export function CartCard({ cartItem, product }: CartCardProps) {
@@ -45,25 +41,33 @@ export function CartCard({ cartItem, product }: CartCardProps) {
   // TODO: Melhorar essa bosta
   const attributes = product
     ? // @ts-ignore
-      product.attributes.filter((attr) => (attr.type ? attr.type : null))
+      product.attributes?.filter((attr: Attribute) =>
+        attr.type ? attr.type : null,
+      )
     : null
 
-  // ALGUEM ME MATA
-
-  const colors: Color[] = attributes
-    ? attributes.map((attr) => {
-        // @ts-ignore
-
-        if (attr.type !== 'color') {
-          return {
-            // @ts-ignore
-            name: attr.name,
-            // @ts-ignore
-            value: attr.value,
-          }
-        }
-      })
+  const colors = attributes
+    ? // @ts-ignore
+      attributes.filter((attr: Attribute) => attr.type.type === 'color')
     : []
+
+  const otherAttributes = attributes
+    ? // @ts-ignore
+      attributes.filter((attr: Attribute) => attr.type.type !== 'color')
+    : []
+
+  function getUniqueTypes(): string[] {
+    const types = new Set<string>()
+
+    otherAttributes.forEach((item: Attribute) => {
+      // @ts-ignore
+      types.add(item.type.name)
+    })
+
+    return Array.from(types)
+  }
+
+  const types = getUniqueTypes()
 
   if (!product)
     return (
@@ -73,38 +77,63 @@ export function CartCard({ cartItem, product }: CartCardProps) {
     )
 
   return (
-    <Card className='tablet:flex'>
+    <Card className='shadow-xl tablet:flex'>
       <CardHeader className='text-center'>
         <Heading variant='h3'>{product.title}</Heading>
         <Media
           className='rounded-md shadow-2xl'
           resource={product.featuredImage}
-          imgClassName='rounded-md aspect-square shadow-lg object-contain w-auto h-auto'
+          imgClassName='rounded-md aspect-square shadow-lg object-contain'
         />
       </CardHeader>
 
       <CardContent className='flex w-full flex-col space-y-2 tablet:p-6'>
-        <div className='space-y-1'>
-          <Label>Atributos:</Label>
+        {otherAttributes.length > 0 ? (
+          <div className='space-y-1'>
+            <Label>Atributos:</Label>
 
-          <Select>
-            <SelectTrigger>
-              <SelectValue placeholder='Selecione um atributo' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='a'>Atributo X</SelectItem>
-              <SelectItem value='b'>Atributo Y</SelectItem>
-              <SelectItem value='c'>Atributo Z</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+            {types.length > 0 ? (
+              types.map((type) => {
+                return (
+                  <div key={type}>
+                    <Label>{type}:</Label>
 
-        <div className='space-y-1'>
-          <Label>Cores:</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder={`Selecione um...`} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {otherAttributes
+                          // @ts-ignore
+                          .filter((attr: Attribute) => attr.type.name === type)
+                          .map((attr: Attribute) => (
+                            <SelectItem key={attr.id} value={attr.value}>
+                              {attr.name}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )
+              })
+            ) : (
+              <Small className='w-full py-2'>
+                Não há atributos para selecionar
+              </Small>
+            )}
+          </div>
+        ) : (
+          <Small className='w-full py-2'>
+            Não há atributos para selecionar
+          </Small>
+        )}
 
-          <RadioGroup className='flex gap-1'>
-            {colors.length > 0 &&
-              colors.map((color, index) => (
+        {colors.length > 0 ? (
+          <div className='space-y-1'>
+            <Label>Cores:</Label>
+
+            <RadioGroup className='flex gap-1'>
+              {colors.map((color: Attribute, index) => (
                 <RadioGroupItem
                   key={color.name + '-' + index}
                   value={color.name}
@@ -112,16 +141,11 @@ export function CartCard({ cartItem, product }: CartCardProps) {
                   className='h-6 w-6 rounded-full text-white'
                 />
               ))}
-          </RadioGroup>
-        </div>
-
-        <div className='space-y-1'>
-          <Label>Observações</Label>
-          <Textarea
-            className='resize-none'
-            placeholder='Adicione observações ou comentários para que nossa equipe faça a análise da melhor maneira possível.'
-          />
-        </div>
+            </RadioGroup>
+          </div>
+        ) : (
+          <Small className='w-full py-2'>Não há cores para selecionar</Small>
+        )}
 
         <div className='flex-1' />
 
@@ -171,7 +195,7 @@ function CartInteraction({
         item.amount - 1 >= minimumQuantity
           ? decrementAmount(item.id, 1)
           : toast.warning(
-              `A quantidade mínima deste produto é de ${minimumQuantity}`,
+              `A quantidade mínima deste produto é de ${minimumQuantity} unidades`,
             )
         break
       default:
@@ -212,7 +236,11 @@ function CartInteraction({
           </Button>
         </div>
       </div>
-      <Button variant='outline' className='w-full' onClick={onCartRemove}>
+      <Button
+        variant='outline'
+        className='w-full shadow-lg'
+        onClick={onCartRemove}
+      >
         <Trash className='mr-2 h-5 w-5' />
         Remover
       </Button>
