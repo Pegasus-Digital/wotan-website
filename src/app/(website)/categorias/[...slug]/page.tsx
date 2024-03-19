@@ -2,30 +2,38 @@ import payload from 'payload'
 import { Metadata } from 'next'
 
 import { CategoryPageContent } from './content'
+import { notFound } from 'next/navigation'
 
 export default async function CategoryPage({ params, searchParams }) {
   const category: string = params.slug[params.slug.length - 1]
   const page: number = searchParams ? Number(searchParams.page) : 1
+  // console.log(category)
 
   const res = await payload.find({
     collection: 'categories',
     where: {
-      title: {
-        contains: category,
+      slug: {
+        equals: category,
       },
     },
     limit: 1,
     pagination: false,
   })
-  console.log(res)
+  // console.log(res)
+
+  if (res.docs.length < 1) {
+    // console.log('not found')
+    notFound()
+  }
+
   const { docs, ...paginationParams } = await payload.find({
     collection: 'products',
     where: {
-      'categories.title': {
-        contains: category,
+      'categories.breadcrumbs.label': {
+        contains: res.docs[0].title,
       },
     },
-    limit: 15,
+    limit: 20,
     page: page,
   })
 
@@ -38,6 +46,9 @@ export default async function CategoryPage({ params, searchParams }) {
   )
 }
 
-export async function generateMetadata({ params }): Promise<Metadata> {
-  return { title: `Buscando por '${params.slug}'` }
+export async function generateMetadata({
+  params,
+  searchParams,
+}): Promise<Metadata> {
+  return { title: `Buscando por '${params.slug[params.slug.length - 1]}'` }
 }
