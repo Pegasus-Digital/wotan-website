@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 import { Heading } from '@/pegasus/heading'
 import { Large, Muted, Small } from '@/components/typography/texts'
@@ -36,7 +37,6 @@ import {
 } from '@/components/ui/select'
 
 import { useCartStore } from '@/components/cart-store-provider'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { CartItem } from '@/components/cart-store'
 
 interface ProductInteractionProps {
@@ -245,7 +245,9 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
                 <div key={type} className='w-full tablet:max-w-64'>
                   <Label>{type}:</Label>
 
-                  <Select>
+                  <Select
+                    onValueChange={(value) => onSelectAttribute(value, type)}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder={`Selecione um...`} />
                     </SelectTrigger>

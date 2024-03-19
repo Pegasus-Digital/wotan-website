@@ -66,7 +66,7 @@ export function ProductCardActions({
         <TooltipTrigger asChild>
           <Button
             onClick={onToggleFavorite}
-            className='group/favorite m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-primary hover:text-background'
+            className='group/favorite m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground shadow-wotan-light hover:bg-primary hover:text-background'
           >
             <Heart
               className={cn(`h-5 w-5`, isFavorite ? favoriteIconStyles : null)}
@@ -77,7 +77,10 @@ export function ProductCardActions({
       </Tooltip>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button>
+          <Button
+            onClick={onAddToCart}
+            className='group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground shadow-wotan-light hover:bg-primary hover:text-background'
+          >
             <ShoppingCart className='h-5 w-5 ' />
           </Button>
         </TooltipTrigger>
@@ -89,7 +92,8 @@ export function ProductCardActions({
             href={`/produtos/${productId}`}
             className={cn(
               buttonVariants({
-                className: 'group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-primary hover:text-background',
+                className:
+                  'group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground shadow-wotan-light hover:bg-primary hover:text-background',
               }),
             )}
           >
