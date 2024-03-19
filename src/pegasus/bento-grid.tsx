@@ -1,4 +1,7 @@
 import { cn } from '@/lib/utils'
+import Link from 'next/link'
+import type { Link as LinkType } from '@/payload/payload-types'
+import { getHref } from '@/components/link'
 
 export const BentoGrid = ({
   className,
@@ -10,7 +13,7 @@ export const BentoGrid = ({
   return (
     <div
       className={cn(
-        'mx-auto grid w-full grid-cols-1 gap-4 bg-transparent tablet:auto-rows-[18rem] tablet:grid-cols-4 ',
+        'mx-auto grid w-full auto-rows-[18rem] grid-cols-1  gap-4 bg-transparent tablet:grid-cols-4  ',
         className,
       )}
     >
@@ -23,25 +26,36 @@ export const BentoGridItem = ({
   className,
   title,
   description,
-  header,
+  image,
+  linkTo,
 }: {
   className?: string
   title?: string | React.ReactNode
   description?: string | React.ReactNode
-  header?: React.ReactNode
+  image?: React.ReactNode
+  linkTo: string
 }) => {
   return (
-    <div
+    <Link
+      href={linkTo}
       className={cn(
-        'group/bento relative row-span-1 flex flex-col justify-between space-y-4 overflow-hidden rounded-md border border-transparent shadow-input transition duration-200 hover:shadow-wotan-light',
+        'group/bento relative row-span-1 flex flex-col justify-between overflow-hidden rounded-md  shadow-wotan-light  transition duration-200',
         className,
       )}
     >
-      {header}
-      <div className='absolute bottom-4 left-4 text-background transition duration-200 group-hover/bento:translate-x-2'>
-        <div className='text-xl font-bold'>{title}</div>
-        <div className='mt-2 text-base font-normal'>{description}</div>
+      {image}
+      <div className='absolute h-full w-full bg-gradient-to-b from-white/0 via-white/15 to-wotanRed-500/50 text-background '>
+        <div className='absolute bottom-0 left-0'>
+          <div className=' mb-2 ml-4 mt-2 text-xl font-bold transition group-hover/bento:translate-x-4'>
+            {title}
+          </div>
+          {description && (
+            <div className=' mb-2 ml-4 text-base font-semibold transition group-hover/bento:translate-x-6'>
+              {description}
+            </div>
+          )}
+        </div>{' '}
       </div>
-    </div>
+    </Link>
   )
 }

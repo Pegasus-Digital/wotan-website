@@ -1,3 +1,5 @@
+import { LINK_FIELDS } from './link'
+
 export const QUERY_PRODUCT_CAROUSEL = `
 ...on ProductCarousel{
   blockType
@@ -12,13 +14,21 @@ export const QUERY_PRODUCT_CAROUSEL = `
         slug
         title
         minimumQuantity
-
+        featuredImage {
+          mimeType
+          filename
+          width
+          height
+          alt
+        }
         categories {
           title
         }
       }
     }
   }
+  seeMore
+  seeMoreLink ${LINK_FIELDS}
 }
 `
 export const QUERY_STATISTICS_SECTION = `
@@ -42,12 +52,21 @@ export const QUERY_FEATURED_SECTION = `
     title
     description
     image {
+      mimeType
       filename
+      width
+      height
+      alt
     }
     linkTo {
       relationTo
       value {
-        __typename
+        ...on Product {
+          slug
+        }
+        ...on Category {
+          slug
+        }
       }
     }
   }
@@ -98,6 +117,20 @@ export const QUERY_CONTENT_MEDIA = `
     width
     height
     alt
+  }
+  blockName 
+  blockType
+}
+`
+
+export const QUERY_FAQ = `
+... on FAQ {
+  title
+  description
+  invertBackground
+  questions {
+    question
+    answer
   }
   blockName 
   blockType

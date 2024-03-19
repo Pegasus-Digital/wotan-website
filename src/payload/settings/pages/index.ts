@@ -56,8 +56,8 @@ export const Pages: CollectionConfig = {
       type: 'text',
       admin: {
         condition: (data) => {
-          console.log('desc:')
-          console.log({ data })
+          // console.log('desc:')
+          // console.log({ data })
           return data.slug !== 'home'
         },
       },
@@ -101,7 +101,7 @@ export const Pages: CollectionConfig = {
         description:
           'Image should be 1920x420 with the content centered around 1280x420',
         condition: (data, siblingData) => {
-          console.log({ data, siblingData })
+          // console.log({ data, siblingData })
           return data.slug === 'home'
         },
       },

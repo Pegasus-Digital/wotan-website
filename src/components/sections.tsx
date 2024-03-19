@@ -6,6 +6,8 @@ import FeaturedGrid from '../app/_sections/featured-grid'
 import Statistics from '../app/_sections/statistics'
 import ClientGrid from '../app/_sections/client-grid'
 import ContentMedia from '../app/_sections/content-media'
+import { FAQ } from '../app/_sections/faq'
+
 import { Background } from './section-background'
 import { VerticalPadding } from '@/pegasus/padding'
 
@@ -16,6 +18,7 @@ const sectionComponents = {
   'content-section': ContentSection,
   'client-grid': ClientGrid,
   'content-media': ContentMedia,
+  'faq-section': FAQ,
 }
 
 export function Sections({ sections }: { sections: Page['layout'][0][] }) {

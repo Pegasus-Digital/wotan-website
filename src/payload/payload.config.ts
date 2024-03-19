@@ -2,6 +2,7 @@ import { buildConfig } from 'payload/config'
 import { mongooseAdapter } from '@payloadcms/db-mongodb' // database-adapter-import
 import { slateEditor } from '@payloadcms/richtext-slate'
 import nestedDocs from '@payloadcms/plugin-nested-docs'
+// import search from '@payloadcms/plugin-search'
 
 import { webpackBundler } from '@payloadcms/bundler-webpack'
 import { Settings } from './settings'
@@ -62,5 +63,16 @@ export default buildConfig({
       generateURL: (docs) =>
         docs.reduce((url, doc) => `${url}/${doc.slug}`, ''),
     }),
+    // search({
+    //   collections: ['products'],
+    //   searchOverrides: {
+    //     fields: [
+    //       {
+    //         name: 'slug',
+    //         type: 'text',
+    //       },
+    //     ],
+    //   },
+    // }),
   ],
 })

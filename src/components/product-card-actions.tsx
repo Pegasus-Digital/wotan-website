@@ -77,11 +77,8 @@ export function ProductCardActions({
       </Tooltip>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button
-            onClick={onAddToCart}
-            className='group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-primary hover:text-background'
-          >
-            <ShoppingCart className='h-5 w-5' />
+          <Button>
+            <ShoppingCart className='h-5 w-5 ' />
           </Button>
         </TooltipTrigger>
         <TooltipContent>Adicionar ao carrinho</TooltipContent>
@@ -92,8 +89,7 @@ export function ProductCardActions({
             href={`/produtos/${productId}`}
             className={cn(
               buttonVariants({
-                className:
-                  'group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-primary hover:text-background',
+                className: 'group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-primary hover:text-background',
               }),
             )}
           >

@@ -9,10 +9,28 @@ import { Button, buttonVariants } from './ui/button'
 
 import { Large } from './typography/texts'
 
-import { Heart, Menu, ShoppingCart } from 'lucide-react'
+import { Heart, Menu, ShoppingCart, Search, SearchX } from 'lucide-react'
+
+import { useSearchParams, useRouter } from 'next/navigation'
+import { FormEvent } from 'react'
+import { toast } from 'sonner'
 
 export function SearchBar() {
   const { cart, favorites } = useCartStore((state) => state)
+
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
+  function handleSearch(e: FormEvent<HTMLFormElement>, query: string) {
+    e.preventDefault()
+    if (query.length >= 3) {
+      router.push(`/pesquisa?query=${encodeURIComponent(query)}`)
+    } else {
+      toast('Sua pesquisa deve ter no mínimo 3 characteres.', {
+        icon: <SearchX className='h-5 w-5 text-destructive' />,
+      })
+    }
+  }
 
   return (
     <div className='flex h-16 w-full items-center justify-between bg-wotan'>
@@ -23,10 +41,30 @@ export function SearchBar() {
           <Large>Produtos</Large>
         </div>
 
-        <Input
-          className='mx-10 hidden max-w-[400px] tablet:flex'
-          placeholder='Estou procurando por...'
-        />
+        <form
+          onSubmit={(e) => handleSearch(e, e.currentTarget.search.value)}
+          className='mx-10 hidden max-w-[400px] grow rounded-md bg-background focus:ring-1 tablet:flex'
+        >
+          <label htmlFor='search' className='sr-only'>
+            Search
+          </label>
+          <Input
+            name='search'
+            placeholder='Estou procurando por...'
+            // minLength={3}
+            maxLength={64}
+            type='text'
+            className='h-auto w-auto grow border-0 focus-visible:ring-0'
+            defaultValue={searchParams.get('query')?.toString()}
+          />
+          <Button
+            type='submit'
+            size='icon'
+            className='bg-background text-primary hover:bg-background'
+          >
+            <Search className='h-6 w-6' />
+          </Button>
+        </form>
 
         {/* Actions */}
         <div className='flex gap-2 text-primary-foreground'>

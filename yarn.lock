@@ -1506,6 +1506,13 @@
   resolved "https://registry.yarnpkg.com/@payloadcms/plugin-nested-docs/-/plugin-nested-docs-1.0.12.tgz#57723fdd1eec3c26a69f0662ee9b05d2ca0269c7"
   integrity sha512-CZcfGjN3nUtlAHHlbjgnmiB+lPCw3X7CNN2t2IL5+n94OH98Kwfnu+qhPV/ALm1JAWMY0sQ46kRIwWHij016Nw==
 
+"@payloadcms/plugin-search@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@payloadcms/plugin-search/-/plugin-search-1.1.0.tgz#4bb08f29939e96506f14ea74853e2fd2ecb59ad2"
+  integrity sha512-iCjAdHOygzbNwZ0Cz+JuxIC+kL0iTqwpfPxNs5PSe89mzuNI7CVeA1QtteqOxQIkiHju6xGzX8V1VfMyluzetQ==
+  dependencies:
+    ts-deepmerge "^2.0.1"
+
 "@payloadcms/richtext-lexical@^0.7.0":
   version "0.7.0"
   resolved "https://registry.npmjs.org/@payloadcms/richtext-lexical/-/richtext-lexical-0.7.0.tgz"
@@ -9679,6 +9686,11 @@ ts-api-utils@^1.0.1:
   version "1.2.1"
   resolved "https://registry.npmjs.org/ts-api-utils/-/ts-api-utils-1.2.1.tgz"
   integrity sha512-RIYA36cJn2WiH9Hy77hdF9r7oEwxAtB/TS9/S4Qd90Ap4z5FSiin5zEiTL44OII1Y3IIlEvxwxFUVgrHSZ/UpA==
+
+ts-deepmerge@^2.0.1:
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/ts-deepmerge/-/ts-deepmerge-2.0.7.tgz#36786a9a10b5f3a6f5154007cf17bfba7251e0a7"
+  integrity sha512-3phiGcxPSSR47RBubQxPoZ+pqXsEsozLo4G4AlSrsMKTFg9TA3l+3he5BqpUi9wiuDbaHWXH/amlzQ49uEdXtg==
 
 ts-essentials@7.0.3:
   version "7.0.3"

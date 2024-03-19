@@ -29,6 +29,8 @@ import {
   LinkedInLogoIcon,
   TwitterLogoIcon,
 } from '@radix-ui/react-icons'
+import { Heading } from '@/pegasus/heading'
+import { LowImpactHero } from '@/app/_sections/heros/lowImpact'
 
 const formSchema = z.object({
   name: z
@@ -100,15 +102,14 @@ export function ContactContent() {
   }
 
   return (
-    <section className='mb-12 mt-6 min-h-screen w-full px-6 text-primary-foreground'>
-      <div className='container flex flex-col items-center rounded-lg bg-opacity-75 bg-wotan p-4 text-center'>
-        <H1>Contato</H1>
-
-        <div className='mt-6 flex w-full flex-col items-center justify-center gap-4 self-start tablet:flex-row tablet:items-start lg:gap-6'>
+    <section className='mb-6 w-full px-6 text-primary-foreground'>
+      <LowImpactHero title='Contato' />
+      <div className='container flex max-w-screen-desktop flex-col items-center rounded-lg  bg-gift bg-cover bg-center p-4 text-center desktop:p-10'>
+        <div className='flex w-full flex-col items-center justify-center gap-4 self-start tablet:flex-row tablet:items-start lg:gap-6'>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className='flex w-full max-w-[450px] flex-col gap-3'
+              className='flex w-full flex-col gap-3 tablet:w-1/2'
             >
               <FormField
                 control={form.control}
@@ -220,7 +221,7 @@ export function ContactContent() {
                   <FormItem>
                     <FormControl>
                       <Textarea
-                        className='h-40 resize-none text-foreground'
+                        className='h-40  text-foreground'
                         placeholder='Mensagem'
                         {...field}
                       />
@@ -289,12 +290,16 @@ export function ContactContent() {
             </form>
           </Form>
           {/* Informações */}
-          <div className='mt-6 flex grow flex-col justify-center tablet:mt-0'>
-            <iframe
-              className='aspect-video rounded-lg border'
-              src='https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d863.4584891761309!2d-51.201612430354096!3d-30.041621137489308!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95197847fb10d883%3A0xc6a59a1606974ae2!2sR.%20Jo%C3%A3o%20Guimar%C3%A3es%2C%20301%20-%20Santa%20Cec%C3%ADlia%2C%20Porto%20Alegre%20-%20RS%2C%2090630-170!5e0!3m2!1spt-BR!2sbr!4v1709142619554!5m2!1spt-BR!2sbr'
-              loading='lazy'
-            />
+          <div className='flex w-full flex-col justify-center tablet:w-1/2'>
+            <div className=' relative h-80 w-full  rounded-lg border'>
+              <iframe
+                className=' absolute left-0 top-0 h-full w-full rounded-lg'
+                src='https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d13815.33916480707!2d-51.2008476!3d-30.0415972!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95197847fbaf1e1f%3A0x7ce237903c469d87!2sWotan%20Brindes!5e0!3m2!1spt-BR!2sbr!4v1710781766668!5m2!1spt-BR!2sbr'
+                loading='lazy'
+                allowFullScreen={true}
+                tabIndex={0}
+              />
+            </div>
             <div className='mt-6 flex flex-col items-center justify-center space-y-4 text-center'>
               <H3>Informações</H3>
               <div className='flex items-center'>
