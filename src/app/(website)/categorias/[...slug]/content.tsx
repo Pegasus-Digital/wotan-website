@@ -45,8 +45,8 @@ export async function CategoryPageContent({
   const nextPage = pagination.hasNextPage ? `?page=${pagination.nextPage}` : ''
 
   return (
-    <section className='relative mt-6 w-full px-6 text-primary-foreground'>
-      <div className='container flex flex-col items-center rounded-lg text-center text-foreground'>
+    <section className='w-full '>
+      <div className='container flex flex-col items-center '>
         <LowImpactHero title={categoryName} />
         {products.length === 0 && (
           <div className='my-12 flex flex-col items-center justify-center space-y-4 rounded-lg text-center text-foreground'>
@@ -63,7 +63,7 @@ export async function CategoryPageContent({
           </div>
         )}
         {/* Products grid */}
-        <div className='grid grid-flow-row grid-cols-5 gap-4'>
+        <div className='grid max-w-screen-desktop grid-flow-row grid-cols-2 gap-4 tablet:grid-cols-3 desktop:grid-cols-4'>
           {products.map((product) => (
             <ProductCard
               key={product.id}

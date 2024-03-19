@@ -22,15 +22,16 @@ export default async function CategoryPage({ params, searchParams }) {
         },
       ],
     },
-    limit: 15,
+    limit: 20,
     page: page,
   })
 
   return (
+    //@ts-ignore
     <SearchPageContent
       products={docs}
       pagination={paginationParams}
-      search={`Pesquisando por: ${query}`}
+      search={query}
     />
   )
 }

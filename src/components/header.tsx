@@ -2,8 +2,9 @@ import Link from 'next/link'
 import { Media } from './media'
 import { Company, Header as HeaderType } from '@/payload/payload-types'
 import { StaticImageData } from 'next/image'
-import Phone from './icons/phone'
+// import Phone from './icons/phone'
 import { HeaderNavigation } from './header-navigation'
+import { PhoneCall } from 'lucide-react'
 
 type Props = HeaderType & {
   staticImage?: StaticImageData
@@ -34,7 +35,7 @@ export function Header({ logo, navigation, staticImage, id, phone }: Props) {
                 href={`tel: ${phone}`}
                 className='flex items-center gap-2 whitespace-nowrap text-sm leading-tight desktop:text-base'
               >
-                <Phone className='mr-2 inline h-6 w-6' />
+                <PhoneCall className='h-6 w-6' />
                 Precisa de ajuda?
                 <br />
                 {phone}
