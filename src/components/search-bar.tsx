@@ -14,13 +14,18 @@ import { Heart, Menu, ShoppingCart, Search, SearchX } from 'lucide-react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { FormEvent } from 'react'
 import { toast } from 'sonner'
+import { CategoriesMenu } from './categories-menu'
+import { Category } from '@/payload/payload-types'
+import { NestedCategory, nestCategories } from '@/lib/categoryHierarchy'
 
-export function SearchBar() {
+export function SearchBar({ categories }: { categories: NestedCategory[] }) {
   const searchParams = useSearchParams()
   const router = useRouter()
 
   const { cart } = useCartStore((state) => state)
 
+  // const nestedCategories = nestCategories(categories)
+  // console.log(nestedCategories)
   function handleSearch(e: FormEvent<HTMLFormElement>, query: string) {
     e.preventDefault()
     if (query.length >= 3) {
@@ -36,10 +41,7 @@ export function SearchBar() {
     <div className='flex h-16 w-full items-center justify-between bg-wotan'>
       <div className='container flex items-center justify-between'>
         {/* Shadcn Navigation Menu */}
-        <div className='flex items-center justify-center gap-2 text-primary-foreground'>
-          <Menu className='h-5 w-5' />
-          <Large>Produtos</Large>
-        </div>
+        <CategoriesMenu categories={categories} />
 
         <form
           onSubmit={(e) => handleSearch(e, e.currentTarget.search.value)}
