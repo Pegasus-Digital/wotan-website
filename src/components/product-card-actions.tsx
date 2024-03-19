@@ -27,7 +27,9 @@ export function ProductCardActions({
   productId,
   minimumQuantity,
 }: ProductCardActions) {
-  const { add } = useCartStore((state) => state)
+  const { add, addFavorite, removeFavorite, favorites } = useCartStore(
+    (state) => state,
+  )
 
   function handleAddToCart() {
     add({
@@ -42,11 +44,28 @@ export function ProductCardActions({
     })
   }
 
+  function onToggleFavorite() {
+    const isFavorite = favorites.some((id) => id === productId)
+
+    // Guard clause
+    if (!isFavorite) {
+      addFavorite(productId)
+      toast.success('Adicionado aos favoritos.')
+      return
+    }
+
+    removeFavorite(productId)
+    toast.error('Item foi removido dos favoritos.')
+  }
+
   return (
     <TooltipProvider delayDuration={150}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button className='group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-wotanRed-500 hover:text-background'>
+          <Button
+            onClick={onToggleFavorite}
+            className='group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-wotanRed-500 hover:text-background'
+          >
             <Heart className='h-5 w-5' />
           </Button>
         </TooltipTrigger>
