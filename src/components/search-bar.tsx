@@ -11,9 +11,21 @@ import { Large } from './typography/texts'
 
 import { Heart, Menu, ShoppingCart } from 'lucide-react'
 
+import { useSearchParams, useRouter } from 'next/navigation'
+import { FormEvent } from 'react'
+
 export function SearchBar() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
   const { cart } = useCartStore((state) => state)
 
+  function handleSearch(e: FormEvent<HTMLFormElement>, query: string) {
+    e.preventDefault()
+
+    console.log(query)
+    router.push(`/pesquisa?query=${encodeURIComponent(query)}`)
+  }
   return (
     <div className='flex h-16 w-full items-center justify-between bg-wotan'>
       <div className='container flex items-center justify-between'>
@@ -22,12 +34,21 @@ export function SearchBar() {
           <Menu className='h-5 w-5' />
           <Large>Produtos</Large>
         </div>
-
-        <Input
+        <form
+          onSubmit={(e) => handleSearch(e, e.currentTarget.search.value)}
           className='mx-10 hidden max-w-[400px] tablet:flex'
-          placeholder='Estou procurando por...'
-        />
-
+        >
+          <label htmlFor='search' className='sr-only'>
+            Search
+          </label>
+          <Input
+            name='search'
+            placeholder='Estou procurando por...'
+            type='text'
+            defaultValue={searchParams.get('query')?.toString()}
+          />
+          <Button type='submit'>Pesquisa</Button>
+        </form>
         {/* Actions */}
         <div className='flex gap-2 text-primary-foreground'>
           {/* Favorite items drawer */}
