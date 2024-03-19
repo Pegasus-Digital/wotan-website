@@ -73,7 +73,7 @@ export function CartCard({ cartItem, product }: CartCardProps) {
     )
 
   return (
-    <Card className='tablet:flex'>
+    <Card className='shadow-xl tablet:flex'>
       <CardHeader className='text-center'>
         <Heading variant='h3'>{product.title}</Heading>
         <Media
@@ -171,7 +171,7 @@ function CartInteraction({
         item.amount - 1 >= minimumQuantity
           ? decrementAmount(item.id, 1)
           : toast.warning(
-              `A quantidade mínima deste produto é de ${minimumQuantity}`,
+              `A quantidade mínima deste produto é de ${minimumQuantity} unidades`,
             )
         break
       default:

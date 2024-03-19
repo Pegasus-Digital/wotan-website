@@ -2,7 +2,10 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+
+import { cn } from '@/lib/utils'
 import { v4 as uuidv4 } from 'uuid'
+
 import { Category, Product } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
@@ -39,10 +42,16 @@ interface ProductInteractionProps {
   product: Product
 }
 
+const favoriteIconStyles = `stroke-white fill-white group-hover/favorite:fill-primary group-hover/favorite:stroke-primary`
+
 export function ProductInteraction({ product }: ProductInteractionProps) {
   const [amount, setAmount] = useState(product.minimumQuantity)
 
-  const { add } = useCartStore((state) => state)
+  const { add, favorites, addFavorite, removeFavorite } = useCartStore(
+    (state) => state,
+  )
+
+  const isFavorite = favorites.some((id) => id === product.id)
 
   function onAmountChange(e: React.MouseEvent<HTMLButtonElement>) {
     const type = e.currentTarget.value
@@ -57,7 +66,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
         amount - quantity >= product.minimumQuantity
           ? setAmount(amount - quantity)
           : toast.warning(
-              `A quantidade mínima deste produto é de ${product.minimumQuantity}`,
+              `A quantidade mínima deste produto é de ${product.minimumQuantity} unidades`,
             )
         break
       default:
@@ -74,7 +83,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
       .replace(/^-+|-+$/g, '')
   }
 
-  function handleAddToCart() {
+  function onAddToCart() {
     add({
       id: uuidv4(),
       productId: product.id,
@@ -85,6 +94,18 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
     toast.success('Produto adicionado ao carrinho.', {
       icon: <PlusCircle className='h-5 w-5' />,
     })
+  }
+
+  function onToggleFavorite() {
+    // Guard clause
+    if (!isFavorite) {
+      addFavorite(product.id)
+      toast.success('Adicionado aos favoritos.')
+      return
+    }
+
+    removeFavorite(product.id)
+    toast.error('Item foi removido dos favoritos.')
   }
 
   return (
@@ -196,10 +217,16 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
+                onClick={onToggleFavorite}
                 size='lg'
-                className='flex items-center space-x-2 bg-wotanRed-500 hover:bg-wotanRed-400'
+                className='space-x-2 bg-primary hover:brightness-125'
               >
-                <Heart className='h-6 w-6' />
+                <Heart
+                  className={cn(
+                    `h-6 w-6`,
+                    isFavorite ? favoriteIconStyles : null,
+                  )}
+                />
                 <span className='ml-2 hidden text-base tablet:inline'>
                   Favoritos
                 </span>
@@ -211,9 +238,9 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                onClick={handleAddToCart}
+                onClick={onAddToCart}
                 size='lg'
-                className='space-x-2 bg-wotanRed-500 hover:bg-wotanRed-400'
+                className='space-x-2 bg-primary hover:brightness-125'
               >
                 <ShoppingCart className='h-6 w-6' />
                 <span className='ml-2 text-base tablet:inline'>Carrinho</span>

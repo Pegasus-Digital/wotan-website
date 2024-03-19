@@ -12,7 +12,7 @@ import { Large } from './typography/texts'
 import { Heart, Menu, ShoppingCart } from 'lucide-react'
 
 export function SearchBar() {
-  const { cart } = useCartStore((state) => state)
+  const { cart, favorites } = useCartStore((state) => state)
 
   return (
     <div className='flex h-16 w-full items-center justify-between bg-wotan'>
@@ -32,11 +32,16 @@ export function SearchBar() {
         <div className='flex gap-2 text-primary-foreground'>
           {/* Favorite items drawer */}
           <Button
-            className='hover:bg-primary hover:text-primary-foreground'
+            className='group relative hover:bg-primary hover:text-primary-foreground'
             size='icon'
             variant='ghost'
           >
-            <Heart className='h-6 w-6' />
+            <Heart className='h-6 w-6 group-hover:fill-white' />
+            {favorites.length > 0 && (
+              <span className='absolute -right-2 -top-2 flex aspect-square min-h-5 w-fit items-center justify-center rounded-full bg-wotanRed-400 text-center leading-none'>
+                {favorites.length}
+              </span>
+            )}
           </Button>
 
           {/* Redirect to shopping cart */}

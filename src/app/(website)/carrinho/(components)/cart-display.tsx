@@ -71,14 +71,18 @@ export function CartDisplay() {
         </div>
       )}
 
-      {cart &&
-        cart.map((item, index) => (
-          <CartCard
-            key={item.productId + '-' + index}
-            cartItem={item}
-            product={products.find((product) => product.id === item.productId)}
-          />
-        ))}
+      <div className='space-y-4'>
+        {cart &&
+          cart.map((item, index) => (
+            <CartCard
+              key={item.productId + '-' + index}
+              cartItem={item}
+              product={products.find(
+                (product) => product.id === item.productId,
+              )}
+            />
+          ))}
+      </div>
 
       {cart.length > 0 && (
         <div className='py-6 tablet:pt-12'>

@@ -23,6 +23,8 @@ interface ProductCardActions {
   minimumQuantity: number
 }
 
+const favoriteIconStyles = `stroke-primary fill-primary group-hover/favorite:fill-white group-hover/favorite:stroke-white`
+
 export function ProductCardActions({
   productId,
   minimumQuantity,
@@ -31,7 +33,9 @@ export function ProductCardActions({
     (state) => state,
   )
 
-  function handleAddToCart() {
+  const isFavorite = favorites.some((id) => id === productId)
+
+  function onAddToCart() {
     add({
       id: uuidv4(),
       productId,
@@ -45,8 +49,6 @@ export function ProductCardActions({
   }
 
   function onToggleFavorite() {
-    const isFavorite = favorites.some((id) => id === productId)
-
     // Guard clause
     if (!isFavorite) {
       addFavorite(productId)
@@ -64,9 +66,11 @@ export function ProductCardActions({
         <TooltipTrigger asChild>
           <Button
             onClick={onToggleFavorite}
-            className='group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-wotanRed-500 hover:text-background'
+            className='group/favorite m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-primary hover:text-background'
           >
-            <Heart className='h-5 w-5' />
+            <Heart
+              className={cn(`h-5 w-5`, isFavorite ? favoriteIconStyles : null)}
+            />
           </Button>
         </TooltipTrigger>
         <TooltipContent>Adicionar aos favoritos</TooltipContent>
@@ -74,8 +78,8 @@ export function ProductCardActions({
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
-            onClick={handleAddToCart}
-            className='group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-wotanRed-500 hover:text-background'
+            onClick={onAddToCart}
+            className='group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-primary hover:text-background'
           >
             <ShoppingCart className='h-5 w-5' />
           </Button>
@@ -89,7 +93,7 @@ export function ProductCardActions({
             className={cn(
               buttonVariants({
                 className:
-                  'group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-wotanRed-500 hover:text-background',
+                  'group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground hover:bg-primary hover:text-background',
               }),
             )}
           >
