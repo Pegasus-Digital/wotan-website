@@ -6,10 +6,10 @@ import { cn } from '../lib/utils'
 const headingStyles = cva('', {
   variants: {
     variant: {
-      h1: 'text-4xl font-extrabold tracking-tight font-heading text-wotanRed-500 desktop:text-5xl ',
-      h2: 'text-3xl font-bold tracking-tight font-heading text-wotanRed-500 desktop:text-4xl',
-      h3: 'text-2xl font-semibold tracking-tight font-heading text-wotanRed-500 desktop:text-3xl',
-      h4: 'text-xl font-semibold tracking-tight font-heading text-wotanRed-500 desktop:text-2xl',
+      h1: 'text-3xl tablet:text-4xl font-extrabold tracking-tight font-heading text-wotanRed-500 desktop:text-5xl ',
+      h2: 'text-2xl tablet:text-3xl font-bold tracking-tight font-heading text-wotanRed-500 desktop:text-4xl',
+      h3: 'text-xl tablet:text-2xl font-semibold tracking-tight font-heading text-wotanRed-500 desktop:text-3xl',
+      h4: 'text-lg tablet:text-xl font-semibold tracking-tight font-heading text-wotanRed-500 desktop:text-2xl',
       h5: 'text-lg font-semibold tracking-tight text-wotanRed-500 desktop:text-xl',
       h6: 'text-base font-semibold tracking-tight text-wotanRed-500 desktop:text-lg',
     },

@@ -107,7 +107,7 @@ export interface Media {
  */
 export interface Category {
   id: string;
-  title?: string | null;
+  title: string;
   slug?: string | null;
   parent?: (string | null) | Category;
   breadcrumbs?:
@@ -340,7 +340,7 @@ export interface FAQ {
   }[];
   id?: string | null;
   blockName?: string | null;
-  blockType: 'faq';
+  blockType: 'faq-section';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

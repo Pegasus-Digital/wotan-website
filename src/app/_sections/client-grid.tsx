@@ -25,7 +25,7 @@ export default function ClientGrid({
             <Media
               key={index}
               resource={client.logo}
-              className='m-2 aspect-square h-full max-h-48 max-w-48  rounded-md object-cover p-2 shadow-wotan-light'
+              className='m-2 aspect-square h-full max-h-48 max-w-48  rounded-md bg-white object-cover p-2 shadow-wotan-light'
             />
           ))}
         </div>

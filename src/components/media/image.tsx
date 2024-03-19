@@ -3,23 +3,20 @@
 import React from 'react'
 import NextImage, { StaticImageData } from 'next/image'
 
-import { Props as MediaProps } from './types'
+import { Props as MediaProps } from './index'
 // import cssVariables from '../../../cssVariables' //also define the breakpoints here
 
 // const { breakpoints } = cssVariables
-
-export const Image: React.FC<MediaProps> = (props) => {
-  const {
-    imgClassName,
-    onClick,
-    onLoad: onLoadFromProps,
-    resource,
-    priority,
-    fill,
-    src: srcFromProps,
-    alt: altFromProps,
-  } = props
-
+export function Image({
+  imgClassName,
+  onClick,
+  onLoad: onLoadFromProps,
+  resource,
+  priority,
+  fill,
+  src: srcFromProps,
+  alt: altFromProps,
+}: MediaProps) {
   const [isLoading, setIsLoading] = React.useState(true)
 
   let width: number | undefined
@@ -51,7 +48,11 @@ export const Image: React.FC<MediaProps> = (props) => {
 
   return (
     <NextImage
-      className={[isLoading && 'bg-transparent', 'object-cover', imgClassName]
+      className={[
+        isLoading && 'bg-white',
+        'object-cover object-center',
+        imgClassName,
+      ]
         .filter(Boolean)
         .join(' ')}
       src={src}
