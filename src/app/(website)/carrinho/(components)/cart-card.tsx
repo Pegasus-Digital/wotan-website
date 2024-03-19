@@ -34,7 +34,7 @@ interface CartCardProps {
 }
 
 export function CartCard({ cartItem, product }: CartCardProps) {
-  const { remove, incrementAmount, decrementAmount } = useCartStore(
+  const { remove, incrementAmount, decrementAmount, updateAttr } = useCartStore(
     (state) => state,
   )
 
@@ -69,6 +69,50 @@ export function CartCard({ cartItem, product }: CartCardProps) {
 
   const types = getUniqueTypes()
 
+  function onSelectAttribute(value: string, type: string) {
+    const attributeToAdd = otherAttributes.find(
+      (attr: Attribute) => attr.value === value,
+    ) as Attribute
+
+    updateAttr(cartItem.id, attributeToAdd)
+  }
+
+  function getAttributeValueByType(type: string): string {
+    // Verificar se existe um atributo com o tipo especificado no cartItem
+    const attribute = cartItem.attributes.find(
+      // @ts-ignore
+      (attr) => attr.type.name === type,
+    )
+
+    if (attribute) {
+      return attribute.value
+    }
+
+    return ''
+  }
+
+  function getAttributeColor(): string {
+    // Verificar se existe um atributo com o tipo especificado no cartItem
+    const attribute = cartItem.attributes.find(
+      // @ts-ignore
+      (attr) => attr.type.type === 'color',
+    )
+
+    if (attribute) {
+      return attribute.value
+    }
+
+    return ''
+  }
+
+  function getColorByValue(value: string) {
+    const attribute = colors.find(
+      (attr: Attribute) => attr.value === value,
+    ) as Attribute
+
+    updateAttr(cartItem.id, attribute)
+  }
+
   if (!product)
     return (
       <Heading variant='h3' className='text-center'>
@@ -98,7 +142,10 @@ export function CartCard({ cartItem, product }: CartCardProps) {
                   <div key={type}>
                     <Label>{type}:</Label>
 
-                    <Select>
+                    <Select
+                      defaultValue={getAttributeValueByType(type)}
+                      onValueChange={(value) => onSelectAttribute(value, type)}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder={`Selecione um...`} />
                       </SelectTrigger>
@@ -132,11 +179,15 @@ export function CartCard({ cartItem, product }: CartCardProps) {
           <div className='space-y-1'>
             <Label>Cores:</Label>
 
-            <RadioGroup className='flex gap-1'>
+            <RadioGroup
+              defaultValue={getAttributeColor()}
+              onValueChange={(value) => getColorByValue(value)}
+              className='flex gap-1'
+            >
               {colors.map((color: Attribute, index) => (
                 <RadioGroupItem
                   key={color.name + '-' + index}
-                  value={color.name}
+                  value={color.value}
                   style={{ backgroundColor: color.value }}
                   className='h-6 w-6 rounded-full text-white'
                 />
@@ -220,7 +271,7 @@ function CartInteraction({
           </Button>
 
           <Input
-            className='pointer-events-none max-w-12 bg-wotanRed-400 px-0 text-center text-lg font-bold text-primary-foreground'
+            className='pointer-events-none max-w-12 bg-primary px-0 text-center text-lg font-bold text-primary-foreground'
             value={item.amount}
             readOnly
           />
@@ -230,7 +281,7 @@ function CartInteraction({
             variant='ghost'
             size='sm'
             onClick={onAmountChange}
-            className='aspect-square text-lg font-semibold hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
+            className='aspect-square text-lg font-semibold hover:bg-primary hover:text-primary-foreground active:scale-110'
           >
             +
           </Button>

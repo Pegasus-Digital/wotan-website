@@ -37,6 +37,7 @@ import {
 
 import { useCartStore } from '@/components/cart-store-provider'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { CartItem } from '@/components/cart-store'
 
 interface ProductInteractionProps {
   product: Product
@@ -45,7 +46,12 @@ interface ProductInteractionProps {
 const favoriteIconStyles = `stroke-white fill-white group-hover/favorite:fill-primary group-hover/favorite:stroke-primary`
 
 export function ProductInteraction({ product }: ProductInteractionProps) {
-  const [amount, setAmount] = useState(product.minimumQuantity)
+  const [itemState, setItemState] = useState<CartItem>({
+    id: uuidv4(),
+    amount: product.minimumQuantity,
+    productId: product.id,
+    attributes: [],
+  })
 
   const { add, favorites, addFavorite, removeFavorite } = useCartStore(
     (state) => state,
@@ -91,12 +97,12 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
 
     switch (type) {
       case 'increment':
-        setAmount(amount + quantity)
+        setItemState({ ...itemState, amount: itemState.amount + quantity })
 
         break
       case 'decrement':
-        amount - quantity >= product.minimumQuantity
-          ? setAmount(amount - quantity)
+        itemState.amount - quantity >= product.minimumQuantity
+          ? setItemState({ ...itemState, amount: itemState.amount - quantity })
           : toast.warning(
               `A quantidade mínima deste produto é de ${product.minimumQuantity} unidades`,
             )
@@ -117,12 +123,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
   }
 
   function onAddToCart() {
-    add({
-      id: uuidv4(),
-      productId: product.id,
-      amount,
-      attributes: [],
-    })
+    add(itemState)
 
     toast.success('Produto adicionado ao carrinho.', {
       icon: <PlusCircle className='h-5 w-5' />,
@@ -139,6 +140,44 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
 
     removeFavorite(product.id)
     toast.error('Item foi removido dos favoritos.')
+  }
+
+  function onSelectAttribute(value: string, type: string) {
+    const attributeToAdd = otherAttributes.find(
+      (attr: Attribute) => attr.value === value,
+    ) as Attribute
+
+    // Se já existe algum atributo com esse tipo, deve ser substituido
+
+    // Então primeiro filtra (remove) os itens desse tipo, gerando um novo array
+    const updatedAttributes = itemState.attributes.filter(
+      // @ts-ignore
+      (attr) => attr.type.name !== type,
+    )
+
+    // Insere o novo atributo que é desse tipo no array
+    updatedAttributes.push(attributeToAdd)
+
+    // Atualiza o estado com o novo array
+    setItemState({ ...itemState, attributes: updatedAttributes })
+  }
+
+  function onSelectColor(value: string) {
+    const attributeToAdd = colors.find(
+      (attr: Attribute) => attr.value === value,
+    ) as Attribute
+
+    // Então primeiro filtra (remove) os itens desse tipo, gerando um novo array
+    const updatedAttributes = itemState.attributes.filter(
+      // @ts-ignore
+      (attr) => attr.type.type !== 'color',
+    )
+
+    // Insere o novo atributo que é desse tipo no array
+    updatedAttributes.push(attributeToAdd)
+
+    // Atualiza o estado com o novo array
+    setItemState({ ...itemState, attributes: updatedAttributes })
   }
 
   return (
@@ -178,11 +217,14 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
           <div className='space-y-1'>
             <Label>Cores:</Label>
 
-            <RadioGroup className='flex gap-1'>
-              {colors.map((color: Attribute, index) => (
+            <RadioGroup
+              onValueChange={(value) => onSelectColor(value)}
+              className='flex gap-1'
+            >
+              {colors.map((color: Attribute) => (
                 <RadioGroupItem
-                  key={color.name + '-' + index}
-                  value={color.name}
+                  key={color.id}
+                  value={color.value}
                   style={{ backgroundColor: color.value }}
                   className='h-6 w-6 rounded-full text-white'
                 />
@@ -258,7 +300,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
           <Input
             className='pointer-events-none max-w-12 bg-wotanRed-400 px-0 text-center text-lg font-bold text-primary-foreground'
             min={product.minimumQuantity}
-            value={amount}
+            value={itemState.amount}
             readOnly
           />
 

@@ -8,12 +8,13 @@ import { Product } from '@/payload/payload-types'
 
 import { Heading } from '@/pegasus/heading'
 import { H2 } from '@/components/typography/headings'
+import { Button, buttonVariants } from '@/pegasus/button'
 
 import { CartCard } from './cart-card'
+
 import { useCartStore } from '@/components/cart-store-provider'
-import { Button, buttonVariants } from '@/pegasus/button'
+
 import { ArrowRight } from 'lucide-react'
-import { Label } from '@/components/ui/label'
 
 export function CartDisplay() {
   const { cart } = useCartStore((state) => state)
