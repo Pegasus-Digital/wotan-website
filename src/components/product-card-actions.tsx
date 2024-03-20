@@ -23,13 +23,19 @@ interface ProductCardActions {
   minimumQuantity: number
 }
 
+const favoriteIconStyles = `stroke-primary fill-primary group-hover/favorite:fill-white group-hover/favorite:stroke-white`
+
 export function ProductCardActions({
   productId,
   minimumQuantity,
 }: ProductCardActions) {
-  const { add } = useCartStore((state) => state)
+  const { add, addFavorite, removeFavorite, favorites } = useCartStore(
+    (state) => state,
+  )
 
-  function handleAddToCart() {
+  const isFavorite = favorites.some((id) => id === productId)
+
+  function onAddToCart() {
     add({
       id: uuidv4(),
       productId,
@@ -42,12 +48,29 @@ export function ProductCardActions({
     })
   }
 
+  function onToggleFavorite() {
+    // Guard clause
+    if (!isFavorite) {
+      addFavorite(productId)
+      toast.success('Adicionado aos favoritos.')
+      return
+    }
+
+    removeFavorite(productId)
+    toast.error('Item foi removido dos favoritos.')
+  }
+
   return (
     <TooltipProvider delayDuration={150}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button className='group m-0 h-10 w-10 rounded-full bg-background p-0 text-wotanRed-500 shadow-wotan-light hover:bg-wotanRed-500 hover:text-background'>
-            <Heart className='h-5 w-5' />
+          <Button
+            onClick={onToggleFavorite}
+            className='group/favorite m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground shadow-wotan-light hover:bg-primary hover:text-background'
+          >
+            <Heart
+              className={cn(`h-5 w-5`, isFavorite ? favoriteIconStyles : null)}
+            />
           </Button>
         </TooltipTrigger>
         <TooltipContent>Adicionar aos favoritos</TooltipContent>
@@ -55,8 +78,8 @@ export function ProductCardActions({
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
-            onClick={handleAddToCart}
-            className='group m-0 h-10 w-10 rounded-full bg-background p-0 text-wotanRed-500 shadow-wotan-light hover:bg-wotanRed-500 hover:text-background'
+            onClick={onAddToCart}
+            className='group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground shadow-wotan-light hover:bg-primary hover:text-background'
           >
             <ShoppingCart className='h-5 w-5 ' />
           </Button>
@@ -70,7 +93,7 @@ export function ProductCardActions({
             className={cn(
               buttonVariants({
                 className:
-                  'group m-0 h-10 w-10 rounded-full bg-background p-0 text-wotanRed-500 shadow-wotan-light  hover:bg-wotanRed-500 hover:text-background',
+                  'group m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground shadow-wotan-light hover:bg-primary hover:text-background',
               }),
             )}
           >

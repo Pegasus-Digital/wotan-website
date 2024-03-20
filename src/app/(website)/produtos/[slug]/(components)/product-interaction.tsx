@@ -2,8 +2,11 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+
+import { cn } from '@/lib/utils'
 import { v4 as uuidv4 } from 'uuid'
-import { Category, Product } from '@/payload/payload-types'
+
+import { Attribute, Category, Product } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
 
@@ -11,6 +14,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 import { Heading } from '@/pegasus/heading'
 import { Large, Muted, Small } from '@/components/typography/texts'
@@ -27,22 +31,67 @@ import {
 import {
   Select,
   SelectItem,
-  SelectLabel,
   SelectValue,
   SelectTrigger,
   SelectContent,
 } from '@/components/ui/select'
 
+import { CartItem } from '@/components/cart-store'
 import { useCartStore } from '@/components/cart-store-provider'
 
 interface ProductInteractionProps {
   product: Product
 }
 
-export function ProductInteraction({ product }: ProductInteractionProps) {
-  const [amount, setAmount] = useState(product.minimumQuantity)
+const favoriteIconStyles = `stroke-white fill-white group-hover/favorite:fill-primary group-hover/favorite:stroke-primary`
 
-  const { add } = useCartStore((state) => state)
+export function ProductInteraction({ product }: ProductInteractionProps) {
+  const [itemState, setItemState] = useState<CartItem>({
+    id: uuidv4(),
+    amount: product.minimumQuantity,
+    productId: product.id,
+    attributes: [],
+  })
+
+  console.log(itemState)
+
+  const { add, favorites, addFavorite, removeFavorite } = useCartStore(
+    (state) => state,
+  )
+
+  const isFavorite = favorites.some((id) => id === product.id)
+
+  // TODO: Melhorar essa bosta
+  // TODO: Colocar num hook
+  const attributes = product
+    ? // @ts-ignore
+      product.attributes?.filter((attr: Attribute) =>
+        attr.type ? attr.type : null,
+      )
+    : null
+
+  const colors = attributes
+    ? // @ts-ignore
+      attributes.filter((attr: Attribute) => attr.type.type === 'color')
+    : []
+
+  const otherAttributes = attributes
+    ? // @ts-ignore
+      attributes.filter((attr: Attribute) => attr.type.type !== 'color')
+    : []
+
+  function getUniqueTypes(): string[] {
+    const types = new Set<string>()
+
+    otherAttributes.forEach((item: Attribute) => {
+      // @ts-ignore
+      types.add(item.type.name)
+    })
+
+    return Array.from(types)
+  }
+
+  const types = getUniqueTypes()
 
   function onAmountChange(e: React.MouseEvent<HTMLButtonElement>) {
     const type = e.currentTarget.value
@@ -50,14 +99,14 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
 
     switch (type) {
       case 'increment':
-        setAmount(amount + quantity)
+        setItemState({ ...itemState, amount: itemState.amount + quantity })
 
         break
       case 'decrement':
-        amount - quantity >= product.minimumQuantity
-          ? setAmount(amount - quantity)
+        itemState.amount - quantity >= product.minimumQuantity
+          ? setItemState({ ...itemState, amount: itemState.amount - quantity })
           : toast.warning(
-              `A quantidade mínima deste produto é de ${product.minimumQuantity}`,
+              `A quantidade mínima deste produto é de ${product.minimumQuantity} unidades`,
             )
         break
       default:
@@ -65,6 +114,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
         break
     }
   }
+
   function slugify(str: string): string {
     return str
       .toLowerCase()
@@ -74,22 +124,50 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
       .replace(/^-+|-+$/g, '')
   }
 
-  function handleAddToCart() {
-    add({
-      id: uuidv4(),
-      productId: product.id,
-      amount,
-      attributes: [],
-    })
+  function onAddToCart() {
+    add(itemState)
 
     toast.success('Produto adicionado ao carrinho.', {
       icon: <PlusCircle className='h-5 w-5' />,
     })
   }
 
+  function onToggleFavorite() {
+    // Guard clause
+    if (!isFavorite) {
+      addFavorite(product.id)
+      toast.success('Adicionado aos favoritos.')
+      return
+    }
+
+    removeFavorite(product.id)
+    toast.error('Item foi removido dos favoritos.')
+  }
+
+  function onSelectAttribute(value: string, type: string) {
+    const attributeToAdd = otherAttributes.find(
+      (attr: Attribute) => attr.value === value,
+    ) as Attribute
+
+    // Se já existe algum atributo com esse tipo, deve ser substituido
+
+    // Então primeiro filtra (remove) os itens desse tipo, gerando um novo array
+    const updatedAttributes = itemState.attributes.filter(
+      // @ts-ignore
+      (attr) => attr.type.name !== type,
+    )
+
+    // Insere o novo atributo que é desse tipo no array
+    updatedAttributes.push(attributeToAdd)
+
+    // Atualiza o estado com o novo array
+    setItemState({ ...itemState, attributes: updatedAttributes })
+  }
+
   return (
-    <div className='flex h-full flex-col space-y-2 px-4 py-2'>
+    <div className='flex h-full flex-col space-y-2 px-4'>
       <Heading variant='h2'>{product.title}</Heading>
+      <Muted>Código: {product.sku}</Muted>
 
       <div className='flex flex-wrap items-center space-x-1 space-y-1'>
         <Label>Categoria(s):</Label>
@@ -118,7 +196,68 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
         placeat fugit nisi iusto saepe nemo. A possimus dolore dolores aut.
       </Small>
 
+      <div>
+        {colors.length > 0 ? (
+          <div className='space-y-1'>
+            <Label>Cores:</Label>
+
+            <RadioGroup className='flex gap-1'>
+              {colors.map((color: Attribute, index) => (
+                <RadioGroupItem
+                  key={color.name + '-' + index}
+                  value={color.name}
+                  style={{ backgroundColor: color.value }}
+                  className='h-6 w-6 rounded-full text-white'
+                />
+              ))}
+            </RadioGroup>
+          </div>
+        ) : (
+          <Small className='w-full py-2'>Não há cores para selecionar</Small>
+        )}
+      </div>
+
       <div className='w-full font-medium'>
+        <Label className='text-base font-semibold'>Atributos:</Label>
+        <div className='mt-1 space-y-2'>
+          {types.length > 0 ? (
+            types.map((type) => {
+              return (
+                <div key={type} className='w-full tablet:max-w-64'>
+                  <Label>{type}:</Label>
+
+                  <Select
+                    onValueChange={(value) => onSelectAttribute(value, type)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={`Selecione um...`} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {otherAttributes
+                        // @ts-ignore
+                        .filter((attr: Attribute) => attr.type.name === type)
+                        .map((attr: Attribute) => (
+                          <SelectItem key={attr.id} value={attr.value}>
+                            {attr.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )
+            })
+          ) : (
+            <Small className='w-full py-2'>
+              Não há atributos para selecionar
+            </Small>
+          )}
+        </div>
+      </div>
+
+      {/* Space filler */}
+      {/* <div className='flex-1' /> */}
+
+      <div className='flex w-full flex-col items-center font-medium tablet:items-start'>
         <Label className='text-base font-semibold'>Quantidade:</Label>
 
         <div className='mt-1 flex items-center space-x-1'>
@@ -144,7 +283,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
           <Input
             className='pointer-events-none max-w-12 bg-wotanRed-400 px-0 text-center text-lg font-bold text-primary-foreground'
             min={product.minimumQuantity}
-            value={amount}
+            value={itemState.amount}
             readOnly
           />
 
@@ -169,40 +308,22 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
         </div>
       </div>
 
-      <div className='w-full font-medium'>
-        <Label className='text-base font-semibold'>Atributos:</Label>
-        {/* TODO: Renderizar atributos dinamicamente como select - BASE */}
-        {/* <div className='mt-1 space-y-2'>
-          {product.attributes.map((attribute: Atribute) => (
-          <Select key={attribute.id}>
-          <SelectTrigger>
-          <SelectValue placeholder='Selecione um valor' />
-          </SelectTrigger>
-          <SelectContent>
-          <SelectItem value='a'>Value 1</SelectItem>
-          <SelectItem value='b'>Value 2</SelectItem>
-          </SelectContent>
-          </Select>
-        ))}
-        </div> */}
-      </div>
-
-      {/* Space filler */}
-      <div className='flex-1' />
-
-      <Muted>Código: {product.sku}</Muted>
-      <div className='flex items-center gap-2'>
+      <div className='flex items-center justify-around gap-2 tablet:justify-start'>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
+                onClick={onToggleFavorite}
                 size='lg'
-                className='flex items-center space-x-2 bg-wotanRed-500 hover:bg-wotanRed-400'
+                className='space-x-2 bg-primary hover:brightness-125'
               >
-                <Heart className='h-6 w-6' />
-                <span className='ml-2 hidden text-base tablet:inline'>
-                  Favoritos
-                </span>
+                <Heart
+                  className={cn(
+                    `h-6 w-6`,
+                    isFavorite ? favoriteIconStyles : null,
+                  )}
+                />
+                <span className='ml-2 text-base tablet:inline'>Favoritos</span>
               </Button>
             </TooltipTrigger>
             <TooltipContent>Adicionar aos favoritos</TooltipContent>
@@ -211,9 +332,9 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                onClick={handleAddToCart}
+                onClick={onAddToCart}
                 size='lg'
-                className='space-x-2 bg-wotanRed-500 hover:bg-wotanRed-400'
+                className='space-x-2 bg-primary hover:brightness-125'
               >
                 <ShoppingCart className='h-6 w-6' />
                 <span className='ml-2 text-base tablet:inline'>Carrinho</span>

@@ -22,10 +22,11 @@ export function SearchBar({ categories }: { categories: NestedCategory[] }) {
   const searchParams = useSearchParams()
   const router = useRouter()
 
-  const { cart } = useCartStore((state) => state)
+  const { cart, favorites } = useCartStore((state) => state)
 
   // const nestedCategories = nestCategories(categories)
   // console.log(nestedCategories)
+
   function handleSearch(e: FormEvent<HTMLFormElement>, query: string) {
     e.preventDefault()
     if (query.length >= 3) {
@@ -73,11 +74,16 @@ export function SearchBar({ categories }: { categories: NestedCategory[] }) {
         <div className='hidden gap-2 text-primary-foreground tablet:flex'>
           {/* Favorite items drawer */}
           <Button
-            className='hover:bg-primary hover:text-primary-foreground'
+            className='group relative hover:bg-primary hover:text-primary-foreground'
             size='icon'
             variant='ghost'
           >
-            <Heart className='h-6 w-6' />
+            <Heart className='h-6 w-6 group-hover:fill-white' />
+            {favorites.length > 0 && (
+              <span className='absolute -right-2 -top-2 flex aspect-square min-h-5 w-fit items-center justify-center rounded-full bg-wotanRed-400 text-center leading-none'>
+                {favorites.length}
+              </span>
+            )}
           </Button>
 
           {/* Redirect to shopping cart */}
