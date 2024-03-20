@@ -32,6 +32,9 @@ import {
 import { Heading } from '@/pegasus/heading'
 import { LowImpactHero } from '@/app/_sections/heros/lowImpact'
 
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label'
+
 const formSchema = z.object({
   name: z
     .string({ required_error: 'É necessário fornecer um nome.' })
@@ -51,8 +54,8 @@ const formSchema = z.object({
   acceptPrivacyPolicy: z.boolean(),
 })
 
-export function ContactContent() {
-  const [isPJ, toggleCNPJ] = useState<boolean>(false)
+export function ContactContent({ address, contact }) {
+  const [isPJ, setCNPJ] = useState<boolean>(true)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -101,6 +104,14 @@ export function ContactContent() {
     return formattedPhoneNumber
   }
 
+  function changeCNPJRadio(e: string) {
+    if (e === 'pj') {
+      setCNPJ(true)
+    } else {
+      setCNPJ(false)
+    }
+  }
+
   return (
     <section className='mb-6 w-full px-6 text-primary-foreground'>
       <LowImpactHero title='Contato' />
@@ -111,6 +122,20 @@ export function ContactContent() {
               onSubmit={form.handleSubmit(onSubmit)}
               className='flex w-full flex-col gap-3 tablet:w-1/2'
             >
+              <RadioGroup
+                defaultValue='pj'
+                className='flex w-full items-center justify-center'
+                onValueChange={(e) => changeCNPJRadio(e)}
+              >
+                <div className='flex items-center space-x-2'>
+                  <RadioGroupItem value='pj' id='pj' />
+                  <Label htmlFor='pj'>Pessoa Jurídica</Label>
+                </div>
+                <div className='flex items-center space-x-2'>
+                  <RadioGroupItem value='pf' id='pf' />
+                  <Label htmlFor='pf'>Pessoa Física</Label>
+                </div>
+              </RadioGroup>
               <FormField
                 control={form.control}
                 name='name'
@@ -169,25 +194,7 @@ export function ContactContent() {
                   </FormItem>
                 )}
               />
-              <div className='flex items-center'>
-                <Checkbox
-                  checked={isPJ}
-                  onCheckedChange={() => {
-                    form.setValue('cnpj', '')
-                    toggleCNPJ(!isPJ)
-                  }}
-                  id='PJ'
-                  className='mr-2 bg-background'
-                />
-                <div className='space-y-1'>
-                  <FormLabel
-                    htmlFor='PJ'
-                    className='cursor-pointer text-sm hover:underline'
-                  >
-                    Represento uma Pessoa Jurídica
-                  </FormLabel>
-                </div>
-              </div>
+
               {isPJ && (
                 <FormField
                   control={form.control}
@@ -221,7 +228,7 @@ export function ContactContent() {
                   <FormItem>
                     <FormControl>
                       <Textarea
-                        className='h-40  text-foreground'
+                        className={` ${!isPJ ? 'h-44' : 'h-32'}  resize-none  text-foreground`}
                         placeholder='Mensagem'
                         {...field}
                       />
@@ -302,82 +309,35 @@ export function ContactContent() {
             </div>
             <div className='mt-6 flex flex-col items-center justify-center space-y-4 text-center'>
               <H3>Informações</H3>
-              <div className='flex items-center'>
-                <MapPin className='h-4 w-4' />
-                <Small>
-                  Rua João Guimarães, 301 - Santa Cecília, Porto Alegre - RS,
-                  45245-245
-                </Small>
-              </div>
-              <div className='flex flex-wrap items-center justify-center gap-4'>
+              <Small className='flex items-center whitespace-nowrap leading-snug'>
+                <MapPin className='mr-2 h-5 w-5' />
+                {address.street}
+                {', '}
+                {address.number}
+                {' - '}
+                {address.neighborhood}
+                {', '}
+                {/* <br /> */}
+                {address.city}
+                {' - '}
+                {address.state}
+                {', '}
+                {address.cep}
+              </Small>
+              <div className='flex flex-col items-center justify-center gap-4'>
                 <div className='flex items-center'>
-                  <Phone className='mr-2 h-4 w-4' />
-                  <Small className='whitespace-nowrap'>(51) 3124-2424</Small>
+                  <Small className='flex items-center whitespace-nowrap'>
+                    <Phone className='mr-2 h-5 w-5' />
+                    {contact.phone}
+                  </Small>
                 </div>
                 <div className='flex items-center'>
-                  <Mail className='mr-2 h-4 w-4' />
-                  <Small className='whitespace-nowrap'>
-                    wotan@wotanbrindes.com.br
+                  <Small className='flex items-center whitespace-nowrap'>
+                    <Mail className='mr-2 h-5 w-5' />
+                    {contact.email}
                   </Small>
                 </div>
               </div>
-
-              <div className='flex items-center'>
-                <Small className='mr-5 whitespace-nowrap'>Redes sociais</Small>
-
-                <div className='flex space-x-2'>
-                  <LinkIcon href='/' Icon={InstagramLogoIcon} />
-                  <LinkIcon href='/' Icon={LinkedInLogoIcon} />
-                  <LinkIcon href='/' Icon={TwitterLogoIcon} />
-                  <LinkIcon href='/' Icon={FacebookIcon} />
-                </div>
-              </div>
-
-              {/* TODO: Organizar icones */}
-              {/* <div className='flex flex-col items-center justify-center space-y-4 text-center'>
-                <img
-                  alt='Wotan Logo'
-                  src='https://wotan-site.medialinesistemas.com.br/storage/company/footer/10051620230522646b688c4118c.png'
-                  className='max-h-[200px] w-full'
-                />
-
-                {companyInfo.showAddress === true && (
-                  <Small>
-                    <MapPin className='mr-2 inline h-5 w-5' />
-                    {adress.adress.street}, {adress.adress.number} -{' '}
-                    {adress.adress.neighborhood}, {adress.adress.city} -{' '}
-                    {adress.adress.state}, {adress.adress.cep}
-                  </Small>
-                )}
-
-                <div className='flex flex-col items-center gap-4 tablet:flex-row'>
-                  {companyInfo.showPhone === true && (
-                    <Small className='flex items-center whitespace-nowrap'>
-                      <Phone className='mr-2 h-5 w-5' />
-                      {contact.phone}
-                    </Small>
-                  )}
-
-                  {companyInfo.showEmail === true && (
-                    <Small className='flex items-center whitespace-nowrap'>
-                      <Mail className='mr-2 h-5 w-5' />
-                      {contact.email}
-                    </Small>
-                  )}
-                </div>
-
-                <div className='flex items-center'>
-                  <Small className='mr-5 whitespace-nowrap'>
-                    Redes sociais
-                  </Small>
-                  <div className='flex space-x-2'>
-                    <LinkIcon href='/' Icon={InstagramLogoIcon} />
-                    <LinkIcon href='/' Icon={LinkedInLogoIcon} />
-                    <LinkIcon href='/' Icon={TwitterLogoIcon} />
-                    <LinkIcon href='/' Icon={FacebookIcon} />
-                  </div>
-                </div>
-              </div> */}
             </div>
           </div>
         </div>

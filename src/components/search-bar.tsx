@@ -14,12 +14,18 @@ import { Heart, Menu, ShoppingCart, Search, SearchX } from 'lucide-react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { FormEvent } from 'react'
 import { toast } from 'sonner'
+import { CategoriesMenu } from './categories-menu'
+import { Category } from '@/payload/payload-types'
+import { NestedCategory, nestCategories } from '@/lib/categoryHierarchy'
 
-export function SearchBar() {
-  const { cart, favorites } = useCartStore((state) => state)
-
+export function SearchBar({ categories }: { categories: NestedCategory[] }) {
   const searchParams = useSearchParams()
   const router = useRouter()
+
+  const { cart, favorites } = useCartStore((state) => state)
+
+  // const nestedCategories = nestCategories(categories)
+  // console.log(nestedCategories)
 
   function handleSearch(e: FormEvent<HTMLFormElement>, query: string) {
     e.preventDefault()
@@ -36,14 +42,12 @@ export function SearchBar() {
     <div className='flex h-16 w-full items-center justify-between bg-wotan'>
       <div className='container flex items-center justify-between'>
         {/* Shadcn Navigation Menu */}
-        <div className='flex items-center justify-center gap-2 text-primary-foreground'>
-          <Menu className='h-5 w-5' />
-          <Large>Produtos</Large>
+        <div className='hidden tablet:block'>
+          <CategoriesMenu categories={categories} />
         </div>
-
         <form
           onSubmit={(e) => handleSearch(e, e.currentTarget.search.value)}
-          className='mx-10 hidden max-w-[400px] grow rounded-md bg-background focus:ring-1 tablet:flex'
+          className='flex max-w-xl grow rounded-md bg-background focus:ring-1 tablet:mx-10'
         >
           <label htmlFor='search' className='sr-only'>
             Search
@@ -67,7 +71,7 @@ export function SearchBar() {
         </form>
 
         {/* Actions */}
-        <div className='flex gap-2 text-primary-foreground'>
+        <div className='hidden gap-2 text-primary-foreground tablet:flex'>
           {/* Favorite items drawer */}
           <Button
             className='group relative hover:bg-primary hover:text-primary-foreground'
