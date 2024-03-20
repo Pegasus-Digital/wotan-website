@@ -20,6 +20,7 @@ import { Heart, ShoppingCart, Eye, PlusCircle } from 'lucide-react'
 
 interface ProductCardActions {
   productId: string
+  productName: string
   minimumQuantity: number
 }
 
@@ -27,6 +28,7 @@ const favoriteIconStyles = `stroke-primary fill-primary group-hover/favorite:fil
 
 export function ProductCardActions({
   productId,
+  productName,
   minimumQuantity,
 }: ProductCardActions) {
   const { add, addFavorite, removeFavorite, favorites } = useCartStore(
@@ -38,6 +40,7 @@ export function ProductCardActions({
   function onAddToCart() {
     add({
       id: uuidv4(),
+      productName,
       productId,
       amount: minimumQuantity,
       attributes: [],

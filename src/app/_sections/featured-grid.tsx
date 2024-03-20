@@ -50,6 +50,7 @@ function getSlug({ linkTo }: FeaturedGridProps['cards'][0]) {
     } else if (linkTo.relationTo === 'categories') {
       return `categorias/${linkTo.value.slug}`
     }
+
   }
   return 'nao-encontrado'
 }
