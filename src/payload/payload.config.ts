@@ -17,8 +17,6 @@ import { Attributes, AttributeTypes } from './products/atributes'
 import Clients from './clients'
 import Salespersons from './salespersons'
 
-const m = path.resolve(__dirname, './emptyModuleMock.js')
-
 export default buildConfig({
   admin: {
     user: Users.slug,
@@ -31,16 +29,6 @@ export default buildConfig({
           }
         : false,
     bundler: webpackBundler(), // or viteBundler()
-    webpack: (config) => ({
-      ...config,
-      resolve: {
-        ...config.resolve,
-        alias: {
-          ...config.resolve?.alias,
-          express: m,
-        },
-      },
-    }),
   },
   serverURL: process.env.PAYLOAD_PUBLIC_SERVER_URL,
   collections: [
@@ -68,8 +56,6 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(__dirname, 'payload-types.ts'),
   },
-  cors: [process.env.PAYLOAD_PUBLIC_SERVER_URL || ''].filter(Boolean),
-  csrf: [process.env.PAYLOAD_PUBLIC_SERVER_URL || ''].filter(Boolean),
   plugins: [
     nestedDocs({
       collections: ['categories'],
