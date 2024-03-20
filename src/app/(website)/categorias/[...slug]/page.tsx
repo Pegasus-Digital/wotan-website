@@ -2,6 +2,7 @@ import payload from 'payload'
 import { Metadata } from 'next'
 
 import { CategoryPageContent } from './content'
+import NotFound from '../../not-found'
 
 export default async function CategoryPage({ params, searchParams }) {
   const category: string = params.slug[params.slug.length - 1]
@@ -17,7 +18,7 @@ export default async function CategoryPage({ params, searchParams }) {
     limit: 1,
     pagination: false,
   })
-  console.log(res)
+
   const { docs, ...paginationParams } = await payload.find({
     collection: 'products',
     where: {
@@ -28,6 +29,10 @@ export default async function CategoryPage({ params, searchParams }) {
     limit: 15,
     page: page,
   })
+
+  if (paginationParams.totalDocs <= 0) {
+    return <NotFound />
+  }
 
   return (
     <CategoryPageContent
