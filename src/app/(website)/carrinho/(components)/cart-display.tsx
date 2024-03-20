@@ -88,16 +88,18 @@ export function CartDisplay() {
 
       {cart.length > 0 && (
         <div className='py-6 tablet:pt-12'>
-          <Button
-            asChild
-            className='w-full'
-            variant='expandIcon'
-            size='lg'
-            Icon={ArrowRight}
-            iconPlacement='right'
+          <Link
+            href={'/carrinho/finalizar'}
+            className={cn(
+              buttonVariants({
+                variant: 'expandIcon',
+                size: 'lg',
+                className: 'w-full',
+              }),
+            )}
           >
             <div className='cursor-pointer'>Enviar orçamento</div>
-          </Button>
+          </Link>
         </div>
       )}
     </div>

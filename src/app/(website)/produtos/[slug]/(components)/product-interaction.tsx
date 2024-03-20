@@ -48,6 +48,7 @@ const favoriteIconStyles = `stroke-white fill-white group-hover/favorite:fill-pr
 export function ProductInteraction({ product }: ProductInteractionProps) {
   const [itemState, setItemState] = useState<CartItem>({
     id: uuidv4(),
+    productName: product.title,
     amount: product.minimumQuantity,
     productId: product.id,
     attributes: [],

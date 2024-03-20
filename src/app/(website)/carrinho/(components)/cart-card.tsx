@@ -121,7 +121,7 @@ export function CartCard({ cartItem, product }: CartCardProps) {
     )
 
   return (
-    <Card className='shadow-xl tablet:flex'>
+    <Card className='w-full shadow-xl tablet:flex'>
       <CardHeader className='text-center'>
         <Heading variant='h3'>{product.title}</Heading>
         <Media

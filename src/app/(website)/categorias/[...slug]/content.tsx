@@ -70,11 +70,10 @@ export async function CategoryPageContent({
               id={product.id}
               title={product.title}
               minimumQuantity={product.minimumQuantity}
+              featuredImage={product.featuredImage}
               categories={product.categories.map(
                 (category: Category) => category.title,
               )}
-              featuredImage={product.featuredImage}
-              minimumQuantity={product.minimumQuantity}
             />
           ))}
         </div>

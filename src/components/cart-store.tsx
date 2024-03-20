@@ -9,6 +9,7 @@ export interface CartItem {
   id: string
 
   productId: string
+  productName: string
   attributes: Attribute[]
   amount: number
 }
