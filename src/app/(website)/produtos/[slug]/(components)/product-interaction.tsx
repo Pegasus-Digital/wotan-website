@@ -192,7 +192,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
           // TODO: Adicionar slug na categoria pra não precisar fazer slugify
           <Link
             key={category.id + '-' + index}
-            href={`/categorias/${slugify(category.title)}`}
+            href={`/categorias/${category.slug}`}
           >
             <Badge className='w-fit px-2 py-1' key={category.id}>
               {category.title}
