@@ -9,6 +9,7 @@ export interface CartItem {
   id: string
 
   productId: string
+  productName: string
   attributes: Attribute[]
   amount: number
 }
@@ -23,6 +24,7 @@ interface Actions {
   remove: (id: string) => void
   incrementAmount: (id: string, quantity: number) => void
   decrementAmount: (id: string, quantity: number) => void
+  updateAttr: (id: string, attr: Attribute) => void
 
   addFavorite: (productId: string) => void
   removeFavorite: (productId: string) => void
@@ -81,6 +83,33 @@ export const createCartStore = (initState: State = defaultInitState) => {
               item.amount -= quantity
             }
 
+            return item
+          })
+
+          set({ cart: updatedCart })
+        },
+
+        updateAttr(id, attr) {
+          const { cart } = get()
+
+          // Encontrando o cartItem correspondente ao cartItemId
+          const updatedCart = cart.map((item) => {
+            if (item.id === id) {
+              // Filtrando os atributos do cartItem com base no nome do tipo
+              const filteredAttributes = item.attributes.filter(
+                // @ts-ignore
+                (attribute) => attribute.type.name !== attr.type.name,
+              )
+
+              // Adicionando o novo objeto Attribute
+              const updatedAttributes = [...filteredAttributes, attr]
+
+              // Retornando o cartItem atualizado com os novos atributos
+              return {
+                ...item,
+                attributes: updatedAttributes,
+              }
+            }
             return item
           })
 

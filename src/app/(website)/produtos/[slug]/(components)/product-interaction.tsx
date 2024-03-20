@@ -36,8 +36,8 @@ import {
   SelectContent,
 } from '@/components/ui/select'
 
-import { CartItem } from '@/components/cart-store'
 import { useCartStore } from '@/components/cart-store-provider'
+import { CartItem } from '@/components/cart-store'
 
 interface ProductInteractionProps {
   product: Product
@@ -48,12 +48,11 @@ const favoriteIconStyles = `stroke-white fill-white group-hover/favorite:fill-pr
 export function ProductInteraction({ product }: ProductInteractionProps) {
   const [itemState, setItemState] = useState<CartItem>({
     id: uuidv4(),
+    productName: product.title,
     amount: product.minimumQuantity,
     productId: product.id,
     attributes: [],
   })
-
-  console.log(itemState)
 
   const { add, favorites, addFavorite, removeFavorite } = useCartStore(
     (state) => state,
@@ -164,6 +163,24 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
     setItemState({ ...itemState, attributes: updatedAttributes })
   }
 
+  function onSelectColor(value: string) {
+    const attributeToAdd = colors.find(
+      (attr: Attribute) => attr.value === value,
+    ) as Attribute
+
+    // Então primeiro filtra (remove) os itens desse tipo, gerando um novo array
+    const updatedAttributes = itemState.attributes.filter(
+      // @ts-ignore
+      (attr) => attr.type.type !== 'color',
+    )
+
+    // Insere o novo atributo que é desse tipo no array
+    updatedAttributes.push(attributeToAdd)
+
+    // Atualiza o estado com o novo array
+    setItemState({ ...itemState, attributes: updatedAttributes })
+  }
+
   return (
     <div className='flex h-full flex-col space-y-2 px-4'>
       <Heading variant='h2'>{product.title}</Heading>
@@ -201,11 +218,14 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
           <div className='space-y-1'>
             <Label>Cores:</Label>
 
-            <RadioGroup className='flex gap-1'>
-              {colors.map((color: Attribute, index) => (
+            <RadioGroup
+              onValueChange={(value) => onSelectColor(value)}
+              className='flex gap-1'
+            >
+              {colors.map((color: Attribute) => (
                 <RadioGroupItem
-                  key={color.name + '-' + index}
-                  value={color.name}
+                  key={color.id}
+                  value={color.value}
                   style={{ backgroundColor: color.value }}
                   className='h-6 w-6 rounded-full text-white'
                 />
