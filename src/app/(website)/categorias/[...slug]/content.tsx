@@ -74,7 +74,6 @@ export async function CategoryPageContent({
                 (category: Category) => category.title,
               )}
               featuredImage={product.featuredImage}
-              minimumQuantity={product.minimumQuantity}
             />
           ))}
         </div>

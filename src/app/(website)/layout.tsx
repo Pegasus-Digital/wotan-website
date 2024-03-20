@@ -24,13 +24,20 @@ async function fetchConfigs() {
 }
 
 async function fetchCategories() {
-  const { docs } = await payload.find({
+  await payload.init({
+    // Init Payload
+    secret: process.env.PAYLOAD_SECRET,
+    local: true, // Enables local mode, doesn't spin up a server or frontend
+  })
+
+  const categories = await payload.find({
     collection: 'categories',
     depth: 5,
     limit: 100,
     sort: 'title',
   })
-  return nestCategories(docs)
+  // @ts-ignore
+  return nestCategories(categories.docs)
 }
 
 export default async function WebsiteLayout({
