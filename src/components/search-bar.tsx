@@ -41,11 +41,12 @@ export function SearchBar({ categories }: { categories: NestedCategory[] }) {
     <div className='flex h-16 w-full items-center justify-between bg-wotan'>
       <div className='container flex items-center justify-between'>
         {/* Shadcn Navigation Menu */}
-        <CategoriesMenu categories={categories} />
-
+        <div className='hidden tablet:block'>
+          <CategoriesMenu categories={categories} />
+        </div>
         <form
           onSubmit={(e) => handleSearch(e, e.currentTarget.search.value)}
-          className='mx-10 hidden max-w-[400px] grow rounded-md bg-background focus:ring-1 tablet:flex'
+          className='flex max-w-xl grow rounded-md bg-background focus:ring-1 tablet:mx-10'
         >
           <label htmlFor='search' className='sr-only'>
             Search
@@ -69,7 +70,7 @@ export function SearchBar({ categories }: { categories: NestedCategory[] }) {
         </form>
 
         {/* Actions */}
-        <div className='flex gap-2 text-primary-foreground'>
+        <div className='hidden gap-2 text-primary-foreground tablet:flex'>
           {/* Favorite items drawer */}
           <Button
             className='hover:bg-primary hover:text-primary-foreground'
