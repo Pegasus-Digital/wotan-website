@@ -5,6 +5,8 @@ import { Attribute } from '@/payload/payload-types'
 import { createStore } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
+import { filterAttributesByNotName } from '@/lib/attribute-hooks'
+
 export interface CartItem {
   id: string
 
@@ -95,13 +97,17 @@ export const createCartStore = (initState: State = defaultInitState) => {
           // Encontrando o cartItem correspondente ao cartItemId
           const updatedCart = cart.map((item) => {
             if (item.id === id) {
+              if (typeof attr.type !== 'object') {
+                return
+              }
+
               // Filtrando os atributos do cartItem com base no nome do tipo
-              const filteredAttributes = item.attributes.filter(
-                // @ts-ignore
-                (attribute) => attribute.type.name !== attr.type.name,
+              const filteredAttributes = filterAttributesByNotName(
+                item.attributes,
+                attr.type.name,
               )
 
-              // Adicionando o novo objeto Attribute
+              // Adicionando o novo objeto Attribute a um novo array
               const updatedAttributes = [...filteredAttributes, attr]
 
               // Retornando o cartItem atualizado com os novos atributos
