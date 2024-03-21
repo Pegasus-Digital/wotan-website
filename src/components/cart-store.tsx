@@ -24,6 +24,7 @@ interface State {
 interface Actions {
   add: (item: CartItem) => void
   remove: (id: string) => void
+  flushToilet: () => void
   incrementAmount: (id: string, quantity: number) => void
   decrementAmount: (id: string, quantity: number) => void
   updateAttr: (id: string, attr: Attribute) => void
@@ -61,6 +62,10 @@ export const createCartStore = (initState: State = defaultInitState) => {
           const updatedCart = cart.filter((item) => item.id !== id)
 
           set({ cart: updatedCart })
+        },
+
+        flushToilet: () => {
+          set({ cart: [] })
         },
 
         incrementAmount: (id, quantity) => {

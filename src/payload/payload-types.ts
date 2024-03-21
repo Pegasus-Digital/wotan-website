@@ -129,7 +129,7 @@ export interface Category {
  */
 export interface Budget {
   id: string;
-  total: number;
+  total?: number | null;
   items: {
     product: string | Product;
     attributes?: (string | Attribute)[] | null;
@@ -137,6 +137,13 @@ export interface Budget {
     price?: number | null;
     id?: string | null;
   }[];
+  contact: {
+    companyName: string;
+    customerName: string;
+    email: string;
+    phone: string;
+    details?: string | null;
+  };
   updatedAt: string;
   createdAt: string;
 }
