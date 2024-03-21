@@ -136,3 +136,24 @@ export const QUERY_FAQ = `
   blockType
 }
 `
+export const QUERY_THREE_COLUMNS = `
+... on ThreeColumns {
+  title
+  description
+  invertBackground
+  mission {
+    title
+    description
+  }
+  vision {
+    title
+    description
+  }
+  values {
+    title
+    description
+  }
+  blockName
+  blockType
+}
+`

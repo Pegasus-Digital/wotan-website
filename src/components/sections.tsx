@@ -7,6 +7,7 @@ import Statistics from '../app/_sections/statistics'
 import ClientGrid from '../app/_sections/client-grid'
 import ContentMedia from '../app/_sections/content-media'
 import { FAQ } from '../app/_sections/faq'
+import ThreeColumns from '@/app/_sections/mission-vision-values'
 
 import { Background } from './section-background'
 import { VerticalPadding } from '@/pegasus/padding'
@@ -19,6 +20,7 @@ const sectionComponents = {
   'client-grid': ClientGrid,
   'content-media': ContentMedia,
   'faq-section': FAQ,
+  'three-columns': ThreeColumns,
 }
 
 export function Sections({ sections }: { sections: Page['layout'][0][] }) {

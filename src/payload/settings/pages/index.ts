@@ -11,6 +11,7 @@ import { FeaturedSection } from '../../blocks/featuredSection'
 import { ProductCarousel } from '../../blocks/productCarousel'
 import { StatisticSection } from '../../blocks/statistics'
 import { FAQ } from '../../blocks/faq'
+import { ThreeColumns } from '../../blocks/threeColumns'
 
 // Fields
 import { hero } from '../../fields/hero'
@@ -119,6 +120,7 @@ export const Pages: CollectionConfig = {
         ClientGrid,
         ContentMedia,
         FAQ,
+        ThreeColumns,
       ],
     },
 

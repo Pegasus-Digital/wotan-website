@@ -6,6 +6,7 @@ import {
   QUERY_CLIENT_GRID,
   QUERY_CONTENT_MEDIA,
   QUERY_FAQ,
+  QUERY_THREE_COLUMNS,
 } from './blocks'
 import { MEDIA, MEDIA_FIELDS } from './media'
 
@@ -40,6 +41,7 @@ query Page($slug: String){
         ${QUERY_CLIENT_GRID}
         ${QUERY_STATISTICS_SECTION}
         ${QUERY_FAQ}
+        ${QUERY_THREE_COLUMNS}
       }
       publishedOn
     }

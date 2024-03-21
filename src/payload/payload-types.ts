@@ -174,7 +174,16 @@ export interface Page {
         id?: string | null;
       }[]
     | null;
-  layout: (ProductCarousel | FeaturedSection | StatisticSection | ContentSection | ClientGrid | ContentMedia | FAQ)[];
+  layout: (
+    | ProductCarousel
+    | FeaturedSection
+    | StatisticSection
+    | ContentSection
+    | ClientGrid
+    | ContentMedia
+    | FAQ
+    | ThreeColumns
+  )[];
   slug?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -343,6 +352,30 @@ export interface FAQ {
   id?: string | null;
   blockName?: string | null;
   blockType: 'faq-section';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ThreeColumns".
+ */
+export interface ThreeColumns {
+  invertBackground?: boolean | null;
+  title?: string | null;
+  description?: string | null;
+  mission: {
+    title: string;
+    description: string;
+  };
+  vision: {
+    title: string;
+    description: string;
+  };
+  values: {
+    title: string;
+    description: string;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'three-columns';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
