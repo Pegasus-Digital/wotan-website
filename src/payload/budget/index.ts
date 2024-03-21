@@ -36,6 +36,14 @@ export const Budget: CollectionConfig = {
       type: 'number',
     },
     {
+      name: 'status',
+      type: 'select',
+      options: [
+        { label: 'pendente', value: 'pendente' },
+        { label: 'cancelado', value: 'cancelado' },
+      ],
+    },
+    {
       name: 'items',
       type: 'array',
       required: true,
