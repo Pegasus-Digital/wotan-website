@@ -75,7 +75,7 @@ export function CartDisplay() {
 
       <div className='flex flex-col items-center space-y-4'>
         {cart &&
-          cart.map((item) => (
+          cart.map((item, index) => (
             <CartCard
               key={item.id}
               cartItem={item}

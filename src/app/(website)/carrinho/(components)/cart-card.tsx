@@ -1,6 +1,6 @@
 'use client'
 
-import { Attribute, AttributeType, Product } from '@/payload/payload-types'
+import { Attribute, Product } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
 
@@ -19,7 +19,6 @@ import { Media } from '@/components/media'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 
@@ -27,6 +26,13 @@ import { Heading } from '@/pegasus/heading'
 
 import { Trash } from 'lucide-react'
 import { Small } from '@/components/typography/texts'
+import {
+  filterAttributesByNotType,
+  filterAttributesByType,
+  findAttributeByValue,
+  getProductAttributes,
+  getUniqueTypes,
+} from '@/lib/attribute-hooks'
 
 interface CartCardProps {
   cartItem: CartItem
@@ -38,71 +44,47 @@ export function CartCard({ cartItem, product }: CartCardProps) {
     (state) => state,
   )
 
-  // TODO: Melhorar essa bosta
-  const attributes = product
-    ? // @ts-ignore
-      product.attributes?.filter((attr: Attribute) =>
-        attr.type ? attr.type : null,
-      )
-    : null
-
-  const colors = attributes
-    ? // @ts-ignore
-      attributes.filter((attr: Attribute) => attr.type.type === 'color')
-    : []
-
+  const attributes = product ? getProductAttributes(product) : null
+  const colors = attributes ? filterAttributesByType(attributes, 'color') : null
   const otherAttributes = attributes
-    ? // @ts-ignore
-      attributes.filter((attr: Attribute) => attr.type.type !== 'color')
-    : []
+    ? filterAttributesByNotType(attributes, 'color')
+    : null
+  const types = otherAttributes ? getUniqueTypes(otherAttributes) : null
 
-  function getUniqueTypes(): string[] {
-    const types = new Set<string>()
+  function onSelectAttribute(value: string) {
+    const newAttribute = findAttributeByValue(otherAttributes, value)
 
-    otherAttributes.forEach((item: Attribute) => {
-      // @ts-ignore
-      types.add(item.type.name)
-    })
-
-    return Array.from(types)
-  }
-
-  const types = getUniqueTypes()
-
-  function onSelectAttribute(value: string, type: string) {
-    const attributeToAdd = otherAttributes.find(
-      (attr: Attribute) => attr.value === value,
-    ) as Attribute
-
-    updateAttr(cartItem.id, attributeToAdd)
+    updateAttr(cartItem.id, newAttribute)
   }
 
   function getAttributeValueByType(type: string): string {
     // Verificar se existe um atributo com o tipo especificado no cartItem
-    const attribute = cartItem.attributes.find(
-      // @ts-ignore
-      (attr) => attr.type.name === type,
-    )
+    const attribute = cartItem.attributes.find((attr) => {
+      if (typeof attr.type === 'object') {
+        return attr.type.name === type
+      }
+    })
 
-    if (attribute) {
-      return attribute.value
+    if (!attribute) {
+      return ''
     }
 
-    return ''
+    return attribute.value
   }
 
   function getAttributeColor(): string {
     // Verificar se existe um atributo com o tipo especificado no cartItem
-    const attribute = cartItem.attributes.find(
-      // @ts-ignore
-      (attr) => attr.type.type === 'color',
-    )
+    const attribute = cartItem.attributes.find((attr) => {
+      if (typeof attr.type === 'object') {
+        return attr.type.type === 'color'
+      }
+    })
 
-    if (attribute) {
-      return attribute.value
+    if (!attribute) {
+      return ''
     }
 
-    return ''
+    return attribute.value
   }
 
   function getColorByValue(value: string) {
@@ -115,7 +97,7 @@ export function CartCard({ cartItem, product }: CartCardProps) {
 
   if (!product)
     return (
-      <Heading variant='h3' className='text-center'>
+      <Heading variant='h3' className='animate-pulse text-center'>
         Carregando item...
       </Heading>
     )
@@ -144,7 +126,7 @@ export function CartCard({ cartItem, product }: CartCardProps) {
 
                     <Select
                       defaultValue={getAttributeValueByType(type)}
-                      onValueChange={(value) => onSelectAttribute(value, type)}
+                      onValueChange={(value) => onSelectAttribute(value)}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder={`Selecione um...`} />

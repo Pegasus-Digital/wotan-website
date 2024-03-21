@@ -34,8 +34,6 @@ export const Budget: CollectionConfig = {
     {
       name: 'total',
       type: 'number',
-      required: true,
-      min: 0,
     },
     {
       name: 'items',
@@ -65,6 +63,17 @@ export const Budget: CollectionConfig = {
           type: 'number',
           min: 0,
         },
+      ],
+    },
+    {
+      name: 'contact',
+      type: 'group',
+      fields: [
+        { name: 'companyName', type: 'text', required: true },
+        { name: 'customerName', type: 'text', required: true },
+        { name: 'email', type: 'email', required: true },
+        { name: 'phone', type: 'text', required: true },
+        { name: 'details', type: 'textarea' },
       ],
     },
   ],

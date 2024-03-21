@@ -1,8 +1,13 @@
 'use client'
 
-import { useCartStore } from '@/components/cart-store-provider'
-import { Lead, P, Small } from '@/components/typography/texts'
-import { Badge } from '@/components/ui/badge'
+import { useRouter } from 'next/navigation'
+
+import { z } from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+
+import { toast } from 'sonner'
+
 import {
   Card,
   CardContent,
@@ -11,6 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+
 import {
   Form,
   FormControl,
@@ -19,15 +25,26 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+
+import { useCartStore } from '@/components/cart-store-provider'
+
+import { Button } from '@/pegasus/button'
+import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/pegasus/button'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { Lead, P, Small } from '@/components/typography/texts'
+
 import { Send } from 'lucide-react'
-import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
+
+const cartSchema = z.array(
+  z.object({
+    id: z.string().uuid(),
+    productId: z.string(),
+    productName: z.string(),
+    amount: z.coerce.number().min(1),
+    attributes: z.array(z.any()),
+  }),
+)
 
 const formSchema = z.object({
   companyName: z
@@ -59,21 +76,43 @@ export function FinishEstimateForm() {
     },
   })
 
-  const { cart } = useCartStore((state) => state)
+  const { cart, flushToilet } = useCartStore((state) => state)
   const router = useRouter()
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // TODO: Enviar para o backend
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const cartData = cartSchema.parse(cart)
 
-    console.log(values)
+      if (cartData.length === 0) {
+        toast.warning('Orçamento não enviado. O carrinho parece estar vazio.')
+        return
+      }
 
-    toast.success(
-      'O orçamento foi enviado com sucesso. Você será redirecionado para o início.',
-    )
+      const response = await fetch('/api/finalizar', {
+        method: 'POST',
+        body: JSON.stringify({
+          items: cartData,
+          contact: { ...values },
+        }),
+      })
 
-    setTimeout(() => {
-      router.push('/')
-    }, 3000)
+      if (response.ok) {
+        toast.success(
+          'O orçamento enviado com sucesso. Você será redirecionado.',
+        )
+
+        flushToilet() // Limpar carrinho
+
+        setTimeout(() => {
+          router.push('/')
+        }, 4000)
+      }
+    } catch (error) {
+      console.error(error)
+
+      toast.warning('Houve um erro ao enviar o orçamento.')
+      return
+    }
   }
 
   function formatPhoneNumber(value: string) {
@@ -129,6 +168,14 @@ export function FinishEstimateForm() {
             <CardTitle className='mb-2 text-primary'>
               Informações necessárias
             </CardTitle>
+
+            {/* <FormField control={form.control} name='cart' render={({ field }) => {
+              <FormItem>
+                <FormControl>
+                  <Input />
+                </FormControl>
+              </FormItem>
+            }} /> */}
 
             <FormField
               control={form.control}

@@ -2,9 +2,17 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-
-import { cn } from '@/lib/utils'
 import { v4 as uuidv4 } from 'uuid'
+
+import {
+  filterAttributesByNotName,
+  filterAttributesByNotType,
+  filterAttributesByType,
+  findAttributeByValue,
+  getProductAttributes,
+  getUniqueTypes,
+} from '@/lib/attribute-hooks'
+import { cn } from '@/lib/utils'
 
 import { Attribute, Category, Product } from '@/payload/payload-types'
 
@@ -47,7 +55,7 @@ const favoriteIconStyles = `stroke-white fill-white group-hover/favorite:fill-pr
 
 export function ProductInteraction({ product }: ProductInteractionProps) {
   const [itemState, setItemState] = useState<CartItem>({
-    id: uuidv4(),
+    id: null,
     productName: product.title,
     amount: product.minimumQuantity,
     productId: product.id,
@@ -60,37 +68,12 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
 
   const isFavorite = favorites.some((id) => id === product.id)
 
-  // TODO: Melhorar essa bosta
-  // TODO: Colocar num hook
-  const attributes = product
-    ? // @ts-ignore
-      product.attributes?.filter((attr: Attribute) =>
-        attr.type ? attr.type : null,
-      )
-    : null
-
-  const colors = attributes
-    ? // @ts-ignore
-      attributes.filter((attr: Attribute) => attr.type.type === 'color')
-    : []
-
+  const attributes = product ? getProductAttributes(product) : null
+  const colors = attributes ? filterAttributesByType(attributes, 'color') : null
   const otherAttributes = attributes
-    ? // @ts-ignore
-      attributes.filter((attr: Attribute) => attr.type.type !== 'color')
-    : []
-
-  function getUniqueTypes(): string[] {
-    const types = new Set<string>()
-
-    otherAttributes.forEach((item: Attribute) => {
-      // @ts-ignore
-      types.add(item.type.name)
-    })
-
-    return Array.from(types)
-  }
-
-  const types = getUniqueTypes()
+    ? filterAttributesByNotType(attributes, 'color')
+    : null
+  const types = otherAttributes ? getUniqueTypes(otherAttributes) : null
 
   function onAmountChange(e: React.MouseEvent<HTMLButtonElement>) {
     const type = e.currentTarget.value
@@ -114,17 +97,8 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
     }
   }
 
-  function slugify(str: string): string {
-    return str
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/[\s_-]+/g, '-')
-      .replace(/^-+|-+$/g, '')
-  }
-
   function onAddToCart() {
-    add(itemState)
+    add({ ...itemState, id: uuidv4() })
 
     toast.success('Produto adicionado ao carrinho.', {
       icon: <PlusCircle className='h-5 w-5' />,
@@ -144,40 +118,28 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
   }
 
   function onSelectAttribute(value: string, type: string) {
-    const attributeToAdd = otherAttributes.find(
-      (attr: Attribute) => attr.value === value,
-    ) as Attribute
+    const newAttribute = findAttributeByValue(otherAttributes, value)
 
-    // Se já existe algum atributo com esse tipo, deve ser substituido
-
-    // Então primeiro filtra (remove) os itens desse tipo, gerando um novo array
-    const updatedAttributes = itemState.attributes.filter(
-      // @ts-ignore
-      (attr) => attr.type.name !== type,
+    const updatedAttributes = filterAttributesByNotName(
+      itemState.attributes,
+      type,
     )
 
-    // Insere o novo atributo que é desse tipo no array
-    updatedAttributes.push(attributeToAdd)
+    updatedAttributes.push(newAttribute)
 
-    // Atualiza o estado com o novo array
     setItemState({ ...itemState, attributes: updatedAttributes })
   }
 
   function onSelectColor(value: string) {
-    const attributeToAdd = colors.find(
-      (attr: Attribute) => attr.value === value,
-    ) as Attribute
+    const newAttribute = findAttributeByValue(colors, value)
 
-    // Então primeiro filtra (remove) os itens desse tipo, gerando um novo array
-    const updatedAttributes = itemState.attributes.filter(
-      // @ts-ignore
-      (attr) => attr.type.type !== 'color',
+    const updatedAttributes = filterAttributesByNotType(
+      itemState.attributes,
+      'color',
     )
 
-    // Insere o novo atributo que é desse tipo no array
-    updatedAttributes.push(attributeToAdd)
+    updatedAttributes.push(newAttribute)
 
-    // Atualiza o estado com o novo array
     setItemState({ ...itemState, attributes: updatedAttributes })
   }
 
@@ -187,24 +149,27 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
       <Muted>Código: {product.sku}</Muted>
 
       <div className='flex flex-wrap items-center space-x-1 space-y-1'>
-        <Label>Categoria(s):</Label>
-        {product.categories.map((category: Category, index) => (
-          // TODO: Adicionar slug na categoria pra não precisar fazer slugify
-          <Link
-            key={category.id + '-' + index}
-            href={`/categorias/${category.slug}`}
-          >
-            <Badge className='w-fit px-2 py-1' key={category.id}>
-              {category.title}
-            </Badge>
-          </Link>
-        ))}
+        {product.categories && (
+          <>
+            <Label>Categoria(s):</Label>
+            {product.categories?.map((category: Category, index) => (
+              <Link
+                key={category.id + '-' + index}
+                href={`/categorias/${category.slug}`}
+              >
+                <Badge className='w-fit px-2 py-1'>{category.title}</Badge>
+              </Link>
+            ))}
+          </>
+        )}
       </div>
 
-      <div className='flex items-center space-x-2 py-1'>
-        <Large className='whitespace-nowrap text-2xl'>R$ 24.90</Large>
-        <Small className='whitespace-nowrap'>/ un.</Small>
-      </div>
+      {product.price && (
+        <div className='flex items-center space-x-2 py-1'>
+          <Large className='whitespace-nowrap text-2xl'>R$ 24.90</Large>
+          <Small className='whitespace-nowrap'>/ un.</Small>
+        </div>
+      )}
 
       {/* Product description */}
       <Small className='pb-1 leading-snug'>
@@ -214,7 +179,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
       </Small>
 
       <div>
-        {colors.length > 0 ? (
+        {colors ? (
           <div className='space-y-1'>
             <Label>Cores:</Label>
 
@@ -240,7 +205,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
       <div className='w-full font-medium'>
         <Label className='text-base font-semibold'>Atributos:</Label>
         <div className='mt-1 space-y-2'>
-          {types.length > 0 ? (
+          {types ? (
             types.map((type) => {
               return (
                 <div key={type} className='w-full tablet:max-w-64'>
