@@ -154,3 +154,7 @@ This applies to each collection in the following ways:
 Cuidados:
 
 - Em uma aplicação vazia (que não tenha nada criado no admin do Payload), cuidar pra não realizar fetch de dados que não existem, porque isso vai quebrar o deploy, sempre fazer uma validação se existe, e se existe, renderiza componente. Especialmente no caso de componentes globais.
+
+# Enviroinment variables
+
+- As variaveis `REVALIDATION_KEY` e `NEXT_PRIVATE_REVALIDATION_KEY` são comparadas no momento que é salva quaisquer alteração em páginas no payload (ver `pages/hooks/revalidatePage.ts`) e precisam ser iguais ou as alterações do payload não serão refletidas no front-end
