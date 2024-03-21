@@ -51,7 +51,7 @@ type CardWithIConProps = Pick<
 function CardWithICon({ icon, title, description }: CardWithIConProps) {
   return (
     <li className='space-y-4'>
-      <div className='mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-wotanRed-50 text-center text-wotanRed-500'>
+      <div className='mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-wotanRed-50 text-center text-wotanRed-500 shadow-wotan-light'>
         {icon}
       </div>
       <div className='mb-3 flex flex-col gap-2 text-center'>
