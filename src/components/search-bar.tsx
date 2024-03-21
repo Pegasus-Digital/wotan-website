@@ -20,12 +20,10 @@ import { NestedCategory, nestCategories } from '@/lib/categoryHierarchy'
 
 export function SearchBar({ categories }: { categories: NestedCategory[] }) {
   const searchParams = useSearchParams()
+
   const router = useRouter()
 
   const { cart, favorites } = useCartStore((state) => state)
-
-  // const nestedCategories = nestCategories(categories)
-  // console.log(nestedCategories)
 
   function handleSearch(e: FormEvent<HTMLFormElement>, query: string) {
     e.preventDefault()

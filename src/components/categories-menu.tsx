@@ -1,11 +1,11 @@
+'use client'
+
 import { Button } from '../pegasus/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuPortal,
-  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -16,7 +16,7 @@ import { Large } from './typography/texts'
 import { NestedCategory } from '@/lib/categoryHierarchy'
 import Link from 'next/link'
 
-export async function CategoriesMenu({
+export function CategoriesMenu({
   categories,
 }: {
   categories: NestedCategory[]
