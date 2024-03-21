@@ -183,6 +183,7 @@ export interface Page {
     | ContentMedia
     | FAQ
     | ThreeColumns
+    | TimelineSection
   )[];
   slug?: string | null;
   updatedAt: string;
@@ -376,6 +377,24 @@ export interface ThreeColumns {
   id?: string | null;
   blockName?: string | null;
   blockType: 'three-columns';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TimelineSection".
+ */
+export interface TimelineSection {
+  invertBackground?: boolean | null;
+  title?: string | null;
+  description?: string | null;
+  cards: {
+    title: string;
+    description: string;
+    date?: string | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'timeline-section';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

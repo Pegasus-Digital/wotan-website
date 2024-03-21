@@ -157,3 +157,17 @@ export const QUERY_THREE_COLUMNS = `
   blockType
 }
 `
+export const QUERY_TIMELINE_SECTION = `
+... on TimelineSection {
+  title
+  description
+  invertBackground
+  cards {
+    title
+    description
+    date
+  }
+  blockName
+  blockType
+}
+`
