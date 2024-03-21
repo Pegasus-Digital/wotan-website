@@ -114,7 +114,7 @@ export function CartCard({ cartItem, product }: CartCardProps) {
       </CardHeader>
 
       <CardContent className='flex w-full flex-col space-y-2 tablet:p-6'>
-        {otherAttributes.length > 0 ? (
+        {otherAttributes && otherAttributes.length > 0 ? (
           <div className='space-y-1'>
             <Label>Atributos:</Label>
 
@@ -157,7 +157,7 @@ export function CartCard({ cartItem, product }: CartCardProps) {
           </Small>
         )}
 
-        {colors.length > 0 ? (
+        {colors && colors.length > 0 ? (
           <div className='space-y-1'>
             <Label>Cores:</Label>
 

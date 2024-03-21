@@ -13,7 +13,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 
 import { NewEstimateForm } from './new-estimate-form'
 
-export async function NewEstimateDialog() {
+export function NewEstimateDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
