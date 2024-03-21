@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload/types'
 
-import { slugField } from '../fields/slug'
+import { productSlugField, slugField } from '../fields/slug'
 import { revalidateProduct } from './hooks/revalidateProduct'
 import { anyone, admins } from '../access'
 // import { populateArchiveBlock } from '../hooks/populateArchiveBlock'
@@ -138,7 +138,7 @@ const Products: CollectionConfig = {
         }
       },
     },
-    slugField(),
+    productSlugField(),
   ],
 }
 
