@@ -29,5 +29,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     disableErrors: true,
   })
 
+  if (!product) {
+    return null
+  }
+
   return { title: `${product.title}` }
 }

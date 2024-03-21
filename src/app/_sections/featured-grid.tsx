@@ -45,9 +45,12 @@ export default function FeaturedGrid({
 
 function getSlug({ linkTo }: FeaturedGridProps['cards'][0]) {
   if (typeof linkTo.value === 'object' && linkTo.value.slug) {
-    return `${linkTo?.relationTo !== 'products' ? `/${linkTo?.relationTo}` : 'produtos'}/${
-      linkTo.value.slug
-    }`
+    if (linkTo.relationTo === 'products') {
+      return `produtos/${linkTo.value.slug}`
+    } else if (linkTo.relationTo === 'categories') {
+      return `categorias/${linkTo.value.slug}`
+    }
+
   }
-  return '404'
+  return 'nao-encontrado'
 }
