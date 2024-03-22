@@ -130,6 +130,7 @@ export interface Category {
 export interface Budget {
   id: string;
   total?: number | null;
+  status?: ('pendente' | 'cancelado') | null;
   items: {
     product: string | Product;
     attributes?: (string | Attribute)[] | null;
