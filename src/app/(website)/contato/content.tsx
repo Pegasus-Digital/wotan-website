@@ -49,7 +49,9 @@ const formSchema = z.object({
     .string({ required_error: 'É necessário fornecer um e-mail.' })
     .min(6, { message: 'E-mail deve conter no mínimo 6 caracteres' })
     .email({ message: `Deve ser um e-mail válido.` }),
-  message: z.string({ required_error: 'Deixe sua mensagem.' }),
+  message: z
+    .string({ required_error: 'Deixe sua mensagem.' })
+    .max(300, { message: 'Máximo de 300 caracteres' }),
   cnpj: z.string().optional(),
   allowNotifications: z.boolean(),
   acceptPrivacyPolicy: z.boolean(),
@@ -254,6 +256,7 @@ export function ContactContent({ address, contact }) {
                       <Textarea
                         className={` ${!isPJ ? 'h-44' : 'h-32'}  resize-none  text-foreground`}
                         placeholder='Mensagem'
+                        maxLength={300}
                         {...field}
                       />
                     </FormControl>

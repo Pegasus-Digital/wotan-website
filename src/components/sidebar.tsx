@@ -73,7 +73,7 @@ export function Sidebar() {
         <SidebarNavigationItem
           icon={MessageSquareText}
           href='/dashboard/contact'
-          text='Contato'
+          text='Contatos'
         />
 
         <SidebarSeparator title='admin' />
