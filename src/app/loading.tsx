@@ -7,7 +7,7 @@ export default function Loading() {
         <WotanLogo className='h-48 w-48' />
         <svg
           role='status'
-          className='h-16 w-16 animate-spin fill-wotanRed-500 text-gray-200 '
+          className='h-16 w-16 animate-spin fill-wotanRed-500 text-wotanRed-50 '
           viewBox='0 0 100 101'
           fill='none'
           xmlns='http://www.w3.org/2000/svg'
