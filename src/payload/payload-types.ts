@@ -30,6 +30,7 @@ export interface Config {
     pages: Page;
     clients: Client;
     salespersons: Salesperson;
+    'contact-messages': ContactMessage;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
@@ -445,6 +446,24 @@ export interface Salesperson {
   loginAttempts?: number | null;
   lockUntil?: string | null;
   password: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-messages".
+ */
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  fone: string;
+  cnpj?: string | null;
+  message: string;
+  acceptEmail?: boolean | null;
+  acceptPrivacy: boolean;
+  read?: boolean | null;
+  contactedBy?: (string | null) | Salesperson;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

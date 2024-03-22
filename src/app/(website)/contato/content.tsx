@@ -34,6 +34,7 @@ import { LowImpactHero } from '@/app/_sections/heros/lowImpact'
 
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Label } from '@/components/ui/label'
+import payload from 'payload'
 
 const formSchema = z.object({
   name: z
@@ -69,14 +70,37 @@ export function ContactContent({ address, contact }) {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!values.acceptPrivacyPolicy) {
       toast.warning(
         'Formulário não enviado, é necessário aceitar os termos da Política de Privacidade.',
       )
+      return
     }
 
-    toast.success('Formulário enviado com sucesso!')
+    try {
+      const response = await fetch('api/contact-form', {
+        method: 'POST',
+        body: JSON.stringify({
+          acceptPrivacy: values.acceptPrivacyPolicy,
+          email: values.email,
+          cnpj: values.cnpj,
+          message: values.message,
+          phone: values.phone,
+          name: values.name,
+          acceptEmail: values.allowNotifications,
+        }),
+      })
+      const data = await response.json()
+      if (data) {
+        toast.success('Formulário enviado com sucesso!')
+      } else {
+        toast.warning('Ocorreu um erro ao enviar os dados.')
+      }
+    } catch (err) {
+      toast.warning('Ocorreu um erro ao enviar os dados.')
+      console.log(err)
+    }
   }
 
   function formatCNPJ(value: string) {
