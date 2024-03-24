@@ -2,7 +2,7 @@ export function LoadingSpinner() {
   return (
     <svg
       role='status'
-      className='mt-8 h-16 w-16 animate-spin fill-wotanRed-500 text-wotanRed-50 '
+      className='my-8 h-16 w-16 animate-spin fill-wotanRed-500 text-wotanRed-50 '
       viewBox='0 0 100 101'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
