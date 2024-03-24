@@ -13,6 +13,7 @@ import {
   getUniqueTypes,
 } from '@/lib/attribute-hooks'
 import { cn } from '@/lib/utils'
+import { getForegroundColor } from '@/lib/color'
 
 import { Attribute, Category, Product } from '@/payload/payload-types'
 
@@ -191,8 +192,11 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
                 <RadioGroupItem
                   key={color.id}
                   value={color.value}
-                  style={{ backgroundColor: color.value }}
-                  className='h-6 w-6 rounded-full text-white'
+                  style={{
+                    backgroundColor: color.value,
+                    color: getForegroundColor(color.value),
+                  }}
+                  className='h-6 w-6 rounded-full'
                 />
               ))}
             </RadioGroup>

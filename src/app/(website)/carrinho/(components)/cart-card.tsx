@@ -19,6 +19,7 @@ import { Media } from '@/components/media'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { LoadingSpinner } from '@/components/spinner'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 
@@ -33,6 +34,7 @@ import {
   getProductAttributes,
   getUniqueTypes,
 } from '@/lib/attribute-hooks'
+import { getForegroundColor } from '@/lib/color'
 
 interface CartCardProps {
   cartItem: CartItem
@@ -95,12 +97,7 @@ export function CartCard({ cartItem, product }: CartCardProps) {
     updateAttr(cartItem.id, attribute)
   }
 
-  if (!product)
-    return (
-      <Heading variant='h3' className='animate-pulse text-center'>
-        Carregando item...
-      </Heading>
-    )
+  if (!product) return <LoadingSpinner />
 
   return (
     <Card className='w-full shadow-xl tablet:flex'>
@@ -166,14 +163,19 @@ export function CartCard({ cartItem, product }: CartCardProps) {
               onValueChange={(value) => getColorByValue(value)}
               className='flex gap-1'
             >
-              {colors.map((color: Attribute, index) => (
-                <RadioGroupItem
-                  key={color.name + '-' + index}
-                  value={color.value}
-                  style={{ backgroundColor: color.value }}
-                  className='h-6 w-6 rounded-full text-white'
-                />
-              ))}
+              {colors.map((color: Attribute, index) => {
+                return (
+                  <RadioGroupItem
+                    key={color.name + '-' + index}
+                    value={color.value}
+                    style={{
+                      backgroundColor: color.value,
+                      color: getForegroundColor(color.value),
+                    }}
+                    className='h-6 w-6 rounded-full'
+                  />
+                )
+              })}
             </RadioGroup>
           </div>
         ) : (
