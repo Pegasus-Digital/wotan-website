@@ -1,3 +1,8 @@
+import Link from 'next/link'
+import { getHref } from './link'
+
+import { Page } from '@/payload/payload-types'
+
 import {
   Carousel,
   CarouselContent,
@@ -5,17 +10,15 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from './ui/carousel'
-
-import { ProductCard } from './product-card'
-import { Lead } from './typography/texts'
-import { buttonVariants } from './ui/button'
-import Link from 'next/link'
-import { Page } from '@/payload/payload-types'
-import { Heading } from '@/pegasus/heading'
 import { Button } from '@/pegasus/button'
-import { ArrowRight } from 'lucide-react'
-import { getHref } from './link'
+import { ProductCard } from './product-card'
 
+import { Lead } from './typography/texts'
+import { Heading } from '@/pegasus/heading'
+
+import { ArrowRight } from 'lucide-react'
+
+// TODO: Acho que da pra simplificar essas tipagens
 export type ProductSliderProps = Extract<
   Page['layout'][0],
   { blockType: 'product-carousel' }
@@ -42,16 +45,10 @@ export function ProductSlider({
         >
           <CarouselContent>
             {selectedDocs.map((doc, index) => {
-              if (typeof doc.value !== 'string') {
+              if (typeof doc.value === 'object') {
                 return (
                   <CarouselItem className='max-w-[300px]' key={index}>
-                    <ProductCard
-                      id={doc.value.id}
-                      title={doc.value.title}
-                      minimumQuantity={doc.value.minimumQuantity}
-                      categories={doc.value.categories}
-                      featuredImage={doc.value.featuredImage}
-                    />
+                    <ProductCard product={doc.value} />
                   </CarouselItem>
                 )
               }

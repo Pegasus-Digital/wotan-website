@@ -45,7 +45,7 @@ async function fetchCategories() {
 export default async function WebsiteLayout({
   children,
 }: Readonly<WebsiteLayoutProps>) {
-  const start = performance.now()
+  // const start = performance.now()
 
   const settingsData = fetchConfigs()
   const categoriesData = fetchCategories()
@@ -55,9 +55,8 @@ export default async function WebsiteLayout({
     categoriesData,
   ])
 
-  const end = performance.now()
-  console.log(`Execution time: ${end - start} ms`)
-  // console.log(categories)
+  // const end = performance.now()
+  // console.log(`Execution time: ${end - start} ms`)
 
   const { header, footer, company } = settings
   const { adress, contact } = company

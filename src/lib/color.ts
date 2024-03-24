@@ -5,7 +5,7 @@ export function getForegroundColor(hexBackground: string): string | null {
   )
   if (!rgbBackground) {
     console.error('Invalid hex color:', hexBackground)
-    return '#FFFFFF'
+    return '#FF00FF'
   }
 
   const rgb = {
