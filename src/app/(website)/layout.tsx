@@ -9,6 +9,8 @@ import { Setting } from '@/payload/payload-types'
 import { fetchSettings } from '../_api/fetchGlobals'
 import payload from 'payload'
 import { NestedCategory, nestCategories } from '@/lib/categoryHierarchy'
+import Loading from '../loading'
+import { Suspense } from 'react'
 
 interface WebsiteLayoutProps {
   children: React.ReactNode
@@ -65,25 +67,27 @@ export default async function WebsiteLayout({
   return (
     <>
       <CartStoreProvider>
-        <Header
-          logo={header?.logo}
-          navigation={header?.navigation}
-          phone={contact?.phone}
-        />
+        <Suspense fallback={<Loading />}>
+          <Header
+            logo={header?.logo}
+            navigation={header?.navigation}
+            phone={contact?.phone}
+          />
 
-        <SearchBar categories={categories} />
+          <SearchBar categories={categories} />
 
-        <main className='flex min-h-screen flex-col items-center bg-pattern bg-right bg-repeat-y'>
-          {children}
-        </main>
+          <main className='flex min-h-screen flex-col items-center bg-pattern bg-right bg-repeat-y'>
+            {children}
+          </main>
 
-        <Footer
-          logo={footer?.logo}
-          companyInfo={footer.companyInfo}
-          columns={footer.columns}
-          adress={adress}
-          contact={contact}
-        />
+          <Footer
+            logo={footer?.logo}
+            companyInfo={footer.companyInfo}
+            columns={footer.columns}
+            adress={adress}
+            contact={contact}
+          />
+        </Suspense>
       </CartStoreProvider>
       <Toaster richColors closeButton theme='light' />
     </>
