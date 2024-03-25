@@ -101,6 +101,8 @@ export function FinishEstimateForm() {
           'O orçamento enviado com sucesso. Você será redirecionado.',
         )
 
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+
         flushToilet() // Limpar carrinho
 
         setTimeout(() => {
@@ -154,8 +156,8 @@ export function FinishEstimateForm() {
                       key={attr.id}
                       className='mr-2 w-min whitespace-nowrap bg-black/55 hover:bg-black/90'
                     >
-                      {/* @ts-ignore */}
-                      {attr.type.name}: {attr.value}
+                      {typeof attr.type === 'object' && attr.type.name}:{' '}
+                      {attr.value}
                     </Badge>
                   ))}
                 </div>
@@ -168,14 +170,6 @@ export function FinishEstimateForm() {
             <CardTitle className='mb-2 text-primary'>
               Informações necessárias
             </CardTitle>
-
-            {/* <FormField control={form.control} name='cart' render={({ field }) => {
-              <FormItem>
-                <FormControl>
-                  <Input />
-                </FormControl>
-              </FormItem>
-            }} /> */}
 
             <FormField
               control={form.control}
@@ -223,6 +217,7 @@ export function FinishEstimateForm() {
                   <FormLabel>Email de contato</FormLabel>
                   <FormControl>
                     <Input
+                      autoComplete={'email'}
                       className='ring-none outline-none'
                       placeholder='Email'
                       type='text'
@@ -242,6 +237,7 @@ export function FinishEstimateForm() {
                   <FormLabel>Telefone</FormLabel>
                   <FormControl>
                     <Input
+                      autoComplete={'tel'}
                       className='ring-none outline-none'
                       placeholder='Telefone'
                       maxLength={15}

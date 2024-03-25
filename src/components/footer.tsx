@@ -131,7 +131,7 @@ type FooterColumnProps = Pick<FooterProps['columns'][0], 'title' | 'links'>
 
 function FooterColumn({ title, links }: FooterColumnProps) {
   return (
-    <nav className='flex shrink flex-col justify-center space-y-1 text-center tablet:justify-start'>
+    <nav className='flex shrink flex-col justify-center space-y-1 text-center tablet:justify-start tablet:text-start'>
       <Lead className='my-3 whitespace-nowrap text-base font-bold text-primary-foreground tablet:text-xl'>
         {title.label}
       </Lead>
@@ -141,7 +141,7 @@ function FooterColumn({ title, links }: FooterColumnProps) {
           variant='linkHover2'
           key={index}
           asChild
-          className='text-center'
+          className='self-center text-center tablet:self-start tablet:text-start'
         >
           <Link href={getHref({ ...child.link })}>{child.link.label}</Link>
         </Button>
