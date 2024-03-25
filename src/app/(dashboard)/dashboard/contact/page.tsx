@@ -1,8 +1,11 @@
+import * as React from 'react'
 import { Metadata } from 'next'
+
 import { ContactContent } from './content'
-import { searchParamsSchema } from './(table)/validations'
+
 import { getContactMessages } from './(table)/queries'
-import React from 'react'
+import { searchParamsSchema } from './(table)/validations'
+
 import { DataTableSkeleton } from '@/components/table/data-table-skeleton'
 
 // This page is meant to be responsible for SEO, data fetching and/or other asynchronous functions
@@ -11,11 +14,15 @@ export const metadata: Metadata = {
   title: 'Contatos',
 }
 
-interface SearchParams {
+export interface SearchParams {
   [key: string]: string | string[] | undefined
 }
 
-export default async function Contacts({ searchParams }: SearchParams) {
+interface ContactsPageProps {
+  searchParams: SearchParams
+}
+
+export default function Contacts({ searchParams }: ContactsPageProps) {
   const search = searchParamsSchema.parse(searchParams)
 
   const messagesPromise = getContactMessages(search)

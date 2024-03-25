@@ -6,10 +6,10 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { ContactMessage } from '@/payload/payload-types'
 
 import { DataTable } from '@/components/table/data-table'
+import { useDataTable } from '@/components/table/hooks/use-data-table'
 
 import { getColumns } from './columns'
 import { getContactMessages } from './queries'
-import { useDataTable } from '@/components/table/hooks/use-data-table'
 
 interface ContactTableProps {
   messagesPromise: ReturnType<typeof getContactMessages>

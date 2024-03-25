@@ -1,7 +1,8 @@
-import { Separator } from '@/components/ui/separator'
-import { Content, ContentHeader } from '@/components/content'
 import { getContactMessages } from './(table)/queries'
 import { ContactTable } from './(table)/contact-table'
+
+import { Separator } from '@/components/ui/separator'
+import { Content, ContentHeader } from '@/components/content'
 
 interface ContactContentProps {
   messages: ReturnType<typeof getContactMessages>

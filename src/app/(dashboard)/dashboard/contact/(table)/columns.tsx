@@ -1,10 +1,11 @@
 'use client'
 
 import { useTransition } from 'react'
-import { getRelativeDate } from '@/lib/date'
 
 import { ColumnDef } from '@tanstack/react-table'
 import { ContactMessage } from '@/payload/payload-types'
+
+import { getRelativeDate } from '@/lib/date'
 
 import { toast } from 'sonner'
 
@@ -19,19 +20,19 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import { Textarea } from '@/components/ui/textarea'
-import { Lead, Small } from '@/components/typography/texts'
+import { Small } from '@/components/typography/texts'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 
-import { readTask } from './actions'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Card, CardContent } from '@/components/ui/card'
+
+import { readTask } from './actions'
 
 export function getColumns(): ColumnDef<ContactMessage>[] {
   return [
@@ -64,6 +65,7 @@ export function getColumns(): ColumnDef<ContactMessage>[] {
               disabled={isReadPending}
               onClick={() => {
                 startReadTransition(() => {
+                  // Investigar: Toast não dispara
                   toast.promise(readTask({ message }), {
                     loading: 'Lendo...',
                     success: 'Mensagem marcada como lida',
