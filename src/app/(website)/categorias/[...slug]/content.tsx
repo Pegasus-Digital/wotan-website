@@ -65,16 +65,7 @@ export async function CategoryPageContent({
         {/* Products grid */}
         <div className='grid max-w-screen-desktop grid-flow-row grid-cols-2 gap-4 tablet:grid-cols-3 desktop:grid-cols-4'>
           {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              id={product.id}
-              title={product.title}
-              minimumQuantity={product.minimumQuantity}
-              featuredImage={product.featuredImage}
-              categories={product.categories.map(
-                (category: Category) => category.title,
-              )}
-            />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
         {products.length > 0 && (

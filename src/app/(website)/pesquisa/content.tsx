@@ -65,16 +65,7 @@ export async function SearchPageContent({
         {/* Products grid */}
         <div className='grid max-w-screen-desktop grid-flow-row grid-cols-2 gap-4 tablet:grid-cols-3 desktop:grid-cols-4'>
           {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              id={product.id}
-              title={product.title}
-              categories={product.categories.map(
-                (category: Category) => category.title,
-              )}
-              featuredImage={product.featuredImage}
-              minimumQuantity={product.minimumQuantity}
-            />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
         <Pagination className='sticky w-full py-6'>

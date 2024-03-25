@@ -8,11 +8,17 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
+import { LowImpactHero } from '@/app/_sections/heros/lowImpact'
+
+import { Button } from '@/pegasus/button'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
-import { H1, H3 } from '@/components/typography/headings'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+
+import { Small } from '@/components/typography/texts'
+import { H3 } from '@/components/typography/headings'
 
 import {
   Form,
@@ -22,19 +28,9 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { LinkIcon, Small } from '@/components/typography/texts'
-import { FacebookIcon, Mail, MapPin, Phone } from 'lucide-react'
-import {
-  InstagramLogoIcon,
-  LinkedInLogoIcon,
-  TwitterLogoIcon,
-} from '@radix-ui/react-icons'
-import { Heading } from '@/pegasus/heading'
-import { LowImpactHero } from '@/app/_sections/heros/lowImpact'
 
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Label } from '@/components/ui/label'
-import payload from 'payload'
+
+import { ArrowRight, Mail, MapPin, Phone } from 'lucide-react'
 
 const formSchema = z.object({
   name: z
@@ -131,11 +127,7 @@ export function ContactContent({ address, contact }) {
   }
 
   function changeCNPJRadio(e: string) {
-    if (e === 'pj') {
-      setCNPJ(true)
-    } else {
-      setCNPJ(false)
-    }
+    e === 'pj' ? setCNPJ(true) : setCNPJ(false)
   }
 
   return (
@@ -175,7 +167,7 @@ export function ContactContent({ address, contact }) {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className='text-primary-foreground' />
+                    <FormMessage className='animate-pulse text-primary-foreground' />
                   </FormItem>
                 )}
               />
@@ -192,7 +184,7 @@ export function ContactContent({ address, contact }) {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className='text-primary-foreground' />
+                    <FormMessage className='animate-pulse text-primary-foreground' />
                   </FormItem>
                 )}
               />
@@ -216,7 +208,7 @@ export function ContactContent({ address, contact }) {
                         {...props}
                       />
                     </FormControl>
-                    <FormMessage className='text-primary-foreground' />
+                    <FormMessage className='animate-pulse text-primary-foreground' />
                   </FormItem>
                 )}
               />
@@ -241,7 +233,7 @@ export function ContactContent({ address, contact }) {
                           {...props}
                         />
                       </FormControl>
-                      <FormMessage className='text-primary-foreground' />
+                      <FormMessage className='animate-pulse text-primary-foreground' />
                     </FormItem>
                   )}
                 />
@@ -260,7 +252,7 @@ export function ContactContent({ address, contact }) {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className='text-primary-foreground' />
+                    <FormMessage className='animate-pulse text-primary-foreground' />
                   </FormItem>
                 )}
               />
@@ -271,7 +263,7 @@ export function ContactContent({ address, contact }) {
                   <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md px-4'>
                     <FormControl>
                       <Checkbox
-                        className='bg-background'
+                        className='bg-background data-[state=checked]:bg-background data-[state=checked]:text-foreground'
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />
@@ -292,7 +284,7 @@ export function ContactContent({ address, contact }) {
                   <FormItem className='flex flex-row items-center space-x-3 space-y-0 rounded-md px-4'>
                     <FormControl>
                       <Checkbox
-                        className='bg-background'
+                        className='bg-background data-[state=checked]:bg-background data-[state=checked]:text-foreground'
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />
@@ -305,7 +297,7 @@ export function ContactContent({ address, contact }) {
                       <Link
                         href='/politica-de-privacidade'
                         target='_blank'
-                        className='text-sm font-medium text-sky-400 hover:text-sky-500 hover:underline'
+                        className='text-sm font-medium text-sky-400 hover:text-sky-300 hover:underline'
                       >
                         Política de Privacidade
                       </Link>
@@ -315,8 +307,10 @@ export function ContactContent({ address, contact }) {
               />
 
               <Button
-                variant='outline'
-                className='bg-transparent font-medium text-primary-foreground'
+                variant='expandIcon'
+                Icon={ArrowRight}
+                iconPlacement='right'
+                className='font-medium shadow-wotan-light transition hover:brightness-125'
                 type='submit'
               >
                 Enviar
@@ -344,7 +338,6 @@ export function ContactContent({ address, contact }) {
                 {' - '}
                 {address.neighborhood}
                 {', '}
-                {/* <br /> */}
                 {address.city}
                 {' - '}
                 {address.state}

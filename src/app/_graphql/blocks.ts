@@ -23,6 +23,9 @@ export const QUERY_PRODUCT_CAROUSEL = `
         }
         categories {
           title
+          parent {
+            title
+          }
         }
       }
     }

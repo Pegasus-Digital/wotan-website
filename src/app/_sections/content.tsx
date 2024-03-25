@@ -15,13 +15,21 @@ export default function ContentSection({
   columns,
   title,
   description,
+  invertBackground,
 }: ContentProps) {
   return (
     <section className='w-full'>
       <div className='container'>
         <div className='mb-3 flex flex-col gap-2 text-center'>
-          <Heading variant='h2'>{title}</Heading>
-          <Lead>{description}</Lead>
+          <Heading
+            className={invertBackground ? 'text-primary-foreground' : null}
+            variant='h2'
+          >
+            {title}
+          </Heading>
+          <Lead className={invertBackground ? 'text-muted' : null}>
+            {description}
+          </Lead>
         </div>
         <div className='grid w-full items-center justify-center gap-8 '>
           {columns &&
