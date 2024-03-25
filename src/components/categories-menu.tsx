@@ -1,6 +1,8 @@
 'use client'
 
-import { Button } from '../pegasus/button'
+import Link from 'next/link'
+import { NestedCategory } from '@/lib/category-hierarchy'
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,17 +13,19 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from './dropdown-menu'
-import { Menu } from 'lucide-react'
-import { Large } from './typography/texts'
-import { NestedCategory } from '@/lib/categoryHierarchy'
-import Link from 'next/link'
 
-export function CategoriesMenu({
-  categories,
-}: {
+import { Button } from '@/pegasus/button'
+
+import { Large } from './typography/texts'
+
+import { ChevronsDown } from 'lucide-react'
+
+interface CategoriesMenuProps {
   categories: NestedCategory[]
-}) {
-  const renderDropdownMenu = (cats, depth) => {
+}
+
+export function CategoriesMenu({ categories }: CategoriesMenuProps) {
+  const renderDropdownMenu = (cats: NestedCategory[], depth: number) => {
     if (depth >= 5) return null
 
     return cats.map((cat, index) => {
@@ -29,12 +33,12 @@ export function CategoriesMenu({
         return (
           <DropdownMenuSub key={index}>
             <Link href={`/categorias${cat.url}`} passHref>
-              <DropdownMenuSubTrigger className='p-2'>
+              <DropdownMenuSubTrigger className='cursor-pointer p-2'>
                 {cat.title}
               </DropdownMenuSubTrigger>
             </Link>
             <DropdownMenuPortal>
-              <DropdownMenuSubContent className='min-w-72 font-semibold'>
+              <DropdownMenuSubContent className='min-w-72 cursor-pointer font-semibold'>
                 {renderDropdownMenu(cat.children, depth + 1)}
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
@@ -43,7 +47,9 @@ export function CategoriesMenu({
       } else {
         return (
           <Link href={`/categorias${cat.url}`} passHref key={index}>
-            <DropdownMenuItem className='p-2'>{cat.title}</DropdownMenuItem>
+            <DropdownMenuItem className='cursor-pointer p-2'>
+              {cat.title}
+            </DropdownMenuItem>
           </Link>
         )
       }
@@ -53,12 +59,12 @@ export function CategoriesMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className='flex items-center justify-center gap-2 text-primary-foreground'>
-          <Menu className='h-6 w-6' />
+        <Button className='flex items-center justify-center gap-2 text-primary-foreground hover:brightness-125'>
+          <ChevronsDown className='h-6 w-6 stroke-2' />
           <Large>Produtos</Large>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className='min-w-72  font-semibold' alignOffset={50}>
+      <DropdownMenuContent align='start' className='min-w-72 font-semibold'>
         {renderDropdownMenu(categories, 0)}
       </DropdownMenuContent>
     </DropdownMenu>

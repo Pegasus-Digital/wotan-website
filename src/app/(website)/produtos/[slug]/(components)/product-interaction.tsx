@@ -152,7 +152,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
       <div className='flex flex-wrap items-center space-x-1 space-y-1'>
         {product.categories && (
           <>
-            <Label>Categoria(s):</Label>
+            <Large>Categoria(s):</Large>
             {product.categories?.map((category: Category, index) => (
               <Link
                 key={category.id + '-' + index}
@@ -165,12 +165,12 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
         )}
       </div>
 
-      {product.price && (
+      {/* {product.price && (
         <div className='flex items-center space-x-2 py-1'>
           <Large className='whitespace-nowrap text-2xl'>R$ 24.90</Large>
           <Small className='whitespace-nowrap'>/ un.</Small>
         </div>
-      )}
+      )} */}
 
       {/* Product description */}
       <Small className='pb-1 leading-snug'>
@@ -180,9 +180,9 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
       </Small>
 
       <div>
-        {colors ? (
+        {colors.length > 0 && (
           <div className='space-y-1'>
-            <Label>Cores:</Label>
+            <Large>Cores:</Large>
 
             <RadioGroup
               onValueChange={(value) => onSelectColor(value)}
@@ -201,13 +201,13 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
               ))}
             </RadioGroup>
           </div>
-        ) : (
-          <Small className='w-full py-2'>Não há cores para selecionar</Small>
         )}
       </div>
 
       <div className='w-full font-medium'>
-        <Label className='text-base font-semibold'>Atributos:</Label>
+        {types.length > 0 && (
+          <Large className='text-base font-semibold'>Atributos:</Large>
+        )}
         <div className='mt-1 space-y-2'>
           {types ? (
             types.map((type) => {

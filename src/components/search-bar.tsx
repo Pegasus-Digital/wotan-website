@@ -6,7 +6,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 
 import { toast } from 'sonner'
 
-import { NestedCategory } from '@/lib/categoryHierarchy'
+import { NestedCategory } from '@/lib/category-hierarchy'
 
 import { Input } from './ui/input'
 import { CategoriesMenu } from './categories-menu'

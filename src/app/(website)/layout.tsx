@@ -8,7 +8,7 @@ import { CartStoreProvider } from '@/components/cart-store-provider'
 import { Setting } from '@/payload/payload-types'
 import { fetchSettings } from '../_api/fetchGlobals'
 import payload from 'payload'
-import { NestedCategory, nestCategories } from '@/lib/categoryHierarchy'
+import { NestedCategory, nestCategories } from '@/lib/category-hierarchy'
 import Loading from '../loading'
 import { Suspense } from 'react'
 

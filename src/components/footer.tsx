@@ -4,6 +4,8 @@ import { StaticImageData } from 'next/image'
 
 import { Company, Footer as FooterType } from '@/payload/payload-types'
 
+import { Image } from './media/image'
+
 import {
   LinkedInLogoIcon,
   TwitterLogoIcon,
@@ -15,7 +17,6 @@ import { Lead, LinkIcon, Small } from './typography/texts'
 
 import { Button } from '@/pegasus/button'
 import { PegasusStamp } from '@/pegasus/pegasus-stamp'
-import { Image } from './media/image'
 
 // TODO: Acho que da pra deixar essa tipagem mais limpa
 type FooterProps = FooterType & {
@@ -121,11 +122,6 @@ export function Footer({
     </footer>
   )
 }
-
-// interface FooterColumnProps {
-//   title: string
-//   links: { title?: string; href?: string; id?: string }[]
-// }
 
 type FooterColumnProps = Pick<FooterProps['columns'][0], 'title' | 'links'>
 

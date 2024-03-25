@@ -1,6 +1,9 @@
+import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
-import { Category, Product } from '@/payload/payload-types'
+import { Product } from '@/payload/payload-types'
+
+import { LowImpactHero } from '@/app/_sections/heros/lowImpact'
 
 import {
   Pagination,
@@ -10,13 +13,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination'
+import { ProductCard } from '@/components/product-card'
+import { Button, buttonVariants } from '@/components/ui/button'
 
 import { Heading } from '@/pegasus/heading'
-import { Button, buttonVariants } from '@/components/ui/button'
-import { ProductCard } from '@/components/product-card'
-import Link from 'next/link'
-import { Hero } from '@/components/heros'
-import { LowImpactHero } from '@/app/_sections/heros/lowImpact'
 
 interface PaginationParams {
   totalDocs: number
