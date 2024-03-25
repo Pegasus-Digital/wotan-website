@@ -29,6 +29,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 
+
 import { ArrowRight, Mail, MapPin, Phone } from 'lucide-react'
 
 const formSchema = z.object({
@@ -44,7 +45,9 @@ const formSchema = z.object({
     .string({ required_error: 'É necessário fornecer um e-mail.' })
     .min(6, { message: 'E-mail deve conter no mínimo 6 caracteres' })
     .email({ message: `Deve ser um e-mail válido.` }),
-  message: z.string({ required_error: 'Deixe sua mensagem.' }),
+  message: z
+    .string({ required_error: 'Deixe sua mensagem.' })
+    .max(300, { message: 'Máximo de 300 caracteres' }),
   cnpj: z.string().optional(),
   allowNotifications: z.boolean(),
   acceptPrivacyPolicy: z.boolean(),
@@ -65,14 +68,37 @@ export function ContactContent({ address, contact }) {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!values.acceptPrivacyPolicy) {
       toast.warning(
         'Formulário não enviado, é necessário aceitar os termos da Política de Privacidade.',
       )
+      return
     }
 
-    toast.success('Formulário enviado com sucesso!')
+    try {
+      const response = await fetch('api/contact-form', {
+        method: 'POST',
+        body: JSON.stringify({
+          acceptPrivacy: values.acceptPrivacyPolicy,
+          email: values.email,
+          cnpj: values.cnpj,
+          message: values.message,
+          phone: values.phone,
+          name: values.name,
+          acceptEmail: values.allowNotifications,
+        }),
+      })
+      const data = await response.json()
+      if (data) {
+        toast.success('Formulário enviado com sucesso!')
+      } else {
+        toast.warning('Ocorreu um erro ao enviar os dados.')
+      }
+    } catch (err) {
+      toast.warning('Ocorreu um erro ao enviar os dados.')
+      console.log(err)
+    }
   }
 
   function formatCNPJ(value: string) {
@@ -222,6 +248,7 @@ export function ContactContent({ address, contact }) {
                       <Textarea
                         className={` ${!isPJ ? 'h-44' : 'h-32'}  resize-none  text-foreground`}
                         placeholder='Mensagem'
+                        maxLength={300}
                         {...field}
                       />
                     </FormControl>

@@ -13,6 +13,7 @@ import {
   FileUp,
   UserCog,
   LayoutTemplate,
+  MessageSquareText,
 } from 'lucide-react'
 import { PegasusIcon } from '@/pegasus/pegasus-stamp'
 
@@ -68,6 +69,11 @@ export function Sidebar() {
           icon={Users}
           href='/dashboard/customers'
           text='Clientes'
+        />
+        <SidebarNavigationItem
+          icon={MessageSquareText}
+          href='/dashboard/contact'
+          text='Contatos'
         />
 
         <SidebarSeparator title='admin' />
