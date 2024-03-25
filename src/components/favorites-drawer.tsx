@@ -20,12 +20,14 @@ import { Button } from './ui/button'
 import { ScrollArea } from './ui/scroll-area'
 
 import { useCartStore } from './cart-store-provider'
-import { Product } from '@/payload/payload-types'
+import { Category, Product } from '@/payload/payload-types'
 import { Image } from './media/image'
 import { Heading } from '@/pegasus/heading'
 import { Small } from './typography/texts'
 import { Card } from './ui/card'
 import { LoadingSpinner } from './spinner'
+import { Badge } from './ui/badge'
+import Link from 'next/link'
 
 export function FavoritesDrawer() {
   const { favorites, removeFavorite } = useCartStore((state) => state)
@@ -93,6 +95,7 @@ export function FavoritesDrawer() {
           onClick={() => setOpen(true)}
         >
           <Heart className='h-6 w-6 group-hover:fill-white' />
+
           {favorites.length > 0 && (
             <span className='absolute -right-2 -top-2 flex aspect-square min-h-5 w-fit items-center justify-center rounded-full bg-wotanRed-400 text-center leading-none'>
               {favorites.length}
@@ -100,11 +103,13 @@ export function FavoritesDrawer() {
           )}
         </Button>
       </DrawerTrigger>
-      <DrawerContent className='right-0 w-full max-w-96'>
+      <DrawerContent className='right-0 w-full max-w-[440px] pl-4'>
         <ScrollArea className='max-h-screen min-h-screen overflow-y-auto p-4'>
           <DrawerHeader>
             <DrawerTitle className='text-xl'>Favoritos</DrawerTitle>
-            <DrawerDescription>Seus produtos favoritos</DrawerDescription>
+            <DrawerDescription>
+              Seus produtos favoritos, clique para visitar a página.
+            </DrawerDescription>
           </DrawerHeader>
 
           <div className='flex flex-col items-center space-y-2'>
@@ -116,18 +121,40 @@ export function FavoritesDrawer() {
 
             {!isLoading &&
               products.map((product) => (
-                <Card key={product.id} className='flex w-full items-center'>
-                  <Image
-                    imgClassName='w-16 h-16'
-                    resource={product.featuredImage}
-                  />
+                <Card
+                  key={product.id}
+                  className='flex w-full gap-2 px-2 py-1 shadow-md group-hover:bg-wotanRed-50'
+                >
+                  <Link
+                    className='group flex w-full gap-2'
+                    href={`/produtos/${product.id}`}
+                  >
+                    <Image
+                      imgClassName='w-20 h-20 border rounded-md'
+                      resource={product.featuredImage}
+                    />
 
-                  <div className='flex flex-col space-y-2'>
-                    <Heading variant='h6'>{product.title}</Heading>
-                    <Small>{product.description}</Small>
-                  </div>
+                    <div className='flex flex-1 flex-col space-y-2'>
+                      <Heading className='m-0 p-0' variant='h6'>
+                        {product.title}
+                      </Heading>
 
-                  <Button onClick={() => handleRemoveFavorite(product.id)}>
+                      <div className='mt-auto flex flex-wrap gap-2'>
+                        {product.categories.map((category: Category) => {
+                          return (
+                            <Badge key={product.id}>{category.title}</Badge>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  </Link>
+
+                  <Button
+                    size='icon'
+                    variant='outline'
+                    onClick={() => handleRemoveFavorite(product.id)}
+                    className='z-50'
+                  >
                     <Trash />
                   </Button>
                 </Card>
