@@ -1,10 +1,13 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
-import { Heart, Trash, X } from 'lucide-react'
-
 import { toast } from 'sonner'
+
+import { Category, Product } from '@/payload/payload-types'
+
+import { Heart, Trash, X } from 'lucide-react'
 
 import {
   Drawer,
@@ -16,24 +19,23 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from './ui/drawer'
+import { Card } from './ui/card'
+import { Badge } from './ui/badge'
 import { Button } from './ui/button'
+import { Image } from './media/image'
+import { LoadingSpinner } from './spinner'
 import { ScrollArea } from './ui/scroll-area'
 
-import { useCartStore } from './cart-store-provider'
-import { Category, Product } from '@/payload/payload-types'
-import { Image } from './media/image'
-import { Heading } from '@/pegasus/heading'
 import { Small } from './typography/texts'
-import { Card } from './ui/card'
-import { LoadingSpinner } from './spinner'
-import { Badge } from './ui/badge'
-import Link from 'next/link'
+import { Heading } from '@/pegasus/heading'
+
+import { useCartStore } from './cart-store-provider'
 
 export function FavoritesDrawer() {
-  const { favorites, removeFavorite } = useCartStore((state) => state)
-  const [products, setProducts] = useState<Product[]>([])
   const [open, setOpen] = useState<boolean>(false)
   const [isLoading, setLoading] = useState<boolean>(false)
+  const [products, setProducts] = useState<Product[]>([])
+  const { favorites, removeFavorite } = useCartStore((state) => state)
 
   function handleOpenChange(openState: boolean) {
     setOpen(openState)
