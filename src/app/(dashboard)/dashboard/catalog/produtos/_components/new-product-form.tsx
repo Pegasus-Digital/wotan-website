@@ -37,7 +37,10 @@ const newProductSchema = z.object({
   active: z.boolean(),
   featuredImage: z.string(),
   minimumQuantity: z.coerce
-    .number()
+    .number({
+      required_error: 'Campo deve ser preenchido.',
+      invalid_type_error: 'Campo deve conter um número.',
+    })
     .min(1, 'Quantidade mínima deve ser maior que 1 unidade.'),
   sku: z
     .string()
@@ -66,6 +69,7 @@ export function NewProductForm() {
       description: '',
       minimumQuantity: 0,
       featuredImage: '660315294d562058e2daa8fb',
+      active: false,
 
       categories: [],
       attributes: [],
@@ -102,10 +106,12 @@ export function NewProductForm() {
     })
 
     if (response.status === true) {
+      console.log('Devia ter tocado um toast positivo')
       toast.success(response.message)
     }
 
     if (response.status === false) {
+      console.log('Devia ter tocado um toast negativo')
       toast.error(response.message)
     }
   }

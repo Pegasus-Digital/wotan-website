@@ -1,5 +1,7 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
+
 import payload from 'payload'
 import { Product } from '@/payload/payload-types'
 
@@ -17,6 +19,8 @@ export async function createProduct(
     data: { ...product, _status: 'published' },
   })
 
+  revalidatePath('/dashboard/catalog/produtos')
+
   return {
     data: { product: response },
     status: true,
@@ -24,38 +28,50 @@ export async function createProduct(
   }
 }
 
-interface UpdateActionResponseData {
-  product: Product | null
-}
+// interface UpdateActionResponseData {
+//   product: Product | null
+// }
 
-export async function updateProduct(
-  product: Product,
-): Promise<ActionResponse<UpdateActionResponseData>> {
-  const response = await payload.update({
+// export async function updateProduct(
+//   product: Product,
+// ): Promise<ActionResponse<UpdateActionResponseData>> {
+//   const response = await payload.update({
+//     collection: 'products',
+//     where: { id: { equals: product.id } },
+//     data: product,
+//   })
+
+//   if (response.errors.length > 0) {
+//     return {
+//       data: null,
+//       status: false,
+//       message: `Não foi possível atualizar o produto.\n${JSON.stringify(response.errors)}`,
+//     }
+//   }
+
+//   return {
+//     data: {
+//       product,
+//     },
+//     status: true,
+//     message: 'Produto atualizado com sucesso.',
+//   }
+// }
+
+interface DeleteProductResponseData {}
+
+export async function deleteProduct(
+  productId: string,
+): Promise<ActionResponse<DeleteProductResponseData>> {
+  const response = await payload.delete({
     collection: 'products',
-    where: { id: { equals: product.id } },
-    data: product,
+    where: { id: { equals: productId } },
   })
 
   if (response.errors.length > 0) {
-    return {
-      data: null,
-      status: false,
-      message: `Não foi possível atualizar o produto.\n${JSON.stringify(response.errors)}`,
-    }
+    return { data: null, status: false, message: 'Algo de errado ocorreu.' }
   }
 
-  return {
-    data: {
-      product,
-    },
-    status: true,
-    message: 'Produto atualizado com sucesso.',
-  }
+  revalidatePath('/dashboard/catalog/produtos')
+  return { data: null, status: true, message: 'Produto deletado com sucesso.' }
 }
-
-// interface DeleteProductResponseData {}
-
-// async function deleteProduct(): Promise<
-//   ActionResponse<DeleteProductResponseData>
-// > {}

@@ -1,20 +1,27 @@
-import payload from 'payload'
+import * as React from 'react'
 import { Metadata } from 'next'
+
+import { DataTableSkeleton } from '@/components/table/data-table-skeleton'
 
 import { ProductsContent } from './content'
 
-// This page is meant to be responsible for SEO, data fetching and/or other asynchronous functions
+import { getProducts } from './_logic/queries'
+import { ISearchParams, searchParamsSchema } from '@/lib/validations'
 
-export const dynamic = 'force-dynamic'
+// This page is meant to be responsible for SEO, data fetching and/or other asynchronous functions
 
 export const metadata: Metadata = {
   title: 'Produtos',
 }
 
-export default async function Products() {
-  // const products = await getData()
+export default function Products({ searchParams }: ISearchParams) {
+  const search = searchParamsSchema.parse(searchParams)
 
-  const { docs } = await payload.find({ collection: 'products' })
+  const productsPromise = getProducts(search)
 
-  return <ProductsContent products={docs} />
+  return (
+    <React.Suspense fallback={<DataTableSkeleton columnCount={4} />}>
+      <ProductsContent products={productsPromise} />
+    </React.Suspense>
+  )
 }
