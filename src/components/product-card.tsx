@@ -38,6 +38,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <CardFooter className='z-10 flex flex-col items-start space-y-2.5 py-4'>
         <Lead className='text-sm font-bold text-wotanRed-500'>
           {typeof mainCategory === 'object' && mainCategory.title}
+          {!mainCategory && 'Sem categoria'}
         </Lead>
 
         <P className='text-base font-bold text-foreground'>{product.title}</P>

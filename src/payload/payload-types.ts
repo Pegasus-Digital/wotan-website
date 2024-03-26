@@ -46,7 +46,7 @@ export interface Product {
   id: string;
   title: string;
   publishedOn?: string | null;
-  sku?: string | null;
+  sku: string;
   minimumQuantity: number;
   stockQuantity?: number | null;
   active: boolean;
