@@ -2,6 +2,7 @@
 
 const nextConfig = {
   images: {
+    // Remember to add deploy server url to remotePatterns
     remotePatterns: [
       {
         protocol: 'http',

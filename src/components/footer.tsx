@@ -42,7 +42,8 @@ export function Footer({
           <div className='flex min-w-80 shrink flex-col items-center gap-4 text-start tablet:items-start'>
             <Image
               resource={logo}
-              imgClassName='max-h-[200px] w-full max-w-80 px-4 contrast-200'
+              imgClassName='max-h-[200px] w-full max-w-80 px-4 contrast-200 bg-transparent'
+              className='bg-transparent'
             />
 
             {companyInfo.showAddress === true && adress && (

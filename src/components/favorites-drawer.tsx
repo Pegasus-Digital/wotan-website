@@ -106,7 +106,7 @@ export function FavoritesDrawer() {
         </Button>
       </DrawerTrigger>
       <DrawerContent className='right-0 w-full max-w-[440px] pl-4'>
-        <ScrollArea className='max-h-screen min-h-screen overflow-y-auto p-4'>
+        <ScrollArea className='max-h-screen min-h-screen overflow-y-auto p-4 pt-12'>
           <DrawerHeader>
             <DrawerTitle className='text-xl'>Favoritos</DrawerTitle>
             <DrawerDescription>
@@ -171,7 +171,7 @@ export function FavoritesDrawer() {
           </DrawerFooter>
         </ScrollArea>
 
-        <DrawerClose className='absolute right-2 top-2'>
+        <DrawerClose className='absolute right-4 top-12'>
           <X className='h-5 w-5' />
         </DrawerClose>
       </DrawerContent>
