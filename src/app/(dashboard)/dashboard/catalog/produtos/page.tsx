@@ -14,7 +14,11 @@ export const metadata: Metadata = {
   title: 'Produtos',
 }
 
-export default function Products({ searchParams }: ISearchParams) {
+interface ProductsPageProps {
+  searchParams: ISearchParams
+}
+
+export default function Products({ searchParams }: ProductsPageProps) {
   const search = searchParamsSchema.parse(searchParams)
 
   const productsPromise = getProducts(search)
