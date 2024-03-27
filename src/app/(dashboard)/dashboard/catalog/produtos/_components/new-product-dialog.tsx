@@ -1,5 +1,7 @@
 'use client'
 
+import { useState } from 'react'
+
 import {
   Dialog,
   DialogContent,
@@ -9,13 +11,14 @@ import {
 } from '@/components/ui/dialog'
 
 import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
 
 import { NewProductForm } from './new-product-form'
 
 export function NewProductDialog() {
+  const [open, setOpen] = useState<boolean>(false)
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant='outline' size='sm'>
           Novo produto
@@ -27,9 +30,8 @@ export function NewProductDialog() {
           <DialogTitle>Criando novo produto</DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className='max-h-[736px] px-2'>
-          <NewProductForm />
-        </ScrollArea>
+        {/* This form is Multi-step using Shadcn Tab component */}
+        <NewProductForm setOpen={setOpen} />
       </DialogContent>
     </Dialog>
   )

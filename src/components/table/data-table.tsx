@@ -60,9 +60,6 @@ export function DataTable<TData, TValue>({
               <ActionJSX />
             </span>
           ))}
-          <Button variant='outline' size='sm'>
-            Exportar
-          </Button>
         </div>
       </div>
 

@@ -11,6 +11,7 @@ export async function getProducts(
   searchParams: z.infer<typeof searchParamsSchema>,
 ) {
   noStore()
+
   try {
     const { page, per_page } = searchParams
 

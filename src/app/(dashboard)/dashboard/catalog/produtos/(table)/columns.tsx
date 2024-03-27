@@ -92,22 +92,24 @@ export function getColumns(): ColumnDef<Product>[] {
         return 'Data inválida'
       },
     },
-    // {
-    //   accessorKey: 'updatedAt',
-    //   header: ({ column }) => (
-    //     <DataTableColumnHeader column={column} title='Atualizado' />
-    //   ),
-    //   cell: ({ row }) => {
-    //     const value: string = row.getValue('updatedAt')
+    {
+      accessorKey: 'updatedAt',
+      enableHiding: true,
 
-    //     if (value) {
-    //       const date = new Date(value)
-    //       const formattedDate = getRelativeDate(date)
-    //       return formattedDate
-    //     }
-    //     return 'Nunca foi atualizado'
-    //   },
-    // },
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title='Atualizado' />
+      ),
+      cell: ({ row }) => {
+        const value: string = row.getValue('updatedAt')
+
+        if (value) {
+          const date = new Date(value)
+          const formattedDate = getRelativeDate(date)
+          return formattedDate
+        }
+        return 'Nunca foi atualizado'
+      },
+    },
     {
       id: 'actions',
       header: () => <span className='text-right'>Interações</span>,
@@ -136,7 +138,6 @@ export function getColumns(): ColumnDef<Product>[] {
                 className='cursor-pointer'
                 onClick={() => {
                   startDeleteTransition(() => {
-                    // Investigar: Toast não dispara
                     toast.promise(deleteProduct(product.id), {
                       loading: 'Deletando...',
                       success: 'Produto deletado com sucesso',

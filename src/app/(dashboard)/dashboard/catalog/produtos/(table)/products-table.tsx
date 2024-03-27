@@ -1,16 +1,17 @@
 'use client'
 
 import * as React from 'react'
-import { type ColumnDef } from '@tanstack/react-table'
 
 import { Product } from '@/payload/payload-types'
 
+import { type ColumnDef } from '@tanstack/react-table'
+
 import { DataTable } from '@/components/table/data-table'
 import { useDataTable } from '@/components/table/hooks/use-data-table'
+import { NewProductDialog } from '../_components/new-product-dialog'
 
 import { getColumns } from './columns'
 import { getProducts } from '../_logic/queries'
-import { NewProductDialog } from '../_components/new-product-dialog'
 
 interface ProductsTableProps {
   productsPromise: ReturnType<typeof getProducts>
