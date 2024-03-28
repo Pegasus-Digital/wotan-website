@@ -29,7 +29,6 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 
-
 import { ArrowRight, Mail, MapPin, Phone } from 'lucide-react'
 
 const formSchema = z.object({
@@ -133,7 +132,8 @@ export function ContactContent({ address, contact }) {
   return (
     <section className='mb-6 w-full px-6 text-primary-foreground'>
       <LowImpactHero title='Contato' />
-      <div className='container flex max-w-screen-desktop flex-col items-center rounded-lg  bg-gift bg-cover bg-center p-4 text-center desktop:p-10'>
+
+      <div className='container flex max-w-screen-desktop flex-col items-center rounded-lg bg-gift bg-cover bg-center p-4 text-center desktop:p-10'>
         <div className='flex w-full flex-col items-center justify-center gap-4 self-start tablet:flex-row tablet:items-start lg:gap-6'>
           <Form {...form}>
             <form
@@ -154,9 +154,10 @@ export function ContactContent({ address, contact }) {
                   <Label htmlFor='pf'>Pessoa Física</Label>
                 </div>
               </RadioGroup>
+
               <FormField
-                control={form.control}
                 name='name'
+                control={form.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -171,9 +172,10 @@ export function ContactContent({ address, contact }) {
                   </FormItem>
                 )}
               />
+
               <FormField
-                control={form.control}
                 name='email'
+                control={form.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -190,8 +192,8 @@ export function ContactContent({ address, contact }) {
               />
 
               <FormField
-                control={form.control}
                 name='phone'
+                control={form.control}
                 render={({ field: { onChange, ...props } }) => (
                   <FormItem>
                     <FormControl>
@@ -215,8 +217,8 @@ export function ContactContent({ address, contact }) {
 
               {isPJ && (
                 <FormField
-                  control={form.control}
                   name='cnpj'
+                  control={form.control}
                   render={({ field: { onChange, ...props } }) => (
                     <FormItem>
                       <FormControl>
@@ -240,8 +242,8 @@ export function ContactContent({ address, contact }) {
               )}
 
               <FormField
-                control={form.control}
                 name='message'
+                control={form.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -256,9 +258,10 @@ export function ContactContent({ address, contact }) {
                   </FormItem>
                 )}
               />
+
               <FormField
-                control={form.control}
                 name='allowNotifications'
+                control={form.control}
                 render={({ field }) => (
                   <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md px-4'>
                     <FormControl>
@@ -278,8 +281,8 @@ export function ContactContent({ address, contact }) {
               />
 
               <FormField
-                control={form.control}
                 name='acceptPrivacyPolicy'
+                control={form.control}
                 render={({ field }) => (
                   <FormItem className='flex flex-row items-center space-x-3 space-y-0 rounded-md px-4'>
                     <FormControl>
@@ -307,59 +310,63 @@ export function ContactContent({ address, contact }) {
               />
 
               <Button
+                type='submit'
                 variant='expandIcon'
                 Icon={ArrowRight}
                 iconPlacement='right'
                 className='font-medium shadow-wotan-light transition hover:brightness-125'
-                type='submit'
               >
                 Enviar
               </Button>
             </form>
           </Form>
+
           {/* Informações */}
-          <div className='flex w-full flex-col justify-center tablet:w-1/2'>
-            <div className=' relative h-80 w-full  rounded-lg border'>
+          <aside className='flex w-full flex-col justify-center tablet:w-1/2'>
+            {/* Google Maps embed */}
+            <section className='relative h-80 w-full rounded-lg border'>
               <iframe
-                className=' absolute left-0 top-0 h-full w-full rounded-lg'
+                className='absolute left-0 top-0 h-full w-full rounded-lg'
                 src='https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d13815.33916480707!2d-51.2008476!3d-30.0415972!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95197847fbaf1e1f%3A0x7ce237903c469d87!2sWotan%20Brindes!5e0!3m2!1spt-BR!2sbr!4v1710781766668!5m2!1spt-BR!2sbr'
                 loading='lazy'
                 allowFullScreen={true}
                 tabIndex={0}
               />
-            </div>
-            <div className='mt-6 flex flex-col items-center justify-center space-y-4 text-center'>
+            </section>
+
+            <section className='mt-6 flex flex-col items-center justify-center space-y-4 text-center'>
               <H3>Informações</H3>
-              <Small className='flex items-center whitespace-nowrap leading-snug'>
-                <MapPin className='mr-2 h-5 w-5' />
-                {address.street}
-                {', '}
-                {address.number}
-                {' - '}
-                {address.neighborhood}
-                {', '}
-                {address.city}
-                {' - '}
-                {address.state}
-                {', '}
-                {address.cep}
-              </Small>
-              <div className='flex flex-col items-center justify-center gap-4'>
-                <div className='flex items-center'>
-                  <Small className='flex items-center whitespace-nowrap'>
-                    <Phone className='mr-2 h-5 w-5' />
-                    {contact.phone}
-                  </Small>
-                </div>
-                <div className='flex items-center'>
-                  <Small className='flex items-center whitespace-nowrap'>
-                    <Mail className='mr-2 h-5 w-5' />
-                    {contact.email}
-                  </Small>
-                </div>
+
+              {/* Address information */}
+              <div className='flex items-center gap-2'>
+                <MapPin className='mr-2 h-5 w-5 shrink-0' />
+                <Small className='flex items-center leading-snug'>
+                  {`${address.street}, ${address.number} - ${address.neighborhood}, ${address.city} - ${address.state}, ${address.cep}`}
+                </Small>
               </div>
-            </div>
-          </div>
+
+              {/* Contact information */}
+              <div className='flex flex-col items-center justify-center gap-4'>
+                <Link
+                  href={`tel:${contact.phone}`}
+                  className='flex items-center'
+                  target='_blank'
+                >
+                  <Phone className='mr-2 h-5 w-5' />
+                  <Small className='whitespace-nowrap'>{contact.phone}</Small>
+                </Link>
+
+                <Link
+                  href={`mailto:${contact.email}`}
+                  className='flex items-center'
+                  target='_blank'
+                >
+                  <Mail className='mr-2 h-5 w-5' />
+                  <Small className='whitespace-nowrap'>{contact.email}</Small>
+                </Link>
+              </div>
+            </section>
+          </aside>
         </div>
       </div>
     </section>

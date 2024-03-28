@@ -45,7 +45,7 @@ export async function CategoryPageContent({
   const nextPage = pagination.hasNextPage ? `?page=${pagination.nextPage}` : ''
 
   return (
-    <section className='w-full '>
+    <section className='w-full'>
       <div className='container flex flex-col items-center '>
         <LowImpactHero title={categoryName} />
         {products.length === 0 && (

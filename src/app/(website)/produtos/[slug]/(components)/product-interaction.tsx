@@ -173,11 +173,9 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
       )} */}
 
       {/* Product description */}
-      <Small className='pb-1 leading-snug'>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit,
-        cupiditate harum non aliquam nihil ab. Blanditiis totam modi autem
-        placeat fugit nisi iusto saepe nemo. A possimus dolore dolores aut.
-      </Small>
+      {product.description && (
+        <Large className='py-4 leading-snug'>{product.description}</Large>
+      )}
 
       <div>
         {colors.length > 0 && (
