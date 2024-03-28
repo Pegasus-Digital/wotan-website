@@ -64,6 +64,8 @@ export async function updateProduct(
       }
     }
 
+    revalidatePath('/dashboard/catalog/produtos')
+
     return {
       data: { product: response.docs[0] },
       status: true,

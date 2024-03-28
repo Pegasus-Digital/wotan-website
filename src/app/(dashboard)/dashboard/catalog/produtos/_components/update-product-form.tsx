@@ -9,6 +9,8 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
 
+import { Attribute, Category, Product } from '@/payload/payload-types'
+
 import {
   Form,
   FormControl,
@@ -33,11 +35,11 @@ import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-import { AlertTriangle, ArrowRight, PlusCircle } from 'lucide-react'
+import { AlertTriangle, ArrowRight, Pencil } from 'lucide-react'
 
-import { createProduct } from '../_logic/actions'
+import { createProduct, updateProduct } from '../_logic/actions'
 
-const newProductSchema = z.object({
+const updateProductSchema = z.object({
   // Non-optional fields
   title: z.string().min(3, 'Título do produto deve conter no mínimo 3 letras.'),
   active: z.boolean(),
@@ -66,28 +68,43 @@ const newProductSchema = z.object({
   categories: z.array(z.string()).optional(),
 })
 
-interface NewProductFormProps {
+interface UpdateProductFormProps {
+  currentProduct: Product
   setOpen: (state: boolean) => void
 }
 
-export function NewProductForm({ setOpen }: NewProductFormProps) {
-  const form = useForm<z.infer<typeof newProductSchema>>({
-    resolver: zodResolver(newProductSchema),
+export function UpdateProductForm({
+  currentProduct,
+  setOpen,
+}: UpdateProductFormProps) {
+  const form = useForm<z.infer<typeof updateProductSchema>>({
+    resolver: zodResolver(updateProductSchema),
     defaultValues: {
-      sku: '',
-      title: '',
-      description: '',
-      minimumQuantity: 0,
-      featuredImage: '660315294d562058e2daa8fb',
-      active: false,
+      sku: currentProduct.sku,
+      title: currentProduct.title,
+      description: currentProduct.description,
+      minimumQuantity: currentProduct.minimumQuantity,
+      active: currentProduct.active,
+      featuredImage:
+        typeof currentProduct.featuredImage === 'object'
+          ? currentProduct.featuredImage.id
+          : currentProduct.featuredImage,
 
-      categories: [],
-      attributes: [],
+      categories:
+        typeof currentProduct.categories === 'object'
+          ? currentProduct.categories.map((category: Category) => category.id)
+          : [],
+      attributes:
+        typeof currentProduct.attributes === 'object'
+          ? currentProduct.attributes.map(
+              (attribute: Attribute) => attribute.id,
+            )
+          : [],
     },
   })
 
   // Values is already formatted and validated.
-  async function onSubmit(values: z.infer<typeof newProductSchema>) {
+  async function onSubmit(values: z.infer<typeof updateProductSchema>) {
     const {
       sku,
       title,
@@ -99,7 +116,7 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
       categories,
     } = values
 
-    const response = await createProduct({
+    const response = await updateProduct(currentProduct.id, {
       sku,
       title,
       description,
@@ -177,6 +194,7 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
                     <FormLabel>Nome do produto</FormLabel>
                     <FormControl>
                       <Input
+                        readOnly
                         type='text'
                         placeholder='Nome do produto'
                         {...field}
@@ -194,7 +212,12 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
                   <FormItem>
                     <FormLabel>Código do produto (SKU)</FormLabel>
                     <FormControl>
-                      <Input type='text' placeholder='SKU' {...field} />
+                      <Input
+                        readOnly
+                        type='text'
+                        placeholder='SKU'
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage className='h-0' />
                   </FormItem>
@@ -353,8 +376,8 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
               />
 
               <Button type='submit' className='col-span-2 w-full'>
-                <PlusCircle className='mr-2 h-5 w-5' />
-                Criar produto
+                <Pencil className='mr-2 h-5 w-5' />
+                Atualizar produto
               </Button>
             </section>
           </TabsContent>

@@ -21,9 +21,11 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 import { getDDMMYYDate, getRelativeDate } from '@/lib/date'
-import { useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { deleteProduct } from '../_logic/actions'
 import { toast } from 'sonner'
+import { Dialog } from '@/components/ui/dialog'
+import { UpdateProductDialog } from '../_components/update-product-dialog-content'
 
 export function getColumns(): ColumnDef<Product>[] {
   return [
@@ -77,21 +79,26 @@ export function getColumns(): ColumnDef<Product>[] {
       header: 'SKU',
     },
     {
-      accessorKey: 'createdAt',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title='Criado' />
-      ),
-      cell: ({ row }) => {
-        const value: string = row.getValue('createdAt')
-
-        if (value) {
-          const date = new Date(value)
-          const formattedDate = getRelativeDate(date)
-          return formattedDate
-        }
-        return 'Data inválida'
-      },
+      accessorKey: 'minimumQuantity',
+      header: 'Quant. mínima',
     },
+    // {
+    //   accessorKey: 'createdAt',
+    //   header: ({ column }) => (
+    //     <DataTableColumnHeader column={column} title='Criado' />
+    //   ),
+    //   cell: ({ row }) => {
+    //     const value: string = row.getValue('createdAt')
+
+    //     if (value) {
+    //       const date = new Date(value)
+    //       const formattedDate = getRelativeDate(date)
+    //       return formattedDate
+    //     }
+    //     return 'Data inválida'
+    //   },
+    // },
+
     {
       accessorKey: 'updatedAt',
       enableHiding: true,
@@ -116,42 +123,61 @@ export function getColumns(): ColumnDef<Product>[] {
       cell: ({ row }) => {
         const product = row.original
 
-        const [isDeletePending, startDeleteTransition] = useTransition()
+        // Precisa ser assim porque não é possível usar hooks no contexto de cell
+        function Actions() {
+          const [isDeletePending, startDeleteTransition] = useTransition()
+          const [isUpdateOpen, setIsUpdateOpen] = useState<boolean>(false)
 
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant='ghost' className='h-8 w-8 p-0'>
-                <span className='sr-only'>Abrir menu</span>
-                <MoreHorizontal className='h-4 w-4' />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align='end'>
-              <DropdownMenuLabel>Interações</DropdownMenuLabel>
+          return (
+            <Dialog
+              open={isUpdateOpen}
+              onOpenChange={isUpdateOpen ? setIsUpdateOpen : () => {}}
+            >
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant='ghost' className='h-8 w-8 p-0'>
+                    <span className='sr-only'>Abrir menu</span>
+                    <MoreHorizontal className='h-4 w-4' />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align='end'>
+                  <DropdownMenuLabel>Interações</DropdownMenuLabel>
 
-              <DropdownMenuSeparator />
+                  <DropdownMenuSeparator />
 
-              <DropdownMenuItem className='cursor-pointer'>
-                Editar produto
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className='cursor-pointer'
-                onClick={() => {
-                  startDeleteTransition(() => {
-                    toast.promise(deleteProduct(product.id), {
-                      loading: 'Deletando...',
-                      success: 'Produto deletado com sucesso',
-                      error: 'Erro ao deletar produto...',
-                    })
-                  })
-                }}
-                disabled={isDeletePending}
-              >
-                Remover produto
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )
+                  <DropdownMenuItem
+                    className='cursor-pointer'
+                    onClick={() => setIsUpdateOpen(true)}
+                  >
+                    Editar produto
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className='cursor-pointer'
+                    onClick={() => {
+                      startDeleteTransition(() => {
+                        toast.promise(deleteProduct(product.id), {
+                          loading: 'Deletando...',
+                          success: 'Produto deletado com sucesso',
+                          error: 'Erro ao deletar produto...',
+                        })
+                      })
+                    }}
+                    disabled={isDeletePending}
+                  >
+                    Remover produto
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <UpdateProductDialog
+                currentProduct={product}
+                setOpen={setIsUpdateOpen}
+              />
+            </Dialog>
+          )
+        }
+
+        return <Actions />
       },
     },
   ]
