@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Attribute, Category } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import { NestedCategory, nestCategories } from '@/lib/category-hierarchy'
 
@@ -43,6 +43,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { AlertTriangle, ArrowRight, PlusCircle } from 'lucide-react'
 
 import { createProduct } from '../_logic/actions'
+import {
+  filterAttributesByName,
+  filterAttributesByType,
+  getUniqueTypes,
+} from '@/lib/attribute-hooks'
+import { Large, Small } from '@/components/typography/texts'
+import { Separator } from '@/components/ui/separator'
+import { LoadingSpinner } from '@/components/spinner'
 
 const newProductSchema = z.object({
   // Non-optional fields
@@ -106,7 +114,7 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
     const fetchAttributes = async () => {
       try {
         setLoading(true)
-        const response = await fetch(`/api/attributes`)
+        const response = await fetch(`/api/all-attributes`)
 
         const data = await response.json()
 
@@ -135,8 +143,7 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
       }
     }
 
-    fetchCategories()
-    fetchAttributes()
+    Promise.all([fetchCategories(), fetchAttributes()])
   }, [])
 
   // Values is already formatted and validated.
@@ -177,6 +184,91 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
 
       setOpen(false)
     }
+  }
+
+  interface AttributeListProps {
+    attributes: Attribute[]
+    props: any
+  }
+
+  const AttributeList: React.FC<AttributeListProps> = ({
+    attributes,
+    props,
+  }) => {
+    const colors = filterAttributesByType(attributes, 'color')
+    const labels = filterAttributesByType(attributes, 'label')
+    const types = getUniqueTypes(labels)
+
+    function handleCheckedChange(id: string, state: boolean) {
+      // state === true => Checkbox foi marcada => Atualiza estado do form adicionando o elemento
+      // state === false => Checkbox foi desmarcada => Remove o elemento do valor do form
+      state
+        ? props.value.push(id)
+        : (props.value = props.value.filter(
+            (categoryId: any) => categoryId !== id,
+          ))
+
+      // Pra funcionar com form controlado
+      form.setValue('attributes', props.value)
+    }
+
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className='grid w-full grid-cols-2 gap-4'
+      >
+        <div className='space-y-2.5'>
+          <Large>Cores</Large>
+
+          {colors.map((color) => (
+            <div key={color.id} className='flex items-center gap-1'>
+              <Checkbox
+                id={color.id}
+                name={color.name}
+                value={color.id}
+                defaultChecked={props.value.includes(color.id)}
+                onCheckedChange={(state) =>
+                  handleCheckedChange(color.id, !!state)
+                }
+              />
+              <div
+                className='h-5 w-5 rounded-full border'
+                style={{ backgroundColor: color.value }}
+              />
+
+              <Small>{color.name}</Small>
+            </div>
+          ))}
+        </div>
+
+        {types.map((type) => {
+          const filteredAttributes = filterAttributesByName(labels, type)
+
+          return (
+            <div key={type} className='space-y-1'>
+              <Large>{type}</Large>
+
+              {filteredAttributes.map((label) => (
+                <div key={label.id} className='flex items-center gap-1'>
+                  <Checkbox
+                    id={label.id}
+                    name={label.name}
+                    value={label.id}
+                    defaultChecked={props.value.includes(label.id)}
+                    onCheckedChange={(state) =>
+                      handleCheckedChange(label.id, !!state)
+                    }
+                  />
+
+                  <Small>{label.name}</Small>
+                </div>
+              ))}
+            </div>
+          )
+        })}
+      </motion.div>
+    )
   }
 
   interface CategoryListProps {
@@ -280,221 +372,271 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
             </motion.div>
           </TabsList>
 
-          <TabsContent asChild value='product'>
-            <motion.section
-              layout
-              transition={{ ease: 'easeInOut' }}
-              className='grid h-full grid-cols-2 gap-2.5'
-            >
-              <FormField
-                name='title'
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nome do produto</FormLabel>
-                    <FormControl>
-                      <Input
-                        type='text'
-                        placeholder='Nome do produto'
-                        {...field}
-                      />
-                    </FormControl>
-                    <StyledFormMessage form={form} field='title' />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                name='sku'
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Código do produto (SKU)</FormLabel>
-                    <FormControl>
-                      <Input type='text' placeholder='SKU' {...field} />
-                    </FormControl>
-                    <FormMessage className='h-0' />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                name='description'
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem className='col-span-2'>
-                    <FormLabel>Descrição do produto</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder='Descrição do produto'
-                        maxLength={300}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                name='minimumQuantity'
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Quantidade mínima</FormLabel>
-                    <FormControl>
-                      <Input
-                        type='text'
-                        placeholder='Quantidade mínima'
-                        {...field}
-                      />
-                    </FormControl>
-                    <StyledFormMessage form={form} field='minimumQuantity' />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                name='featuredImage'
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem className='col-span-2'>
-                    <FormLabel htmlFor='featured'>Imagem em destaque</FormLabel>
-
-                    <FormControl>
-                      {/* <Input id='featured' type='file' {...field} /> */}
-                      <Input id='featured' type='text' {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Escolha uma imagem de até 999x777 px
-                    </FormDescription>
-                    <StyledFormMessage form={form} field='featuredImage' />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                name='active'
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem className='col-span-2 mt-2 flex flex-col'>
-                    <div className='flex items-center gap-2.5 space-y-0'>
-                      <FormControl>
-                        <Checkbox
-                          className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground'
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <FormLabel className='cursor-pointer hover:underline'>
-                        Produto deve estar visível imediatamente?
-                      </FormLabel>
-                    </div>
-
-                    <FormDescription className='block'>
-                      Se esta caixa estiver marcada, o produto será visível na
-                      loja imediatamente.
-                    </FormDescription>
-                  </FormItem>
-                )}
-              />
-
-              <Button
-                onClick={() => handleChangeStep('attributes')}
-                type='button'
-                className='col-span-2 w-fit place-self-end'
+          <AnimatePresence>
+            {activeTab === 'product' && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
               >
-                Próximo <ArrowRight className='ml-2 h-5 w-5' />
-              </Button>
-            </motion.section>
-          </TabsContent>
-
-          <TabsContent value='attributes'>
-            <section className='grid grid-cols-2 gap-2.5'>
-              <FormField
-                name='attributes'
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Atributos</FormLabel>
-
-                    {/* {attributes && (
-                      <MultiSelect
-                        defaultValue={[]}
-                        elements={attributes.map((attribute) => {
-                          return {
-                            label: attribute.name,
-                            value: attribute.id,
-                          }
-                        })}
-                      />
-                    )} */}
-
-                    {/* <Select onValueChange={field.onChange}>
-                      <FormControl>
-                        <SelectTrigger className='w-full'>
-                          <SelectValue placeholder='Selecione os atributos' />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={'attr1'}>Attribute 1</SelectItem>
-                        <SelectItem value={'attr2'}>Attribute 2</SelectItem>
-                      </SelectContent>
-                    </Select> */}
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <Button
-                onClick={() => handleChangeStep('categories')}
-                type='button'
-                className='col-span-2 w-fit place-self-end'
-              >
-                Próximo <ArrowRight className='ml-2 h-5 w-5' />
-              </Button>
-            </section>
-          </TabsContent>
-
-          <TabsContent value='categories'>
-            <section className='grid grid-cols-2 gap-2.5'>
-              <ScrollArea className='col-span-2 max-h-[440px] w-full rounded-lg border p-2'>
-                <FormField
-                  name='categories'
-                  control={form.control}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className='text-lg'>Categorias: </FormLabel>
-
-                      <div className='inline-flex flex-wrap gap-1 rounded-md'>
-                        {field.value.map((item: string) => (
-                          <Badge key={item} className='h-fit w-fit'>
-                            {
-                              categories.find(
-                                (category) => category.id === item,
-                              ).title
-                            }
-                          </Badge>
-                        ))}
-                      </div>
-                      {categories && (
-                        <CategoryList
-                          categories={nestCategories(categories)}
-                          props={field}
-                        />
+                <TabsContent asChild value='product'>
+                  <motion.section
+                    layout
+                    transition={{ ease: 'easeInOut' }}
+                    className='grid h-full grid-cols-2 gap-2.5'
+                  >
+                    <FormField
+                      name='title'
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nome do produto</FormLabel>
+                          <FormControl>
+                            <Input
+                              type='text'
+                              placeholder='Nome do produto'
+                              {...field}
+                            />
+                          </FormControl>
+                          <StyledFormMessage form={form} field='title' />
+                        </FormItem>
                       )}
+                    />
 
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </ScrollArea>
-              <Button type='submit' className='col-span-2 w-full'>
-                <PlusCircle className='mr-2 h-5 w-5' />
-                Criar produto
-              </Button>
-            </section>
-          </TabsContent>
+                    <FormField
+                      name='sku'
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Código do produto (SKU)</FormLabel>
+                          <FormControl>
+                            <Input type='text' placeholder='SKU' {...field} />
+                          </FormControl>
+                          <FormMessage className='h-0' />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      name='description'
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem className='col-span-2'>
+                          <FormLabel>Descrição do produto</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder='Descrição do produto'
+                              maxLength={300}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      name='minimumQuantity'
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Quantidade mínima</FormLabel>
+                          <FormControl>
+                            <Input
+                              type='text'
+                              placeholder='Quantidade mínima'
+                              {...field}
+                            />
+                          </FormControl>
+                          <StyledFormMessage
+                            form={form}
+                            field='minimumQuantity'
+                          />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      name='featuredImage'
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem className='col-span-2'>
+                          <FormLabel htmlFor='featured'>
+                            Imagem em destaque
+                          </FormLabel>
+
+                          <FormControl>
+                            {/* <Input id='featured' type='file' {...field} /> */}
+                            <Input id='featured' type='text' {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            Escolha uma imagem de até 999x777 px
+                          </FormDescription>
+                          <StyledFormMessage
+                            form={form}
+                            field='featuredImage'
+                          />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      name='active'
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem className='col-span-2 mt-2 flex flex-col'>
+                          <div className='flex items-center gap-2.5 space-y-0'>
+                            <FormControl>
+                              <Checkbox
+                                className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground'
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <FormLabel className='cursor-pointer hover:underline'>
+                              Produto deve estar visível imediatamente?
+                            </FormLabel>
+                          </div>
+
+                          <FormDescription className='block'>
+                            Se esta caixa estiver marcada, o produto será
+                            visível na loja imediatamente.
+                          </FormDescription>
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button
+                      onClick={() => handleChangeStep('attributes')}
+                      type='button'
+                      className='col-span-2 w-fit place-self-end'
+                    >
+                      Próximo <ArrowRight className='ml-2 h-5 w-5' />
+                    </Button>
+                  </motion.section>
+                </TabsContent>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {activeTab === 'attributes' && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <TabsContent value='attributes'>
+                  <section className='flex flex-col'>
+                    <FormField
+                      name='attributes'
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <AnimatePresence>
+                            {isLoading && (
+                              <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className='flex w-full items-center justify-center'
+                              >
+                                <LoadingSpinner />
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+
+                          <AnimatePresence>
+                            {attributes && !isLoading && (
+                              <AttributeList
+                                attributes={attributes}
+                                props={field}
+                              />
+                            )}
+                          </AnimatePresence>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button
+                      onClick={() => handleChangeStep('categories')}
+                      type='button'
+                      className='w-fit self-end'
+                    >
+                      Próximo <ArrowRight className='ml-2 h-5 w-5' />
+                    </Button>
+                  </section>
+                </TabsContent>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {activeTab === 'categories' && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <TabsContent value='categories'>
+                  <section className='grid grid-cols-2 gap-2.5'>
+                    <ScrollArea className='col-span-2 max-h-[440px] w-full rounded-lg border p-2'>
+                      <FormField
+                        name='categories'
+                        control={form.control}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className='text-lg'>
+                              Categorias:{' '}
+                            </FormLabel>
+
+                            <div className='inline-flex flex-wrap gap-1 rounded-md'>
+                              {field.value.map((item: string) => (
+                                <Badge key={item} className='h-fit w-fit'>
+                                  {
+                                    categories.find(
+                                      (category) => category.id === item,
+                                    ).title
+                                  }
+                                </Badge>
+                              ))}
+                            </div>
+
+                            <AnimatePresence>
+                              {isLoading && (
+                                <motion.div
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0 }}
+                                  className='flex w-full items-center justify-center'
+                                >
+                                  <LoadingSpinner />
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+
+                            {categories && (
+                              <CategoryList
+                                categories={nestCategories(categories)}
+                                props={field}
+                              />
+                            )}
+
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </ScrollArea>
+                    <Button type='submit' className='col-span-2 w-full'>
+                      <PlusCircle className='mr-2 h-5 w-5' />
+                      Criar produto
+                    </Button>
+                  </section>
+                </TabsContent>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </Tabs>
 
         {/* Relacionamentos - Atributos, categorias */}
