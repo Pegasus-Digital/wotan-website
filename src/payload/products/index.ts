@@ -50,7 +50,14 @@ const Products: CollectionConfig = {
         },
       },
     },
-
+    {
+      name: 'keywords',
+      type: 'textarea',
+      admin: {
+        position: 'sidebar',
+        description: 'Separar por vírgula.',
+      },
+    },
     {
       type: 'tabs',
       tabs: [

@@ -4,6 +4,9 @@ import { slateEditor } from '@payloadcms/richtext-slate'
 import nestedDocs from '@payloadcms/plugin-nested-docs'
 // import search from '@payloadcms/plugin-search'
 
+import type { GenerateTitle } from '@payloadcms/plugin-seo/types'
+import seo from '@payloadcms/plugin-seo'
+
 import { webpackBundler } from '@payloadcms/bundler-webpack'
 import { Settings } from './settings'
 import Users from './users'
@@ -17,7 +20,10 @@ import { Attributes, AttributeTypes } from './products/atributes'
 import Clients from './clients'
 import Salespersons from './salespersons'
 import { seed } from './endpoints/seed'
-import seo from '@payloadcms/plugin-seo'
+
+const generateTitle: GenerateTitle = () => {
+  return 'Wotan Brindes'
+}
 
 export default buildConfig({
   admin: {
