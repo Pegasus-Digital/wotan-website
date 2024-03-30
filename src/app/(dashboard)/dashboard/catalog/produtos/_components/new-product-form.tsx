@@ -179,12 +179,12 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
     }
   }
 
-  interface Props {
+  interface CategoryListProps {
     categories: NestedCategory[]
     props: any
   }
 
-  const CategoryList: React.FC<Props> = ({ categories, props }) => {
+  const CategoryList: React.FC<CategoryListProps> = ({ categories, props }) => {
     return (
       <div className='space-y-2'>
         {categories.map((category) => (

@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+
+import { NestedCategory, nestCategories } from '@/lib/category-hierarchy'
 
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
@@ -29,15 +31,18 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
+import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { AlertTriangle, ArrowRight, Pencil } from 'lucide-react'
 
-import { createProduct, updateProduct } from '../_logic/actions'
+import { updateProduct } from '../_logic/actions'
 
 const updateProductSchema = z.object({
   // Non-optional fields
@@ -102,6 +107,119 @@ export function UpdateProductForm({
           : [],
     },
   })
+
+  const [attributes, setAttributes] = useState<Attribute[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
+  const [isLoading, setLoading] = useState<boolean>(false)
+
+  useEffect(() => {
+    const fetchAttributes = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch(`/api/attributes`)
+
+        const data = await response.json()
+
+        setAttributes(data.docs)
+        setLoading(false)
+      } catch (error) {
+        console.error(error)
+        toast.error(error)
+        setLoading(false)
+      }
+    }
+
+    const fetchCategories = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch(`/api/all-categories`)
+
+        const data = await response.json()
+
+        setCategories(data.docs)
+        setLoading(false)
+      } catch (error) {
+        console.error(error)
+        toast.error(error)
+        setLoading(false)
+      }
+    }
+
+    fetchCategories()
+    fetchAttributes()
+  }, [])
+
+  interface CategoryListProps {
+    categories: NestedCategory[]
+    props: any
+  }
+
+  const CategoryList: React.FC<CategoryListProps> = ({ categories, props }) => {
+    return (
+      <div className='space-y-2'>
+        {categories.map((category) => (
+          <CategoryCheckbox
+            key={category.id}
+            category={category}
+            props={props}
+          />
+        ))}
+      </div>
+    )
+  }
+
+  interface CategoryCheckboxProps {
+    category: NestedCategory
+    props: any
+  }
+
+  const CategoryCheckbox: React.FC<CategoryCheckboxProps> = ({
+    category,
+    props,
+  }) => {
+    function handleCheckedChange(id: string, state: boolean) {
+      // state === true => Checkbox foi marcada => Atualiza estado do form adicionando o elemento
+      // state === false => Checkbox foi desmarcada => Remove o elemento do valor do form
+      state
+        ? props.value.push(id)
+        : (props.value = props.value.filter(
+            (categoryId: any) => categoryId !== id,
+          ))
+
+      // Pra funcionar com form controlado
+      form.setValue('categories', props.value)
+    }
+
+    return (
+      <div className='ml-4 space-y-2'>
+        <div className='group flex items-center gap-1.5'>
+          <Checkbox
+            id={category.id}
+            name={category.title}
+            value={category.id}
+            defaultChecked={props.value.includes(category.id)}
+            onCheckedChange={(state) =>
+              handleCheckedChange(category.id, !!state)
+            }
+          />
+          <Label
+            className='cursor-pointer hover:underline group-hover:underline'
+            htmlFor={category.id}
+          >
+            {category.title}
+          </Label>
+        </div>
+
+        {category.children.map((childCategory) => (
+          <CategoryCheckbox
+            key={childCategory.id}
+            category={childCategory}
+            props={props}
+          />
+        ))}
+      </div>
+    )
+  }
 
   // Values is already formatted and validated.
   async function onSubmit(values: z.infer<typeof updateProductSchema>) {
@@ -352,29 +470,37 @@ export function UpdateProductForm({
 
           <TabsContent value='categories'>
             <section className='grid grid-cols-2 gap-2.5'>
-              <FormField
-                name='categories'
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Categorias</FormLabel>
+              <ScrollArea className='col-span-2 max-h-[440px] w-full rounded-lg border p-2'>
+                <FormField
+                  name='categories'
+                  control={form.control}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className='text-lg'>Categorias: </FormLabel>
 
-                    <Select onValueChange={field.onChange}>
-                      <FormControl>
-                        <SelectTrigger className='w-full'>
-                          <SelectValue placeholder='Selecione as categorias' />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value={'INCOME'}>Income</SelectItem>
-                        <SelectItem value={'EXPENSE'}>Expense</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                      <div className='inline-flex flex-wrap gap-1 rounded-md'>
+                        {field.value.map((item: string) => (
+                          <Badge key={item} className='h-fit w-fit'>
+                            {
+                              categories.find(
+                                (category) => category.id === item,
+                              ).title
+                            }
+                          </Badge>
+                        ))}
+                      </div>
+                      {categories && (
+                        <CategoryList
+                          categories={nestCategories(categories)}
+                          props={field}
+                        />
+                      )}
 
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </ScrollArea>
               <Button type='submit' className='col-span-2 w-full'>
                 <Pencil className='mr-2 h-5 w-5' />
                 Atualizar produto
