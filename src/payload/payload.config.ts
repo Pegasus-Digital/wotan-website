@@ -17,6 +17,7 @@ import { Attributes, AttributeTypes } from './products/atributes'
 import Clients from './clients'
 import Salespersons from './salespersons'
 import { seed } from './endpoints/seed'
+import seo from '@payloadcms/plugin-seo'
 
 export default buildConfig({
   admin: {
@@ -72,6 +73,11 @@ export default buildConfig({
       generateLabel: (_, doc) => doc.title as string,
       generateURL: (docs) =>
         docs.reduce((url, doc) => `${url}/${doc.slug}`, ''),
+    }),
+    seo({
+      collections: ['pages', 'products'],
+      generateTitle,
+      uploadsCollection: 'media',
     }),
     // search({
     //   collections: ['products'],
