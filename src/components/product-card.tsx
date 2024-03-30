@@ -30,6 +30,7 @@ export function ProductCard({ product }: ProductCardProps) {
           <ProductCardActions
             productId={product.id}
             productName={product.title}
+            productSlug={product.slug}
             minimumQuantity={product.minimumQuantity}
           />
         </div>
