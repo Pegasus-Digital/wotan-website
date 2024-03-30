@@ -16,6 +16,7 @@ import { Budget } from './budget'
 import { Attributes, AttributeTypes } from './products/atributes'
 import Clients from './clients'
 import Salespersons from './salespersons'
+import { seed } from './endpoints/seed'
 
 export default buildConfig({
   admin: {
@@ -56,6 +57,15 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(__dirname, 'payload-types.ts'),
   },
+  endpoints: [
+    // The seed endpoint is used to populate the database with some example data
+    // You should delete this endpoint before deploying your site to production
+    {
+      path: '/seed',
+      method: 'get',
+      handler: seed,
+    },
+  ],
   plugins: [
     nestedDocs({
       collections: ['categories'],
