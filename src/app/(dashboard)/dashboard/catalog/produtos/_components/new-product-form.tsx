@@ -110,7 +110,7 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
 
         const data = await response.json()
 
-        setAttributes(data.docs)
+        setAttributes(data)
         setLoading(false)
       } catch (error) {
         console.error(error)
@@ -126,7 +126,7 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
 
         const data = await response.json()
 
-        setCategories(data.docs)
+        setCategories(data)
         setLoading(false)
       } catch (error) {
         console.error(error)
@@ -135,7 +135,8 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
       }
     }
 
-    Promise.all([fetchCategories(), fetchAttributes()])
+    fetchCategories()
+    fetchAttributes()
   }, [])
 
   // Values is already formatted and validated.
@@ -187,6 +188,7 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
     attributes,
     props,
   }) => {
+    console.log(attributes)
     const colors = filterAttributesByType(attributes, 'color')
     const labels = filterAttributesByType(attributes, 'label')
     const types = getUniqueTypes(labels)

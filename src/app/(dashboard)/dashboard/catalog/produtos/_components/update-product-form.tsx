@@ -120,7 +120,7 @@ export function UpdateProductForm({
 
         const data = await response.json()
 
-        setAttributes(data.docs)
+        setAttributes(data)
         setLoading(false)
       } catch (error) {
         console.error(error)
@@ -136,7 +136,7 @@ export function UpdateProductForm({
 
         const data = await response.json()
 
-        setCategories(data.docs)
+        setCategories(data)
         setLoading(false)
       } catch (error) {
         console.error(error)
@@ -145,7 +145,8 @@ export function UpdateProductForm({
       }
     }
 
-    Promise.all([fetchCategories(), fetchAttributes()])
+    fetchCategories()
+    fetchAttributes()
   }, [])
 
   interface AttributeListProps {
