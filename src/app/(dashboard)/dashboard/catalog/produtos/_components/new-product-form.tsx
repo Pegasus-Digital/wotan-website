@@ -205,7 +205,7 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
       state
         ? props.value.push(id)
         : (props.value = props.value.filter(
-            (categoryId: any) => categoryId !== id,
+            (attributeId: any) => attributeId !== id,
           ))
 
       // Pra funcionar com form controlado
@@ -527,42 +527,65 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
                 exit={{ opacity: 0 }}
               >
                 <TabsContent value='attributes'>
-                  <section className='flex flex-col'>
-                    <FormField
-                      name='attributes'
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem>
-                          <AnimatePresence>
-                            {isLoading && (
-                              <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                className='flex w-full items-center justify-center'
-                              >
-                                <LoadingSpinner />
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
+                  <section className='grid grid-cols-2 gap-2.5'>
+                    <ScrollArea className='col-span-2 max-h-[440px] w-full rounded-lg border p-2'>
+                      <FormField
+                        name='attributes'
+                        control={form.control}
+                        render={({ field }) => (
+                          <FormItem className='px-2'>
+                            <AnimatePresence>
+                              {field.value.length > 0 && (
+                                <motion.div
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0 }}
+                                  className='inline-flex flex-wrap gap-1 rounded-md'
+                                >
+                                  {field.value.map((item: string) => (
+                                    <Badge key={item} className='h-fit w-fit'>
+                                      {
+                                        attributes.find(
+                                          (attribute) => attribute.id === item,
+                                        ).name
+                                      }
+                                    </Badge>
+                                  ))}
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
 
-                          <AnimatePresence>
-                            {attributes && !isLoading && (
-                              <AttributeList
-                                attributes={attributes}
-                                props={field}
-                              />
-                            )}
-                          </AnimatePresence>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                            <AnimatePresence>
+                              {isLoading && (
+                                <motion.div
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0 }}
+                                  className='flex w-full items-center justify-center'
+                                >
+                                  <LoadingSpinner />
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+
+                            <AnimatePresence>
+                              {attributes && !isLoading && (
+                                <AttributeList
+                                  attributes={attributes}
+                                  props={field}
+                                />
+                              )}
+                            </AnimatePresence>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </ScrollArea>
 
                     <Button
                       onClick={() => handleChangeStep('categories')}
                       type='button'
-                      className='w-fit self-end'
+                      className='col-span-2 w-fit place-self-end'
                     >
                       Próximo <ArrowRight className='ml-2 h-5 w-5' />
                     </Button>
@@ -587,21 +610,26 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
                         control={form.control}
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className='text-lg'>
-                              Categorias:{' '}
-                            </FormLabel>
-
-                            <div className='inline-flex flex-wrap gap-1 rounded-md'>
-                              {field.value.map((item: string) => (
-                                <Badge key={item} className='h-fit w-fit'>
-                                  {
-                                    categories.find(
-                                      (category) => category.id === item,
-                                    ).title
-                                  }
-                                </Badge>
-                              ))}
-                            </div>
+                            <AnimatePresence>
+                              {field.value.length > 0 && (
+                                <motion.div
+                                  initial={{ opacity: 0 }}
+                                  animate={{ opacity: 1 }}
+                                  exit={{ opacity: 0 }}
+                                  className='inline-flex flex-wrap gap-1 rounded-md'
+                                >
+                                  {field.value.map((item: string) => (
+                                    <Badge key={item} className='h-fit w-fit'>
+                                      {
+                                        categories.find(
+                                          (category) => category.id === item,
+                                        ).title
+                                      }
+                                    </Badge>
+                                  ))}
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
 
                             <AnimatePresence>
                               {isLoading && (
@@ -628,6 +656,7 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
                         )}
                       />
                     </ScrollArea>
+
                     <Button type='submit' className='col-span-2 w-full'>
                       <PlusCircle className='mr-2 h-5 w-5' />
                       Criar produto
