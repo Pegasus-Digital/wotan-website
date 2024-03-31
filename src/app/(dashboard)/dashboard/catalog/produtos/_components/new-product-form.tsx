@@ -11,6 +11,11 @@ import { Attribute, Category } from '@/payload/payload-types'
 import { toast } from 'sonner'
 import { AnimatePresence, motion } from 'framer-motion'
 
+import {
+  filterAttributesByName,
+  filterAttributesByType,
+  getUniqueTypes,
+} from '@/lib/attribute-hooks'
 import { NestedCategory, nestCategories } from '@/lib/category-hierarchy'
 
 import {
@@ -23,34 +28,21 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
+import { LoadingSpinner } from '@/components/spinner'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { AlertTriangle, ArrowRight, PlusCircle } from 'lucide-react'
 
-import { createProduct } from '../_logic/actions'
-import {
-  filterAttributesByName,
-  filterAttributesByType,
-  getUniqueTypes,
-} from '@/lib/attribute-hooks'
 import { Large, Small } from '@/components/typography/texts'
-import { Separator } from '@/components/ui/separator'
-import { LoadingSpinner } from '@/components/spinner'
+
+import { createProduct } from '../_logic/actions'
 
 const newProductSchema = z.object({
   // Non-optional fields
@@ -667,8 +659,6 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
             )}
           </AnimatePresence>
         </Tabs>
-
-        {/* Relacionamentos - Atributos, categorias */}
       </form>
     </Form>
   )

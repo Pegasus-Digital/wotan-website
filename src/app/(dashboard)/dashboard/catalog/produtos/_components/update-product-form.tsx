@@ -6,6 +6,11 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
+import {
+  filterAttributesByName,
+  filterAttributesByType,
+  getUniqueTypes,
+} from '@/lib/attribute-hooks'
 import { NestedCategory, nestCategories } from '@/lib/category-hierarchy'
 
 import { toast } from 'sonner'
@@ -23,33 +28,21 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
+import { LoadingSpinner } from '@/components/spinner'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { AlertTriangle, ArrowRight, Pencil } from 'lucide-react'
 
-import { updateProduct } from '../_logic/actions'
 import { Large, Small } from '@/components/typography/texts'
-import {
-  filterAttributesByName,
-  filterAttributesByType,
-  getUniqueTypes,
-} from '@/lib/attribute-hooks'
-import { LoadingSpinner } from '@/components/spinner'
+
+import { updateProduct } from '../_logic/actions'
 
 const updateProductSchema = z.object({
   // Non-optional fields
@@ -677,8 +670,6 @@ export function UpdateProductForm({
             )}
           </AnimatePresence>
         </Tabs>
-
-        {/* Relacionamentos - Atributos, categorias */}
       </form>
     </Form>
   )
