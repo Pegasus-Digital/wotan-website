@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 
+import { Category } from '@/payload/payload-types'
+
 import {
   Dialog,
   DialogContent,
@@ -13,29 +15,34 @@ import {
 
 import { Button } from '@/components/ui/button'
 
-import { NewProductForm } from './new-product-form'
+import { CreateCategoryForm } from './create-category-form'
 
-export function NewProductDialog() {
+interface CreateCategoryDialogProps {
+  categories: Category[]
+}
+
+export function CreateCategoryDialog({
+  categories,
+}: CreateCategoryDialogProps) {
   const [open, setOpen] = useState<boolean>(false)
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant='outline' size='sm'>
-          Novo produto
+          Adicionar categoria
         </Button>
       </DialogTrigger>
 
-      <DialogContent className='max-h-[832px] max-w-screen-lg'>
+      <DialogContent className='max-h-[832px] w-fit max-w-screen-lg'>
         <DialogHeader>
-          <DialogTitle>Criando novo produto</DialogTitle>
+          <DialogTitle>Criando nova categoria</DialogTitle>
           <DialogDescription>
-            Insira as informações e escolha as etiquetas do novo produto.
+            Insira as informações da nova categoria.
           </DialogDescription>
         </DialogHeader>
 
-        {/* This form is Multi-step using Shadcn Tab component */}
-        <NewProductForm setOpen={setOpen} />
+        <CreateCategoryForm categories={categories} setOpen={setOpen} />
       </DialogContent>
     </Dialog>
   )

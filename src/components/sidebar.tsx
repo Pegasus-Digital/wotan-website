@@ -48,9 +48,9 @@ export function Sidebar() {
               href: '/dashboard/catalog/produtos',
             },
             {
-              text: 'Categorias',
+              text: 'Propriedades',
               icon: Tag,
-              href: '/dashboard/catalog/categories',
+              href: '/dashboard/catalog/propriedades',
             },
           ]}
         />
