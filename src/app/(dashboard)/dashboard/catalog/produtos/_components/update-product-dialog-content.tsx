@@ -4,6 +4,7 @@ import { Product } from '@/payload/payload-types'
 
 import {
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
@@ -23,6 +24,9 @@ export function UpdateProductDialog({
     <DialogContent className='max-h-[832px] max-w-screen-lg'>
       <DialogHeader>
         <DialogTitle>Atualizando produto</DialogTitle>
+        <DialogDescription>
+          Atualize as informações de um produto existente.
+        </DialogDescription>
       </DialogHeader>
 
       <UpdateProductForm currentProduct={currentProduct} setOpen={setOpen} />

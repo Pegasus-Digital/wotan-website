@@ -9,7 +9,6 @@ import {
 } from '@/components/ui/dialog'
 
 import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
 
 import { NewEstimateForm } from './new-estimate-form'
 
@@ -28,9 +27,7 @@ export function NewEstimateDialog() {
           </DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className='max-h-[736px] px-2'>
-          <NewEstimateForm />
-        </ScrollArea>
+        <NewEstimateForm />
       </DialogContent>
     </Dialog>
   )
