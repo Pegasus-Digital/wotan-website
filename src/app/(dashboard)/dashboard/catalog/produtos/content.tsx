@@ -1,13 +1,12 @@
 import { Separator } from '@/components/ui/separator'
 import { Content, ContentHeader } from '@/components/content'
 
-import { Product } from '@/payload/payload-types'
+import { ProductsTable } from './(table)/products-table'
 
-import { columns } from './(table)/columns'
-import { DataTable } from './(table)/data-table'
+import { getProducts } from './_logic/queries'
 
 interface ProductsContentProps {
-  products: Product[]
+  products: ReturnType<typeof getProducts>
 }
 
 export function ProductsContent({ products }: ProductsContentProps) {
@@ -20,7 +19,7 @@ export function ProductsContent({ products }: ProductsContentProps) {
 
       <Separator className='mb-4' />
 
-      <DataTable columns={columns} data={products} />
+      <ProductsTable productsPromise={products} />
     </Content>
   )
 }

@@ -85,6 +85,7 @@ export default async function WebsiteLayout({
             columns={footer.columns}
             adress={adress}
             contact={contact}
+            social={company.social}
           />
         </Suspense>
       </CartStoreProvider>

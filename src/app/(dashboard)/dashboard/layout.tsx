@@ -1,4 +1,5 @@
 import { Sidebar } from '@/components/sidebar'
+import { Toaster } from 'sonner'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -12,6 +13,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
         {children}
       </div>
+      <Toaster richColors closeButton theme='light' />
     </section>
   )
 }

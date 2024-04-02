@@ -3,7 +3,6 @@ import Link from 'next/link'
 
 function PegasusStamp() {
   return (
-
     <div className='bottom-0 z-50 flex h-16 w-full items-center justify-center gap-2 border-t border-white border-opacity-10 bg-transparent text-white'>
       Desenvolvido por
       <Link
@@ -45,4 +44,5 @@ function PegasusIcon(props: SVGProps) {
     </svg>
   )
 }
+
 export { PegasusStamp, PegasusIcon }

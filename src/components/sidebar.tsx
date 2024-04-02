@@ -45,7 +45,7 @@ export function Sidebar() {
             {
               text: 'Produtos',
               icon: Boxes,
-              href: '/dashboard/catalog/products',
+              href: '/dashboard/catalog/produtos',
             },
             {
               text: 'Categorias',

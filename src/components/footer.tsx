@@ -15,14 +15,14 @@ import { FacebookIcon, Mail, MapPin, Phone } from 'lucide-react'
 
 import { Lead, LinkIcon, Small } from './typography/texts'
 
-import { Button } from '@/pegasus/button'
+import { Button, buttonVariants } from '@/pegasus/button'
 import { PegasusStamp } from '@/pegasus/pegasus-stamp'
 
 // TODO: Acho que da pra deixar essa tipagem mais limpa
 type FooterProps = FooterType & {
   staticImage?: StaticImageData
   id?: string
-} & Pick<Company, 'adress' | 'contact'>
+} & Pick<Company, 'adress' | 'contact' | 'social'>
 
 export function Footer({
   logo,
@@ -32,6 +32,7 @@ export function Footer({
   id,
   adress,
   contact,
+  social,
 }: FooterProps) {
   return (
     <footer className=' mt-auto w-full  bg-wotanRed-500 bg-footer	 text-primary-foreground backdrop-blur desktop:min-h-96'>
@@ -49,44 +50,69 @@ export function Footer({
             {companyInfo.showAddress === true && adress && (
               <Small className='flex items-center whitespace-nowrap leading-snug'>
                 <MapPin className='mr-2 h-5 w-5' />
-                {adress.street}
-                {', '}
-                {adress.number}
-                {' - '}
-                {adress.neighborhood}
-                {/* {', '} */}
+
+                {`${adress.street}, ${adress.number} - ${adress.neighborhood}`}
                 <br />
-                {adress.city}
-                {' - '}
-                {adress.state}
-                {', '}
-                {adress.cep}
+                {`${adress.city} - ${adress.state}, ${adress.cep}`}
               </Small>
             )}
 
             {companyInfo.showPhone === true && (
-              <Small className='flex items-center whitespace-nowrap'>
-                <Phone className='mr-2 h-5 w-5' />
-                {contact.phone}
-              </Small>
+              <Link
+                className='flex items-center'
+                target='_blank'
+                href={`tel:${contact.phone}`}
+              >
+                <Phone className='h-5 w-5' />
+                <Small className={buttonVariants({ variant: 'linkHover2' })}>
+                  {contact.phone}
+                </Small>
+              </Link>
             )}
 
             {companyInfo.showEmail === true && (
-              <Small className='flex items-center whitespace-nowrap'>
-                <Mail className='mr-2 h-5 w-5' />
-                {contact.email}
-              </Small>
+              <Link
+                className='flex items-center'
+                target='_blank'
+                href={`mailto:${contact.email}`}
+              >
+                <Mail className='h-5 w-5' />
+                <Small className={buttonVariants({ variant: 'linkHover2' })}>
+                  {contact.email}
+                </Small>
+              </Link>
             )}
 
-            <div className='flex items-center'>
-              <Small className='mr-5 whitespace-nowrap'>Redes sociais</Small>
-              <div className='flex space-x-2'>
-                <LinkIcon href='/' Icon={InstagramLogoIcon} />
-                <LinkIcon href='/' Icon={LinkedInLogoIcon} />
-                <LinkIcon href='/' Icon={TwitterLogoIcon} />
-                <LinkIcon href='/' Icon={FacebookIcon} />
-              </div>
-            </div>
+            {companyInfo.showSocial && (
+              <section className='flex items-center'>
+                <Small className='mr-5 whitespace-nowrap'>Redes sociais</Small>
+                <div className='flex space-x-2'>
+                  {social.instagram && (
+                    <LinkIcon
+                      target='_blank'
+                      href={social.instagram}
+                      Icon={InstagramLogoIcon}
+                    />
+                  )}
+
+                  {social.linkedin && (
+                    <LinkIcon
+                      target='_blank'
+                      href={social.linkedin}
+                      Icon={LinkedInLogoIcon}
+                    />
+                  )}
+
+                  {social.facebook && (
+                    <LinkIcon
+                      target='_blank'
+                      href={social.facebook}
+                      Icon={FacebookIcon}
+                    />
+                  )}
+                </div>
+              </section>
+            )}
           </div>
         </div>
 

@@ -65,7 +65,6 @@ export function getColumns(): ColumnDef<ContactMessage>[] {
               disabled={isReadPending}
               onClick={() => {
                 startReadTransition(() => {
-                  // Investigar: Toast não dispara
                   toast.promise(readTask({ message }), {
                     loading: 'Lendo...',
                     success: 'Mensagem marcada como lida',

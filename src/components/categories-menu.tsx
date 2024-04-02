@@ -59,9 +59,9 @@ export function CategoriesMenu({ categories }: CategoriesMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className='flex items-center justify-center gap-2 text-primary-foreground hover:brightness-125'>
-          <ChevronsDown className='h-6 w-6 stroke-2' />
-          <Large>Produtos</Large>
+        <Button className='group flex items-center justify-center gap-2 text-primary-foreground transition-all hover:brightness-125'>
+          <ChevronsDown className='h-6 w-6 stroke-2 transition-all group-data-[state=open]:rotate-180' />
+          <Large className='select-none'>Produtos</Large>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='start' className='min-w-72 font-semibold'>
