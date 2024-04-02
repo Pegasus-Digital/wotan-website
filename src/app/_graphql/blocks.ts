@@ -30,6 +30,30 @@ export const QUERY_PRODUCT_CAROUSEL = `
       }
     }
   }
+  populatedDocs {
+    relationTo
+    value {
+      ...on Product{
+        id
+        slug
+        title
+        minimumQuantity
+        featuredImage {
+          mimeType
+          filename
+          width
+          height
+          alt
+        }
+        categories {
+          title
+          parent {
+            title
+          }
+        }
+      }
+    }
+  }
   seeMore
   seeMoreLink ${LINK_FIELDS}
 }
