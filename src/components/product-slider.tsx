@@ -30,21 +30,27 @@ export function ProductSlider({
   selectedDocs,
   seeMore,
   seeMoreLink,
+  populateBy,
+  populatedDocs,
 }: ProductSliderProps) {
+  const carousel = populateBy === 'categories' ? populatedDocs : selectedDocs
+
   return (
     <section className='w-full overflow-x-hidden'>
       <div className='flex w-full flex-col gap-4 desktop:container'>
-        <div className='flex flex-col gap-2 text-center'>
-          <Heading variant='h2'>{title}</Heading>
-          <Lead>{description}</Lead>
-        </div>
+        {title && (
+          <div className='flex flex-col gap-2 text-center'>
+            <Heading variant='h2'>{title}</Heading>
+            {description && <Lead>{description}</Lead>}
+          </div>
+        )}
 
         <Carousel
           className=' w-full border-x'
           opts={{ align: 'center', loop: true }}
         >
           <CarouselContent>
-            {selectedDocs.map((doc, index) => {
+            {carousel.map((doc, index) => {
               if (typeof doc.value === 'object') {
                 return (
                   <CarouselItem className='max-w-[300px]' key={index}>
@@ -58,18 +64,18 @@ export function ProductSlider({
           <CarouselNext className='hidden desktop:flex' />
         </Carousel>
 
-        <Button
-          className='self-center'
-          size='lg'
-          variant='expandIcon'
-          Icon={ArrowRight}
-          iconPlacement='right'
-          asChild
-        >
-          {seeMore && (
+        {seeMore && (
+          <Button
+            className='self-center'
+            size='lg'
+            variant='expandIcon'
+            Icon={ArrowRight}
+            iconPlacement='right'
+            asChild
+          >
             <Link href={getHref(seeMoreLink)}>{seeMoreLink.label}</Link>
-          )}
-        </Button>
+          </Button>
+        )}
       </div>
     </section>
   )
