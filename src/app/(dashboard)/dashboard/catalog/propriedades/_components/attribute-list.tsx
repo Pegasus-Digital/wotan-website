@@ -23,7 +23,7 @@ export function AttributeList({ attributes }: AttributeListProps) {
         <Large>Cores</Large>
 
         {colors.map((color) => (
-          <div key={color.id} className='flex items-center gap-1'>
+          <div key={color.id} className='flex items-center gap-1.5'>
             <div
               className='h-5 w-5 rounded-full border'
               style={{ backgroundColor: color.value }}

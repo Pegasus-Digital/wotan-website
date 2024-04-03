@@ -1,4 +1,4 @@
-import { Attribute, Product } from '@/payload/payload-types'
+import { Attribute, AttributeType, Product } from '@/payload/payload-types'
 
 export function getProductAttributes(product: Product): Attribute[] | null {
   if (!product) {
@@ -70,6 +70,25 @@ export function getUniqueTypes(attributes: Attribute[]): string[] {
   })
 
   return Array.from(types)
+}
+
+export function getUniqueAttributeTypes(
+  attributes: Attribute[],
+): AttributeType[] {
+  const attributeTypes: AttributeType[] = []
+
+  attributes.filter((item: Attribute) => {
+    if (typeof item.type === 'object') {
+      const attributeAlreadyExists = attributeTypes.find(
+        // @ts-ignore
+        (type) => type.id === item.type.id,
+      )
+
+      if (!attributeAlreadyExists) attributeTypes.push(item.type)
+    }
+  })
+
+  return attributeTypes
 }
 
 export function findAttributeByValue(attributes: Attribute[], value: string) {

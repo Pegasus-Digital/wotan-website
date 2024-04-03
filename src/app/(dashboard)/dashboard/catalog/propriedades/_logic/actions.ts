@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 
 import payload from 'payload'
-import { Category } from '@/payload/payload-types'
+import { Attribute, Category } from '@/payload/payload-types'
 
 import { ActionResponse } from '@/lib/actions'
 
@@ -35,12 +35,10 @@ export async function createCategory(
     return {
       data: null,
       status: false,
-      message: 'Ocorreu um erro ao criar a categoria.',
+      message: '[500] Ocorreu um erro ao criar a categoria.',
     }
   }
 }
-
-export async function createAttribute() {}
 
 interface UpdateCategoryResponseData {
   category: Category
@@ -84,8 +82,6 @@ export async function updateCategory(
     }
   }
 }
-
-export async function updateAttribute() {}
 
 interface DeleteCategoryResponseData {}
 
@@ -141,5 +137,42 @@ export async function deleteCategory(
     }
   }
 }
+
+type SafeAttribute = Omit<Attribute, 'id' | 'createdAt' | 'updatedAt'>
+
+interface CreateAttributeResponseData {
+  attribute: Attribute | null
+}
+
+export async function createAttribute(
+  attribute: SafeAttribute,
+): Promise<ActionResponse<CreateAttributeResponseData>> {
+  try {
+    const response = await payload.create({
+      collection: 'attributes',
+      data: {
+        ...attribute,
+      },
+    })
+
+    revalidatePath('/dashboard/catalog/propriedades')
+
+    return {
+      data: { attribute: response },
+      status: true,
+      message: 'Atributo criado com sucesso.',
+    }
+  } catch (err) {
+    console.error(err)
+
+    return {
+      data: null,
+      status: false,
+      message: '[500] Ocorreu um erro ao criar o atributo.',
+    }
+  }
+}
+
+export async function updateAttribute() {}
 
 export async function deleteAttribute() {}

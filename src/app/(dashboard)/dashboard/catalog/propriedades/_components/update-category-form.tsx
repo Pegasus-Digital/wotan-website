@@ -173,7 +173,9 @@ export function UpdateCategoryForm({
                     defaultValue={currentCategoryParentId}
                     side='bottom'
                   >
-                    <SelectItem value='base'>Categoria base</SelectItem>
+                    <SelectItem value='base'>
+                      Sem categoria (Nova base)
+                    </SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category.id} value={category.id}>
                         {category.title}
