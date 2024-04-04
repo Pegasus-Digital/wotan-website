@@ -188,7 +188,6 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
     attributes,
     props,
   }) => {
-    console.log(attributes)
     const colors = filterAttributesByType(attributes, 'color')
     const labels = filterAttributesByType(attributes, 'label')
     const types = getUniqueTypes(labels)

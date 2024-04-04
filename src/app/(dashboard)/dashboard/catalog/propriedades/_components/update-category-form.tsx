@@ -99,7 +99,6 @@ export function UpdateCategoryForm({
     if (/^[a-z0-9-]$/.test(lastChar)) {
       if (lastChar === '-' && inputValue.endsWith('--')) return
       form.setValue('slug', inputValue)
-      console.log(form.getValues('slug'))
     }
   }
 
