@@ -31,6 +31,7 @@ import { Input } from '@/components/ui/input'
 import { getUniqueAttributeTypes } from '@/lib/attribute-hooks'
 
 import { createAttribute } from '../_logic/actions'
+import { useMemo } from 'react'
 
 const createAttributeSchema = z.object({
   name: z.string().min(3, 'Campo deve conter no mínimo 3 caracteres.'),
@@ -61,8 +62,24 @@ export function CreateAttributeForm({
 
   const types = getUniqueAttributeTypes(attributes)
 
+  const colorAttributeType = useMemo(() => {
+    return types.find((type) => type.type === 'color')
+  }, [types])
+
+  const hexRegex = /^#[0-9A-Fa-f]{6}$/
+
   async function onSubmit(values: z.infer<typeof createAttributeSchema>) {
     const { name, value, attributeTypeId } = values
+
+    if (attributeTypeId === colorAttributeType.id) {
+      const isValidHex = hexRegex.test(value)
+
+      if (!isValidHex) {
+        return toast.warning(
+          `Para o agrupamento 'Cor', o campo valor deve ser formatado da seguinte maneira: '#FF00FF'`,
+        )
+      }
+    }
 
     const response = await createAttribute({
       name,

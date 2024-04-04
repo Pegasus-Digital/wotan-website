@@ -102,7 +102,7 @@ export async function deleteCategory(
       return {
         data: null,
         status: false,
-        message: `Não foi possível remover a categoria, é necessário remover esta categoria de todos os produtos existentes.`,
+        message: `[400] Não foi possível remover a categoria, é necessário remover esta categoria de todos os produtos existentes.`,
       }
     }
 
@@ -173,6 +173,59 @@ export async function createAttribute(
   }
 }
 
-export async function updateAttribute() {}
+interface DeleteAttributeResponseData {}
 
-export async function deleteAttribute() {}
+export async function deleteAttribute(
+  attributeId: string,
+): Promise<ActionResponse<DeleteAttributeResponseData>> {
+  try {
+    const productsWithAttribute = await payload.find({
+      collection: 'products',
+      where: {
+        attributes: { contains: attributeId },
+      },
+      pagination: false,
+    })
+
+    // Se existe um produto com a categoria ou atributo, deve avisar pra que o admin remova antes de deletar a propriedade
+    if (productsWithAttribute.totalDocs > 0) {
+      return {
+        data: null,
+        status: false,
+        message: `[400] Não foi possível remover o atributo, é necessário remover o atributo de todos os produtos existentes.`,
+      }
+    }
+
+    const response = await payload.delete({
+      collection: 'attributes',
+      where: {
+        id: { equals: attributeId },
+      },
+    })
+
+    if (response.errors.length > 0) {
+      return {
+        data: null,
+        status: false,
+        message: `[400] Ocorreu um erro ao deletar o atributo. ${JSON.stringify(response.errors.map((error) => error.message))}`,
+      }
+    }
+
+    revalidatePath('/dashboard/catalog/propriedades')
+
+    return {
+      data: null,
+      status: true,
+      message: 'Atributo deletado com sucesso.',
+    }
+  } catch (err) {
+    console.error(err)
+    return {
+      data: null,
+      status: false,
+      message: '[500] Ocorreu um erro ao deletar o atributo.',
+    }
+  }
+}
+
+export async function updateAttribute() {}

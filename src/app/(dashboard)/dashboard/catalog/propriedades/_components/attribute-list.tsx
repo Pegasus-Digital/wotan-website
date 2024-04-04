@@ -7,6 +7,7 @@ import {
 import { Attribute } from '@/payload/payload-types'
 
 import { Large, Small } from '@/components/typography/texts'
+import { AttributeActions } from './attribute-actions'
 
 interface AttributeListProps {
   attributes: Attribute[]
@@ -24,6 +25,8 @@ export function AttributeList({ attributes }: AttributeListProps) {
 
         {colors.map((color) => (
           <div key={color.id} className='flex items-center gap-1.5'>
+            <AttributeActions attribute={color} />
+
             <div
               className='h-5 w-5 rounded-full border'
               style={{ backgroundColor: color.value }}
@@ -42,7 +45,9 @@ export function AttributeList({ attributes }: AttributeListProps) {
             <Large>{type}</Large>
 
             {filteredAttributes.map((label) => (
-              <div key={label.id} className='flex items-center gap-1'>
+              <div key={label.id} className='flex items-center space-x-2'>
+                <AttributeActions attribute={label} />
+
                 <Small>{label.name}</Small>
               </div>
             ))}
