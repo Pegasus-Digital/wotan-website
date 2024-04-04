@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import { Attribute } from '@/payload/payload-types'
+import { AttributeType } from '@/payload/payload-types'
 
 import {
   Dialog,
@@ -19,12 +19,10 @@ import { Separator } from '@/components/ui/separator'
 import { CreateAttributeForm } from './create-attribute-form'
 
 interface CreateAttributeDialogProps {
-  attributes: Attribute[]
+  types: AttributeType[]
 }
 
-export function CreateAttributeDialog({
-  attributes,
-}: CreateAttributeDialogProps) {
+export function CreateAttributeDialog({ types }: CreateAttributeDialogProps) {
   const [open, setOpen] = useState<boolean>(false)
 
   return (
@@ -45,7 +43,7 @@ export function CreateAttributeDialog({
 
         <Separator />
 
-        <CreateAttributeForm attributes={attributes} setOpen={setOpen} />
+        <CreateAttributeForm types={types} setOpen={setOpen} />
       </DialogContent>
     </Dialog>
   )

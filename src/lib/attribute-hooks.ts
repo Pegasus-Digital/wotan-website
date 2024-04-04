@@ -14,7 +14,10 @@ export function getProductAttributes(product: Product): Attribute[] | null {
   return attributes
 }
 
-export function filterAttributesByType(attributes: Attribute[], type: string) {
+export function filterAttributesByType(
+  attributes: Attribute[],
+  type: 'label' | 'color',
+) {
   const filteredAttributes = attributes.filter((attribute) => {
     if (typeof attribute.type === 'object') {
       return attribute.type.type === type

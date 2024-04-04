@@ -1,4 +1,4 @@
-import { Attribute, Category } from '@/payload/payload-types'
+import { Attribute, AttributeType, Category } from '@/payload/payload-types'
 
 import { Heading } from '@/pegasus/heading'
 import { Separator } from '@/components/ui/separator'
@@ -10,12 +10,14 @@ import { CreateAttributeDialog } from './_components/create-attribute-dialog'
 
 interface PropertiesContentProps {
   attributes: Attribute[]
+  types: AttributeType[]
   categories: Category[]
 }
 
 export function PropertiesContent({
   attributes,
   categories,
+  types,
 }: PropertiesContentProps) {
   return (
     <Content>
@@ -33,10 +35,10 @@ export function PropertiesContent({
               Atributos
             </Heading>
 
-            <CreateAttributeDialog attributes={attributes} />
+            <CreateAttributeDialog types={types} />
           </div>
 
-          <AttributeList attributes={attributes} />
+          <AttributeList types={types} attributes={attributes} />
         </div>
 
         <div className='flex-1 rounded-lg border p-4'>

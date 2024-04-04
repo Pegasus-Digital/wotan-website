@@ -1,20 +1,22 @@
 'use client'
 
-import { Attribute } from '@/payload/payload-types'
+import { Attribute, AttributeType } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
 
-import { Button } from '@/components/ui/button'
+import { Trash } from 'lucide-react'
 
-import { Pencil, Trash } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { UpdateAttributeDialog } from './update-attribute-dialog'
 
 import { deleteAttribute } from '../_logic/actions'
 
 interface AttributeActionsProps {
   attribute: Attribute
+  types: AttributeType[]
 }
 
-export function AttributeActions({ attribute }: AttributeActionsProps) {
+export function AttributeActions({ attribute, types }: AttributeActionsProps) {
   async function handleDeleteAttribute() {
     const response = await deleteAttribute(attribute.id)
 
@@ -29,9 +31,7 @@ export function AttributeActions({ attribute }: AttributeActionsProps) {
 
   return (
     <div className='flex gap-2'>
-      <Button variant='outline' size='icon' className='h-6 w-6'>
-        <Pencil className='h-4 w-4' />
-      </Button>
+      <UpdateAttributeDialog attribute={attribute} types={types} />
 
       <Button
         onClick={handleDeleteAttribute}

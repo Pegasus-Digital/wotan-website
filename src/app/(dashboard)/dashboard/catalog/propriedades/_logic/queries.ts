@@ -21,6 +21,23 @@ export async function getAttributes() {
   }
 }
 
+export async function getAttributeTypes() {
+  noStore()
+
+  const response = await payload.find({
+    collection: 'attribute-types',
+    pagination: false,
+  })
+
+  try {
+    return {
+      data: response.docs,
+    }
+  } catch (err) {
+    return { data: [] }
+  }
+}
+
 export async function getCategories() {
   noStore()
 

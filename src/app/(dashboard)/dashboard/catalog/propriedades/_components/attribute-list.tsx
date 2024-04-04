@@ -1,22 +1,23 @@
 import {
   filterAttributesByType,
-  getUniqueTypes,
   filterAttributesByName,
 } from '@/lib/attribute-hooks'
 
-import { Attribute } from '@/payload/payload-types'
+import { Attribute, AttributeType } from '@/payload/payload-types'
 
 import { Large, Small } from '@/components/typography/texts'
+
 import { AttributeActions } from './attribute-actions'
 
 interface AttributeListProps {
   attributes: Attribute[]
+  types: AttributeType[]
 }
 
-export function AttributeList({ attributes }: AttributeListProps) {
+export function AttributeList({ attributes, types }: AttributeListProps) {
   const colors = filterAttributesByType(attributes, 'color')
   const labels = filterAttributesByType(attributes, 'label')
-  const types = getUniqueTypes(labels)
+  const attributeTypeNames = types.map((type) => type.name)
 
   return (
     <div className='grid w-full gap-4'>
@@ -25,7 +26,7 @@ export function AttributeList({ attributes }: AttributeListProps) {
 
         {colors.map((color) => (
           <div key={color.id} className='flex items-center gap-1.5'>
-            <AttributeActions attribute={color} />
+            <AttributeActions attribute={color} types={types} />
 
             <div
               className='h-5 w-5 rounded-full border'
@@ -37,7 +38,10 @@ export function AttributeList({ attributes }: AttributeListProps) {
         ))}
       </div>
 
-      {types.map((type) => {
+      {attributeTypeNames.map((type) => {
+        // Color is being rendered separately with a different method.
+        if (type === 'Cor') return null
+
         const filteredAttributes = filterAttributesByName(labels, type)
 
         return (
@@ -46,7 +50,7 @@ export function AttributeList({ attributes }: AttributeListProps) {
 
             {filteredAttributes.map((label) => (
               <div key={label.id} className='flex items-center space-x-2'>
-                <AttributeActions attribute={label} />
+                <AttributeActions attribute={label} types={types} />
 
                 <Small>{label.name}</Small>
               </div>

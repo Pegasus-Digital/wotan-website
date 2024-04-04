@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, useFormState } from 'react-hook-form'
 
-import { AttributeType } from '@/payload/payload-types'
+import { Attribute, AttributeType } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
 
@@ -31,9 +31,9 @@ import {
 import { Button } from '@/pegasus/button'
 import { Input } from '@/components/ui/input'
 
-import { createAttribute } from '../_logic/actions'
+import { updateAttribute } from '../_logic/actions'
 
-const createAttributeSchema = z.object({
+const updateAttributeSchema = z.object({
   name: z.string().min(3, 'Campo deve conter no mínimo 3 caracteres.'),
   value: z.string().min(1, 'Campo deve conter no mínimo 1 caracter.'),
   attributeTypeId: z.string({
@@ -41,20 +41,26 @@ const createAttributeSchema = z.object({
   }),
 })
 
-interface CreateAttributeFormProps {
+interface UpdateAttributeFormProps {
   types: AttributeType[]
+  currentAttribute: Attribute
   setOpen: (state: boolean) => void
 }
 
-export function CreateAttributeForm({
+export function UpdateAttributeForm({
+  currentAttribute,
   types,
   setOpen,
-}: CreateAttributeFormProps) {
-  const form = useForm<z.infer<typeof createAttributeSchema>>({
-    resolver: zodResolver(createAttributeSchema),
+}: UpdateAttributeFormProps) {
+  const currentAttributeTypeId =
+    typeof currentAttribute.type === 'object' ? currentAttribute.type.id : ''
+
+  const form = useForm<z.infer<typeof updateAttributeSchema>>({
+    resolver: zodResolver(updateAttributeSchema),
     defaultValues: {
-      name: '',
-      value: '',
+      name: currentAttribute.name,
+      value: currentAttribute.value,
+      attributeTypeId: currentAttributeTypeId,
     },
   })
 
@@ -66,7 +72,7 @@ export function CreateAttributeForm({
 
   const hexRegex = /^#[0-9A-Fa-f]{6}$/
 
-  async function onSubmit(values: z.infer<typeof createAttributeSchema>) {
+  async function onSubmit(values: z.infer<typeof updateAttributeSchema>) {
     const { name, value, attributeTypeId } = values
 
     if (attributeTypeId === colorAttributeType.id) {
@@ -79,7 +85,8 @@ export function CreateAttributeForm({
       }
     }
 
-    const response = await createAttribute({
+    const response = await updateAttribute({
+      ...currentAttribute,
       name,
       value,
       type: attributeTypeId,
@@ -130,13 +137,19 @@ export function CreateAttributeForm({
               <FormItem>
                 <FormLabel>Grupo do atributo</FormLabel>
 
-                <Select onValueChange={field.onChange}>
+                <Select
+                  defaultValue={field.value}
+                  onValueChange={field.onChange}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder='Selecione o grupo do atributo' />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent side='bottom'>
+                  <SelectContent
+                    defaultValue={currentAttributeTypeId}
+                    side='bottom'
+                  >
                     {types.map((type) => {
                       return (
                         <SelectItem key={type.id} value={type.id}>
@@ -183,7 +196,7 @@ export function CreateAttributeForm({
             )}
           />
           <Button disabled={isSubmitting} type='submit' className='mt-4'>
-            Criar atributo
+            Atualizar atributo
           </Button>
         </section>
       </form>
