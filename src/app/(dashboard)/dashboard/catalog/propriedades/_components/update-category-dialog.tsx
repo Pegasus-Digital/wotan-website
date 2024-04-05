@@ -9,6 +9,8 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 
+import { Separator } from '@/components/ui/separator'
+
 import { UpdateCategoryForm } from './update-category-form'
 
 interface UpdateCategoryDialogProps {
@@ -23,11 +25,13 @@ export function UpdateCategoryDialog({
   setOpen,
 }: UpdateCategoryDialogProps) {
   return (
-    <DialogContent className='max-h-[832px] w-fit max-w-screen-lg'>
+    <DialogContent className='max-h-[832px] w-full max-w-screen-sm'>
       <DialogHeader>
         <DialogTitle>Atualizando categoria</DialogTitle>
         <DialogDescription>Atualize as informações a seguir.</DialogDescription>
       </DialogHeader>
+
+      <Separator />
 
       <UpdateCategoryForm
         currentCategory={category}

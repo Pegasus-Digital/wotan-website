@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 
 import payload from 'payload'
-import { Category } from '@/payload/payload-types'
+import { Attribute, Category } from '@/payload/payload-types'
 
 import { ActionResponse } from '@/lib/actions'
 
@@ -35,12 +35,10 @@ export async function createCategory(
     return {
       data: null,
       status: false,
-      message: 'Ocorreu um erro ao criar a categoria.',
+      message: '[500] Ocorreu um erro ao criar a categoria.',
     }
   }
 }
-
-export async function createAttribute() {}
 
 interface UpdateCategoryResponseData {
   category: Category
@@ -85,8 +83,6 @@ export async function updateCategory(
   }
 }
 
-export async function updateAttribute() {}
-
 interface DeleteCategoryResponseData {}
 
 export async function deleteCategory(
@@ -106,7 +102,7 @@ export async function deleteCategory(
       return {
         data: null,
         status: false,
-        message: `Não foi possível remover a categoria, é necessário remover esta categoria de todos os produtos existentes.`,
+        message: `[400] Não foi possível remover a categoria, é necessário remover esta categoria de todos os produtos existentes.`,
       }
     }
 
@@ -142,4 +138,135 @@ export async function deleteCategory(
   }
 }
 
-export async function deleteAttribute() {}
+type SafeAttribute = Omit<Attribute, 'id' | 'createdAt' | 'updatedAt'>
+
+interface CreateAttributeResponseData {
+  attribute: Attribute | null
+}
+
+export async function createAttribute(
+  attribute: SafeAttribute,
+): Promise<ActionResponse<CreateAttributeResponseData>> {
+  try {
+    const response = await payload.create({
+      collection: 'attributes',
+      data: {
+        ...attribute,
+      },
+    })
+
+    revalidatePath('/dashboard/catalog/propriedades')
+
+    return {
+      data: { attribute: response },
+      status: true,
+      message: 'Atributo criado com sucesso.',
+    }
+  } catch (err) {
+    console.error(err)
+
+    return {
+      data: null,
+      status: false,
+      message: '[500] Ocorreu um erro ao criar o atributo.',
+    }
+  }
+}
+
+interface DeleteAttributeResponseData {}
+
+export async function deleteAttribute(
+  attributeId: string,
+): Promise<ActionResponse<DeleteAttributeResponseData>> {
+  try {
+    const productsWithAttribute = await payload.find({
+      collection: 'products',
+      where: {
+        attributes: { contains: attributeId },
+      },
+      pagination: false,
+    })
+
+    // Se existe um produto com a categoria ou atributo, deve avisar pra que o admin remova antes de deletar a propriedade
+    if (productsWithAttribute.totalDocs > 0) {
+      return {
+        data: null,
+        status: false,
+        message: `[400] Não foi possível remover o atributo, é necessário remover o atributo de todos os produtos existentes.`,
+      }
+    }
+
+    const response = await payload.delete({
+      collection: 'attributes',
+      where: {
+        id: { equals: attributeId },
+      },
+    })
+
+    if (response.errors.length > 0) {
+      return {
+        data: null,
+        status: false,
+        message: `[400] Ocorreu um erro ao deletar o atributo. ${JSON.stringify(response.errors.map((error) => error.message))}`,
+      }
+    }
+
+    revalidatePath('/dashboard/catalog/propriedades')
+
+    return {
+      data: null,
+      status: true,
+      message: 'Atributo deletado com sucesso.',
+    }
+  } catch (err) {
+    console.error(err)
+    return {
+      data: null,
+      status: false,
+      message: '[500] Ocorreu um erro ao deletar o atributo.',
+    }
+  }
+}
+
+interface UpdateAttributeResponseData {
+  attribute: Attribute
+}
+
+export async function updateAttribute(
+  attribute: Attribute,
+): Promise<ActionResponse<UpdateAttributeResponseData>> {
+  try {
+    const response = await payload.update({
+      collection: 'attributes',
+      where: {
+        id: { equals: attribute.id },
+      },
+      data: {
+        ...attribute,
+      },
+    })
+
+    if (!response.docs[0]) {
+      return {
+        data: null,
+        status: false,
+        message: '[400] Ocorreu um erro ao atualizar o atributo.',
+      }
+    }
+
+    revalidatePath('/dashboard/catalog/propriedades')
+
+    return {
+      data: { attribute: response.docs[0] },
+      status: true,
+      message: 'Atributo atualizado com sucesso.',
+    }
+  } catch (err) {
+    console.error(err)
+    return {
+      data: null,
+      status: false,
+      message: '[500] Ocorreu um erro ao atualizar o atributo.',
+    }
+  }
+}

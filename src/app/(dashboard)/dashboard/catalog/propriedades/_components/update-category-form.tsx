@@ -99,7 +99,6 @@ export function UpdateCategoryForm({
     if (/^[a-z0-9-]$/.test(lastChar)) {
       if (lastChar === '-' && inputValue.endsWith('--')) return
       form.setValue('slug', inputValue)
-      console.log(form.getValues('slug'))
     }
   }
 
@@ -173,7 +172,9 @@ export function UpdateCategoryForm({
                     defaultValue={currentCategoryParentId}
                     side='bottom'
                   >
-                    <SelectItem value='base'>Categoria base</SelectItem>
+                    <SelectItem value='base'>
+                      Sem categoria (Nova base)
+                    </SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category.id} value={category.id}>
                         {category.title}

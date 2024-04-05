@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 
-import { Category } from '@/payload/payload-types'
+import { AttributeType } from '@/payload/payload-types'
 
 import {
   Dialog,
@@ -16,36 +16,34 @@ import {
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 
-import { CreateCategoryForm } from './create-category-form'
+import { CreateAttributeForm } from './create-attribute-form'
 
-interface CreateCategoryDialogProps {
-  categories: Category[]
+interface CreateAttributeDialogProps {
+  types: AttributeType[]
 }
 
-export function CreateCategoryDialog({
-  categories,
-}: CreateCategoryDialogProps) {
+export function CreateAttributeDialog({ types }: CreateAttributeDialogProps) {
   const [open, setOpen] = useState<boolean>(false)
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant='outline' size='sm'>
-          Adicionar categoria
+          Adicionar atributo
         </Button>
       </DialogTrigger>
 
       <DialogContent className='max-h-[832px] w-full max-w-screen-sm'>
         <DialogHeader>
-          <DialogTitle>Criando nova categoria</DialogTitle>
+          <DialogTitle>Criando novo atributo</DialogTitle>
           <DialogDescription>
-            Insira as informações da nova categoria.
+            Insira as informações do novo atributo.
           </DialogDescription>
         </DialogHeader>
 
         <Separator />
 
-        <CreateCategoryForm categories={categories} setOpen={setOpen} />
+        <CreateAttributeForm types={types} setOpen={setOpen} />
       </DialogContent>
     </Dialog>
   )

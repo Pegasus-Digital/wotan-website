@@ -72,8 +72,6 @@ export function CreateCategoryForm({
 
     if (response.status === false) {
       toast.error(response.message)
-
-      setOpen(false)
     }
   }
 
@@ -115,7 +113,9 @@ export function CreateCategoryForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent side='bottom'>
-                    <SelectItem value='base'>Categoria base</SelectItem>
+                    <SelectItem value='base'>
+                      Sem categoria (Nova base)
+                    </SelectItem>
                     {categories.map((category) => (
                       <SelectItem key={category.id} value={category.id}>
                         {category.title}

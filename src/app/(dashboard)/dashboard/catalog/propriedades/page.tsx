@@ -1,6 +1,10 @@
 import { Metadata } from 'next'
 
-import { getAttributes, getCategories } from './_logic/queries'
+import {
+  getAttributes,
+  getAttributeTypes,
+  getCategories,
+} from './_logic/queries'
 
 import { PropertiesContent } from './content'
 
@@ -13,11 +17,13 @@ export const metadata: Metadata = {
 export default async function Properties() {
   const categories = await getCategories()
   const attributes = await getAttributes()
+  const attributeTypes = await getAttributeTypes()
 
   return (
     <PropertiesContent
       categories={categories.data}
       attributes={attributes.data}
+      types={attributeTypes.data}
     />
   )
 }
