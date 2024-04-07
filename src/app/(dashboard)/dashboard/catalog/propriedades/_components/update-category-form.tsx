@@ -30,12 +30,7 @@ import { Button } from '@/pegasus/button'
 import { Input } from '@/components/ui/input'
 
 import { updateCategory } from '../_logic/actions'
-
-const updateCategorySchema = z.object({
-  title: z.string().min(3, 'Campo deve conter no mínimo 3 caracteres.'),
-  parent: z.string().optional(),
-  slug: z.string().min(3, 'Campo deve ter no minimo 3 letras'),
-})
+import { updateCategorySchema } from '../_logic/validations'
 
 interface UpdateCategoryFormProps {
   currentCategory: Category

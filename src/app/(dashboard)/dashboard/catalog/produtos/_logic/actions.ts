@@ -18,6 +18,8 @@ export async function createProduct(
   product: SafeProduct,
 ): Promise<ActionResponse<CreateProductResponseData>> {
   try {
+    // await payload.find({ collection: 'media' })
+
     const response = await payload.create({
       collection: 'products',
       data: { ...product, _status: 'published' },

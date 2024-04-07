@@ -26,7 +26,7 @@ export function NewProductDialog() {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className='max-h-[832px] max-w-screen-lg'>
+      <DialogContent className='max-h-[832px] max-w-screen-lg overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>Criando novo produto</DialogTitle>
           <DialogDescription>
@@ -34,7 +34,6 @@ export function NewProductDialog() {
           </DialogDescription>
         </DialogHeader>
 
-        {/* This form is Multi-step using Shadcn Tab component */}
         <NewProductForm setOpen={setOpen} />
       </DialogContent>
     </Dialog>

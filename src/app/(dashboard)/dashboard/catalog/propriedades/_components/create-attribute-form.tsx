@@ -32,14 +32,7 @@ import { Button } from '@/pegasus/button'
 import { Input } from '@/components/ui/input'
 
 import { createAttribute } from '../_logic/actions'
-
-const createAttributeSchema = z.object({
-  name: z.string().min(3, 'Campo deve conter no mínimo 3 caracteres.'),
-  value: z.string().min(1, 'Campo deve conter no mínimo 1 caracter.'),
-  attributeTypeId: z.string({
-    required_error: 'Escolha um tipo.',
-  }),
-})
+import { createAttributeSchema, hexRegex } from '../_logic/validations'
 
 interface CreateAttributeFormProps {
   types: AttributeType[]
@@ -50,6 +43,10 @@ export function CreateAttributeForm({
   types,
   setOpen,
 }: CreateAttributeFormProps) {
+  const colorAttributeType = useMemo(() => {
+    return types.find((type) => type.type === 'color')
+  }, [types])
+
   const form = useForm<z.infer<typeof createAttributeSchema>>({
     resolver: zodResolver(createAttributeSchema),
     defaultValues: {
@@ -59,12 +56,6 @@ export function CreateAttributeForm({
   })
 
   const { isSubmitting } = useFormState({ control: form.control })
-
-  const colorAttributeType = useMemo(() => {
-    return types.find((type) => type.type === 'color')
-  }, [types])
-
-  const hexRegex = /^#[0-9A-Fa-f]{6}$/
 
   async function onSubmit(values: z.infer<typeof createAttributeSchema>) {
     const { name, value, attributeTypeId } = values

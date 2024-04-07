@@ -1,5 +1,3 @@
-'use client'
-
 import { Product } from '@/payload/payload-types'
 
 import {

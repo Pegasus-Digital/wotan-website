@@ -30,11 +30,7 @@ import { Button } from '@/pegasus/button'
 import { Input } from '@/components/ui/input'
 
 import { createCategory } from '../_logic/actions'
-
-const createCategorySchema = z.object({
-  title: z.string().min(3, 'Campo deve conter no mínimo 3 caracteres.'),
-  parent: z.string().optional(),
-})
+import { createCategorySchema } from '../_logic/validations'
 
 interface CreateCategoryFormProps {
   categories: Category[]
