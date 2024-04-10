@@ -30,10 +30,12 @@ import { Button } from '@/pegasus/button'
 import { Input } from '@/components/ui/input'
 
 import { createCategory } from '../_logic/actions'
+import { Checkbox } from '@/components/ui/checkbox'
 
 const createCategorySchema = z.object({
   title: z.string().min(3, 'Campo deve conter no mínimo 3 caracteres.'),
   parent: z.string().optional(),
+  active: z.boolean(),
 })
 
 interface CreateCategoryFormProps {
@@ -50,19 +52,20 @@ export function CreateCategoryForm({
     defaultValues: {
       title: '',
       parent: 'base',
+      active: false,
     },
   })
 
   const { isSubmitting } = useFormState({ control: form.control })
 
   async function onSubmit(values: z.infer<typeof createCategorySchema>) {
-    const { title, parent } = values
+    const { title, parent, active } = values
 
     const hasNoParent = values.parent === 'base' || values.parent === ''
 
     const response = hasNoParent
-      ? await createCategory({ title, parent: '' })
-      : await createCategory({ title, parent })
+      ? await createCategory({ title, parent: '', active: false })
+      : await createCategory({ title, parent, active })
 
     if (response.status === true) {
       toast.success(response.message)
@@ -78,13 +81,13 @@ export function CreateCategoryForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <section className='grid h-full grid-cols-1'>
+        <section className='grid h-full grid-cols-1 gap-2'>
           <FormField
             name='title'
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Título</FormLabel>
+                <FormLabel>Nome</FormLabel>
 
                 <FormControl>
                   <Input
@@ -125,15 +128,36 @@ export function CreateCategoryForm({
                 </Select>
 
                 <FormDescription>
-                  Este campo define o aninhamento das categorias. Evite aninhar
-                  demasiadamente.
+                  Este campo define o aninhamento das categorias. Limitação de 5
+                  categorias superiores.
                 </FormDescription>
 
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button disabled={isSubmitting} type='submit' className='mt-4'>
+
+          <FormField
+            name='active'
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <div className='flex items-center gap-1'>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    name='Ativa'
+                  />
+                  <FormLabel>Ativa</FormLabel>
+                </div>
+                <FormDescription>
+                  Este campo define se a categoria está ativa no site.
+                </FormDescription>
+              </FormItem>
+            )}
+          />
+
+          <Button disabled={isSubmitting} type='submit'>
             Criar categoria
           </Button>
         </section>
