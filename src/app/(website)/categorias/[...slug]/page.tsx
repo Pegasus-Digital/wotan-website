@@ -14,6 +14,9 @@ export default async function CategoryPage({ params, searchParams }) {
       slug: {
         equals: category,
       },
+      active: {
+        not_equals: false,
+      },
     },
     limit: 1,
     pagination: false,
@@ -33,10 +36,6 @@ export default async function CategoryPage({ params, searchParams }) {
     limit: 20,
     page: page,
   })
-
-  if (paginationParams.totalDocs <= 0) {
-    return notFound()
-  }
 
   return (
     <CategoryPageContent
