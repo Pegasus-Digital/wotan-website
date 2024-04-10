@@ -7,6 +7,7 @@ interface PagesContentProps {
 }
 
 export function PagesContent({ pages }: PagesContentProps) {
+  // console.log(pages)
   return (
     <Content>
       <ContentHeader
@@ -16,13 +17,14 @@ export function PagesContent({ pages }: PagesContentProps) {
 
       <Separator className='mb-4' />
 
-      <div className='grid grid-cols-2 grid-rows-2 gap-4'>
+      <div className='grid grid-cols-2 gap-4 desktop:grid-cols-3'>
         {pages.map((page) => (
           <PageCard
             key={page.title}
             title={page.title}
             href={page.href}
             image={page.image}
+            updatedAt={page.updatedAt}
           />
         ))}
       </div>
