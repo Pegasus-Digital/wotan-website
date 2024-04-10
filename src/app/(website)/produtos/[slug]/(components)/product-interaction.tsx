@@ -178,7 +178,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
       )}
 
       <div>
-        {colors.length > 0 && (
+        {colors && colors.length > 0 && (
           <div className='space-y-1'>
             <Large>Cores:</Large>
 
@@ -203,11 +203,11 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
       </div>
 
       <div className='w-full font-medium'>
-        {types.length > 0 && (
+        {types && types.length > 0 && (
           <Large className='text-base font-semibold'>Atributos:</Large>
         )}
         <div className='mt-1 space-y-2'>
-          {types ? (
+          {types &&
             types.map((type) => {
               return (
                 <div key={type} className='w-full tablet:max-w-64'>
@@ -232,12 +232,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
                   </Select>
                 </div>
               )
-            })
-          ) : (
-            <Small className='w-full py-2'>
-              Não há atributos para selecionar
-            </Small>
-          )}
+            })}
         </div>
       </div>
 

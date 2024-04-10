@@ -34,8 +34,14 @@ async function fetchCategories() {
 
   const categories = await payload.find({
     collection: 'categories',
-    depth: 5,
-    limit: 100,
+    // depth: 5,
+    // page: 1,
+    pagination: false,
+    where: {
+      active: {
+        not_equals: false,
+      },
+    },
     sort: 'title',
   })
   // @ts-ignore
@@ -57,6 +63,8 @@ export default async function WebsiteLayout({
 
   // const end = performance.now()
   // console.log(`Execution time: ${end - start} ms`)
+
+  console.log({ categories })
 
   const { header, footer, company } = settings
   const { adress, contact } = company
