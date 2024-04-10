@@ -64,7 +64,7 @@ export default async function WebsiteLayout({
   // const end = performance.now()
   // console.log(`Execution time: ${end - start} ms`)
 
-  console.log({ categories })
+  // console.log({ categories })
 
   const { header, footer, company } = settings
   const { adress, contact } = company
