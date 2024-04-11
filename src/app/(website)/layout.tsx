@@ -18,7 +18,18 @@ interface WebsiteLayoutProps {
 
 async function fetchConfigs() {
   try {
-    const settings = await fetchSettings()
+    await payload.init({
+      // Init Payload
+      secret: process.env.PAYLOAD_SECRET,
+      local: true, // Enables local mode, doesn't spin up a server or frontend
+    })
+
+    // const settings = await fetchSettings()
+
+    const settings = await payload.findGlobal({
+      slug: 'settings',
+    })
+    // console.log({ settings })
     return settings
   } catch (error) {
     console.error(error)
@@ -67,9 +78,11 @@ export default async function WebsiteLayout({
   // console.log({ categories })
 
   const { header, footer, company } = settings
-  const { adress, contact } = company
+  const { adress, contact, social } = company
 
   // TODO: If data doesn't exist on Payload, it should not break the deployment.
+
+  // console.log(social)
 
   return (
     <>
@@ -93,7 +106,7 @@ export default async function WebsiteLayout({
             columns={footer.columns}
             adress={adress}
             contact={contact}
-            social={company.social}
+            social={social}
           />
         </Suspense>
       </CartStoreProvider>
