@@ -44,8 +44,7 @@ export function CategoryList({ categories }: CategoryListProps) {
   const [selected, setSelected] = useState<NestedCategory | undefined>()
 
   useEffect(() => {
-    if (selected && open === false) setOpen(true)
-    if (selected && open === true) setOpen(false)
+    selected && open ? setOpen(false) : setOpen(true)
   }, [selected])
 
   return (

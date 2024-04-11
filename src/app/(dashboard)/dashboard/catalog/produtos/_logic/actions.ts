@@ -18,6 +18,8 @@ export async function createProduct(
   product: SafeProduct,
 ): Promise<ActionResponse<CreateProductResponseData>> {
   try {
+    // await payload.find({ collection: 'media' })
+
     const response = await payload.create({
       collection: 'products',
       data: { ...product, _status: 'published' },
@@ -36,7 +38,7 @@ export async function createProduct(
     return {
       data: null,
       status: false,
-      message: 'Ocorreu um erro ao criar o produto.',
+      message: '[500] Ocorreu um erro ao criar o produto.',
     }
   }
 }
@@ -60,7 +62,7 @@ export async function updateProduct(
       return {
         data: null,
         status: false,
-        message: `Não foi possível atualizar o produto.\n${JSON.stringify(response.errors)}`,
+        message: '[400] Ocorreu um erro ao atualizar o produto.',
       }
     }
 
@@ -77,7 +79,7 @@ export async function updateProduct(
     return {
       data: null,
       status: false,
-      message: 'Ocorreu um erro ao atualizar o produto.',
+      message: '[500] Ocorreu um erro ao atualizar o produto.',
     }
   }
 }
@@ -94,7 +96,11 @@ export async function deleteProduct(
     })
 
     if (response.errors.length > 0) {
-      return { data: null, status: false, message: 'Algo de errado ocorreu.' }
+      return {
+        data: null,
+        status: false,
+        message: '[400] Ocorreu um erro ao deletar o produto.',
+      }
     }
 
     revalidatePath('/dashboard/catalog/produtos')
@@ -110,7 +116,33 @@ export async function deleteProduct(
     return {
       data: null,
       status: false,
-      message: 'Ocorreu um erro ao deletar o produto.',
+      message: '[500] Ocorreu um erro ao deletar o produto.',
     }
   }
 }
+
+interface CreateMediaResponseData {}
+
+// export async function createMedia(): Promise<
+//   ActionResponse<CreateMediaResponseData>
+// > {
+//   try {
+//     const response = await payload.create({
+//       collection: 'media',
+//       data: {
+//         alt: '',
+//       },
+//       file: {
+
+//       }
+//     })
+//   } catch (err) {
+//     console.error(err)
+
+//     return {
+//       data: null,
+//       status: false,
+//       message: '[500] Ocorreu um erro ao enviar a imagem para o servidor.',
+//     }
+//   }
+// }

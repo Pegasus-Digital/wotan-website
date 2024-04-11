@@ -1,12 +1,13 @@
 'use client'
 
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import { useState, useTransition } from 'react'
 
+import { toast } from 'sonner'
 import { ColumnDef } from '@tanstack/react-table'
-import { Product } from '@/payload/payload-types'
 
-import { MoreHorizontal } from 'lucide-react'
+import { getRelativeDate } from '@/lib/date'
+
+import { Product } from '@/payload/payload-types'
 
 import {
   DropdownMenu,
@@ -17,15 +18,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
+import { Dialog } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
-import { getDDMMYYDate, getRelativeDate } from '@/lib/date'
-import { useState, useTransition } from 'react'
-import { deleteProduct } from '../_logic/actions'
-import { toast } from 'sonner'
-import { Dialog } from '@/components/ui/dialog'
 import { UpdateProductDialog } from '../_components/update-product-dialog-content'
+
+import { MoreHorizontal } from 'lucide-react'
+
+import { deleteProduct } from '../_logic/actions'
 
 export function getColumns(): ColumnDef<Product>[] {
   return [
@@ -65,15 +66,6 @@ export function getColumns(): ColumnDef<Product>[] {
         else return 'Inativo'
       },
     },
-    // {
-    //   accessorKey: '_status',
-    //   header: 'Status',
-    //   cell: ({ row }) => {
-    //     const status = row.getValue('_status')
-    //     if (status === 'draft') return 'Não publicado'
-    //     if (status === 'published') return 'Publicado'
-    //   },
-    // },
     {
       accessorKey: 'sku',
       header: 'SKU',
@@ -82,23 +74,6 @@ export function getColumns(): ColumnDef<Product>[] {
       accessorKey: 'minimumQuantity',
       header: 'Quant. mínima',
     },
-    // {
-    //   accessorKey: 'createdAt',
-    //   header: ({ column }) => (
-    //     <DataTableColumnHeader column={column} title='Criado' />
-    //   ),
-    //   cell: ({ row }) => {
-    //     const value: string = row.getValue('createdAt')
-
-    //     if (value) {
-    //       const date = new Date(value)
-    //       const formattedDate = getRelativeDate(date)
-    //       return formattedDate
-    //     }
-    //     return 'Data inválida'
-    //   },
-    // },
-
     {
       accessorKey: 'updatedAt',
       enableHiding: true,
@@ -109,12 +84,12 @@ export function getColumns(): ColumnDef<Product>[] {
       cell: ({ row }) => {
         const value: string = row.getValue('updatedAt')
 
-        if (value) {
-          const date = new Date(value)
-          const formattedDate = getRelativeDate(date)
-          return formattedDate
-        }
-        return 'Nunca foi atualizado'
+        if (!value) return 'Nunca foi atualizado'
+
+        const date = new Date(value)
+        const formattedDate = getRelativeDate(date)
+
+        return formattedDate
       },
     },
     {

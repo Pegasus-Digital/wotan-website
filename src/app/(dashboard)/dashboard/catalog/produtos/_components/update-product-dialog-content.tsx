@@ -1,5 +1,3 @@
-'use client'
-
 import { Product } from '@/payload/payload-types'
 
 import {
@@ -21,7 +19,7 @@ export function UpdateProductDialog({
   setOpen,
 }: UpdateProductDialogProps) {
   return (
-    <DialogContent className='max-h-[832px] max-w-screen-lg'>
+    <DialogContent className='max-h-[832px] max-w-screen-lg overflow-y-auto'>
       <DialogHeader>
         <DialogTitle>Atualizando produto</DialogTitle>
         <DialogDescription>

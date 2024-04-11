@@ -34,6 +34,7 @@ export function ProductPageContent({ product }: ProductPageProps) {
   }
 
   return (
+
     <section className='relative my-6 flex w-full flex-col items-center justify-center gap-12 self-center text-primary-foreground tablet:gap-12 tablet:px-6 desktop:gap-24'>
       <div className='container flex justify-center'>
         <div className='flex h-min max-w-screen-xl flex-col gap-6 text-foreground tablet:flex-row'>

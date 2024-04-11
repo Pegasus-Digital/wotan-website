@@ -32,14 +32,7 @@ import { Button } from '@/pegasus/button'
 import { Input } from '@/components/ui/input'
 
 import { updateAttribute } from '../_logic/actions'
-
-const updateAttributeSchema = z.object({
-  name: z.string().min(3, 'Campo deve conter no mínimo 3 caracteres.'),
-  value: z.string().min(1, 'Campo deve conter no mínimo 1 caracter.'),
-  attributeTypeId: z.string({
-    required_error: 'Escolha um tipo.',
-  }),
-})
+import { hexRegex, updateAttributeSchema } from '../_logic/validations'
 
 interface UpdateAttributeFormProps {
   types: AttributeType[]
@@ -55,6 +48,10 @@ export function UpdateAttributeForm({
   const currentAttributeTypeId =
     typeof currentAttribute.type === 'object' ? currentAttribute.type.id : ''
 
+  const colorAttributeType = useMemo(() => {
+    return types.find((type) => type.type === 'color')
+  }, [types])
+
   const form = useForm<z.infer<typeof updateAttributeSchema>>({
     resolver: zodResolver(updateAttributeSchema),
     defaultValues: {
@@ -65,12 +62,6 @@ export function UpdateAttributeForm({
   })
 
   const { isSubmitting } = useFormState({ control: form.control })
-
-  const colorAttributeType = useMemo(() => {
-    return types.find((type) => type.type === 'color')
-  }, [types])
-
-  const hexRegex = /^#[0-9A-Fa-f]{6}$/
 
   async function onSubmit(values: z.infer<typeof updateAttributeSchema>) {
     const { name, value, attributeTypeId } = values

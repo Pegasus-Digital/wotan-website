@@ -3,20 +3,16 @@
 import { useEffect, useState } from 'react'
 
 import { z } from 'zod'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm, useFormState } from 'react-hook-form'
 
-import {
-  filterAttributesByName,
-  filterAttributesByType,
-  getUniqueTypes,
-} from '@/lib/attribute-hooks'
-import { NestedCategory, nestCategories } from '@/lib/category-hierarchy'
+import { formatBytes } from '@/lib/format'
+import { nestCategories } from '@/lib/category-hierarchy'
 
 import { toast } from 'sonner'
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { Attribute, Category, Product } from '@/payload/payload-types'
+import { Attribute, Category, Media, Product } from '@/payload/payload-types'
 
 import {
   Form,
@@ -28,50 +24,26 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 
-import { Label } from '@/components/ui/label'
+import { CategoryList } from './category-list'
+import { AttributeList } from './attribute-list'
+import { ImageUploader } from './image-uploader'
+
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Image } from '@/components/media/image'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { LoadingSpinner } from '@/components/spinner'
+import { Small } from '@/components/typography/texts'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-import { AlertTriangle, ArrowRight, Pencil } from 'lucide-react'
-
-import { Large, Small } from '@/components/typography/texts'
+import { AlertTriangle, ArrowRight, Pencil, X } from 'lucide-react'
 
 import { updateProduct } from '../_logic/actions'
-
-const updateProductSchema = z.object({
-  // Non-optional fields
-  title: z.string().min(3, 'Título do produto deve conter no mínimo 3 letras.'),
-  active: z.boolean(),
-  featuredImage: z.string(),
-  minimumQuantity: z.coerce
-    .number({
-      required_error: 'Campo deve ser preenchido.',
-      invalid_type_error: 'Campo deve conter um número.',
-    })
-    .min(1, 'Quantidade mínima deve ser maior que 1 unidade.'),
-  sku: z
-    .string()
-    .refine(
-      (value) => /^[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(value),
-      'SKU deve ser alfanumérico e pode conter hífens, porém não no início nem no fim do código.',
-    ),
-
-  // Optional fields
-  description: z
-    .string()
-    .max(300, 'Uma descrição pode ter no máximo 300 caracteres.')
-    .optional(),
-
-  // Relationship fields
-  attributes: z.array(z.string()).optional(),
-  categories: z.array(z.string()).optional(),
-})
+import { updateProductSchema } from '../_logic/validations'
 
 interface UpdateProductFormProps {
   currentProduct: Product
@@ -82,6 +54,57 @@ export function UpdateProductForm({
   currentProduct,
   setOpen,
 }: UpdateProductFormProps) {
+  const currentFeaturedImage = currentProduct.featuredImage as Media
+
+  const [images, setMedia] = useState<Media[]>(
+    currentProduct.images.map((entry) => entry.image) as Media[],
+  )
+  const [featured, setFeatured] = useState<string>(currentFeaturedImage.id)
+  const [isLoading, setLoading] = useState<boolean>(false)
+  const [categories, setCategories] = useState<Category[]>([])
+  const [attributes, setAttributes] = useState<Attribute[]>([])
+
+  const [activeTab, setActiveTab] = useState<string>('product')
+
+  function handleChangeStep(destination: string) {
+    setActiveTab(destination)
+  }
+
+  useEffect(() => {
+    async function fetchAttributes() {
+      setLoading(true)
+
+      try {
+        const response = await fetch(`/api/all-attributes`)
+        const data = await response.json()
+
+        setAttributes(data)
+      } catch (error) {
+        toast.error(error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    async function fetchCategories() {
+      setLoading(true)
+
+      try {
+        const response = await fetch(`/api/all-categories`)
+        const data = await response.json()
+
+        setCategories(data)
+      } catch (error) {
+        toast.error(error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCategories()
+    fetchAttributes()
+  }, [])
+
   const form = useForm<z.infer<typeof updateProductSchema>>({
     resolver: zodResolver(updateProductSchema),
     defaultValues: {
@@ -90,10 +113,6 @@ export function UpdateProductForm({
       description: currentProduct.description,
       minimumQuantity: currentProduct.minimumQuantity,
       active: currentProduct.active,
-      featuredImage:
-        typeof currentProduct.featuredImage === 'object'
-          ? currentProduct.featuredImage.id
-          : currentProduct.featuredImage,
 
       categories:
         typeof currentProduct.categories === 'object'
@@ -108,205 +127,8 @@ export function UpdateProductForm({
     },
   })
 
-  const [attributes, setAttributes] = useState<Attribute[]>([])
-  const [categories, setCategories] = useState<Category[]>([])
-  const [isLoading, setLoading] = useState<boolean>(false)
+  const { isSubmitting } = useFormState({ control: form.control })
 
-  useEffect(() => {
-    const fetchAttributes = async () => {
-      try {
-        setLoading(true)
-        const response = await fetch(`/api/all-attributes`)
-
-        const data = await response.json()
-
-        setAttributes(data)
-        setLoading(false)
-      } catch (error) {
-        console.error(error)
-        toast.error(error)
-        setLoading(false)
-      }
-    }
-
-    const fetchCategories = async () => {
-      try {
-        setLoading(true)
-        const response = await fetch(`/api/all-categories`)
-
-        const data = await response.json()
-
-        setCategories(data)
-        setLoading(false)
-      } catch (error) {
-        console.error(error)
-        toast.error(error)
-        setLoading(false)
-      }
-    }
-
-    fetchCategories()
-    fetchAttributes()
-  }, [])
-
-  interface AttributeListProps {
-    attributes: Attribute[]
-    props: any
-  }
-
-  const AttributeList: React.FC<AttributeListProps> = ({
-    attributes,
-    props,
-  }) => {
-    const colors = filterAttributesByType(attributes, 'color')
-    const labels = filterAttributesByType(attributes, 'label')
-    const types = getUniqueTypes(labels)
-
-    function handleCheckedChange(id: string, state: boolean) {
-      // state === true => Checkbox foi marcada => Atualiza estado do form adicionando o elemento
-      // state === false => Checkbox foi desmarcada => Remove o elemento do valor do form
-      state
-        ? props.value.push(id)
-        : (props.value = props.value.filter(
-            (attributeId: any) => attributeId !== id,
-          ))
-
-      // Pra funcionar com form controlado
-      form.setValue('attributes', props.value)
-    }
-
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className='grid w-full grid-cols-2 gap-4'
-      >
-        <div className='space-y-2.5'>
-          <Large>Cores</Large>
-
-          {colors.map((color) => (
-            <div key={color.id} className='flex items-center gap-1'>
-              <Checkbox
-                id={color.id}
-                name={color.name}
-                value={color.id}
-                defaultChecked={props.value.includes(color.id)}
-                onCheckedChange={(state) =>
-                  handleCheckedChange(color.id, !!state)
-                }
-              />
-              <div
-                className='h-5 w-5 rounded-full border'
-                style={{ backgroundColor: color.value }}
-              />
-
-              <Small>{color.name}</Small>
-            </div>
-          ))}
-        </div>
-
-        {types.map((type) => {
-          const filteredAttributes = filterAttributesByName(labels, type)
-
-          return (
-            <div key={type} className='space-y-1'>
-              <Large>{type}</Large>
-
-              {filteredAttributes.map((label) => (
-                <div key={label.id} className='flex items-center gap-1'>
-                  <Checkbox
-                    id={label.id}
-                    name={label.name}
-                    value={label.id}
-                    defaultChecked={props.value.includes(label.id)}
-                    onCheckedChange={(state) =>
-                      handleCheckedChange(label.id, !!state)
-                    }
-                  />
-
-                  <Small>{label.name}</Small>
-                </div>
-              ))}
-            </div>
-          )
-        })}
-      </motion.div>
-    )
-  }
-
-  interface CategoryListProps {
-    categories: NestedCategory[]
-    props: any
-  }
-
-  const CategoryList: React.FC<CategoryListProps> = ({ categories, props }) => {
-    return (
-      <div className='space-y-2'>
-        {categories.map((category) => (
-          <CategoryCheckbox
-            key={category.id}
-            category={category}
-            props={props}
-          />
-        ))}
-      </div>
-    )
-  }
-
-  interface CategoryCheckboxProps {
-    category: NestedCategory
-    props: any
-  }
-
-  const CategoryCheckbox: React.FC<CategoryCheckboxProps> = ({
-    category,
-    props,
-  }) => {
-    function handleCheckedChange(id: string, state: boolean) {
-      // state === true => Checkbox foi marcada => Atualiza estado do form adicionando o elemento
-      // state === false => Checkbox foi desmarcada => Remove o elemento do valor do form
-      state
-        ? props.value.push(id)
-        : (props.value = props.value.filter(
-            (categoryId: any) => categoryId !== id,
-          ))
-
-      // Pra funcionar com form controlado
-      form.setValue('categories', props.value)
-    }
-
-    return (
-      <div className='ml-4 space-y-2'>
-        <div className='group flex items-center gap-1.5'>
-          <Checkbox
-            id={category.id}
-            name={category.title}
-            value={category.id}
-            defaultChecked={props.value.includes(category.id)}
-            onCheckedChange={(state) =>
-              handleCheckedChange(category.id, !!state)
-            }
-          />
-          <Label
-            className='cursor-pointer hover:underline group-hover:underline'
-            htmlFor={category.id}
-          >
-            {category.title}
-          </Label>
-        </div>
-
-        {category.children.map((childCategory) => (
-          <CategoryCheckbox
-            key={childCategory.id}
-            category={childCategory}
-            props={props}
-          />
-        ))}
-      </div>
-    )
-  }
-
-  // Values is already formatted and validated.
   async function onSubmit(values: z.infer<typeof updateProductSchema>) {
     const {
       sku,
@@ -314,10 +136,15 @@ export function UpdateProductForm({
       description,
       minimumQuantity,
       active,
-      featuredImage,
       attributes,
       categories,
     } = values
+
+    if (!featured || featured === '') {
+      return toast.error(
+        'Você deve escolher uma imagem em destaque para o produto.',
+      )
+    }
 
     const response = await updateProduct(currentProduct.id, {
       sku,
@@ -327,7 +154,10 @@ export function UpdateProductForm({
       active,
 
       // Placeholder image id
-      featuredImage,
+      featuredImage: featured,
+      images: images.map((image) => {
+        return { image: image.id }
+      }),
 
       attributes,
       categories,
@@ -346,17 +176,9 @@ export function UpdateProductForm({
     }
   }
 
-  function handleChangeStep(destination: string) {
-    setActiveTab(destination)
-  }
-
-  const [activeTab, setActiveTab] = useState<string>('product')
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 px-2'>
-        {/* Informações gerais do produto */}
-
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
             <motion.div
@@ -473,29 +295,72 @@ export function UpdateProductForm({
                       )}
                     />
 
-                    <FormField
-                      name='featuredImage'
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem className='col-span-2'>
-                          <FormLabel htmlFor='featured'>
-                            Imagem em destaque
-                          </FormLabel>
+                    <div />
 
-                          <FormControl>
-                            {/* <Input id='featured' type='file' {...field} /> */}
-                            <Input id='featured' type='text' {...field} />
-                          </FormControl>
-                          <FormDescription>
-                            Escolha uma imagem de até 999x777 px
-                          </FormDescription>
-                          <StyledFormMessage
-                            form={form}
-                            field='featuredImage'
-                          />
-                        </FormItem>
-                      )}
-                    />
+                    <div className='col-span-2'>
+                      <ImageUploader setMedia={setMedia} />
+                    </div>
+
+                    {images.length >= 0 && (
+                      <div className='col-span-2'>
+                        <p className='my-2 text-sm font-medium text-muted-foreground'>
+                          Arquivos salvos
+                        </p>
+                        <div className='space-y-2 pr-3'>
+                          <RadioGroup
+                            defaultValue={featured}
+                            onValueChange={(value) => setFeatured(value)}
+                          >
+                            {images.map((file) => {
+                              return (
+                                <div
+                                  key={file.id}
+                                  className='group flex w-full justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 pr-2 transition-all hover:border-slate-300 hover:pr-0'
+                                >
+                                  <div className='flex flex-1 items-center p-2'>
+                                    <div>
+                                      <Image
+                                        resource={file}
+                                        imgClassName='w-24 object-cover'
+                                      />
+                                    </div>
+                                    <div className='ml-2 w-full space-y-2'>
+                                      <div className='flex flex-col justify-between text-sm'>
+                                        <p className='text-muted-foreground '>
+                                          {file.filename}
+                                        </p>
+                                        <p>{formatBytes(file.filesize)}</p>
+
+                                        <div className='mt-1 flex items-center space-x-2'>
+                                          <RadioGroupItem value={file.id} />
+                                          <Small>Imagem em destaque</Small>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <button
+                                    onClick={(e) => {
+                                      e.preventDefault()
+
+                                      setFeatured('')
+
+                                      const filteredImage = images.filter(
+                                        (image) => image.id !== file.id,
+                                      )
+
+                                      setMedia(filteredImage)
+                                    }}
+                                    className='items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex'
+                                  >
+                                    <X size={20} />
+                                  </button>
+                                </div>
+                              )
+                            })}
+                          </RadioGroup>
+                        </div>
+                      </div>
+                    )}
 
                     <FormField
                       name='active'
@@ -559,21 +424,30 @@ export function UpdateProductForm({
                                   exit={{ opacity: 0 }}
                                   className='inline-flex flex-wrap gap-1 rounded-md'
                                 >
-                                  {field.value.map((item: string) => (
-                                    <Badge key={item} className='h-fit w-fit'>
-                                      {
-                                        attributes.find(
-                                          (attribute) => attribute.id === item,
-                                        ).name
-                                      }
-                                    </Badge>
-                                  ))}
+                                  {field.value.map((item: string) => {
+                                    const attribute = attributes.find(
+                                      (attribute) => attribute.id === item,
+                                    )
+
+                                    return (
+                                      <Badge key={item} className='h-fit w-fit'>
+                                        {attribute.name}
+                                      </Badge>
+                                    )
+                                  })}
                                 </motion.div>
                               )}
                             </AnimatePresence>
 
+                            {/* Render AttributeList, else render LoadingSpinner */}
                             <AnimatePresence>
-                              {isLoading && (
+                              {attributes && !isLoading ? (
+                                <AttributeList
+                                  attributes={attributes}
+                                  field={field}
+                                  set={form.setValue}
+                                />
+                              ) : (
                                 <motion.div
                                   initial={{ opacity: 0 }}
                                   animate={{ opacity: 1 }}
@@ -582,15 +456,6 @@ export function UpdateProductForm({
                                 >
                                   <LoadingSpinner />
                                 </motion.div>
-                              )}
-                            </AnimatePresence>
-
-                            <AnimatePresence>
-                              {attributes && !isLoading && (
-                                <AttributeList
-                                  attributes={attributes}
-                                  props={field}
-                                />
                               )}
                             </AnimatePresence>
                             <FormMessage />
@@ -635,15 +500,17 @@ export function UpdateProductForm({
                                   exit={{ opacity: 0 }}
                                   className='inline-flex flex-wrap gap-1 rounded-md'
                                 >
-                                  {field.value.map((item: string) => (
-                                    <Badge key={item} className='h-fit w-fit'>
-                                      {
-                                        categories.find(
-                                          (category) => category.id === item,
-                                        ).title
-                                      }
-                                    </Badge>
-                                  ))}
+                                  {field.value.map((item: string) => {
+                                    const category = categories.find(
+                                      (category) => category.id === item,
+                                    )
+
+                                    return (
+                                      <Badge key={item} className='h-fit w-fit'>
+                                        {category.title}
+                                      </Badge>
+                                    )
+                                  })}
                                 </motion.div>
                               )}
                             </AnimatePresence>
@@ -651,7 +518,8 @@ export function UpdateProductForm({
                             {categories && (
                               <CategoryList
                                 categories={nestCategories(categories)}
-                                props={field}
+                                field={field}
+                                set={form.setValue}
                               />
                             )}
 
@@ -661,7 +529,11 @@ export function UpdateProductForm({
                       />
                     </ScrollArea>
 
-                    <Button type='submit' className='col-span-2 w-full'>
+                    <Button
+                      type='submit'
+                      disabled={isSubmitting}
+                      className='col-span-2 w-full'
+                    >
                       <Pencil className='mr-2 h-5 w-5' />
                       Atualizar produto
                     </Button>
