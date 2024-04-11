@@ -36,7 +36,6 @@ export const updateProductSchema = z.object({
   /* Non-optional fields */
   title: z.string().min(3, 'Título do produto deve conter no mínimo 3 letras.'),
   active: z.boolean(),
-  featuredImage: z.string(),
   minimumQuantity: z.coerce
     .number({
       required_error: 'Campo deve ser preenchido.',

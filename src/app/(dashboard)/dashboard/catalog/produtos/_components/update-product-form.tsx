@@ -6,12 +6,13 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, useFormState } from 'react-hook-form'
 
+import { formatBytes } from '@/lib/format'
 import { nestCategories } from '@/lib/category-hierarchy'
 
 import { toast } from 'sonner'
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { Attribute, Category, Product } from '@/payload/payload-types'
+import { Attribute, Category, Media, Product } from '@/payload/payload-types'
 
 import {
   Form,
@@ -25,17 +26,21 @@ import {
 
 import { CategoryList } from './category-list'
 import { AttributeList } from './attribute-list'
+import { ImageUploader } from './image-uploader'
 
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Image } from '@/components/media/image'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { LoadingSpinner } from '@/components/spinner'
+import { Small } from '@/components/typography/texts'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-import { AlertTriangle, ArrowRight, Pencil } from 'lucide-react'
+import { AlertTriangle, ArrowRight, Pencil, X } from 'lucide-react'
 
 import { updateProduct } from '../_logic/actions'
 import { updateProductSchema } from '../_logic/validations'
@@ -49,6 +54,12 @@ export function UpdateProductForm({
   currentProduct,
   setOpen,
 }: UpdateProductFormProps) {
+  const currentFeaturedImage = currentProduct.featuredImage as Media
+
+  const [images, setMedia] = useState<Media[]>(
+    currentProduct.images.map((entry) => entry.image) as Media[],
+  )
+  const [featured, setFeatured] = useState<string>(currentFeaturedImage.id)
   const [isLoading, setLoading] = useState<boolean>(false)
   const [categories, setCategories] = useState<Category[]>([])
   const [attributes, setAttributes] = useState<Attribute[]>([])
@@ -102,10 +113,6 @@ export function UpdateProductForm({
       description: currentProduct.description,
       minimumQuantity: currentProduct.minimumQuantity,
       active: currentProduct.active,
-      featuredImage:
-        typeof currentProduct.featuredImage === 'object'
-          ? currentProduct.featuredImage.id
-          : currentProduct.featuredImage,
 
       categories:
         typeof currentProduct.categories === 'object'
@@ -129,10 +136,15 @@ export function UpdateProductForm({
       description,
       minimumQuantity,
       active,
-      featuredImage,
       attributes,
       categories,
     } = values
+
+    if (!featured || featured === '') {
+      return toast.error(
+        'Você deve escolher uma imagem em destaque para o produto.',
+      )
+    }
 
     const response = await updateProduct(currentProduct.id, {
       sku,
@@ -142,7 +154,10 @@ export function UpdateProductForm({
       active,
 
       // Placeholder image id
-      featuredImage,
+      featuredImage: featured,
+      images: images.map((image) => {
+        return { image: image.id }
+      }),
 
       attributes,
       categories,
@@ -164,8 +179,6 @@ export function UpdateProductForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 px-2'>
-        {/* Informações gerais do produto */}
-
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList>
             <motion.div
@@ -282,29 +295,72 @@ export function UpdateProductForm({
                       )}
                     />
 
-                    <FormField
-                      name='featuredImage'
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem className='col-span-2'>
-                          <FormLabel htmlFor='featured'>
-                            Imagem em destaque
-                          </FormLabel>
+                    <div />
 
-                          <FormControl>
-                            {/* <Input id='featured' type='file' {...field} /> */}
-                            <Input id='featured' type='text' {...field} />
-                          </FormControl>
-                          <FormDescription>
-                            Escolha uma imagem de até 999x777 px
-                          </FormDescription>
-                          <StyledFormMessage
-                            form={form}
-                            field='featuredImage'
-                          />
-                        </FormItem>
-                      )}
-                    />
+                    <div className='col-span-2'>
+                      <ImageUploader setMedia={setMedia} />
+                    </div>
+
+                    {images.length >= 0 && (
+                      <div className='col-span-2'>
+                        <p className='my-2 text-sm font-medium text-muted-foreground'>
+                          Arquivos salvos
+                        </p>
+                        <div className='space-y-2 pr-3'>
+                          <RadioGroup
+                            defaultValue={featured}
+                            onValueChange={(value) => setFeatured(value)}
+                          >
+                            {images.map((file) => {
+                              return (
+                                <div
+                                  key={file.id}
+                                  className='group flex w-full justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 pr-2 transition-all hover:border-slate-300 hover:pr-0'
+                                >
+                                  <div className='flex flex-1 items-center p-2'>
+                                    <div>
+                                      <Image
+                                        resource={file}
+                                        imgClassName='w-24 object-cover'
+                                      />
+                                    </div>
+                                    <div className='ml-2 w-full space-y-2'>
+                                      <div className='flex flex-col justify-between text-sm'>
+                                        <p className='text-muted-foreground '>
+                                          {file.filename}
+                                        </p>
+                                        <p>{formatBytes(file.filesize)}</p>
+
+                                        <div className='mt-1 flex items-center space-x-2'>
+                                          <RadioGroupItem value={file.id} />
+                                          <Small>Imagem em destaque</Small>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <button
+                                    onClick={(e) => {
+                                      e.preventDefault()
+
+                                      setFeatured('')
+
+                                      const filteredImage = images.filter(
+                                        (image) => image.id !== file.id,
+                                      )
+
+                                      setMedia(filteredImage)
+                                    }}
+                                    className='items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex'
+                                  >
+                                    <X size={20} />
+                                  </button>
+                                </div>
+                              )
+                            })}
+                          </RadioGroup>
+                        </div>
+                      </div>
+                    )}
 
                     <FormField
                       name='active'

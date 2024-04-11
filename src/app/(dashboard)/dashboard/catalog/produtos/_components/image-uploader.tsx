@@ -3,26 +3,21 @@
 import { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 
+import { Media } from '@/payload/payload-types'
+
 import { toast } from 'sonner'
 
-import {
-  AudioWaveform,
-  File,
-  FileImage,
-  FolderArchive,
-  UploadCloud,
-  Video,
-  X,
-} from 'lucide-react'
+import { getFileIconAndColor } from '@/lib/upload'
+
+import { UploadCloud, X } from 'lucide-react'
 
 import { Input } from '@/components/ui/input'
 import { ProgressBar } from '@/components/ui/progress'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Lead, Small } from '@/components/typography/texts'
+
 import { ACCEPTED_IMAGE_TYPES } from '../_logic/validations'
-import { Media } from '@/payload/payload-types'
-import { PaginatedDocs } from 'payload/database'
-import { getFileIconAndColor } from '@/lib/upload'
+
 interface FileUploadProgress {
   progress: number
   File: File
