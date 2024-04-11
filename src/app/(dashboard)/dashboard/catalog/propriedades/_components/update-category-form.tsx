@@ -31,6 +31,8 @@ import { Input } from '@/components/ui/input'
 
 import { updateCategory } from '../_logic/actions'
 import { updateCategorySchema } from '../_logic/validations'
+import { Checkbox } from '@/components/ui/checkbox'
+
 
 interface UpdateCategoryFormProps {
   currentCategory: Category
@@ -55,13 +57,14 @@ export function UpdateCategoryForm({
       title: currentCategory.title,
       slug: currentCategory.slug,
       parent: currentCategoryParentId,
+      active: currentCategory.active,
     },
   })
 
   const { isSubmitting } = useFormState({ control: form.control })
 
   async function onSubmit(values: z.infer<typeof updateCategorySchema>) {
-    const { title, parent, slug } = values
+    const { title, parent, slug, active } = values
 
     const hasNoParent = values.parent === 'base' || values.parent === ''
 
@@ -70,6 +73,7 @@ export function UpdateCategoryForm({
       title,
       parent: hasNoParent ? '' : parent,
       slug,
+      active,
     })
 
     if (response.status === true) {
@@ -100,7 +104,7 @@ export function UpdateCategoryForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <section className='grid h-full grid-cols-1'>
+        <section className='grid h-full grid-cols-1 gap-2'>
           <FormField
             name='title'
             control={form.control}
@@ -187,7 +191,28 @@ export function UpdateCategoryForm({
               </FormItem>
             )}
           />
-          <Button disabled={isSubmitting} type='submit' className='mt-4'>
+
+          <FormField
+            name='active'
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <div className='flex items-center gap-1'>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    name='Ativa'
+                  />
+                  <FormLabel>Ativa</FormLabel>
+                </div>
+                <FormDescription>
+                  Este campo define se a categoria está ativa no site.
+                </FormDescription>
+              </FormItem>
+            )}
+          />
+
+          <Button disabled={isSubmitting} type='submit'>
             Atualizar categoria
           </Button>
         </section>

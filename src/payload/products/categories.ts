@@ -17,6 +17,12 @@ const Categories: CollectionConfig = {
       type: 'text',
       required: true,
     },
+    {
+      name: 'active',
+      type: 'checkbox',
+      required: true,
+      defaultValue: true,
+    },
     slugField(),
   ],
 }

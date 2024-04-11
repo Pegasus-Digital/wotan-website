@@ -50,7 +50,6 @@ const Products: CollectionConfig = {
         },
       },
     },
-
     {
       type: 'tabs',
       tabs: [
@@ -83,6 +82,7 @@ const Products: CollectionConfig = {
             },
             { name: 'price', type: 'number' },
             { name: 'description', type: 'textarea' },
+            { name: 'tags', type: 'textarea' },
           ],
         },
         {
