@@ -12,6 +12,7 @@ import {
   getSortedRowModel,
   getFilteredRowModel,
   useReactTable,
+  Table as TanstackTable,
 } from '@tanstack/react-table'
 
 import {
@@ -30,54 +31,35 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 
 interface DataTableProps<TData, TValue> {
+  table: TanstackTable<TData>
   columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+  actions?: React.ElementType[]
 }
 
 export function DataTable<TData, TValue>({
+  table,
   columns,
-  data,
+  actions,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([])
-  const [rowSelection, setRowSelection] = useState({})
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    state: {
-      sorting,
-      rowSelection,
-      columnFilters,
-    },
-    onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getFilteredRowModel: getFilteredRowModel(),
-  })
-
   return (
     <div className='space-y-2'>
       {/* Table interaction */}
       <div className='flex items-center justify-between'>
-        <DataTableInputFilter
-          columnId='title'
+        {/* <DataTableInputFilter
+          columnId='name'
           title='nome'
           plural={false}
           table={table}
-        />
+        /> */}
+        <div className='flex-1' />
 
         {/* Actions */}
         <div className='space-x-2'>
-          <Button variant='outline' size='sm'>
-            Novo produto
-          </Button>
-          <Button variant='outline' size='sm'>
-            Exportar
-          </Button>
+          {actions?.map((ActionJSX, index) => (
+            <span key={ActionJSX.valueOf().toString() + index}>
+              <ActionJSX />
+            </span>
+          ))}
         </div>
       </div>
 

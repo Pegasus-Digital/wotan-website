@@ -1,6 +1,9 @@
+import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
-import { Category, Product } from '@/payload/payload-types'
+import { Product } from '@/payload/payload-types'
+
+import { LowImpactHero } from '@/app/_sections/heros/lowImpact'
 
 import {
   Pagination,
@@ -10,13 +13,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination'
+import { ProductCard } from '@/components/product-card'
+import { Button, buttonVariants } from '@/components/ui/button'
 
 import { Heading } from '@/pegasus/heading'
-import { Button, buttonVariants } from '@/components/ui/button'
-import { ProductCard } from '@/components/product-card'
-import Link from 'next/link'
-import { Hero } from '@/components/heros'
-import { LowImpactHero } from '@/app/_sections/heros/lowImpact'
 
 interface PaginationParams {
   totalDocs: number
@@ -45,13 +45,13 @@ export async function CategoryPageContent({
   const nextPage = pagination.hasNextPage ? `?page=${pagination.nextPage}` : ''
 
   return (
-    <section className='w-full '>
+    <section className='w-full'>
       <div className='container flex flex-col items-center '>
         <LowImpactHero title={categoryName} />
         {products.length === 0 && (
           <div className='my-12 flex flex-col items-center justify-center space-y-4 rounded-lg text-center text-foreground'>
             <Heading variant='h3' className='text-foreground'>
-              Não encontramos produtos para essa categoria.
+              Não encontramos produtos nesta categoria.
             </Heading>
 
             <Link
@@ -65,16 +65,7 @@ export async function CategoryPageContent({
         {/* Products grid */}
         <div className='grid max-w-screen-desktop grid-flow-row grid-cols-2 gap-4 tablet:grid-cols-3 desktop:grid-cols-4'>
           {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              id={product.id}
-              title={product.title}
-              minimumQuantity={product.minimumQuantity}
-              featuredImage={product.featuredImage}
-              categories={product.categories.map(
-                (category: Category) => category.title,
-              )}
-            />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
         {products.length > 0 && (

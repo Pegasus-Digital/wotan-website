@@ -51,20 +51,12 @@ const Products: CollectionConfig = {
       },
     },
     {
-      name: 'keywords',
-      type: 'textarea',
-      admin: {
-        position: 'sidebar',
-        description: 'Separar por vírgula.',
-      },
-    },
-    {
       type: 'tabs',
       tabs: [
         {
           label: 'Product Details',
           fields: [
-            { name: 'sku', label: 'SKU', type: 'text' },
+            { name: 'sku', label: 'SKU', type: 'text', required: true },
             {
               name: 'minimumQuantity',
               label: 'Minimum Quantity',
@@ -90,6 +82,7 @@ const Products: CollectionConfig = {
             },
             { name: 'price', type: 'number' },
             { name: 'description', type: 'textarea' },
+            { name: 'tags', type: 'textarea' },
           ],
         },
         {

@@ -30,6 +30,7 @@ export interface Config {
     pages: Page;
     clients: Client;
     salespersons: Salesperson;
+    'contact-messages': ContactMessage;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
@@ -45,13 +46,14 @@ export interface Product {
   id: string;
   title: string;
   publishedOn?: string | null;
-  sku?: string | null;
+  sku: string;
   minimumQuantity: number;
   stockQuantity?: number | null;
   active: boolean;
   attributes?: (string | Attribute)[] | null;
   price?: number | null;
   description?: string | null;
+  tags?: string | null;
   featuredImage: string | Media;
   images?:
     | {
@@ -93,7 +95,7 @@ export interface AttributeType {
  */
 export interface Media {
   id: string;
-  alt: string;
+  alt?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -110,6 +112,7 @@ export interface Media {
 export interface Category {
   id: string;
   title: string;
+  active: boolean;
   slug?: string | null;
   parent?: (string | null) | Category;
   breadcrumbs?:
@@ -130,6 +133,7 @@ export interface Category {
 export interface Budget {
   id: string;
   total?: number | null;
+  status?: ('pendente' | 'cancelado') | null;
   items: {
     product: string | Product;
     attributes?: (string | Attribute)[] | null;
@@ -444,6 +448,24 @@ export interface Salesperson {
   loginAttempts?: number | null;
   lockUntil?: string | null;
   password: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-messages".
+ */
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  fone: string;
+  cnpj?: string | null;
+  message: string;
+  acceptEmail?: boolean | null;
+  acceptPrivacy: boolean;
+  read?: boolean | null;
+  contactedBy?: (string | null) | Salesperson;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

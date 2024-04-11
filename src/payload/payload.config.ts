@@ -24,6 +24,7 @@ import { seed } from './endpoints/seed'
 const generateTitle: GenerateTitle = () => {
   return 'Wotan Brindes'
 }
+import { Contact } from './contact'
 
 export default buildConfig({
   admin: {
@@ -50,6 +51,7 @@ export default buildConfig({
     Pages,
     Clients,
     Salespersons,
+    Contact,
   ],
   globals: [Settings],
   // database-adapter-config-start

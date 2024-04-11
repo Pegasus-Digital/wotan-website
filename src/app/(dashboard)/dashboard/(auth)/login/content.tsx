@@ -55,16 +55,16 @@ export function LoginContent() {
     async (data: z.infer<typeof formLogin>) => {
       try {
         await login(data)
-        if (redirect?.current)
-          router.push(
-            `${redirect.current as string}?success=${encodeURIComponent('Login realizado com sucesso.')}`,
-          )
-        else
-          router.push(
-            `/dashboard?success=${encodeURIComponent(
-              'Login realizado com sucesso.',
-            )}`,
-          )
+        // if (redirect?.current)
+        //   router.push(
+        //     `${redirect.current as string}&success=${encodeURIComponent('Login realizado com sucesso.')}`,
+        //   )
+        // else
+        router.push(
+          `/dashboard?success=${encodeURIComponent(
+            'Login realizado com sucesso.',
+          )}`,
+        )
       } catch (_) {
         toast.error('Credenciais inválidas. Por favor, tente novamente.')
       }

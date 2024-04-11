@@ -8,7 +8,9 @@ import { CartStoreProvider } from '@/components/cart-store-provider'
 import { Setting } from '@/payload/payload-types'
 import { fetchSettings } from '../_api/fetchGlobals'
 import payload from 'payload'
-import { NestedCategory, nestCategories } from '@/lib/categoryHierarchy'
+import { NestedCategory, nestCategories } from '@/lib/category-hierarchy'
+import Loading from '../loading'
+import { Suspense } from 'react'
 
 interface WebsiteLayoutProps {
   children: React.ReactNode
@@ -16,7 +18,18 @@ interface WebsiteLayoutProps {
 
 async function fetchConfigs() {
   try {
-    const settings = await fetchSettings()
+    await payload.init({
+      // Init Payload
+      secret: process.env.PAYLOAD_SECRET,
+      local: true, // Enables local mode, doesn't spin up a server or frontend
+    })
+
+    // const settings = await fetchSettings()
+
+    const settings = await payload.findGlobal({
+      slug: 'settings',
+    })
+    // console.log({ settings })
     return settings
   } catch (error) {
     console.error(error)
@@ -32,8 +45,14 @@ async function fetchCategories() {
 
   const categories = await payload.find({
     collection: 'categories',
-    depth: 5,
-    limit: 100,
+    // depth: 5,
+    // page: 1,
+    pagination: false,
+    where: {
+      active: {
+        not_equals: false,
+      },
+    },
     sort: 'title',
   })
   // @ts-ignore
@@ -43,7 +62,7 @@ async function fetchCategories() {
 export default async function WebsiteLayout({
   children,
 }: Readonly<WebsiteLayoutProps>) {
-  const start = performance.now()
+  // const start = performance.now()
 
   const settingsData = fetchConfigs()
   const categoriesData = fetchCategories()
@@ -53,37 +72,43 @@ export default async function WebsiteLayout({
     categoriesData,
   ])
 
-  const end = performance.now()
-  console.log(`Execution time: ${end - start} ms`)
-  // console.log(categories)
+  // const end = performance.now()
+  // console.log(`Execution time: ${end - start} ms`)
+
+  // console.log({ categories })
 
   const { header, footer, company } = settings
-  const { adress, contact } = company
+  const { adress, contact, social } = company
 
   // TODO: If data doesn't exist on Payload, it should not break the deployment.
+
+  // console.log(social)
 
   return (
     <>
       <CartStoreProvider>
-        <Header
-          logo={header?.logo}
-          navigation={header?.navigation}
-          phone={contact?.phone}
-        />
+        <Suspense fallback={<Loading />}>
+          <Header
+            logo={header?.logo}
+            navigation={header?.navigation}
+            phone={contact?.phone}
+          />
 
-        <SearchBar categories={categories} />
+          <SearchBar categories={categories} />
 
-        <main className='flex min-h-screen flex-col items-center bg-pattern bg-right bg-repeat-y'>
-          {children}
-        </main>
+          <main className='flex min-h-96 flex-col items-center bg-pattern bg-right bg-repeat-y'>
+            {children}
+          </main>
 
-        <Footer
-          logo={footer?.logo}
-          companyInfo={footer.companyInfo}
-          columns={footer.columns}
-          adress={adress}
-          contact={contact}
-        />
+          <Footer
+            logo={footer?.logo}
+            companyInfo={footer.companyInfo}
+            columns={footer.columns}
+            adress={adress}
+            contact={contact}
+            social={social}
+          />
+        </Suspense>
       </CartStoreProvider>
       <Toaster richColors closeButton theme='light' />
     </>

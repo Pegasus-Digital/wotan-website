@@ -8,11 +8,17 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
+import { LowImpactHero } from '@/app/_sections/heros/lowImpact'
+
+import { Button } from '@/pegasus/button'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
-import { H1, H3 } from '@/components/typography/headings'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+
+import { Small } from '@/components/typography/texts'
+import { H3 } from '@/components/typography/headings'
 
 import {
   Form,
@@ -22,18 +28,8 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { LinkIcon, Small } from '@/components/typography/texts'
-import { FacebookIcon, Mail, MapPin, Phone } from 'lucide-react'
-import {
-  InstagramLogoIcon,
-  LinkedInLogoIcon,
-  TwitterLogoIcon,
-} from '@radix-ui/react-icons'
-import { Heading } from '@/pegasus/heading'
-import { LowImpactHero } from '@/app/_sections/heros/lowImpact'
 
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Label } from '@/components/ui/label'
+import { ArrowRight, Mail, MapPin, Phone } from 'lucide-react'
 
 const formSchema = z.object({
   name: z
@@ -48,7 +44,9 @@ const formSchema = z.object({
     .string({ required_error: 'É necessário fornecer um e-mail.' })
     .min(6, { message: 'E-mail deve conter no mínimo 6 caracteres' })
     .email({ message: `Deve ser um e-mail válido.` }),
-  message: z.string({ required_error: 'Deixe sua mensagem.' }),
+  message: z
+    .string({ required_error: 'Deixe sua mensagem.' })
+    .max(300, { message: 'Máximo de 300 caracteres' }),
   cnpj: z.string().optional(),
   allowNotifications: z.boolean(),
   acceptPrivacyPolicy: z.boolean(),
@@ -69,14 +67,37 @@ export function ContactContent({ address, contact }) {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!values.acceptPrivacyPolicy) {
       toast.warning(
         'Formulário não enviado, é necessário aceitar os termos da Política de Privacidade.',
       )
+      return
     }
 
-    toast.success('Formulário enviado com sucesso!')
+    try {
+      const response = await fetch('api/contact-form', {
+        method: 'POST',
+        body: JSON.stringify({
+          acceptPrivacy: values.acceptPrivacyPolicy,
+          email: values.email,
+          cnpj: values.cnpj,
+          message: values.message,
+          phone: values.phone,
+          name: values.name,
+          acceptEmail: values.allowNotifications,
+        }),
+      })
+      const data = await response.json()
+      if (data) {
+        toast.success('Formulário enviado com sucesso!')
+      } else {
+        toast.warning('Ocorreu um erro ao enviar os dados.')
+      }
+    } catch (err) {
+      toast.warning('Ocorreu um erro ao enviar os dados.')
+      console.log(err)
+    }
   }
 
   function formatCNPJ(value: string) {
@@ -105,17 +126,14 @@ export function ContactContent({ address, contact }) {
   }
 
   function changeCNPJRadio(e: string) {
-    if (e === 'pj') {
-      setCNPJ(true)
-    } else {
-      setCNPJ(false)
-    }
+    e === 'pj' ? setCNPJ(true) : setCNPJ(false)
   }
 
   return (
-    <section className='mb-6 w-full px-6 text-primary-foreground'>
+    <section className='mb-6 flex w-full flex-col items-center  px-6 text-primary-foreground'>
       <LowImpactHero title='Contato' />
-      <div className='container flex max-w-screen-desktop flex-col items-center rounded-lg  bg-gift bg-cover bg-center p-4 text-center desktop:p-10'>
+
+      <div className='container flex max-w-screen-desktop flex-col items-center rounded-lg bg-gift bg-cover bg-center p-4 text-center desktop:p-10'>
         <div className='flex w-full flex-col items-center justify-center gap-4 self-start tablet:flex-row tablet:items-start lg:gap-6'>
           <Form {...form}>
             <form
@@ -136,9 +154,10 @@ export function ContactContent({ address, contact }) {
                   <Label htmlFor='pf'>Pessoa Física</Label>
                 </div>
               </RadioGroup>
+
               <FormField
-                control={form.control}
                 name='name'
+                control={form.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -149,13 +168,14 @@ export function ContactContent({ address, contact }) {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className='text-primary-foreground' />
+                    <FormMessage className='animate-pulse text-primary-foreground' />
                   </FormItem>
                 )}
               />
+
               <FormField
-                control={form.control}
                 name='email'
+                control={form.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
@@ -166,14 +186,14 @@ export function ContactContent({ address, contact }) {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className='text-primary-foreground' />
+                    <FormMessage className='animate-pulse text-primary-foreground' />
                   </FormItem>
                 )}
               />
 
               <FormField
-                control={form.control}
                 name='phone'
+                control={form.control}
                 render={({ field: { onChange, ...props } }) => (
                   <FormItem>
                     <FormControl>
@@ -190,15 +210,15 @@ export function ContactContent({ address, contact }) {
                         {...props}
                       />
                     </FormControl>
-                    <FormMessage className='text-primary-foreground' />
+                    <FormMessage className='animate-pulse text-primary-foreground' />
                   </FormItem>
                 )}
               />
 
               {isPJ && (
                 <FormField
-                  control={form.control}
                   name='cnpj'
+                  control={form.control}
                   render={({ field: { onChange, ...props } }) => (
                     <FormItem>
                       <FormControl>
@@ -215,36 +235,38 @@ export function ContactContent({ address, contact }) {
                           {...props}
                         />
                       </FormControl>
-                      <FormMessage className='text-primary-foreground' />
+                      <FormMessage className='animate-pulse text-primary-foreground' />
                     </FormItem>
                   )}
                 />
               )}
 
               <FormField
-                control={form.control}
                 name='message'
+                control={form.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
                       <Textarea
                         className={` ${!isPJ ? 'h-44' : 'h-32'}  resize-none  text-foreground`}
                         placeholder='Mensagem'
+                        maxLength={300}
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage className='text-primary-foreground' />
+                    <FormMessage className='animate-pulse text-primary-foreground' />
                   </FormItem>
                 )}
               />
+
               <FormField
-                control={form.control}
                 name='allowNotifications'
+                control={form.control}
                 render={({ field }) => (
                   <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md px-4'>
                     <FormControl>
                       <Checkbox
-                        className='bg-background'
+                        className='bg-background data-[state=checked]:bg-background data-[state=checked]:text-foreground'
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />
@@ -259,13 +281,13 @@ export function ContactContent({ address, contact }) {
               />
 
               <FormField
-                control={form.control}
                 name='acceptPrivacyPolicy'
+                control={form.control}
                 render={({ field }) => (
                   <FormItem className='flex flex-row items-center space-x-3 space-y-0 rounded-md px-4'>
                     <FormControl>
                       <Checkbox
-                        className='bg-background'
+                        className='bg-background data-[state=checked]:bg-background data-[state=checked]:text-foreground'
                         checked={field.value}
                         onCheckedChange={field.onChange}
                       />
@@ -278,7 +300,7 @@ export function ContactContent({ address, contact }) {
                       <Link
                         href='/politica-de-privacidade'
                         target='_blank'
-                        className='text-sm font-medium text-sky-400 hover:text-sky-500 hover:underline'
+                        className='text-sm font-medium text-sky-400 hover:text-sky-300 hover:underline'
                       >
                         Política de Privacidade
                       </Link>
@@ -288,58 +310,63 @@ export function ContactContent({ address, contact }) {
               />
 
               <Button
-                variant='outline'
-                className='bg-transparent font-medium text-primary-foreground'
                 type='submit'
+                variant='expandIcon'
+                Icon={ArrowRight}
+                iconPlacement='right'
+                className='font-medium shadow-wotan-light transition hover:brightness-125'
               >
                 Enviar
               </Button>
             </form>
           </Form>
+
           {/* Informações */}
-          <div className='flex w-full flex-col justify-center tablet:w-1/2'>
-            <div className=' relative h-80 w-full  rounded-lg border'>
+          <aside className='flex w-full flex-col justify-center tablet:w-1/2'>
+            {/* Google Maps embed */}
+            <section className='relative h-80 w-full rounded-lg border'>
               <iframe
-                className=' absolute left-0 top-0 h-full w-full rounded-lg'
+                className='absolute left-0 top-0 h-full w-full rounded-lg'
                 src='https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d13815.33916480707!2d-51.2008476!3d-30.0415972!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95197847fbaf1e1f%3A0x7ce237903c469d87!2sWotan%20Brindes!5e0!3m2!1spt-BR!2sbr!4v1710781766668!5m2!1spt-BR!2sbr'
                 loading='lazy'
                 allowFullScreen={true}
                 tabIndex={0}
               />
-            </div>
-            <div className='mt-6 flex flex-col items-center justify-center space-y-4 text-center'>
+            </section>
+
+            <section className='mt-6 flex flex-col items-center justify-center space-y-4 text-center'>
               <H3>Informações</H3>
-              <Small className='flex items-center whitespace-nowrap leading-snug'>
-                <MapPin className='mr-2 h-5 w-5' />
-                {address.street}
-                {', '}
-                {address.number}
-                {' - '}
-                {address.neighborhood}
-                {', '}
-                {/* <br /> */}
-                {address.city}
-                {' - '}
-                {address.state}
-                {', '}
-                {address.cep}
-              </Small>
-              <div className='flex flex-col items-center justify-center gap-4'>
-                <div className='flex items-center'>
-                  <Small className='flex items-center whitespace-nowrap'>
-                    <Phone className='mr-2 h-5 w-5' />
-                    {contact.phone}
-                  </Small>
-                </div>
-                <div className='flex items-center'>
-                  <Small className='flex items-center whitespace-nowrap'>
-                    <Mail className='mr-2 h-5 w-5' />
-                    {contact.email}
-                  </Small>
-                </div>
+
+              {/* Address information */}
+              <div className='flex items-center gap-2'>
+                <MapPin className='mr-2 h-5 w-5 shrink-0' />
+                <Small className='flex items-center leading-snug'>
+                  {`${address.street}, ${address.number} - ${address.neighborhood}, ${address.city} - ${address.state}, ${address.cep}`}
+                </Small>
               </div>
-            </div>
-          </div>
+
+              {/* Contact information */}
+              <div className='flex flex-col items-center justify-center gap-4'>
+                <Link
+                  href={`tel:${contact.phone}`}
+                  className='flex items-center'
+                  target='_blank'
+                >
+                  <Phone className='mr-2 h-5 w-5' />
+                  <Small className='whitespace-nowrap'>{contact.phone}</Small>
+                </Link>
+
+                <Link
+                  href={`mailto:${contact.email}`}
+                  className='flex items-center'
+                  target='_blank'
+                >
+                  <Mail className='mr-2 h-5 w-5' />
+                  <Small className='whitespace-nowrap'>{contact.email}</Small>
+                </Link>
+              </div>
+            </section>
+          </aside>
         </div>
       </div>
     </section>

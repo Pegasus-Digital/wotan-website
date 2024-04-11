@@ -4,6 +4,15 @@ import { Attribute, Product } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
 
+import {
+  filterAttributesByNotType,
+  filterAttributesByType,
+  findAttributeByValue,
+  getProductAttributes,
+  getUniqueTypes,
+} from '@/lib/attribute-hooks'
+import { getForegroundColor } from '@/lib/color'
+
 import { CartItem } from '@/components/cart-store'
 import { useCartStore } from '@/components/cart-store-provider'
 
@@ -16,23 +25,16 @@ import {
 } from '@/components/ui/select'
 
 import { Media } from '@/components/media'
-import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { LoadingSpinner } from '@/components/spinner'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 import { Heading } from '@/pegasus/heading'
+import { Large, Small } from '@/components/typography/texts'
 
 import { Trash } from 'lucide-react'
-import { Small } from '@/components/typography/texts'
-import {
-  filterAttributesByNotType,
-  filterAttributesByType,
-  findAttributeByValue,
-  getProductAttributes,
-  getUniqueTypes,
-} from '@/lib/attribute-hooks'
 
 interface CartCardProps {
   cartItem: CartItem
@@ -58,7 +60,6 @@ export function CartCard({ cartItem, product }: CartCardProps) {
   }
 
   function getAttributeValueByType(type: string): string {
-    // Verificar se existe um atributo com o tipo especificado no cartItem
     const attribute = cartItem.attributes.find((attr) => {
       if (typeof attr.type === 'object') {
         return attr.type.name === type
@@ -73,7 +74,6 @@ export function CartCard({ cartItem, product }: CartCardProps) {
   }
 
   function getAttributeColor(): string {
-    // Verificar se existe um atributo com o tipo especificado no cartItem
     const attribute = cartItem.attributes.find((attr) => {
       if (typeof attr.type === 'object') {
         return attr.type.type === 'color'
@@ -95,12 +95,7 @@ export function CartCard({ cartItem, product }: CartCardProps) {
     updateAttr(cartItem.id, attribute)
   }
 
-  if (!product)
-    return (
-      <Heading variant='h3' className='animate-pulse text-center'>
-        Carregando item...
-      </Heading>
-    )
+  if (!product) return <LoadingSpinner />
 
   return (
     <Card className='w-full shadow-xl tablet:flex'>
@@ -116,13 +111,13 @@ export function CartCard({ cartItem, product }: CartCardProps) {
       <CardContent className='flex w-full flex-col space-y-2 tablet:p-6'>
         {otherAttributes && otherAttributes.length > 0 ? (
           <div className='space-y-1'>
-            <Label>Atributos:</Label>
+            <Large>Atributos:</Large>
 
             {types.length > 0 ? (
               types.map((type) => {
                 return (
                   <div key={type}>
-                    <Label>{type}:</Label>
+                    <Small>{type}:</Small>
 
                     <Select
                       defaultValue={getAttributeValueByType(type)}
@@ -146,38 +141,43 @@ export function CartCard({ cartItem, product }: CartCardProps) {
                 )
               })
             ) : (
-              <Small className='w-full py-2'>
+              <Large className='w-full py-2'>
                 Não há atributos para selecionar
-              </Small>
+              </Large>
             )}
           </div>
         ) : (
-          <Small className='w-full py-2'>
+          <Large className='w-full py-2'>
             Não há atributos para selecionar
-          </Small>
+          </Large>
         )}
 
         {colors && colors.length > 0 ? (
           <div className='space-y-1'>
-            <Label>Cores:</Label>
+            <Large>Cores:</Large>
 
             <RadioGroup
               defaultValue={getAttributeColor()}
               onValueChange={(value) => getColorByValue(value)}
               className='flex gap-1'
             >
-              {colors.map((color: Attribute, index) => (
-                <RadioGroupItem
-                  key={color.name + '-' + index}
-                  value={color.value}
-                  style={{ backgroundColor: color.value }}
-                  className='h-6 w-6 rounded-full text-white'
-                />
-              ))}
+              {colors.map((color: Attribute, index) => {
+                return (
+                  <RadioGroupItem
+                    key={color.name + '-' + index}
+                    value={color.value}
+                    style={{
+                      backgroundColor: color.value,
+                      color: getForegroundColor(color.value),
+                    }}
+                    className='h-6 w-6 rounded-full'
+                  />
+                )
+              })}
             </RadioGroup>
           </div>
         ) : (
-          <Small className='w-full py-2'>Não há cores para selecionar</Small>
+          <Large className='w-full py-2'>Não há cores para selecionar</Large>
         )}
 
         <div className='flex-1' />
@@ -240,7 +240,7 @@ function CartInteraction({
   return (
     <div className='flex w-full flex-col space-y-2'>
       <div className='flex flex-col items-center space-y-1 self-center'>
-        <Label>Quantidade:</Label>
+        <Large>Quantidade:</Large>
         <div className='flex items-center space-x-1 transition-all'>
           <Button
             value='decrement'
