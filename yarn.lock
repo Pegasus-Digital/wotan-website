@@ -1513,6 +1513,11 @@
   dependencies:
     ts-deepmerge "^2.0.1"
 
+"@payloadcms/plugin-seo@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@payloadcms/plugin-seo/-/plugin-seo-2.2.1.tgz#12b65af75d140403546b034c8738fc022c5ec0a5"
+  integrity sha512-EqC+98oAwH0qlqVM/X7/zvKKAvWuHAGj8zzcwNGJN/Q7tIh9NB5isKSxeIXI8e9QxuRzCnR2MVBi0Q/I0SKZTQ==
+
 "@payloadcms/richtext-lexical@^0.7.0":
   version "0.7.0"
   resolved "https://registry.npmjs.org/@payloadcms/richtext-lexical/-/richtext-lexical-0.7.0.tgz"
