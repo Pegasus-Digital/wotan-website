@@ -1,4 +1,7 @@
+import { AdminAuthProvider } from '@/components/admin-auth-provider'
+import ToasterParams from '@/components/render-params'
 import { Sidebar } from '@/components/sidebar'
+import { PegasusStamp } from '@/pegasus/pegasus-stamp'
 import { Toaster } from 'sonner'
 
 interface DashboardLayoutProps {
@@ -7,12 +10,19 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
-    <section className='min-h-screen w-full'>
-      <div className='grid w-full grid-cols-dashboard gap-6 px-16 py-4'>
-        <Sidebar />
+    <section className='flex min-h-screen w-full flex-col'>
+      <AdminAuthProvider>
+        <div className='grid w-full grow grid-cols-dashboard gap-6 px-4 py-4'>
+          <Sidebar />
 
-        {children}
-      </div>
+
+          {children}
+        </div>
+      </AdminAuthProvider>
+      <footer className='w-full bg-wotanRed-500'>
+        <PegasusStamp />
+      </footer>
+      <ToasterParams />
       <Toaster richColors closeButton theme='light' />
     </section>
   )
