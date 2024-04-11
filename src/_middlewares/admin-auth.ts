@@ -1,23 +1,31 @@
-import type { NextRequest } from 'next/server'
+import fetch from 'node-fetch'
 
-// Server-side JWT auth cookie validation
-export async function isAuthenticated(request: NextRequest) {
-  const token = request.cookies.get('payload-token')?.value
+async function isAuthenticated(req) {
+  const token = req.cookies['payload-token']
 
   if (!token) {
     return false
   }
 
-  const meUserReq = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/me`,
-    {
-      headers: {
-        Authorization: `JWT ${token}`,
+  try {
+    const meUserReq = await fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/me`,
+      {
+        headers: {
+          Authorization: `JWT ${token}`,
+        },
       },
-    },
-  )
+    )
 
-  if (meUserReq.ok) {
-    return true
+    if (meUserReq.ok) {
+      return true
+    } else {
+      return false
+    }
+  } catch (error) {
+    console.error('Error checking authentication:', error)
+    return false
   }
 }
+
+export default isAuthenticated
