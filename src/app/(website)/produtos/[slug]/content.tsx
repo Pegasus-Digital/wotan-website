@@ -3,9 +3,11 @@ import { cn } from '@/lib/utils'
 import { Product } from '@/payload/payload-types'
 
 import { Heading } from '@/pegasus/heading'
-import { Image } from '@/components/media/image'
 import { buttonVariants } from '@/components/ui/button'
 import { ProductInteraction } from './(components)/product-interaction'
+import ProductGallery from './(components)/product-gallery'
+import { ProductSlider } from '@/components/product-slider'
+import { RelatedProductsSlider } from './(components)/related-products'
 
 interface ProductPageProps {
   product: Product | null
@@ -32,31 +34,21 @@ export function ProductPageContent({ product }: ProductPageProps) {
   }
 
   return (
-    <section className='relative my-6 flex w-full flex-col items-center justify-center self-center text-primary-foreground tablet:px-6'>
-      <div className='container grid h-min grid-cols-1 text-foreground tablet:grid-cols-2'>
-        <div className='mb-4 grid grid-cols-3 grid-rows-3 gap-x-6 gap-y-2'>
-          <Image
-            imgClassName='col-span-3 row-span-3 w-full border w-full object-cover bg-teal-300 max-h-[640px] rounded-lg shadow-wotan-light'
-            resource={product.featuredImage}
-          />
-
-          {product.images.length > 0
-            ? product.images.map((entry) => (
-                <Image
-                  key={entry.id}
-                  resource={entry.image}
-                  className='h-full w-full'
-                  imgClassName='aspect-square rounded-lg border object-cover object-center col-span-1 row-span-1 shadow-wotan-light w-full h-full'
-                />
-              ))
-            : null}
+    <section className='relative my-6 flex w-full flex-col items-center justify-center gap-12 self-center text-primary-foreground tablet:gap-12 tablet:px-6 desktop:gap-24'>
+      <div className='container flex justify-center'>
+        <div className='flex h-min max-w-screen-xl flex-col gap-6 text-foreground tablet:flex-row'>
+          {/* Galeria de imagens */}
+          <ProductGallery product={product} />
+          {/* Informaçoes e interação */}
+          <ProductInteraction product={product} />
         </div>
-
-        <ProductInteraction product={product} />
       </div>
 
       {/* Related products */}
-      {/* {related && <div>Produtos relacionados:</div>} */}
+      <RelatedProductsSlider
+        relatedProducts={product.relatedProducts}
+        categories={product.categories}
+      />
     </section>
   )
 }
