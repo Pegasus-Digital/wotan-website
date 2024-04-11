@@ -6,11 +6,12 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, useFormState } from 'react-hook-form'
 
-import { Attribute, Category } from '@/payload/payload-types'
+import { Attribute, Category, Media } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
 import { AnimatePresence, motion } from 'framer-motion'
 
+import { formatBytes } from '@/lib/format'
 import { nestCategories } from '@/lib/category-hierarchy'
 
 import {
@@ -25,26 +26,32 @@ import {
 
 import { CategoryList } from './category-list'
 import { AttributeList } from './attribute-list'
+import { ImageUploader } from './image-uploader'
 
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Image } from '@/components/media/image'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { LoadingSpinner } from '@/components/spinner'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
-import { AlertTriangle, ArrowRight, PlusCircle } from 'lucide-react'
+import { AlertTriangle, ArrowRight, PlusCircle, X } from 'lucide-react'
 
 import { createProduct } from '../_logic/actions'
 import { newProductSchema } from '../_logic/validations'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Small } from '@/components/typography/texts'
 
 interface NewProductFormProps {
   setOpen: (state: boolean) => void
 }
 
 export function NewProductForm({ setOpen }: NewProductFormProps) {
+  const [images, setMedia] = useState<Media[]>([])
+  const [featured, setFeatured] = useState<string>('')
   const [isLoading, setLoading] = useState<boolean>(false)
   const [categories, setCategories] = useState<Category[]>([])
   const [attributes, setAttributes] = useState<Attribute[]>([])
@@ -91,6 +98,7 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
   }, [])
 
   const form = useForm<z.infer<typeof newProductSchema>>({
+    mode: 'onChange',
     resolver: zodResolver(newProductSchema),
     defaultValues: {
       sku: '',
@@ -98,7 +106,6 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
       description: '',
       minimumQuantity: 0,
       active: false,
-      featuredImage: new File([], ''),
 
       categories: [],
       attributes: [],
@@ -114,12 +121,15 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
       description,
       minimumQuantity,
       active,
-      featuredImage,
       attributes,
       categories,
     } = values
 
-    console.log('FeaturedImage onSubmit', JSON.stringify(featuredImage))
+    if (!featured || featured === '') {
+      return toast.error(
+        'Você deve escolher uma imagem em destaque para o produto.',
+      )
+    }
 
     const response = await createProduct({
       sku,
@@ -129,7 +139,10 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
       active,
 
       // Placeholder image id
-      featuredImage: 'test',
+      featuredImage: featured,
+      images: images.map((image) => {
+        return { image: image.id }
+      }),
 
       attributes,
       categories,
@@ -217,7 +230,7 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
                           <FormControl>
                             <Input type='text' placeholder='SKU' {...field} />
                           </FormControl>
-                          <FormMessage className='h-0' />
+                          <StyledFormMessage form={form} field='sku' />
                         </FormItem>
                       )}
                     />
@@ -235,7 +248,7 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
                               {...field}
                             />
                           </FormControl>
-                          <FormMessage />
+                          <StyledFormMessage form={form} field='description' />
                         </FormItem>
                       )}
                     />
@@ -261,38 +274,72 @@ export function NewProductForm({ setOpen }: NewProductFormProps) {
                       )}
                     />
 
-                    <FormField
-                      name='featuredImage'
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem className='col-span-2'>
-                          <FormLabel htmlFor='featured'>
-                            Imagem em destaque
-                          </FormLabel>
+                    {/* Fill grid space */}
+                    <div />
 
-                          <FormControl>
-                            {/* <Input id='featured' type='file' {...field} /> */}
-                            <Input
-                              type='file'
-                              onChange={(e) =>
-                                field.onChange(
-                                  e.target.files ? e.target.files[0] : null,
-                                )
-                              }
-                            />
-                          </FormControl>
+                    <div className='col-span-2'>
+                      <ImageUploader setMedia={setMedia} />
+                    </div>
 
-                          <FormDescription>
-                            Escolha uma imagem de até 999x777 px - png, jpg ou
-                            jpeg
-                          </FormDescription>
-                          <StyledFormMessage
-                            form={form}
-                            field='featuredImage'
-                          />
-                        </FormItem>
-                      )}
-                    />
+                    {images.length >= 0 && (
+                      <div className='col-span-2'>
+                        <p className='my-2 text-sm font-medium text-muted-foreground'>
+                          Arquivos salvos
+                        </p>
+                        <div className='space-y-2 pr-3'>
+                          <RadioGroup
+                            onValueChange={(value) => setFeatured(value)}
+                          >
+                            {images.map((file) => {
+                              return (
+                                <div
+                                  key={file.id}
+                                  className='group flex w-full justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 pr-2 transition-all hover:border-slate-300 hover:pr-0'
+                                >
+                                  <div className='flex flex-1 items-center p-2'>
+                                    <div>
+                                      <Image
+                                        resource={file}
+                                        imgClassName='w-24 object-cover'
+                                      />
+                                    </div>
+                                    <div className='ml-2 w-full space-y-2'>
+                                      <div className='flex flex-col justify-between text-sm'>
+                                        <p className='text-muted-foreground '>
+                                          {file.filename}
+                                        </p>
+                                        <p>{formatBytes(file.filesize)}</p>
+
+                                        <div className='mt-1 flex items-center space-x-2'>
+                                          <RadioGroupItem value={file.id} />
+                                          <Small>Imagem em destaque</Small>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <button
+                                    onClick={(e) => {
+                                      e.preventDefault()
+
+                                      setFeatured('')
+
+                                      const filteredImage = images.filter(
+                                        (image) => image.id !== file.id,
+                                      )
+
+                                      setMedia(filteredImage)
+                                    }}
+                                    className='items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex'
+                                  >
+                                    <X size={20} />
+                                  </button>
+                                </div>
+                              )
+                            })}
+                          </RadioGroup>
+                        </div>
+                      </div>
+                    )}
 
                     <FormField
                       name='active'

@@ -36,7 +36,7 @@ export function ProductPageContent({ product }: ProductPageProps) {
       <div className='container grid h-min grid-cols-1 text-foreground tablet:grid-cols-2'>
         <div className='mb-4 grid grid-cols-3 grid-rows-3 gap-x-6 gap-y-2'>
           <Image
-            imgClassName='col-span-3 row-span-3 w-full border w-full object-cover bg-teal-300 max-h-[640px] rounded-lg shadow-wotan-light'
+            imgClassName='col-span-3 row-span-3 w-full border w-full object-cover max-h-[640px] rounded-lg shadow-wotan-light'
             resource={product.featuredImage}
           />
 

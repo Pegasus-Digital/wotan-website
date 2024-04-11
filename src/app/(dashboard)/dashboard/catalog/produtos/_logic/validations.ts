@@ -1,18 +1,13 @@
 import { z } from 'zod'
 
-const ACCEPTED_IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg']
+export const ACCEPTED_IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg']
+
+export const MAX_FILE_SIZE = 8 * 1024 * 1024 // 8 MB
 
 export const newProductSchema = z.object({
   /* Non-optional fields */
   title: z.string().min(3, 'Título do produto deve conter no mínimo 3 letras.'),
   active: z.boolean(),
-  featuredImage: z
-    .any()
-    .refine((file) => !!file, 'É necessário inserir uma imagem de destaque.')
-    .refine(
-      (file) => (ACCEPTED_IMAGE_TYPES.includes(file.type) ? true : false),
-      'Formato não suportado. Utilize imagens .jpg, .jpeg ou .png',
-    ),
   minimumQuantity: z.coerce
     .number({
       required_error: 'Campo deve ser preenchido.',
