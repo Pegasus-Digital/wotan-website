@@ -83,7 +83,7 @@ export default async function WebsiteLayout({
 
           <SearchBar categories={categories} />
 
-          <main className='flex min-h-screen flex-col items-center bg-pattern bg-right bg-repeat-y'>
+          <main className='flex min-h-96 flex-col items-center bg-pattern bg-right bg-repeat-y'>
             {children}
           </main>
 
