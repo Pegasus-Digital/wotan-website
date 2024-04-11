@@ -50,14 +50,13 @@ const Products: CollectionConfig = {
         },
       },
     },
-
     {
       type: 'tabs',
       tabs: [
         {
           label: 'Product Details',
           fields: [
-            { name: 'sku', label: 'SKU', type: 'text' },
+            { name: 'sku', label: 'SKU', type: 'text', required: true },
             {
               name: 'minimumQuantity',
               label: 'Minimum Quantity',
@@ -83,6 +82,7 @@ const Products: CollectionConfig = {
             },
             { name: 'price', type: 'number' },
             { name: 'description', type: 'textarea' },
+            { name: 'tags', type: 'textarea' },
           ],
         },
         {

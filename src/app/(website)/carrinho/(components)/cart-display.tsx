@@ -7,14 +7,11 @@ import { useEffect, useState } from 'react'
 import { Product } from '@/payload/payload-types'
 
 import { Heading } from '@/pegasus/heading'
-import { H2 } from '@/components/typography/headings'
-import { Button, buttonVariants } from '@/pegasus/button'
+import { buttonVariants } from '@/pegasus/button'
 
 import { CartCard } from './cart-card'
-
+import { LoadingSpinner } from '@/components/spinner'
 import { useCartStore } from '@/components/cart-store-provider'
-
-import { ArrowRight } from 'lucide-react'
 
 export function CartDisplay() {
   const { cart } = useCartStore((state) => state)
@@ -22,6 +19,10 @@ export function CartDisplay() {
 
   const [products, setProducts] = useState<Product[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   useEffect(() => {
     if (cart) {
@@ -53,7 +54,12 @@ export function CartDisplay() {
   }, [hasCartLoaded])
 
   if (isLoading) {
-    return <H2>Carregando produtos...</H2>
+    return (
+      <>
+        <Heading variant='h3'>Carregando carrinho...</Heading>
+        <LoadingSpinner />
+      </>
+    )
   }
 
   return (

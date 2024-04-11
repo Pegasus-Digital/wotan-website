@@ -1,9 +1,11 @@
 import Link from 'next/link'
-import { Media } from './media'
-import { Company, Header as HeaderType } from '@/payload/payload-types'
 import { StaticImageData } from 'next/image'
-// import Phone from './icons/phone'
+
+import { Company, Header as HeaderType } from '@/payload/payload-types'
+
+import { Media } from './media'
 import { HeaderNavigation } from './header-navigation'
+
 import { PhoneCall } from 'lucide-react'
 
 type Props = HeaderType & {

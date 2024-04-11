@@ -23,6 +23,33 @@ export const QUERY_PRODUCT_CAROUSEL = `
         }
         categories {
           title
+          parent {
+            title
+          }
+        }
+      }
+    }
+  }
+  populatedDocs {
+    relationTo
+    value {
+      ...on Product{
+        id
+        slug
+        title
+        minimumQuantity
+        featuredImage {
+          mimeType
+          filename
+          width
+          height
+          alt
+        }
+        categories {
+          title
+          parent {
+            title
+          }
         }
       }
     }

@@ -1,15 +1,24 @@
 import { Button } from '@/pegasus/button'
 import { Heading } from '@/pegasus/heading'
+import Image from 'next/image'
 import Link from 'next/link'
 
 export default function NotFound() {
   return (
-    <div className='mx-auto flex min-h-96 max-w-screen-xl items-center justify-start px-4 md:px-8'>
+    <div className='mx-auto flex h-screen min-h-96 max-w-screen-xl flex-col items-center justify-center bg-pattern bg-center bg-no-repeat px-4 md:px-8'>
+      <Image
+        src='/wotan.png'
+        alt='logo-wotan'
+        width={800}
+        height={270}
+        className='mb-4 max-w-96 select-none'
+        quality={100}
+      />
       <div className='mx-auto max-w-lg space-y-3 text-center'>
-        <Heading variant='h2'>Erro 404</Heading>
-        <p className='text-4xl font-semibold  tablet:text-5xl'>
+        {/* <Heading variant='h2'>Erro 404</Heading> */}
+        <Heading variant='h2' className='leading-normal '>
           Página não encontrada
-        </p>
+        </Heading>
         <p className='text-gray-600'>
           Ops, parece que o brinde que você está procurando não foi encontrado.
         </p>

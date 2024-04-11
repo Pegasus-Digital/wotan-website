@@ -15,6 +15,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className='grid w-full grow grid-cols-dashboard gap-6 px-4 py-4'>
           <Sidebar />
 
+
           {children}
         </div>
       </AdminAuthProvider>

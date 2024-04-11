@@ -13,6 +13,7 @@ import {
   getUniqueTypes,
 } from '@/lib/attribute-hooks'
 import { cn } from '@/lib/utils'
+import { getForegroundColor } from '@/lib/color'
 
 import { Attribute, Category, Product } from '@/payload/payload-types'
 
@@ -151,7 +152,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
       <div className='flex flex-wrap items-center space-x-1 space-y-1'>
         {product.categories && (
           <>
-            <Label>Categoria(s):</Label>
+            <Large>Categoria(s):</Large>
             {product.categories?.map((category: Category, index) => (
               <Link
                 key={category.id + '-' + index}
@@ -164,24 +165,22 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
         )}
       </div>
 
-      {product.price && (
+      {/* {product.price && (
         <div className='flex items-center space-x-2 py-1'>
           <Large className='whitespace-nowrap text-2xl'>R$ 24.90</Large>
           <Small className='whitespace-nowrap'>/ un.</Small>
         </div>
-      )}
+      )} */}
 
       {/* Product description */}
-      <Small className='pb-1 leading-snug'>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit,
-        cupiditate harum non aliquam nihil ab. Blanditiis totam modi autem
-        placeat fugit nisi iusto saepe nemo. A possimus dolore dolores aut.
-      </Small>
+      {product.description && (
+        <Large className='py-4 leading-snug'>{product.description}</Large>
+      )}
 
       <div>
-        {colors ? (
+        {colors && colors.length > 0 && (
           <div className='space-y-1'>
-            <Label>Cores:</Label>
+            <Large>Cores:</Large>
 
             <RadioGroup
               onValueChange={(value) => onSelectColor(value)}
@@ -191,21 +190,24 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
                 <RadioGroupItem
                   key={color.id}
                   value={color.value}
-                  style={{ backgroundColor: color.value }}
-                  className='h-6 w-6 rounded-full text-white'
+                  style={{
+                    backgroundColor: color.value,
+                    color: getForegroundColor(color.value),
+                  }}
+                  className='h-6 w-6 rounded-full'
                 />
               ))}
             </RadioGroup>
           </div>
-        ) : (
-          <Small className='w-full py-2'>Não há cores para selecionar</Small>
         )}
       </div>
 
       <div className='w-full font-medium'>
-        <Label className='text-base font-semibold'>Atributos:</Label>
+        {types && types.length > 0 && (
+          <Large className='text-base font-semibold'>Atributos:</Large>
+        )}
         <div className='mt-1 space-y-2'>
-          {types ? (
+          {types &&
             types.map((type) => {
               return (
                 <div key={type} className='w-full tablet:max-w-64'>
@@ -230,12 +232,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
                   </Select>
                 </div>
               )
-            })
-          ) : (
-            <Small className='w-full py-2'>
-              Não há atributos para selecionar
-            </Small>
-          )}
+            })}
         </div>
       </div>
 

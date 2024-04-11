@@ -1,10 +1,14 @@
 'use client'
 
 import * as React from 'react'
+
 import Link from 'next/link'
 import Image from 'next/image'
 
 import { cn } from '@/lib/utils'
+
+import { Header } from '@/payload/payload-types'
+
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -14,8 +18,8 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu'
+
 import { Lead } from './typography/texts'
-import { Header } from '@/payload/payload-types'
 import { getHref } from './link'
 
 type HeaderNavigationProps = Pick<Header['navigation'], 'links' | 'style'>
@@ -76,15 +80,18 @@ function MegaMenuCard({
   return (
     <NavigationMenuLink asChild>
       <a
-        className='flex h-full w-full select-none flex-col justify-end rounded-md bg-wotan p-6 text-center text-primary-foreground no-underline outline-none focus:shadow-md'
+        className='flex h-full w-full select-none flex-col justify-end rounded-md bg-wotan px-2 py-6 text-center text-primary-foreground no-underline outline-none focus:shadow-md'
         href='/quem-somos'
       >
-        <img
+        <Image
           className='h-fit w-full'
-          src={
-            'https://wotan-site.medialinesistemas.com.br/storage/company/footer/10051620230522646b688c4118c.png'
-          }
+          alt='wotan logo'
+          src={'/wotan-white.png'}
+          width={300}
+          height={200}
+          priority
         />
+
         {/* <Image alt='' src='/' width={156} height={54} /> */}
         <div className='mb-2 mt-4 text-lg font-medium'>{title}</div>
         <Lead className='text-sm leading-tight text-primary-foreground'>

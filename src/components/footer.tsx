@@ -1,22 +1,28 @@
-import { FacebookIcon, Mail, MapPin, Phone } from 'lucide-react'
+import Link from 'next/link'
+import { getHref } from './link'
+import { StaticImageData } from 'next/image'
+
+import { Company, Footer as FooterType } from '@/payload/payload-types'
+
+import { Image } from './media/image'
+
 import {
   LinkedInLogoIcon,
   TwitterLogoIcon,
   InstagramLogoIcon,
 } from '@radix-ui/react-icons'
+import { FacebookIcon, Mail, MapPin, Phone } from 'lucide-react'
 
-import { Lead, LinkIcon, NavLink, Small } from './typography/texts'
-import { Company, Footer as FooterType, Setting } from '@/payload/payload-types'
-import { StaticImageData } from 'next/image'
-import { Button } from '@/pegasus/button'
-import Link from 'next/link'
+import { Lead, LinkIcon, Small } from './typography/texts'
+
+import { Button, buttonVariants } from '@/pegasus/button'
 import { PegasusStamp } from '@/pegasus/pegasus-stamp'
-import CMSLink, { getHref } from './link'
 
+// TODO: Acho que da pra deixar essa tipagem mais limpa
 type FooterProps = FooterType & {
   staticImage?: StaticImageData
   id?: string
-} & Pick<Company, 'adress' | 'contact'>
+} & Pick<Company, 'adress' | 'contact' | 'social'>
 
 export function Footer({
   logo,
@@ -26,6 +32,7 @@ export function Footer({
   id,
   adress,
   contact,
+  social,
 }: FooterProps) {
   return (
     <footer className=' mt-auto w-full  bg-wotanRed-500 bg-footer	 text-primary-foreground backdrop-blur desktop:min-h-96'>
@@ -33,54 +40,79 @@ export function Footer({
       <div className='container flex w-full max-w-screen-desktop flex-col items-center justify-center gap-4 py-6 tablet:flex-row desktop:gap-8 '>
         {/* Logo and Company Info */}
         <div className='flex w-full justify-center  tablet:w-2/5 desktop:w-1/4'>
-          <div className='flex min-w-80 shrink flex-col gap-4 text-start'>
-            <img
-              alt='Wotan Logo'
-              src='https://wotan-site.medialinesistemas.com.br/storage/company/footer/10051620230522646b688c4118c.png'
-              className='max-h-[200px] w-full max-w-80 px-4'
+          <div className='flex min-w-80 shrink flex-col items-center gap-4 text-start tablet:items-start'>
+            <Image
+              resource={logo}
+              imgClassName='max-h-[200px] w-full max-w-80 px-4 contrast-200 bg-transparent'
+              className='bg-transparent'
             />
 
             {companyInfo.showAddress === true && adress && (
               <Small className='flex items-center whitespace-nowrap leading-snug'>
                 <MapPin className='mr-2 h-5 w-5' />
-                {adress.street}
-                {', '}
-                {adress.number}
-                {' - '}
-                {adress.neighborhood}
-                {/* {', '} */}
+
+                {`${adress.street}, ${adress.number} - ${adress.neighborhood}`}
                 <br />
-                {adress.city}
-                {' - '}
-                {adress.state}
-                {', '}
-                {adress.cep}
+                {`${adress.city} - ${adress.state}, ${adress.cep}`}
               </Small>
             )}
 
             {companyInfo.showPhone === true && (
-              <Small className='flex items-center whitespace-nowrap'>
-                <Phone className='mr-2 h-5 w-5' />
-                {contact.phone}
-              </Small>
+              <Link
+                className='flex items-center'
+                target='_blank'
+                href={`tel:${contact.phone}`}
+              >
+                <Phone className='h-5 w-5' />
+                <Small className={buttonVariants({ variant: 'linkHover2' })}>
+                  {contact.phone}
+                </Small>
+              </Link>
             )}
 
             {companyInfo.showEmail === true && (
-              <Small className='flex items-center whitespace-nowrap'>
-                <Mail className='mr-2 h-5 w-5' />
-                {contact.email}
-              </Small>
+              <Link
+                className='flex items-center'
+                target='_blank'
+                href={`mailto:${contact.email}`}
+              >
+                <Mail className='h-5 w-5' />
+                <Small className={buttonVariants({ variant: 'linkHover2' })}>
+                  {contact.email}
+                </Small>
+              </Link>
             )}
 
-            <div className='flex items-center'>
-              <Small className='mr-5 whitespace-nowrap'>Redes sociais</Small>
-              <div className='flex space-x-2'>
-                <LinkIcon href='/' Icon={InstagramLogoIcon} />
-                <LinkIcon href='/' Icon={LinkedInLogoIcon} />
-                <LinkIcon href='/' Icon={TwitterLogoIcon} />
-                <LinkIcon href='/' Icon={FacebookIcon} />
-              </div>
-            </div>
+            {companyInfo.showSocial && (
+              <section className='flex items-center'>
+                <Small className='mr-5 whitespace-nowrap'>Redes sociais</Small>
+                <div className='flex space-x-2'>
+                  {social.instagram && (
+                    <LinkIcon
+                      target='_blank'
+                      href={social.instagram}
+                      Icon={InstagramLogoIcon}
+                    />
+                  )}
+
+                  {social.linkedin && (
+                    <LinkIcon
+                      target='_blank'
+                      href={social.linkedin}
+                      Icon={LinkedInLogoIcon}
+                    />
+                  )}
+
+                  {social.facebook && (
+                    <LinkIcon
+                      target='_blank'
+                      href={social.facebook}
+                      Icon={FacebookIcon}
+                    />
+                  )}
+                </div>
+              </section>
+            )}
           </div>
         </div>
 
@@ -118,22 +150,22 @@ export function Footer({
   )
 }
 
-// interface FooterColumnProps {
-//   title: string
-//   links: { title?: string; href?: string; id?: string }[]
-// }
-
 type FooterColumnProps = Pick<FooterProps['columns'][0], 'title' | 'links'>
 
 function FooterColumn({ title, links }: FooterColumnProps) {
   return (
-    <nav className='flex shrink flex-col space-y-1 text-start'>
+    <nav className='flex shrink flex-col justify-center space-y-1 text-center tablet:justify-start tablet:text-start'>
       <Lead className='my-3 whitespace-nowrap text-base font-bold text-primary-foreground tablet:text-xl'>
         {title.label}
       </Lead>
 
       {links.map((child, index) => (
-        <Button variant='linkHover2' key={index} asChild className='self-start'>
+        <Button
+          variant='linkHover2'
+          key={index}
+          asChild
+          className='self-center text-center tablet:self-start tablet:text-start'
+        >
           <Link href={getHref({ ...child.link })}>{child.link.label}</Link>
         </Button>
       ))}

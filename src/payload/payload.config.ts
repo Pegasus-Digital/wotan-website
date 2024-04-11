@@ -16,6 +16,7 @@ import { Budget } from './budget'
 import { Attributes, AttributeTypes } from './products/atributes'
 import Clients from './clients'
 import Salespersons from './salespersons'
+import { Contact } from './contact'
 
 export default buildConfig({
   admin: {
@@ -42,6 +43,7 @@ export default buildConfig({
     Pages,
     Clients,
     Salespersons,
+    Contact,
   ],
   globals: [Settings],
   // database-adapter-config-start

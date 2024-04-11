@@ -1,29 +1,27 @@
 'use client'
 
 import Link from 'next/link'
+import { FormEvent } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 
-import { useCartStore } from './cart-store-provider'
+import { toast } from 'sonner'
+
+import { NestedCategory } from '@/lib/category-hierarchy'
 
 import { Input } from './ui/input'
-import { Button, buttonVariants } from './ui/button'
-
-import { Large } from './typography/texts'
-
-import { Heart, Menu, ShoppingCart, Search, SearchX } from 'lucide-react'
-
-import { useSearchParams, useRouter } from 'next/navigation'
-import { FormEvent } from 'react'
-import { toast } from 'sonner'
 import { CategoriesMenu } from './categories-menu'
-import { Category } from '@/payload/payload-types'
-import { NestedCategory, nestCategories } from '@/lib/categoryHierarchy'
+import { FavoritesDrawer } from './favorites-drawer'
+import { Button, buttonVariants } from './ui/button'
+import { useCartStore } from './cart-store-provider'
+
+import { ShoppingCart, Search, SearchX } from 'lucide-react'
 
 export function SearchBar({ categories }: { categories: NestedCategory[] }) {
   const searchParams = useSearchParams()
 
   const router = useRouter()
 
-  const { cart, favorites } = useCartStore((state) => state)
+  const { cart } = useCartStore((state) => state)
 
   function handleSearch(e: FormEvent<HTMLFormElement>, query: string) {
     e.preventDefault()
@@ -51,6 +49,7 @@ export function SearchBar({ categories }: { categories: NestedCategory[] }) {
             Search
           </label>
           <Input
+            id='search'
             name='search'
             placeholder='Estou procurando por...'
             // minLength={3}
@@ -70,19 +69,7 @@ export function SearchBar({ categories }: { categories: NestedCategory[] }) {
 
         {/* Actions */}
         <div className='hidden gap-2 text-primary-foreground tablet:flex'>
-          {/* Favorite items drawer */}
-          <Button
-            className='group relative hover:bg-primary hover:text-primary-foreground'
-            size='icon'
-            variant='ghost'
-          >
-            <Heart className='h-6 w-6 group-hover:fill-white' />
-            {favorites.length > 0 && (
-              <span className='absolute -right-2 -top-2 flex aspect-square min-h-5 w-fit items-center justify-center rounded-full bg-wotanRed-400 text-center leading-none'>
-                {favorites.length}
-              </span>
-            )}
-          </Button>
+          <FavoritesDrawer />
 
           {/* Redirect to shopping cart */}
           <Link

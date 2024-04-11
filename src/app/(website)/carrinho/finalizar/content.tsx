@@ -1,6 +1,5 @@
-import { Heading } from '@/pegasus/heading'
+import { ContentHeader } from '@/components/content'
 import { FinishEstimateForm } from './(form)/finish-estimate-form'
-import { Content, ContentHeader } from '@/components/content'
 
 export function FinishContent() {
   return (

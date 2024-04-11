@@ -9,6 +9,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from './ui/collapsible'
+
 import { ChevronDown } from 'lucide-react'
 
 interface SidebarNavItem {

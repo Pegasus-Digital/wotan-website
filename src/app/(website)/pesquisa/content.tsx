@@ -1,6 +1,9 @@
+import Link from 'next/link'
 import { cn } from '@/lib/utils'
 
-import { Category, Product } from '@/payload/payload-types'
+import { LowImpactHero } from '@/app/_sections/heros/lowImpact'
+
+import { Product } from '@/payload/payload-types'
 
 import {
   Pagination,
@@ -10,13 +13,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination'
+import { ProductCard } from '@/components/product-card'
+import { Button, buttonVariants } from '@/components/ui/button'
 
 import { Heading } from '@/pegasus/heading'
-import { Button, buttonVariants } from '@/components/ui/button'
-import { ProductCard } from '@/components/product-card'
-import Link from 'next/link'
-import { Hero } from '@/components/heros'
-import { LowImpactHero } from '@/app/_sections/heros/lowImpact'
 
 interface PaginationParams {
   totalDocs: number
@@ -41,8 +41,13 @@ export async function SearchPageContent({
   pagination,
   search,
 }: CategoryPageProps) {
-  const prevPage = pagination.hasPrevPage ? `?page=${pagination.prevPage}` : ''
-  const nextPage = pagination.hasNextPage ? `?page=${pagination.nextPage}` : ''
+  const prevPage = pagination.hasPrevPage
+    ? `?query=${search}&page=${pagination.nextPage}`
+    : ''
+
+  const nextPage = pagination.hasNextPage
+    ? `?query=${search}&page=${pagination.nextPage}`
+    : ''
 
   return (
     <section className='w-full '>
@@ -65,16 +70,7 @@ export async function SearchPageContent({
         {/* Products grid */}
         <div className='grid max-w-screen-desktop grid-flow-row grid-cols-2 gap-4 tablet:grid-cols-3 desktop:grid-cols-4'>
           {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              id={product.id}
-              title={product.title}
-              categories={product.categories.map(
-                (category: Category) => category.title,
-              )}
-              featuredImage={product.featuredImage}
-              minimumQuantity={product.minimumQuantity}
-            />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
         <Pagination className='sticky w-full py-6'>

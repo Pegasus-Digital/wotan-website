@@ -13,6 +13,7 @@ import {
   FileUp,
   UserCog,
   LayoutTemplate,
+  MessageSquareText,
 } from 'lucide-react'
 
 import { Large, List, Muted } from './typography/texts'
@@ -40,6 +41,7 @@ export function Sidebar() {
               icon={LayoutDashboard}
               text='Dashboard'
             />
+
 
             <SidebarCollapsible
               text='Catálogo'

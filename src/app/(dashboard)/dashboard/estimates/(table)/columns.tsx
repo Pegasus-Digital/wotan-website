@@ -109,26 +109,26 @@ export const columns: ColumnDef<Budget>[] = [
       )
     },
   },
-  {
-    accessorKey: 'total',
-    header: 'Total',
-    cell: ({ row }) => {
-      const value = row.getValue('total')
+  // {
+  //   accessorKey: 'total',
+  //   header: 'Total',
+  //   cell: ({ row }) => {
+  //     const value = row.getValue('total')
 
-      if (!value) {
-        return <span className='whitespace-nowrap'>Indefinido</span>
-      }
+  //     if (!value) {
+  //       return <span className='whitespace-nowrap'>Indefinido</span>
+  //     }
 
-      const total: number = Number.parseInt(row.getValue('total'))
+  //     const total: number = Number.parseInt(row.getValue('total'))
 
-      const formattedTotal = new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-      }).format(total)
+  //     const formattedTotal = new Intl.NumberFormat('pt-BR', {
+  //       style: 'currency',
+  //       currency: 'BRL',
+  //     }).format(total)
 
-      return <span>{formattedTotal}</span>
-    },
-  },
+  //     return <span>{formattedTotal}</span>
+  //   },
+  // },
   {
     id: 'budget-details',
     cell: ({ row }) => {
@@ -238,7 +238,7 @@ export const columns: ColumnDef<Budget>[] = [
                                           style={{
                                             backgroundColor: attribute.value,
                                           }}
-                                          className='ml-2 h-5 w-5 rounded-full'
+                                          className='ml-2 h-5 w-5 rounded-full border-2'
                                         />
                                       )}
                                   </Badge>
