@@ -24,11 +24,11 @@ import WotanLogo from './logo-wotan'
 import { useAdminAuth } from './admin-auth-provider'
 
 export function Sidebar() {
-  const { user } = useAdminAuth()
+  const { status } = useAdminAuth()
   return (
     <>
-      {user && (
-        <aside className='flex h-full max-h-[calc(100vh-32px)] min-h-[calc(100vh-96px)] flex-col rounded-sm border px-4 py-1'>
+      {status === 'loggedIn' && (
+        <aside className='sticky top-4 flex h-full max-h-[calc(100vh-96px)]  flex-col rounded-sm border px-4 py-1'>
           <div className='mt-2 flex items-center gap-4'>
             <WotanLogo className='h-8 w-8' />
             <Large className='text-2xl text-wotanRed-500'>Wotan Brindes</Large>
@@ -42,7 +42,6 @@ export function Sidebar() {
               text='Dashboard'
             />
 
-
             <SidebarCollapsible
               text='Catálogo'
               icon={ScanBarcode}
@@ -50,12 +49,12 @@ export function Sidebar() {
                 {
                   text: 'Produtos',
                   icon: Boxes,
-                  href: '/dashboard/catalog/products',
+                  href: '/dashboard/catalog/produtos',
                 },
                 {
-                  text: 'Categorias',
+                  text: 'Propriedades',
                   icon: Tag,
-                  href: '/dashboard/catalog/categories',
+                  href: '/dashboard/catalog/propriedades',
                 },
               ]}
             />
