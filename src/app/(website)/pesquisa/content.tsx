@@ -41,8 +41,13 @@ export async function SearchPageContent({
   pagination,
   search,
 }: CategoryPageProps) {
-  const prevPage = pagination.hasPrevPage ? `?page=${pagination.prevPage}` : ''
-  const nextPage = pagination.hasNextPage ? `?page=${pagination.nextPage}` : ''
+  const prevPage = pagination.hasPrevPage
+    ? `?query=${search}&page=${pagination.nextPage}`
+    : ''
+
+  const nextPage = pagination.hasNextPage
+    ? `?query=${search}&page=${pagination.nextPage}`
+    : ''
 
   return (
     <section className='w-full '>
