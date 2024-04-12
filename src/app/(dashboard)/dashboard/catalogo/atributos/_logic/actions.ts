@@ -24,7 +24,7 @@ export async function createAttribute(
       },
     })
 
-    revalidatePath('/dashboard/catalog/propriedades')
+    revalidatePath('/dashboard/catalogo/atributos')
 
     return {
       data: { attribute: response },
@@ -80,7 +80,7 @@ export async function deleteAttribute(
       }
     }
 
-    revalidatePath('/dashboard/catalog/propriedades')
+    revalidatePath('/dashboard/catalogo/atributos')
 
     return {
       data: null,
@@ -123,7 +123,7 @@ export async function updateAttribute(
       }
     }
 
-    revalidatePath('/dashboard/catalog/propriedades')
+    revalidatePath('/dashboard/catalogo/atributos')
 
     return {
       data: { attribute: response.docs[0] },
