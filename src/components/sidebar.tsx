@@ -1,19 +1,20 @@
 'use client'
 
 import {
-  Tag,
-  Boxes,
   Users,
   Settings,
   PackageOpen,
-  ScanBarcode,
   PackageCheck,
   LayoutDashboard,
-  MessageCircleMore,
+  HelpCircle,
   FileUp,
   UserCog,
-  LayoutTemplate,
-  MessageSquareText,
+  Mailbox,
+  ShoppingCart,
+  Barcode,
+  Tags,
+  Bookmark,
+  AppWindow,
 } from 'lucide-react'
 
 import { Large, List, Muted } from './typography/texts'
@@ -44,21 +45,21 @@ export function Sidebar() {
 
             <SidebarCollapsible
               text='Catálogo'
-              icon={ScanBarcode}
+              icon={ShoppingCart}
               navItems={[
                 {
                   text: 'Produtos',
-                  icon: Boxes,
+                  icon: Barcode,
                   href: '/dashboard/catalogo/produtos',
                 },
                 {
                   text: 'Categorias',
-                  icon: Tag,
+                  icon: Tags,
                   href: '/dashboard/catalogo/categorias',
                 },
                 {
                   text: 'Atributos',
-                  icon: Tag,
+                  icon: Bookmark,
                   href: '/dashboard/catalogo/atributos',
                 },
               ]}
@@ -80,7 +81,7 @@ export function Sidebar() {
               text='Clientes'
             />
             <SidebarNavigationItem
-              icon={MessageSquareText}
+              icon={Mailbox}
               href='/dashboard/contato'
               text='Contato'
             />
@@ -88,7 +89,7 @@ export function Sidebar() {
             <SidebarSeparator title='admin' />
 
             <SidebarNavigationItem
-              icon={LayoutTemplate}
+              icon={AppWindow}
               href='/dashboard/pages'
               text='Páginas'
             />
@@ -113,9 +114,9 @@ export function Sidebar() {
 
           <div className='mb-2 space-y-1'>
             <SidebarNavigationItem
-              icon={MessageCircleMore}
-              href='/dashboard/feedback'
-              text='Feedback'
+              icon={HelpCircle}
+              href='/dashboard/ajuda'
+              text='Ajuda'
             />
           </div>
         </aside>
