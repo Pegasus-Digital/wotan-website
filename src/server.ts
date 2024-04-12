@@ -2,6 +2,7 @@ import dotenv from 'dotenv'
 import next from 'next'
 import nextBuild from 'next/dist/build'
 import path from 'path'
+import cookieParser from 'cookie-parser' // Import cookie-parser
 
 dotenv.config({
   path: path.resolve(__dirname, '../.env'),
@@ -9,9 +10,12 @@ dotenv.config({
 
 import express from 'express'
 import payload from 'payload'
+import isAuthenticated from './_middlewares/admin-auth'
 
 const app = express()
 const PORT = process.env.PORT || 3000
+
+app.use(cookieParser())
 
 const start = async (): Promise<void> => {
   await payload.init({
@@ -21,6 +25,34 @@ const start = async (): Promise<void> => {
     },
     secret: process.env.PAYLOAD_SECRET || '',
   })
+
+  const router = express.Router()
+
+  router.use(payload.authenticate)
+
+  const dashboardMiddleware = (req, res, next) => {
+    // Check if the requested URL path starts with /dashboard
+
+    // TODO find better solution for next server actions
+    if (req.path !== '/login' && !req.headers['next-action']) {
+      isAuthenticated(req).then((loggedIn) => {
+        if (!loggedIn) {
+          res.clearCookie('payload-token')
+
+          const redirectUrl = `/dashboard/login?error=${encodeURIComponent(
+            'Você deve estar logado para acessar o painel de Administrador',
+          )}&redirect=${encodeURIComponent(req.originalUrl)}`
+          res.redirect(redirectUrl)
+        } else {
+          next()
+        }
+      })
+    }
+    // Move to the next middleware or route handler
+    next()
+  }
+
+  app.use('/dashboard', dashboardMiddleware)
 
   if (process.env.NEXT_BUILD) {
     app.listen(PORT, async () => {

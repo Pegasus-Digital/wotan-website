@@ -53,6 +53,7 @@ export interface Product {
   attributes?: (string | Attribute)[] | null;
   price?: number | null;
   description?: string | null;
+  tags?: string | null;
   featuredImage: string | Media;
   images?:
     | {
@@ -94,7 +95,7 @@ export interface AttributeType {
  */
 export interface Media {
   id: string;
-  alt: string;
+  alt?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -111,6 +112,7 @@ export interface Media {
 export interface Category {
   id: string;
   title: string;
+  active: boolean;
   slug?: string | null;
   parent?: (string | null) | Category;
   breadcrumbs?:

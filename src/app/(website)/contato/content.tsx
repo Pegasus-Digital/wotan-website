@@ -130,7 +130,7 @@ export function ContactContent({ address, contact }) {
   }
 
   return (
-    <section className='mb-6 w-full px-6 text-primary-foreground'>
+    <section className='mb-6 flex w-full flex-col items-center  px-6 text-primary-foreground'>
       <LowImpactHero title='Contato' />
 
       <div className='container flex max-w-screen-desktop flex-col items-center rounded-lg bg-gift bg-cover bg-center p-4 text-center desktop:p-10'>

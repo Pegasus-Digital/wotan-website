@@ -51,7 +51,7 @@ export async function CategoryPageContent({
         {products.length === 0 && (
           <div className='my-12 flex flex-col items-center justify-center space-y-4 rounded-lg text-center text-foreground'>
             <Heading variant='h3' className='text-foreground'>
-              Não encontramos produtos para essa categoria.
+              Não encontramos produtos nesta categoria.
             </Heading>
 
             <Link

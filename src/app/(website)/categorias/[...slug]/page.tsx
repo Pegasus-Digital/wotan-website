@@ -14,6 +14,9 @@ export default async function CategoryPage({ params, searchParams }) {
       slug: {
         equals: category,
       },
+      active: {
+        not_equals: false,
+      },
     },
     limit: 1,
     pagination: false,
@@ -34,10 +37,6 @@ export default async function CategoryPage({ params, searchParams }) {
     page: page,
   })
 
-  if (paginationParams.totalDocs <= 0) {
-    return notFound()
-  }
-
   return (
     <CategoryPageContent
       products={docs}
@@ -51,5 +50,21 @@ export async function generateMetadata({
   params,
   searchParams,
 }): Promise<Metadata> {
-  return { title: `Buscando por '${params.slug[params.slug.length - 1]}'` }
+  const category: string = params.slug[params.slug.length - 1]
+
+  const res = await payload.find({
+    collection: 'categories',
+    where: {
+      slug: {
+        equals: category,
+      },
+      active: {
+        not_equals: false,
+      },
+    },
+    limit: 1,
+    pagination: false,
+  })
+
+  return { title: `${res.docs[0].title}` }
 }

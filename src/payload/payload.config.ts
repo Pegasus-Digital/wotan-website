@@ -4,6 +4,9 @@ import { slateEditor } from '@payloadcms/richtext-slate'
 import nestedDocs from '@payloadcms/plugin-nested-docs'
 // import search from '@payloadcms/plugin-search'
 
+import type { GenerateTitle } from '@payloadcms/plugin-seo/types'
+import seo from '@payloadcms/plugin-seo'
+
 import { webpackBundler } from '@payloadcms/bundler-webpack'
 import { Settings } from './settings'
 import Users from './users'
@@ -16,6 +19,11 @@ import { Budget } from './budget'
 import { Attributes, AttributeTypes } from './products/atributes'
 import Clients from './clients'
 import Salespersons from './salespersons'
+import { seed } from './endpoints/seed'
+
+const generateTitle: GenerateTitle = () => {
+  return 'Wotan Brindes'
+}
 import { Contact } from './contact'
 
 export default buildConfig({
@@ -58,12 +66,26 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(__dirname, 'payload-types.ts'),
   },
+  endpoints: [
+    // The seed endpoint is used to populate the database with some example data
+    // You should delete this endpoint before deploying your site to production
+    {
+      path: '/seed',
+      method: 'get',
+      handler: seed,
+    },
+  ],
   plugins: [
     nestedDocs({
       collections: ['categories'],
       generateLabel: (_, doc) => doc.title as string,
       generateURL: (docs) =>
         docs.reduce((url, doc) => `${url}/${doc.slug}`, ''),
+    }),
+    seo({
+      collections: ['pages', 'products'],
+      generateTitle,
+      uploadsCollection: 'media',
     }),
     // search({
     //   collections: ['products'],
