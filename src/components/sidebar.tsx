@@ -49,30 +49,40 @@ export function Sidebar() {
                 {
                   text: 'Produtos',
                   icon: Boxes,
-                  href: '/dashboard/catalog/produtos',
+                  href: '/dashboard/catalogo/produtos',
                 },
                 {
-                  text: 'Propriedades',
+                  text: 'Categorias',
                   icon: Tag,
-                  href: '/dashboard/catalog/propriedades',
+                  href: '/dashboard/catalogo/categorias',
+                },
+                {
+                  text: 'Atributos',
+                  icon: Tag,
+                  href: '/dashboard/catalogo/atributos',
                 },
               ]}
             />
 
             <SidebarNavigationItem
               icon={PackageOpen}
-              href='/dashboard/estimates'
+              href='/dashboard/orcamentos'
               text='Orçamentos'
             />
             <SidebarNavigationItem
               icon={PackageCheck}
-              href='/dashboard/orders'
+              href='/dashboard/pedidos'
               text='Pedidos'
             />
             <SidebarNavigationItem
               icon={Users}
-              href='/dashboard/customers'
+              href='/dashboard/clientes'
               text='Clientes'
+            />
+            <SidebarNavigationItem
+              icon={MessageSquareText}
+              href='/dashboard/contato'
+              text='Contato'
             />
 
             <SidebarSeparator title='admin' />
@@ -84,7 +94,7 @@ export function Sidebar() {
             />
             <SidebarNavigationItem
               icon={UserCog}
-              href='/dashboard/users'
+              href='/dashboard/usuarios'
               text='Usuários'
             />
             <SidebarNavigationItem
