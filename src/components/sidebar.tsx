@@ -1,19 +1,20 @@
 'use client'
 
 import {
-  Tag,
-  Boxes,
   Users,
   Settings,
   PackageOpen,
-  ScanBarcode,
   PackageCheck,
   LayoutDashboard,
-  MessageCircleMore,
+  HelpCircle,
   FileUp,
   UserCog,
-  LayoutTemplate,
-  MessageSquareText,
+  Mailbox,
+  ShoppingCart,
+  Barcode,
+  Tags,
+  Bookmark,
+  AppWindow,
 } from 'lucide-react'
 
 import { Large, List, Muted } from './typography/texts'
@@ -44,47 +45,57 @@ export function Sidebar() {
 
             <SidebarCollapsible
               text='Catálogo'
-              icon={ScanBarcode}
+              icon={ShoppingCart}
               navItems={[
                 {
                   text: 'Produtos',
-                  icon: Boxes,
-                  href: '/dashboard/catalog/produtos',
+                  icon: Barcode,
+                  href: '/dashboard/catalogo/produtos',
                 },
                 {
-                  text: 'Propriedades',
-                  icon: Tag,
-                  href: '/dashboard/catalog/propriedades',
+                  text: 'Categorias',
+                  icon: Tags,
+                  href: '/dashboard/catalogo/categorias',
+                },
+                {
+                  text: 'Atributos',
+                  icon: Bookmark,
+                  href: '/dashboard/catalogo/atributos',
                 },
               ]}
             />
 
             <SidebarNavigationItem
               icon={PackageOpen}
-              href='/dashboard/estimates'
+              href='/dashboard/orcamentos'
               text='Orçamentos'
             />
             <SidebarNavigationItem
               icon={PackageCheck}
-              href='/dashboard/orders'
+              href='/dashboard/pedidos'
               text='Pedidos'
             />
             <SidebarNavigationItem
               icon={Users}
-              href='/dashboard/customers'
+              href='/dashboard/clientes'
               text='Clientes'
+            />
+            <SidebarNavigationItem
+              icon={Mailbox}
+              href='/dashboard/contato'
+              text='Contato'
             />
 
             <SidebarSeparator title='admin' />
 
             <SidebarNavigationItem
-              icon={LayoutTemplate}
+              icon={AppWindow}
               href='/dashboard/pages'
               text='Páginas'
             />
             <SidebarNavigationItem
               icon={UserCog}
-              href='/dashboard/users'
+              href='/dashboard/usuarios'
               text='Usuários'
             />
             <SidebarNavigationItem
@@ -103,9 +114,9 @@ export function Sidebar() {
 
           <div className='mb-2 space-y-1'>
             <SidebarNavigationItem
-              icon={MessageCircleMore}
-              href='/dashboard/feedback'
-              text='Feedback'
+              icon={HelpCircle}
+              href='/dashboard/ajuda'
+              text='Ajuda'
             />
           </div>
         </aside>

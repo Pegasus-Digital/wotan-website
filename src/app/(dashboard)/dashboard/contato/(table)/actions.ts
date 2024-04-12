@@ -19,7 +19,7 @@ export async function readTask({ message }: ReadTaskProps) {
       },
     })
 
-    revalidatePath('/dashboard/contact')
+    revalidatePath('/dashboard/contato')
   } catch (err) {
     console.log(err)
     return {
