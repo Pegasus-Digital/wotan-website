@@ -30,28 +30,12 @@ const start = async (): Promise<void> => {
 
   router.use(payload.authenticate)
 
-  // router.get('/', (req, res, next) => {
-  //   isAuthenticated(req).then((loggedIn) => {
-  //     // console.log(req.path)
-  //     if (!loggedIn && req.path !== '/login') {
-  //       res.clearCookie('payload-token')
-
-  //       const redirectUrl = `/dashboard/login?error=${encodeURIComponent(
-  //         'Você deve estar logado para acessar o painel de Administrador',
-  //       )}&redirect=${encodeURIComponent(req.originalUrl)}`
-  //       res.redirect(redirectUrl)
-  //     } else {
-  //       next()
-  //     }
-  //   })
-  // })
-
   const dashboardMiddleware = (req, res, next) => {
     // Check if the requested URL path starts with /dashboard
-    // console.log(req.path)
-    if (req.path !== '/login') {
+
+    // TODO find better solution for next server actions
+    if (req.path !== '/login' && !req.headers['next-action']) {
       isAuthenticated(req).then((loggedIn) => {
-        // console.log(req.path)
         if (!loggedIn) {
           res.clearCookie('payload-token')
 
