@@ -27,12 +27,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
         {/* Actions Wrapper */}
         <div className='absolute bottom-2 flex w-full items-center justify-center gap-2.5 transition duration-200 tablet:translate-y-10 tablet:opacity-0 tablet:group-hover:translate-y-0 tablet:group-hover:opacity-100'>
-          <ProductCardActions
-            productId={product.id}
-            productName={product.title}
-            productSlug={product.slug}
-            minimumQuantity={product.minimumQuantity}
-          />
+          <ProductCardActions product={product} />
         </div>
       </CardContent>
 

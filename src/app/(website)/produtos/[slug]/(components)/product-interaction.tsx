@@ -26,7 +26,7 @@ import { Button } from '@/components/ui/button'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 import { Heading } from '@/pegasus/heading'
-import { Large, Muted, Small } from '@/components/typography/texts'
+import { Large, Muted } from '@/components/typography/texts'
 
 import { Heart, PlusCircle, ShoppingCart } from 'lucide-react'
 
@@ -77,6 +77,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
   const types = otherAttributes ? getUniqueTypes(otherAttributes) : null
 
   function onAmountChange(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault()
     const type = e.currentTarget.value
     const quantity = Math.abs(parseInt(e.currentTarget.innerText))
 
@@ -98,7 +99,9 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
     }
   }
 
-  function onAddToCart() {
+  function onAddToCart(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault()
+
     add({ ...itemState, id: uuidv4() })
 
     toast.success('Produto adicionado ao carrinho.', {
@@ -106,7 +109,9 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
     })
   }
 
-  function onToggleFavorite() {
+  function onToggleFavorite(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault()
+
     // Guard clause
     if (!isFavorite) {
       addFavorite(product.id)
@@ -146,8 +151,8 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
 
   return (
     <div className='flex h-full flex-col space-y-2 px-4'>
-      <Heading variant='h2'>{product.title}</Heading>
       <Muted>Código: {product.sku}</Muted>
+      <Heading variant='h2'>{product.title}</Heading>
 
       <div className='flex flex-wrap items-center space-x-1 space-y-1'>
         {product.categories && (
@@ -210,7 +215,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
           {types &&
             types.map((type) => {
               return (
-                <div key={type} className='w-full tablet:max-w-64'>
+                <div key={type} className='w-full'>
                   <Label>{type}:</Label>
 
                   <Select

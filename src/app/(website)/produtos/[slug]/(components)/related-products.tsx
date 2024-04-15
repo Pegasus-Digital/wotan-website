@@ -1,3 +1,4 @@
+import payload from 'payload'
 import { Product } from '@/payload/payload-types'
 
 import {
@@ -11,8 +12,6 @@ import {
 import { ProductCard } from '@/components/product-card'
 
 import { Heading } from '@/pegasus/heading'
-
-import payload from 'payload'
 import { Lead } from '@/components/typography/texts'
 
 // TODO: Acho que da pra simplificar essas tipagens
@@ -21,7 +20,7 @@ export type RelatedProductsSliderProps = Pick<
   'categories' | 'relatedProducts'
 >
 
-async function gerRelated({
+async function getRelated({
   relatedProducts,
   categories,
 }: RelatedProductsSliderProps) {
@@ -47,7 +46,7 @@ export async function RelatedProductsSlider({
   relatedProducts,
   categories,
 }: RelatedProductsSliderProps) {
-  const carousel = await gerRelated({ relatedProducts, categories })
+  const carousel = await getRelated({ relatedProducts, categories })
 
   if (!carousel) {
     return null
