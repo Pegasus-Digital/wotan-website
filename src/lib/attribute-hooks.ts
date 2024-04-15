@@ -28,6 +28,8 @@ export function filterAttributesByType(
 }
 
 export function filterAttributesByName(attributes: Attribute[], name: string) {
+  if (attributes.length === 0) return []
+
   const filteredAttributes = attributes.filter((attribute) => {
     if (typeof attribute.type === 'object') {
       return attribute.type.name === name
@@ -41,6 +43,8 @@ export function filterAttributesByNotType(
   attributes: Attribute[],
   type: string,
 ) {
+  if (attributes.length === 0) return []
+
   const filteredAttributes = attributes.filter((attribute) => {
     if (typeof attribute.type === 'object') {
       return attribute.type.type !== type
@@ -79,6 +83,8 @@ export function getUniqueAttributeTypes(
   attributes: Attribute[],
 ): AttributeType[] {
   const attributeTypes: AttributeType[] = []
+
+  if (attributes.length === 0) return []
 
   attributes.filter((item: Attribute) => {
     if (typeof item.type === 'object') {
