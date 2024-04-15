@@ -9,6 +9,16 @@ export const metadata: Metadata = {
     template: '%s | Wotan Brindes',
     default: 'Wotan Brindes', // a default is required when creating a template
   },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SERVER_URL),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'Wotan Brindes',
+    description:
+      'Wotan Brindes. Brindes personalizados e presentes corporativos.',
+    url: new URL(process.env.NEXT_PUBLIC_SERVER_URL),
+  },
 }
 
 interface RootLayoutProps {
