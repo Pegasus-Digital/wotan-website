@@ -26,10 +26,6 @@ const start = async (): Promise<void> => {
     secret: process.env.PAYLOAD_SECRET || '',
   })
 
-  const router = express.Router()
-
-  router.use(payload.authenticate)
-
   const dashboardMiddleware = (req, res, next) => {
     // Check if the requested URL path starts with /dashboard
 
@@ -52,7 +48,10 @@ const start = async (): Promise<void> => {
     next()
   }
 
-  app.use('/dashboard', dashboardMiddleware)
+  if (process.env.NODE_ENV === 'production') {
+    console.log('Activating Express authentication middleware.')
+    app.use('/dashboard', dashboardMiddleware)
+  }
 
   if (process.env.NEXT_BUILD) {
     app.listen(PORT, async () => {

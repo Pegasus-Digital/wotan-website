@@ -23,12 +23,17 @@ import { Separator } from './ui/separator'
 import { SidebarCollapsible, SidebarNavigationItem } from './sidebar-navigation'
 import WotanLogo from './logo-wotan'
 import { useAdminAuth } from './admin-auth-provider'
+import { Skeleton } from './ui/skeleton'
+import { LoadingSpinner } from './spinner'
+import { usePathname } from 'next/navigation'
 
 export function Sidebar() {
   const { status } = useAdminAuth()
+  const path = usePathname()
+
   return (
     <>
-      {status === 'loggedIn' && (
+      {status === 'loggedIn' ? (
         <aside className='sticky top-4 flex h-full max-h-[calc(100vh-96px)]  flex-col rounded-sm border px-4 py-1'>
           <div className='mt-2 flex items-center gap-4'>
             <WotanLogo className='h-8 w-8' />
@@ -120,6 +125,10 @@ export function Sidebar() {
             />
           </div>
         </aside>
+      ) : path.includes('/login') ? null : (
+        <Skeleton className='sticky top-4 flex h-full max-h-[calc(100vh-96px)] flex-col items-center  justify-center rounded-sm border px-4 py-1'>
+          <LoadingSpinner />
+        </Skeleton>
       )}
     </>
   )
