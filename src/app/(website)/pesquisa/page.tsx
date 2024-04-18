@@ -59,8 +59,6 @@ export default async function CategoryPage({ params, searchParams }) {
     and: createObjectsForWords(words),
   }
 
-  console.log(whereQuery)
-
   const { docs, ...paginationParams } = await payload.find({
     collection: 'products',
     where: whereQuery,

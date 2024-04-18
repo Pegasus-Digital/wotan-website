@@ -26,7 +26,6 @@ export default function CMSLink({
     : {}
 
   if (href || url) {
-    console.log({ label })
     return (
       <Link {...newTabProps} href={href || url}>
         {label}

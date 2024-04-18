@@ -27,6 +27,15 @@ import { UpdateProductDialog } from '../_components/update-product-dialog-conten
 import { MoreHorizontal } from 'lucide-react'
 
 import { deleteProduct } from '../_logic/actions'
+import { DataTableFilterField } from '@/components/table/types/table-types'
+
+export const filterFields: DataTableFilterField<Product>[] = [
+  {
+    label: 'Title',
+    value: 'title',
+    placeholder: 'Filtrar por nome...',
+  },
+]
 
 export function getColumns(): ColumnDef<Product>[] {
   return [

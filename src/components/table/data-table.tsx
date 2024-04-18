@@ -27,42 +27,19 @@ import {
 import { DataTableInputFilter } from '@/components/table/data-table-input-filter'
 import { DataTablePagination } from '@/components/table/data-table-pagination'
 
-import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 
 interface DataTableProps<TData, TValue> {
   table: TanstackTable<TData>
   columns: ColumnDef<TData, TValue>[]
-  actions?: React.ElementType[]
 }
 
 export function DataTable<TData, TValue>({
   table,
   columns,
-  actions,
 }: DataTableProps<TData, TValue>) {
   return (
     <div className='space-y-2'>
-      {/* Table interaction */}
-      <div className='flex items-center justify-between'>
-        {/* <DataTableInputFilter
-          columnId='name'
-          title='nome'
-          plural={false}
-          table={table}
-        /> */}
-        <div className='flex-1' />
-
-        {/* Actions */}
-        <div className='space-x-2'>
-          {actions?.map((ActionJSX, index) => (
-            <span key={ActionJSX.valueOf().toString() + index}>
-              <ActionJSX />
-            </span>
-          ))}
-        </div>
-      </div>
-
       <div className='rounded-md border'>
         <Table>
           <TableHeader>

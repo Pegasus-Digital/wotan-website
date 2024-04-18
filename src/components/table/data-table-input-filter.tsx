@@ -6,14 +6,14 @@ interface DataTableInputFilterProps<TData> {
   columnId: string
   table: Table<TData>
   title: string
-  plural: boolean
+  plural?: boolean
 }
 
 export function DataTableInputFilter<TData>({
   columnId,
   table,
   title,
-  plural,
+  plural = false,
 }: DataTableInputFilterProps<TData>) {
   return (
     <Input
