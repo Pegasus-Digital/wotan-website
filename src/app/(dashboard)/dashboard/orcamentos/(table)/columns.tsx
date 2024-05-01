@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 
 import { Attribute, Budget } from '@/payload/payload-types'
 
@@ -42,18 +42,20 @@ import { Small } from '@/components/typography/texts'
 
 import { Eye, MoreHorizontal } from 'lucide-react'
 import { DataTableFilterField } from '@/components/table/types/table-types'
+import { toast } from 'sonner'
+import { deleteEstimate } from '../_logic/actions'
 
 export const filterFields: DataTableFilterField<Budget>[] = [
-  {
-    label: 'Company Name',
-    value: 'companyName',
-    placeholder: 'Filtrar nome da empresa...',
-  },
-  {
-    label: 'Company',
-    value: 'companyName',
-    placeholder: 'Filtrar nome da empresa...',
-  },
+  // {
+  //   label: 'Company Name',
+  //   value: '',
+  //   placeholder: 'Filtrar nome da empresa...',
+  // },
+  // {
+  //   label: 'Company',
+  //   value: 'companyName',
+  //   placeholder: 'Filtrar nome da empresa...',
+  // },
 ]
 
 export function getColumns(): ColumnDef<Budget>[] {
@@ -83,12 +85,12 @@ export function getColumns(): ColumnDef<Budget>[] {
     },
     {
       id: 'company',
-      accessorKey: 'companyName',
+      accessorFn: (row) => row.contact.companyName,
       header: 'Cliente',
     },
     {
       id: 'customer',
-      accessorFn: (row) => row.customerName,
+      accessorFn: (row) => row.contact.customerName,
       header: 'Responsável',
       cell: ({ row }) => {
         const customer: string = row.getValue('customer')
@@ -98,7 +100,7 @@ export function getColumns(): ColumnDef<Budget>[] {
     },
     {
       accessorKey: 'items',
-      header: 'Produtos',
+      header: 'Carrinho',
       cell: ({ row }) => {
         const items: any[] = row.getValue('items')
 
@@ -138,6 +140,7 @@ export function getColumns(): ColumnDef<Budget>[] {
                   onClick={() => setOpen(true)}
                   size='icon'
                   variant='ghost'
+                  className='rounded-full'
                 >
                   <Eye className='h-5 w-5' />
                 </Button>
@@ -162,7 +165,7 @@ export function getColumns(): ColumnDef<Budget>[] {
                             <Label>Empresa</Label>
                             <Input
                               disabled
-                              value={budget.companyName}
+                              value={budget.contact.companyName}
                               className='disabled:cursor-text disabled:opacity-100'
                             />
                           </div>
@@ -171,7 +174,7 @@ export function getColumns(): ColumnDef<Budget>[] {
                             <Label>Responsável</Label>
                             <Input
                               disabled
-                              value={budget.customerName}
+                              value={budget.contact.customerName}
                               className='disabled:cursor-text disabled:opacity-100'
                             />
                           </div>
@@ -180,7 +183,7 @@ export function getColumns(): ColumnDef<Budget>[] {
                             <Label>Email</Label>
                             <Input
                               disabled
-                              value={budget.email}
+                              value={budget.contact.email}
                               className='disabled:cursor-text disabled:opacity-100'
                             />
                           </div>
@@ -189,7 +192,7 @@ export function getColumns(): ColumnDef<Budget>[] {
                             <Label>Telefone</Label>
                             <Input
                               disabled
-                              value={budget.phone}
+                              value={budget.contact.phone}
                               className='disabled:cursor-text disabled:opacity-100'
                             />
                           </div>
@@ -197,7 +200,7 @@ export function getColumns(): ColumnDef<Budget>[] {
                           <div className='col-span-2'>
                             <Label>Detalhes</Label>
                             <Textarea
-                              value={budget.details}
+                              value={budget.contact.details}
                               className='min-h-24 disabled:cursor-text disabled:opacity-100'
                               disabled
                             />
@@ -276,11 +279,34 @@ export function getColumns(): ColumnDef<Budget>[] {
     {
       id: 'actions',
       header: () => <span className='text-right'>Interações</span>,
-      cell: () => {
+      cell: ({ row }) => {
+        const estimate = row.original
+
+        function DeleteEstimateAction() {
+          const [isDeletePending, startDeleteTransition] = useTransition()
+
+          return (
+            <DropdownMenuItem
+              onClick={() => {
+                startDeleteTransition(() => {
+                  toast.promise(deleteEstimate({ estimateId: estimate.id }), {
+                    loading: 'Deletando...',
+                    success: 'Orçamento deletado com sucesso',
+                    error: 'Erro ao deletar orçamento...',
+                  })
+                })
+              }}
+              className='cursor-pointer'
+              disabled={isDeletePending}
+            >
+              Deletar orçamento
+            </DropdownMenuItem>
+          )
+        }
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant='ghost' className='h-8 w-8 p-0'>
+              <Button size='icon' variant='ghost' className='rounded-full'>
                 <span className='sr-only'>Abrir menu</span>
                 <MoreHorizontal className='h-4 w-4' />
               </Button>
@@ -293,9 +319,8 @@ export function getColumns(): ColumnDef<Budget>[] {
               <DropdownMenuItem className='cursor-pointer'>
                 Editar orçamento
               </DropdownMenuItem>
-              <DropdownMenuItem className='cursor-pointer'>
-                Cancelar orçamento
-              </DropdownMenuItem>
+
+              <DeleteEstimateAction />
             </DropdownMenuContent>
           </DropdownMenu>
         )

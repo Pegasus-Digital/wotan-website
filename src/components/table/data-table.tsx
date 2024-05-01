@@ -24,7 +24,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
-import { DataTableInputFilter } from '@/components/table/data-table-input-filter'
 import { DataTablePagination } from '@/components/table/data-table-pagination'
 
 import { Separator } from '@/components/ui/separator'
