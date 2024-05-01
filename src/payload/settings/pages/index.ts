@@ -41,12 +41,12 @@ export const Pages: CollectionConfig = {
   versions: {
     drafts: true,
   },
-  access: {
-    read: adminsOrPublished,
-    update: admins,
-    create: admins,
-    delete: admins,
-  },
+  // access: {
+  //   read: adminsOrPublished,
+  //   update: admins,
+  //   create: admins,
+  //   delete: admins,
+  // },
   fields: [
     {
       name: 'title',

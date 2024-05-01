@@ -8,46 +8,83 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-export const statisticSectionSchema = z.object({
-  title: z.string().optional(),
-  description: z
-    .string()
-    .max(300, 'Uma descrição pode ter no máximo 300 caracteres.')
-    .optional(),
-  statistics: z
-    .array(
-      z.object({
-        title: z.string(),
-        value: z.string(),
-      }),
-    )
-    .min(2, 'Pelo menos 2 estatísticas devem ser definidas.')
-    .max(4, 'No maximo 4 estatísticas.'),
-  invertBackground: z.boolean().optional(),
-})
+import {
+  FormControl,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormField,
+} from '@/components/ui/form'
+import { statisticSectionSchema } from '../_logic/validations'
 
-export default function Statistics({ data }: { data: StatisticSection }) {
-  // const form = useForm<z.infer<typeof statisticsEdit>>({
-  //   resolver: zodResolver(statisticsEdit),
-  //   defaultValues: {
-  //     title: data.title,
-  //     description: data.description,
-  //     statistics: data.statistics,
-  //     invertBackground: data.invertBackground,
-  //   },
+type EditStatisticsProps = {
+  form: ReturnType<typeof useForm>
+  statisticSection: StatisticSection
+}
+
+export default function Statistics({
+  statisticSection,
+  form,
+}: EditStatisticsProps) {
+  console.log({ statisticSection })
+
+  // const form = useForm<z.infer<typeof statisticSectionSchema>>({
+  //   resolver: zodResolver(statisticSectionSchema),
   // })
 
-  console.log(data)
   return (
-    <section>
-      <Input value={data.title} className='font-bold' />
-      <Textarea value={data.description} />
-      <div className='grid grid-cols-4 gap-4'>
-        {data.statistics.map((stat, index) => {
+    <section className='flex w-full flex-col gap-2'>
+      <h3 className='font-bold'>Estatísticas</h3>
+      <FormField
+        name='statisticSection.title'
+        control={form.control}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel className='font-bold'>Título</FormLabel>
+
+            <FormControl>
+              <Input type='text' placeholder='Título' {...field} />
+            </FormControl>
+
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      {/* <Textarea value={description} onChange={() => {}} /> */}
+      <div className='flex flex-row gap-4'>
+        {statisticSection.statistics.map((stat, index) => {
           return (
-            <div key={index}>
-              <Input value={stat.title} />
-              <Input value={stat.value} />
+            <div key={index} className='flex flex-col gap-2'>
+              <FormField
+                name={`statistics.${index}.title`}
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className='font-bold'>Título</FormLabel>
+
+                    <FormControl>
+                      <Input type='text' placeholder='Título' {...field} />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                name={`statisticSection.statistics.${index}.value`}
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className='font-bold'>Valor</FormLabel>
+
+                    <FormControl>
+                      <Input type='text' placeholder='Valor' {...field} />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           )
         })}

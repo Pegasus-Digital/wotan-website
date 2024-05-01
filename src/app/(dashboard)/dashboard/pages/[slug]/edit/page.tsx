@@ -18,5 +18,5 @@ export default async function EditPage({ params: { slug } }) {
       return result.docs.length >= 1 ? result.docs[0] : null
     })
 
-  return <EditPageContent {...page} />
+  return <EditPageContent page={page} />
 }
