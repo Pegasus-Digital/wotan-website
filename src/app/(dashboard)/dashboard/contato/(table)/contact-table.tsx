@@ -8,8 +8,9 @@ import { ContactMessage } from '@/payload/payload-types'
 import { DataTable } from '@/components/table/data-table'
 import { useDataTable } from '@/components/table/hooks/use-data-table'
 
-import { getColumns } from './columns'
-import { getContactMessages } from './queries'
+import { filterFields, getColumns } from './columns'
+import { getContactMessages } from '../_logic/queries'
+import { DataTableToolbar } from '@/components/table/data-table-toolbar'
 
 interface ContactTableProps {
   messagesPromise: ReturnType<typeof getContactMessages>
@@ -27,7 +28,13 @@ export function ContactTable({ messagesPromise }: ContactTableProps) {
     data,
     columns,
     pageCount,
+    filterFields,
   })
 
-  return <DataTable table={table} columns={columns} />
+  return (
+    <div>
+      <DataTableToolbar table={table} filterFields={filterFields} />
+      <DataTable table={table} columns={columns} />
+    </div>
+  )
 }

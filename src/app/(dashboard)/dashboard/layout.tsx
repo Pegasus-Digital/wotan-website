@@ -15,7 +15,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     <section className='flex min-h-screen w-full flex-col'>
       <Suspense fallback={<Loading />}>
         <AdminAuthProvider>
-          <div className=' mb-16 grid w-full grow grid-cols-dashboard gap-6 px-4 py-4'>
+          <div className='mb-16 grid w-full grow grid-cols-dashboard gap-6 px-4 py-4'>
             <Sidebar />
             {children}
           </div>

@@ -4,12 +4,14 @@ import { useTransition } from 'react'
 
 import { ColumnDef } from '@tanstack/react-table'
 import { ContactMessage } from '@/payload/payload-types'
+import { DataTableFilterField } from '@/components/table/types/table-types'
 
 import { getRelativeDate } from '@/lib/date'
 
 import { toast } from 'sonner'
 
-import { Mail, MailOpen, MoreHorizontal } from 'lucide-react'
+import { MoreHorizontal } from 'lucide-react'
+import { EnvelopeClosedIcon, EnvelopeOpenIcon } from '@radix-ui/react-icons'
 
 import {
   DropdownMenu,
@@ -20,11 +22,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import { Small } from '@/components/typography/texts'
-import { Card, CardContent } from '@/components/ui/card'
-import { Button, buttonVariants } from '@/components/ui/button'
-import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
-
 import {
   Tooltip,
   TooltipContent,
@@ -32,7 +29,25 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 
-import { readTask } from './actions'
+import { Small } from '@/components/typography/texts'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
+
+import { readMessage } from '../_logic/actions'
+
+export const filterFields: DataTableFilterField<ContactMessage>[] = [
+  {
+    label: 'Name',
+    value: 'name',
+    placeholder: 'Filtrar por nome...',
+  },
+  {
+    label: 'Email',
+    value: 'email',
+    placeholder: 'Filtrar por email...',
+  },
+]
 
 export function getColumns(): ColumnDef<ContactMessage>[] {
   return [
@@ -43,7 +58,7 @@ export function getColumns(): ColumnDef<ContactMessage>[] {
         const [isReadPending, startReadTransition] = useTransition()
         const message = row.original
 
-        function MessageAlreadyRead() {
+        function AlreadyReadMessage() {
           return (
             <div
               className={buttonVariants({
@@ -52,7 +67,7 @@ export function getColumns(): ColumnDef<ContactMessage>[] {
                 className: 'hover:text-green-70 hover:bg-transparent',
               })}
             >
-              <MailOpen className='text-green-500' />
+              <EnvelopeOpenIcon className='h-5 w-5 text-green-500' />
             </div>
           )
         }
@@ -62,10 +77,11 @@ export function getColumns(): ColumnDef<ContactMessage>[] {
             <Button
               size='icon'
               variant='ghost'
+              className='rounded-full'
               disabled={isReadPending}
               onClick={() => {
                 startReadTransition(() => {
-                  toast.promise(readTask({ message }), {
+                  toast.promise(readMessage({ message }), {
                     loading: 'Lendo...',
                     success: 'Mensagem marcada como lida',
                     error: 'Erro lendo a mensagem...',
@@ -73,12 +89,12 @@ export function getColumns(): ColumnDef<ContactMessage>[] {
                 })
               }}
             >
-              <Mail />
+              <EnvelopeClosedIcon className='h-5 w-5' />
             </Button>
           )
         }
 
-        return message.read ? <MessageAlreadyRead /> : <UnreadMessage />
+        return message.read ? <AlreadyReadMessage /> : <UnreadMessage />
       },
     },
     {
@@ -98,7 +114,7 @@ export function getColumns(): ColumnDef<ContactMessage>[] {
           <TooltipProvider>
             <Tooltip delayDuration={100}>
               <TooltipTrigger>
-                <Card className='p-2'>
+                <Card className='min-w-48 max-w-48 truncate p-2'>
                   <Small className='whitespace-break-spaces font-medium'>
                     {excerpt}
                   </Small>
@@ -115,6 +131,7 @@ export function getColumns(): ColumnDef<ContactMessage>[] {
       },
     },
     {
+      id: 'email',
       header: 'Email',
       cell: ({ row }) => {
         const { email } = row.original
@@ -168,10 +185,7 @@ export function getColumns(): ColumnDef<ContactMessage>[] {
               <DropdownMenuSeparator />
 
               <DropdownMenuItem className='cursor-pointer'>
-                Editar produto
-              </DropdownMenuItem>
-              <DropdownMenuItem className='cursor-pointer'>
-                Remover produto
+                Arquivar mensagem
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

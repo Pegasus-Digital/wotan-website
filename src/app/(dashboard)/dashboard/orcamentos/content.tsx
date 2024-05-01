@@ -1,16 +1,14 @@
-import { Budget } from '@/payload/payload-types'
-
-import { columns } from './(table)/columns'
-import { DataTable } from './(table)/data-table'
-
-import { Small } from '@/components/typography/texts'
-
 import { Separator } from '@/components/ui/separator'
+import { Small } from '@/components/typography/texts'
 import { Content, ContentHeader } from '@/components/content'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
+import { EstimatesTable } from './(table)/estimates-table'
+
+import { getEstimates } from './_logic/queries'
+
 interface EstimatesContentProps {
-  estimates: Budget[]
+  estimates: ReturnType<typeof getEstimates>
 }
 
 export function EstimatesContent({ estimates }: EstimatesContentProps) {
@@ -32,7 +30,7 @@ export function EstimatesContent({ estimates }: EstimatesContentProps) {
         </TabsList>
 
         <TabsContent value='table'>
-          <DataTable columns={columns} data={estimates} />
+          <EstimatesTable estimatesPromise={estimates} />
         </TabsContent>
 
         <TabsContent value='interactive'>

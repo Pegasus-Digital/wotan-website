@@ -1,4 +1,4 @@
-import { getContactMessages } from './(table)/queries'
+import { getContactMessages } from './_logic/queries'
 import { ContactTable } from './(table)/contact-table'
 
 import { Separator } from '@/components/ui/separator'

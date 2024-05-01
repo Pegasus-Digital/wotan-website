@@ -1,23 +1,25 @@
 import 'server-only'
 
-import { unstable_noStore as noStore } from 'next/cache'
-
 import payload from 'payload'
 
 import { z } from 'zod'
-import { searchParamsSchema } from './validations'
+import { searchParamsSchema } from '@/lib/validations'
 
-export async function getContactMessages(
+import { unstable_noStore as noStore } from 'next/cache'
+
+export async function getEstimates(
   searchParams: z.infer<typeof searchParamsSchema>,
 ) {
   noStore()
+
   try {
-    const { page, per_page } = searchParams
+    const { page, per_page, sort } = searchParams
 
     const response = await payload.find({
-      collection: 'contact-messages',
+      collection: 'budget',
       page,
       limit: per_page,
+      sort,
     })
 
     return {
