@@ -131,7 +131,7 @@ export default function ImagesCarousel({
                 x: { type: 'spring', stiffness: 100, damping: 15 },
                 opacity: { duration: 0.5 },
               }}
-              className='image absolute inset-0 h-full w-full object-cover object-center'
+              className='image animate-fade-in absolute inset-0 h-full w-full object-cover object-center'
               drag='x'
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={1}
