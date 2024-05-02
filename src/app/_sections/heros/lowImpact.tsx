@@ -6,7 +6,7 @@ type LowImpactHeroProps = Pick<Page, 'title' | 'description'>
 
 export function LowImpactHero({ title, description }: LowImpactHeroProps) {
   return (
-    <div className='flex min-h-32 w-fit flex-col justify-center gap-2 text-center'>
+    <div className='animate-fade-in flex min-h-32 w-fit flex-col justify-center gap-2 text-center'>
       <Heading variant='h1'>{title}</Heading>
       {description && <Lead>{description}</Lead>}
     </div>

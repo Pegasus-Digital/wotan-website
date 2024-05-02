@@ -32,7 +32,11 @@ const VerticalPadding = React.forwardRef<HTMLDivElement, VerticalPaddingProps>(
     return (
       <div
         ref={ref}
-        className={cn(paddingSizes({ top, bottom }), className)}
+        className={cn(
+          paddingSizes({ top, bottom }),
+          className,
+          'animate-fade-in-up',
+        )}
         {...props}
       >
         {children}

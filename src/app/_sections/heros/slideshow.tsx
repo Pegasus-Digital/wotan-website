@@ -27,7 +27,7 @@ export function SlideshowHero({ carousel }: SlideshowProps) {
 
   return (
     <ImagesCarousel
-      className=' aspect-[1920/480] w-full bg-black/50 '
+      className=' aspect-[1920/480] w-full  bg-black/50'
       images={images}
     />
   )
