@@ -110,7 +110,7 @@ export function Sidebar() {
             />
             <SidebarNavigationItem
               icon={Settings}
-              href='/dashboard/settings'
+              href='/dashboard/configuracoes'
               text='Configurações'
             />
           </List>
