@@ -101,7 +101,7 @@ export async function deleteUser(
       }
     }
 
-    revalidatePath('/painel/usuarios')
+    revalidatePath('/painel/arquivos')
 
     return {
       data: null,
