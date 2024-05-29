@@ -43,7 +43,7 @@ export function Sidebar() {
             <SidebarSeparator title='menu' />
 
             <SidebarNavigationItem
-              href='/dashboard'
+              href='/painel'
               icon={LayoutDashboard}
               text='Dashboard'
             />
@@ -55,39 +55,39 @@ export function Sidebar() {
                 {
                   text: 'Produtos',
                   icon: Barcode,
-                  href: '/dashboard/catalogo/produtos',
+                  href: '/painel/catalogo/produtos',
                 },
                 {
                   text: 'Categorias',
                   icon: Tags,
-                  href: '/dashboard/catalogo/categorias',
+                  href: '/painel/catalogo/categorias',
                 },
                 {
                   text: 'Atributos',
                   icon: Bookmark,
-                  href: '/dashboard/catalogo/atributos',
+                  href: '/painel/catalogo/atributos',
                 },
               ]}
             />
 
             <SidebarNavigationItem
               icon={PackageOpen}
-              href='/dashboard/orcamentos'
+              href='/painel/orcamentos'
               text='Orçamentos'
             />
             <SidebarNavigationItem
               icon={PackageCheck}
-              href='/dashboard/pedidos'
+              href='/painel/pedidos'
               text='Pedidos'
             />
             <SidebarNavigationItem
               icon={Users}
-              href='/dashboard/clientes'
+              href='/painel/clientes'
               text='Clientes'
             />
             <SidebarNavigationItem
               icon={Mailbox}
-              href='/dashboard/contato'
+              href='/painel/contato'
               text='Contato'
             />
 
@@ -95,22 +95,22 @@ export function Sidebar() {
 
             <SidebarNavigationItem
               icon={AppWindow}
-              href='/dashboard/pages'
+              href='/painel/pages'
               text='Páginas'
             />
             <SidebarNavigationItem
               icon={UserCog}
-              href='/dashboard/usuarios'
+              href='/painel/usuarios'
               text='Usuários'
             />
             <SidebarNavigationItem
               icon={FileUp}
-              href='/dashboard/files'
+              href='/painel/files'
               text='Arquivos'
             />
             <SidebarNavigationItem
               icon={Settings}
-              href='/dashboard/configuracoes'
+              href='/painel/configuracoes'
               text='Configurações'
             />
           </List>
@@ -120,7 +120,7 @@ export function Sidebar() {
           <div className='mb-2 space-y-1'>
             <SidebarNavigationItem
               icon={HelpCircle}
-              href='/dashboard/ajuda'
+              href='/painel/ajuda'
               text='Ajuda'
             />
           </div>

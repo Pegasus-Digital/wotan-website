@@ -27,7 +27,7 @@ const start = async (): Promise<void> => {
   })
 
   const dashboardMiddleware = (req, res, next) => {
-    // Check if the requested URL path starts with /dashboard
+    // Check if the requested URL path starts with /painel
 
     // TODO find better solution for next server actions
     if (req.path !== '/login' && !req.headers['next-action']) {
@@ -35,7 +35,7 @@ const start = async (): Promise<void> => {
         if (!loggedIn) {
           res.clearCookie('payload-token')
 
-          const redirectUrl = `/dashboard/login?error=${encodeURIComponent(
+          const redirectUrl = `/painel/login?error=${encodeURIComponent(
             'Você deve estar logado para acessar o painel de Administrador',
           )}&redirect=${encodeURIComponent(req.originalUrl)}`
           res.redirect(redirectUrl)
@@ -50,7 +50,7 @@ const start = async (): Promise<void> => {
 
   if (process.env.NODE_ENV === 'production') {
     console.log('Activating Express authentication middleware.')
-    app.use('/dashboard', dashboardMiddleware)
+    app.use('/painel', dashboardMiddleware)
   }
 
   if (process.env.NEXT_BUILD) {
