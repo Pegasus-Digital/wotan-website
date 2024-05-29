@@ -105,7 +105,7 @@ export function Sidebar() {
             />
             <SidebarNavigationItem
               icon={FileUp}
-              href='/painel/files'
+              href='/painel/arquivos'
               text='Arquivos'
             />
             <SidebarNavigationItem
