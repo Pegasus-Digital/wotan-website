@@ -17,14 +17,17 @@ import {
   AppWindow,
 } from 'lucide-react'
 
-import { Large, List, Muted } from './typography/texts'
+import { Large, List, Muted } from '../../../../components/typography/texts'
 
-import { Separator } from './ui/separator'
-import { SidebarCollapsible, SidebarNavigationItem } from './sidebar-navigation'
-import WotanLogo from './logo-wotan'
-import { useAdminAuth } from './admin-auth-provider'
-import { Skeleton } from './ui/skeleton'
-import { LoadingSpinner } from './spinner'
+import { Separator } from '../../../../components/ui/separator'
+import {
+  SidebarCollapsible,
+  SidebarNavigationItem,
+} from '../../../../components/sidebar-navigation'
+import WotanLogo from '../../../../components/logo-wotan'
+import { useAdminAuth } from '../../../../components/admin-auth-provider'
+import { Skeleton } from '../../../../components/ui/skeleton'
+import { LoadingSpinner } from '../../../../components/spinner'
 import { usePathname } from 'next/navigation'
 
 export function Sidebar() {
@@ -43,75 +46,45 @@ export function Sidebar() {
             <SidebarSeparator title='menu' />
 
             <SidebarNavigationItem
-              href='/painel'
+              href='/sistema'
               icon={LayoutDashboard}
               text='Dashboard'
             />
 
-            <SidebarCollapsible
-              text='Catálogo'
-              icon={ShoppingCart}
-              navItems={[
-                {
-                  text: 'Produtos',
-                  icon: Barcode,
-                  href: '/painel/catalogo/produtos',
-                },
-                {
-                  text: 'Categorias',
-                  icon: Tags,
-                  href: '/painel/catalogo/categorias',
-                },
-                {
-                  text: 'Atributos',
-                  icon: Bookmark,
-                  href: '/painel/catalogo/atributos',
-                },
-              ]}
+            <SidebarNavigationItem
+              icon={Barcode}
+              href='/sistema/catalogo/produtos'
+              text='Produtos'
             />
 
             <SidebarNavigationItem
               icon={PackageOpen}
-              href='/painel/orcamentos'
+              href='/sistema/orcamentos'
               text='Orçamentos'
             />
             <SidebarNavigationItem
               icon={PackageCheck}
-              href='/painel/pedidos'
+              href='/sistema/pedidos'
               text='Pedidos'
             />
             <SidebarNavigationItem
               icon={Users}
-              href='/painel/clientes'
-              text='Clientes'
+              href='/sistema/clientes'
+              text='Meus clientes'
             />
+
             <SidebarNavigationItem
               icon={Mailbox}
-              href='/painel/contato'
-              text='Contato'
+              href='/sistema/contato'
+              text='Mensagens'
             />
 
-            <SidebarSeparator title='admin' />
+            <SidebarSeparator title='config' />
 
-            <SidebarNavigationItem
-              icon={AppWindow}
-              href='/painel/pages'
-              text='Páginas'
-            />
-            <SidebarNavigationItem
-              icon={UserCog}
-              href='/painel/usuarios'
-              text='Usuários'
-            />
-            <SidebarNavigationItem
-              icon={FileUp}
-              href='/painel/files'
-              text='Arquivos'
-            />
             <SidebarNavigationItem
               icon={Settings}
-              href='/painel/configuracoes'
-              text='Configurações'
+              href='/sistema/preferencias'
+              text='Preferências'
             />
           </List>
 
@@ -120,7 +93,7 @@ export function Sidebar() {
           <div className='mb-2 space-y-1'>
             <SidebarNavigationItem
               icon={HelpCircle}
-              href='/painel/ajuda'
+              href='/sistema/ajuda'
               text='Ajuda'
             />
           </div>
