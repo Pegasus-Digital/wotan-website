@@ -104,19 +104,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
     e.preventDefault()
 
     const typesAmount = types ? types.length : 0
-    const colorAmount = colors ? 1 : 0
-
-    if (colors) {
-      const selectedColor = itemState.attributes.some(
-        // @ts-ignore
-        (attribute) => attribute.type.type === 'color',
-      )
-
-      if (selectedColor === false)
-        return toast.info(
-          'Você deve escolher todos os atributos do produto antes de adicioná-lo ao carrinho.',
-        )
-    }
+    const colorAmount = colors.length > 0 ? 1 : 0
 
     if (itemState.attributes.length !== typesAmount + colorAmount) {
       return toast.info(
