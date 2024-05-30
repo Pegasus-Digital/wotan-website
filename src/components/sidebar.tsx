@@ -86,6 +86,11 @@ export function Sidebar() {
               text='Clientes'
             />
             <SidebarNavigationItem
+              icon={Users}
+              href='/painel/vendedores'
+              text='Vendedores'
+            />
+            <SidebarNavigationItem
               icon={Mailbox}
               href='/painel/contato'
               text='Contato'

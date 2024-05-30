@@ -3,15 +3,15 @@ import { Metadata } from 'next'
 
 import { DataTableSkeleton } from '@/components/table/data-table-skeleton'
 
-import { ClientsContent } from './content'
+import { SalespersonsContent } from './content'
 
-import { getClients } from './_logic/queries'
+import { getSalespersons } from './_logic/queries'
 import { ISearchParams, searchParamsSchema } from '@/lib/validations'
 
 // This page is meant to be responsible for SEO, data fetching and/or other asynchronous functions
 
 export const metadata: Metadata = {
-  title: 'Clientes',
+  title: 'Vendedores e Representantes',
 }
 
 interface ProductsPageProps {
@@ -21,11 +21,11 @@ interface ProductsPageProps {
 export default function Products({ searchParams }: ProductsPageProps) {
   const search = searchParamsSchema.parse(searchParams)
 
-  const clientsPromise = getClients(search)
+  const salespersonsPromise = getSalespersons(search)
 
   return (
     <React.Suspense fallback={<DataTableSkeleton columnCount={4} />}>
-      <ClientsContent clients={clientsPromise} />
+      <SalespersonsContent salespersons={salespersonsPromise} />
     </React.Suspense>
   )
 }
