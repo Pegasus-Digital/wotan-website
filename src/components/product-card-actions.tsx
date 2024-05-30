@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import { v4 as uuidv4 } from 'uuid'
 
+import { Product } from '@/payload/payload-types'
 import { useCartStore } from './cart-store-provider'
 
 import { toast } from 'sonner'
@@ -14,11 +14,11 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from './ui/tooltip'
-
 import { Button, buttonVariants } from './ui/button'
-import { Heart, ShoppingCart, Eye, PlusCircle } from 'lucide-react'
-import { Product } from '@/payload/payload-types'
+
 import { AddToCartDialog } from './add-to-cart-dialog'
+
+import { Heart, Eye } from 'lucide-react'
 
 interface ProductCardActions {
   product: Product
@@ -27,25 +27,11 @@ interface ProductCardActions {
 const favoriteIconStyles = `stroke-primary fill-primary group-hover/favorite:fill-white group-hover/favorite:stroke-white`
 
 export function ProductCardActions({ product }: ProductCardActions) {
-  const { add, addFavorite, removeFavorite, favorites } = useCartStore(
+  const { addFavorite, removeFavorite, favorites } = useCartStore(
     (state) => state,
   )
 
   const isFavorite = favorites.some((id) => id === product.id)
-
-  function onAddToCart() {
-    add({
-      id: uuidv4(),
-      productName: product.title,
-      productId: product.id,
-      amount: product.minimumQuantity,
-      attributes: [],
-    })
-
-    toast.success('Produto adicionado ao carrinho.', {
-      icon: <PlusCircle className='h-5 w-5' />,
-    })
-  }
 
   function onToggleFavorite() {
     // Guard clause
