@@ -1,13 +1,13 @@
 'use client'
 
-import React, { useState, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 
 import { toast } from 'sonner'
 import { ColumnDef } from '@tanstack/react-table'
 
 import { getRelativeDate } from '@/lib/date'
 
-import { Client } from '@/payload/payload-types'
+import { Salesperson } from '@/payload/payload-types'
 
 import {
   DropdownMenu,
@@ -27,18 +27,16 @@ import { MoreHorizontal } from 'lucide-react'
 
 import { deleteUser } from '../../_logic/actions'
 import { DataTableFilterField } from '@/components/table/types/table-types'
-import { Badge } from '@/components/ui/badge'
-import Link from 'next/link'
 
-export const filterFields: DataTableFilterField<Client>[] = [
+export const filterFields: DataTableFilterField<Salesperson>[] = [
   {
-    label: 'Documento',
-    value: 'document',
-    placeholder: 'Filtrar por documento...',
+    label: 'E-mail',
+    value: 'email',
+    placeholder: 'Filtrar por e-mail...',
   },
 ]
 
-export function getColumns(): ColumnDef<Client>[] {
+export function getColumns(): ColumnDef<Salesperson>[] {
   return [
     {
       id: 'select',
@@ -64,40 +62,24 @@ export function getColumns(): ColumnDef<Client>[] {
       enableHiding: false,
     },
     {
-      accessorKey: 'razaosocial',
-      header: 'Razão social',
+      accessorKey: 'name',
+      header: 'Nome de usuário',
     },
     {
-      accessorKey: 'document',
-      header: 'Documento',
+      accessorKey: 'email',
+      header: 'E-mail',
+    },
+    {
+      accessorKey: 'roles',
+      header: 'Tipo',
       cell: ({ row }) => {
-        const value: string = row.getValue('document')
-        // Check if it's a CPF (11 digits) or CNPJ (14 digits)
-        if (value.length === 11) {
-          // Format CPF
-          return value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4')
-        } else if (value.length === 14) {
-          // Format CNPJ
-          return value.replace(
-            /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
-            '$1.$2.$3/$4-$5',
-          )
-        } else {
-          // Invalid document
-          return 'Documento inválido'
+        const roles = row.getValue('roles')
+
+        if (typeof roles === 'string') {
+          if (roles.includes('internal')) return 'Interno Wotan'
+          if (roles.includes('representative')) return 'Representante Externo'
         }
-      },
-    },
-    {
-      accessorKey: 'salesperson',
-      header: 'Vendedor',
-      cell: ({ row }) => {
-        const value: string = row.getValue('salesperson')
-        return (
-          <Link href={`/painel/vendedores/${value['id']}`}>
-            <Badge className='w-fit'>{value['name']}</Badge>
-          </Link>
-        )
+        return 'Indeterminado'
       },
     },
     {
@@ -105,7 +87,7 @@ export function getColumns(): ColumnDef<Client>[] {
       enableHiding: true,
 
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title='Atualizado em' />
+        <DataTableColumnHeader column={column} title='Atualizado' />
       ),
       cell: ({ row }) => {
         const value: string = row.getValue('updatedAt')
@@ -146,22 +128,22 @@ export function getColumns(): ColumnDef<Client>[] {
                     className='cursor-pointer'
                     onClick={() => setIsUpdateOpen(true)}
                   >
-                    Editar cadastro
+                    Editar usuário
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     className='cursor-pointer'
                     onClick={() => {
                       startDeleteTransition(() => {
                         toast.promise(deleteUser(product.id), {
-                          loading: 'Deletando...',
-                          success: 'Cliente deletado com sucesso',
-                          error: 'Erro ao deletar cliente...',
+                          loading: 'Removendo...',
+                          success: 'Usuário removido com sucesso',
+                          error: 'Erro ao deletar usuário...',
                         })
                       })
                     }}
                     disabled={isDeletePending}
                   >
-                    Remover cliente
+                    Remover usuário
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
