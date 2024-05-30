@@ -38,7 +38,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <P className='text-base font-bold text-foreground'>{product.title}</P>
 
-        <div className='flex h-4 items-center gap-1'>
+        {/* <div className='flex h-4 items-center gap-1'>
           {typeof product.attributes === 'object' &&
             product.attributes.map(
               // Filter attributes by color, and render the colors
@@ -52,7 +52,7 @@ export function ProductCard({ product }: ProductCardProps) {
                   />
                 ),
             )}
-        </div>
+        </div> */}
       </CardFooter>
     </Card>
   )
