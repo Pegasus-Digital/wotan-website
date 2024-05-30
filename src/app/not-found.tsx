@@ -15,7 +15,6 @@ export default function NotFound() {
         quality={100}
       />
       <div className='mx-auto max-w-lg space-y-3 text-center'>
-        {/* <Heading variant='h2'>Erro 404</Heading> */}
         <Heading variant='h2' className='leading-normal '>
           Página não encontrada
         </Heading>

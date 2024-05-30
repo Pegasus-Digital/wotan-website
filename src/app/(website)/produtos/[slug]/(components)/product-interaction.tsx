@@ -177,7 +177,6 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
         )}
       </div>
 
-      {/* Product description */}
       {product.description && (
         <Large className='py-4 leading-snug'>{product.description}</Large>
       )}
