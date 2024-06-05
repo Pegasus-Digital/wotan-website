@@ -5,12 +5,12 @@ import { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 
 import {
-  filterAttributesByNotName,
-  filterAttributesByNotType,
-  filterAttributesByType,
-  findAttributeByValue,
-  getProductAttributes,
   getUniqueTypes,
+  getProductAttributes,
+  findAttributeByValue,
+  filterAttributesByType,
+  filterAttributesByNotType,
+  filterAttributesByNotName,
 } from '@/lib/attribute-hooks'
 import { cn } from '@/lib/utils'
 import { getForegroundColor } from '@/lib/color'
@@ -84,8 +84,8 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
     switch (type) {
       case 'increment':
         setItemState({ ...itemState, amount: itemState.amount + quantity })
-
         break
+
       case 'decrement':
         itemState.amount - quantity >= product.minimumQuantity
           ? setItemState({ ...itemState, amount: itemState.amount - quantity })
@@ -93,6 +93,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
               `A quantidade mínima deste produto é de ${product.minimumQuantity} unidades`,
             )
         break
+
       default:
         toast.error('Ocorreu algum erro.')
         break
@@ -101,6 +102,15 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
 
   function onAddToCart(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
+
+    const typesAmount = types ? types.length : 0
+    const colorAmount = colors.length > 0 ? 1 : 0
+
+    if (itemState.attributes.length !== typesAmount + colorAmount) {
+      return toast.info(
+        'Você deve escolher todos os atributos do produto antes de adicioná-lo ao carrinho.',
+      )
+    }
 
     add({ ...itemState, id: uuidv4() })
 
@@ -170,14 +180,6 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
         )}
       </div>
 
-      {/* {product.price && (
-        <div className='flex items-center space-x-2 py-1'>
-          <Large className='whitespace-nowrap text-2xl'>R$ 24.90</Large>
-          <Small className='whitespace-nowrap'>/ un.</Small>
-        </div>
-      )} */}
-
-      {/* Product description */}
       {product.description && (
         <Large className='py-4 leading-snug'>{product.description}</Large>
       )}
@@ -240,9 +242,6 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
             })}
         </div>
       </div>
-
-      {/* Space filler */}
-      {/* <div className='flex-1' /> */}
 
       <div className='flex w-full flex-col items-center font-medium tablet:items-start'>
         <Label className='text-base font-semibold'>Quantidade:</Label>

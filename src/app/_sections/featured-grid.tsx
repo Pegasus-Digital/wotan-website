@@ -19,7 +19,7 @@ export default function FeaturedGrid({
           <Heading variant='h2'>{title}</Heading>
           <Lead>{description}</Lead>
         </div>
-        <BentoGrid className='max-w-desktop mx-auto  py-4'>
+        <BentoGrid className='max-w-desktop mx-auto py-4'>
           {cards.map((card, index) => {
             return (
               <BentoGridItem
@@ -50,7 +50,6 @@ function getSlug({ linkTo }: FeaturedGridProps['cards'][0]) {
     } else if (linkTo.relationTo === 'categories') {
       return `categorias/${linkTo.value.slug}`
     }
-
   }
   return 'nao-encontrado'
 }

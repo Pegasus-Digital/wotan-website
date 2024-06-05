@@ -11,7 +11,7 @@ import { Heading } from '@/pegasus/heading'
 
 export function FAQ({ title, description, questions }: FAQProps) {
   return (
-    <section className='w-full '>
+    <section className='w-full'>
       <div className='container flex max-w-screen-desktop flex-col items-center text-center'>
         {title && (
           <div className='mb-3 flex flex-col gap-2 text-center'>

@@ -25,7 +25,6 @@ export function ProductCard({ product }: ProductCardProps) {
           imgClassName='bg-white w-full h-full aspect-square rounded-t-md'
         />
 
-        {/* Actions Wrapper */}
         <div className='absolute bottom-2 flex w-full items-center justify-center gap-2.5 transition duration-200 tablet:translate-y-10 tablet:opacity-0 tablet:group-hover:translate-y-0 tablet:group-hover:opacity-100'>
           <ProductCardActions product={product} />
         </div>
@@ -39,7 +38,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <P className='text-base font-bold text-foreground'>{product.title}</P>
 
-        <div className='flex h-4 items-center gap-1'>
+        {/* <div className='flex h-4 items-center gap-1'>
           {typeof product.attributes === 'object' &&
             product.attributes.map(
               // Filter attributes by color, and render the colors
@@ -53,7 +52,7 @@ export function ProductCard({ product }: ProductCardProps) {
                   />
                 ),
             )}
-        </div>
+        </div> */}
       </CardFooter>
     </Card>
   )
