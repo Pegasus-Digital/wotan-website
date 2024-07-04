@@ -42,7 +42,7 @@ export function AddToCartContent({ productId }: AddToCartFormProps) {
     <ScrollArea className='max-h-[720px]'>
       <div className='grid h-full w-full grid-cols-1 place-items-stretch gap-2 overflow-y-auto py-4 md:grid-cols-2'>
         <ProductGallery product={product} />
-        <ProductInteraction product={product} />
+        <ProductInteraction product={product} biggerQuantity={false} />
       </div>
     </ScrollArea>
   ) : (

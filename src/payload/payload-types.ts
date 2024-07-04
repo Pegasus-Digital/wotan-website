@@ -523,7 +523,9 @@ export interface PayloadMigration {
 export interface Setting {
   id: string;
   general: {
-    enableDarkMode?: boolean | null;
+    allowDarkMode?: boolean | null;
+    showWhatsAppButton?: boolean | null;
+    biggerQuantity?: boolean | null;
   };
   header: Header;
   footer: Footer;
@@ -593,6 +595,7 @@ export interface Footer {
     }[];
     id?: string | null;
   }[];
+  facebookEmbed?: boolean | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

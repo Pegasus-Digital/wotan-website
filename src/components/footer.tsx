@@ -33,6 +33,7 @@ export function Footer({
   adress,
   contact,
   social,
+  facebookEmbed,
 }: FooterProps) {
   return (
     <footer className=' mt-auto w-full  bg-wotanRed-500 bg-footer	 text-primary-foreground backdrop-blur desktop:min-h-96'>
@@ -126,23 +127,25 @@ export function Footer({
               <FooterColumn {...column} />
             </div>
           ))}
-          <div className='hidden w-1/3 flex-col space-y-1 text-center desktop:flex desktop:text-start'>
-            <Lead className='my-2.5 whitespace-nowrap text-base font-bold text-primary-foreground tablet:text-xl'>
-              {'Facebook'}
-            </Lead>
+          {facebookEmbed && (
+            <div className='hidden w-1/3 flex-col space-y-1 text-center desktop:flex desktop:text-start'>
+              <Lead className='my-2.5 whitespace-nowrap text-base font-bold text-primary-foreground tablet:text-xl'>
+                {'Facebook'}
+              </Lead>
 
-            {/* <iframe
-              src='https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fwotanbrindes%2F&tabs=timeline&width=340&height=271&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=true&appId=1385369231684652'
-              // style='border:none;overflow:hidden'
-              scrolling='no'
-              // frameborder='0'
-              // allowfullscreen='true'
-              width={340}
-              height={271}
-              allow='autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share'
-              className='h-full w-full'
-            /> */}
-          </div>
+              <iframe
+                src='https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fwotanbrindes%2F&tabs=timeline&width=340&height=271&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=true&appId=1385369231684652'
+                // style='border:none;overflow:hidden'
+                scrolling='no'
+                // frameborder='0'
+                // allowfullscreen='true'
+                width={340}
+                height={271}
+                allow='autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share'
+                className='h-full w-full'
+              />
+            </div>
+          )}
         </div>
       </div>
       <PegasusStamp />

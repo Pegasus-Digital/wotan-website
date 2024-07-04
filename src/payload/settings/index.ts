@@ -21,7 +21,11 @@ export const Settings: GlobalConfig = {
         {
           name: 'general',
           label: 'General',
-          fields: [{ name: 'enableDarkMode', type: 'checkbox' }],
+          fields: [
+            { name: 'allowDarkMode', type: 'checkbox' },
+            { name: 'showWhatsAppButton', type: 'checkbox' },
+            { name: 'biggerQuantity', type: 'checkbox' },
+          ],
         },
         {
           label: 'Header',

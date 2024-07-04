@@ -61,6 +61,11 @@ export const footer: Field[] = [
         minRows: 2,
         fields: linkColumn,
       },
+      {
+        name: 'facebookEmbed',
+        type: 'checkbox',
+        defaultValue: false,
+      },
     ],
   },
 ]

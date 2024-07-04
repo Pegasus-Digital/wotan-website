@@ -50,11 +50,15 @@ import { CartItem } from '@/components/cart-store'
 
 interface ProductInteractionProps {
   product: Product
+  biggerQuantity: boolean
 }
 
 const favoriteIconStyles = `stroke-white fill-white group-hover/favorite:fill-primary group-hover/favorite:stroke-primary`
 
-export function ProductInteraction({ product }: ProductInteractionProps) {
+export function ProductInteraction({
+  product,
+  biggerQuantity,
+}: ProductInteractionProps) {
   const [itemState, setItemState] = useState<CartItem>({
     id: null,
     productName: product.title,
@@ -104,7 +108,7 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
     e.preventDefault()
 
     const typesAmount = types ? types.length : 0
-    const colorAmount = colors.length > 0 ? 1 : 0
+    const colorAmount = colors && colors.length > 0 ? 1 : 0
 
     if (itemState.attributes.length !== typesAmount + colorAmount) {
       return toast.info(
@@ -247,24 +251,39 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
         <Label className='text-base font-semibold'>Quantidade:</Label>
 
         <div className='mt-1 flex items-center space-x-1'>
-          <Button
-            value='decrement'
-            variant='outline'
-            size='sm'
-            onClick={onAmountChange}
-            className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
-          >
-            -10
-          </Button>
-          <Button
-            value='decrement'
-            variant='outline'
-            size='sm'
-            onClick={onAmountChange}
-            className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
-          >
-            -1
-          </Button>
+          {biggerQuantity ? (
+            <>
+              {' '}
+              <Button
+                value='decrement'
+                variant='outline'
+                size='sm'
+                onClick={onAmountChange}
+                className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
+              >
+                -10
+              </Button>
+              <Button
+                value='decrement'
+                variant='outline'
+                size='sm'
+                onClick={onAmountChange}
+                className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
+              >
+                -1
+              </Button>
+            </>
+          ) : (
+            <Button
+              value='decrement'
+              variant='outline'
+              size='sm'
+              onClick={onAmountChange}
+              className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
+            >
+              -1
+            </Button>
+          )}
 
           <Input
             className='pointer-events-none max-w-12 bg-wotanRed-400 px-0 text-center text-lg font-bold text-primary-foreground'
@@ -272,25 +291,39 @@ export function ProductInteraction({ product }: ProductInteractionProps) {
             value={itemState.amount}
             readOnly
           />
-
-          <Button
-            value='increment'
-            variant='outline'
-            size='sm'
-            onClick={onAmountChange}
-            className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
-          >
-            +1
-          </Button>
-          <Button
-            value='increment'
-            variant='outline'
-            size='sm'
-            onClick={onAmountChange}
-            className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
-          >
-            +10
-          </Button>
+          {biggerQuantity ? (
+            <>
+              {' '}
+              <Button
+                value='increment'
+                variant='outline'
+                size='sm'
+                onClick={onAmountChange}
+                className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
+              >
+                +1
+              </Button>
+              <Button
+                value='increment'
+                variant='outline'
+                size='sm'
+                onClick={onAmountChange}
+                className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
+              >
+                +10
+              </Button>
+            </>
+          ) : (
+            <Button
+              value='increment'
+              variant='outline'
+              size='sm'
+              onClick={onAmountChange}
+              className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
+            >
+              +1
+            </Button>
+          )}
         </div>
       </div>
 

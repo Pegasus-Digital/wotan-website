@@ -78,7 +78,7 @@ export default async function WebsiteLayout({
 
   // console.log({ categories })
 
-  const { header, footer, company } = settings
+  const { header, footer, company, general } = settings
   const { adress, contact, social } = company
 
   // TODO: If data doesn't exist on Payload, it should not break the deployment.
@@ -108,11 +108,15 @@ export default async function WebsiteLayout({
             adress={adress}
             contact={contact}
             social={social}
+            facebookEmbed={footer.facebookEmbed}
           />
         </Suspense>
       </CartStoreProvider>
       <Toaster richColors closeButton theme='light' />
-      <WhatsAppButton phoneNumber={contact?.whatsapp} />
+
+      {general.showWhatsAppButton && (
+        <WhatsAppButton phoneNumber={contact?.whatsapp} />
+      )}
     </>
   )
 }
