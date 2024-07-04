@@ -11,6 +11,7 @@ import payload from 'payload'
 import { NestedCategory, nestCategories } from '@/lib/category-hierarchy'
 import Loading from '../loading'
 import { Suspense } from 'react'
+import WhatsAppButton from '@/components/whats-button'
 
 interface WebsiteLayoutProps {
   children: React.ReactNode
@@ -111,6 +112,7 @@ export default async function WebsiteLayout({
         </Suspense>
       </CartStoreProvider>
       <Toaster richColors closeButton theme='light' />
+      <WhatsAppButton phoneNumber={contact?.whatsapp} />
     </>
   )
 }
