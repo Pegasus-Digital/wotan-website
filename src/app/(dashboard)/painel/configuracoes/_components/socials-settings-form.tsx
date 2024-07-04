@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { H3 } from '@/components/typography/headings'
 import { Company } from '@/payload/payload-types'
-import { updateSettings } from '../_logic/actions'
+import { updateCompanySettings } from '../_logic/actions'
 import { toast } from 'sonner'
 
 const socialsSettingsFormSchema = z.object({
@@ -41,7 +41,7 @@ export function SocialsSettingsForm({ company }: CompanyProps) {
   })
 
   async function onSubmit(values: z.infer<typeof socialsSettingsFormSchema>) {
-    const response = await updateSettings({
+    const response = await updateCompanySettings({
       ...company,
 
       social: {

@@ -20,7 +20,7 @@ import { Button } from '@/components/ui/button'
 import { H3 } from '@/components/typography/headings'
 import { Company } from '@/payload/payload-types'
 import { toast } from 'sonner'
-import { updateSettings } from '../_logic/actions'
+import { updateCompanySettings } from '../_logic/actions'
 
 const generalSettingsFormSchema = z.object({
   name: z.string().min(3),
@@ -55,7 +55,7 @@ export function GeneralSettingsForm({ company }: CompanyProps) {
   }
 
   async function onSubmit(values: z.infer<typeof generalSettingsFormSchema>) {
-    const response = await updateSettings({
+    const response = await updateCompanySettings({
       ...company,
 
       name: values.name,

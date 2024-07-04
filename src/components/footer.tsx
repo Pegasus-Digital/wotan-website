@@ -156,7 +156,7 @@ function FooterColumn({ title, links }: FooterColumnProps) {
   return (
     <nav className='flex shrink flex-col justify-center space-y-1 text-center tablet:justify-start tablet:text-start'>
       <Lead className='my-3 whitespace-nowrap text-base font-bold text-primary-foreground tablet:text-xl'>
-        {title.label}
+        {title}
       </Lead>
 
       {links.map((child, index) => (

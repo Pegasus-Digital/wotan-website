@@ -3,7 +3,11 @@ import linkGroup from './linkGroup'
 import link from './link'
 
 const linkColumn: Field[] = [
-  link({ overrides: { name: 'title' } }),
+  {
+    name: 'title',
+    type: 'text',
+    required: true,
+  },
   linkGroup({ overrides: { name: 'links', required: true } }),
 ]
 
