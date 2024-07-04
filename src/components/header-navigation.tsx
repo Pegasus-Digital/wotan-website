@@ -128,7 +128,7 @@ function Dropdown({ linkTo, subLinks }: LinkProps) {
 function Classic({ linkTo }: LinkProps) {
   return (
     <NavigationMenuItem>
-      <Link href={getHref({ ...linkTo })} legacyBehavior passHref>
+      <Link href={getHref({ ...linkTo })} passHref>
         <NavigationMenuLink className={navigationMenuTriggerStyle()}>
           {linkTo.label}
         </NavigationMenuLink>
@@ -150,9 +150,9 @@ export function HeaderNavigation({ links, style }: HeaderNavigationProps) {
     <NavigationMenu>
       <NavigationMenuList>
         {links.map((link, index) => {
-          if (link.onlyLink === false) {
-            return <Menu key={index} {...link} />
-          }
+          // if (link.onlyLink === false) {
+          //   return <Menu key={index} {...link} />
+          // }
           return <Classic key={index} {...link} />
         })}
       </NavigationMenuList>
