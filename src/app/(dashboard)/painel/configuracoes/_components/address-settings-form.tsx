@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { H3 } from '@/components/typography/headings'
 import { Company } from '@/payload/payload-types'
-import { updateSettings } from '../_logic/actions'
+import { updateCompanySettings } from '../_logic/actions'
 import {
   Select,
   SelectContent,
@@ -28,6 +28,7 @@ import {
 
 import { BRAZIL_STATES } from '@/lib/brazil-states'
 import { toast } from 'sonner'
+import { Textarea } from '@/components/ui/textarea'
 
 const addressSettingsFormSchema = z.object({
   street: z.string(),
@@ -59,7 +60,7 @@ export function AddressSettingsForm({ company }: CompanyProps) {
   })
 
   async function onSubmit(values: z.infer<typeof addressSettingsFormSchema>) {
-    const response = await updateSettings({
+    const response = await updateCompanySettings({
       ...company,
       googleMaps: values.maps,
       adress: {
@@ -223,10 +224,9 @@ export function AddressSettingsForm({ company }: CompanyProps) {
               <FormItem className='flex-1'>
                 <FormLabel>Google Maps Embed IFrame</FormLabel>
                 <FormControl>
-                  <Input
-                    className='ring-none outline-none'
-                    type='text'
+                  <Textarea
                     placeholder='Google Maps embed URL'
+                    className='ring-none outline-none'
                     {...field}
                   />
                 </FormControl>

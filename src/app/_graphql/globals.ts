@@ -41,7 +41,7 @@ footer {
     showSocial
   }
   columns {
-    title ${LINK_FIELDS}
+    title 
     links {
       link ${LINK_FIELDS}
     }

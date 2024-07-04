@@ -1,3 +1,5 @@
+'use client'
+
 import { Content, ContentHeader } from '@/components/content'
 
 import { Separator } from '@/components/ui/separator'
@@ -9,6 +11,8 @@ import { AddressSettingsForm } from './_components/address-settings-form'
 import { SocialsSettingsForm } from './_components/socials-settings-form'
 
 import { Setting } from '@/payload/payload-types'
+import FooterSettingsForm from './_components/footer-settings-form'
+import HeaderSettingsForm from './_components/header-settings-form'
 
 interface SettingsContentProps {
   settings: Setting
@@ -28,23 +32,33 @@ export function SettingsContent({ settings }: SettingsContentProps) {
 
       <Tabs defaultValue='company'>
         <TabsList>
+          {/* <TabsTrigger value='general'>Geral</TabsTrigger> */}
           <TabsTrigger value='company'>Empresa</TabsTrigger>
+          <TabsTrigger value='contato'>Contato</TabsTrigger>
+          <TabsTrigger value='endereco'>Endereço</TabsTrigger>
+          <TabsTrigger value='socials'>Redes Sociais</TabsTrigger>
           <TabsTrigger value='header'>Cabeçalho</TabsTrigger>
           <TabsTrigger value='footer'>Rodapé</TabsTrigger>
         </TabsList>
 
-        <TabsContent
-          className='grid grid-cols-1 gap-6 lg:grid-cols-2'
-          value='company'
-        >
+        <TabsContent value='company'>
           <GeneralSettingsForm company={company} />
-          <ContactSettingsForm company={company} />
+        </TabsContent>
+        <TabsContent value='endereco'>
           <AddressSettingsForm company={company} />
+        </TabsContent>
+        <TabsContent value='contato'>
+          <ContactSettingsForm company={company} />
+        </TabsContent>
+        <TabsContent value='socials'>
           <SocialsSettingsForm company={company} />
         </TabsContent>
-
-        <TabsContent value='header'>cabeçalho</TabsContent>
-        <TabsContent value='footer'>rodapé</TabsContent>
+        <TabsContent value='header'>
+          <HeaderSettingsForm header={header} />
+        </TabsContent>
+        <TabsContent value='footer'>
+          <FooterSettingsForm footer={footer} />
+        </TabsContent>
       </Tabs>
     </Content>
   )

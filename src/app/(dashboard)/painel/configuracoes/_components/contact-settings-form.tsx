@@ -19,7 +19,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { H3 } from '@/components/typography/headings'
 import { Company } from '@/payload/payload-types'
-import { updateSettings } from '../_logic/actions'
+import { updateCompanySettings } from '../_logic/actions'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 
@@ -55,7 +55,7 @@ export function ContactSettingsForm({ company }: CompanyProps) {
   }
 
   async function onSubmit(values: z.infer<typeof contactSettingsSchema>) {
-    const response = await updateSettings({
+    const response = await updateCompanySettings({
       ...company,
       contact: {
         email: values.email,

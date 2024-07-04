@@ -586,7 +586,7 @@ export interface Footer {
     showSocial: boolean;
   };
   columns: {
-    title: Link;
+    title: string;
     links: {
       link: Link;
       id?: string | null;
