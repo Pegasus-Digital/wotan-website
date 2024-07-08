@@ -21,7 +21,7 @@ const Products: CollectionConfig = {
   },
   hooks: {
     //   beforeChange: [beforeProductChange],
-    // afterChange: [revalidateProduct],
+    afterChange: [revalidateProduct],
     //   afterRead: [populateArchiveBlock],
     //   afterDelete: [deleteProductFromCarts],
   },
@@ -97,7 +97,7 @@ const Products: CollectionConfig = {
             {
               name: 'images',
               type: 'array',
-              maxRows: 6,
+              maxRows: 16,
               fields: [
                 {
                   name: 'image',

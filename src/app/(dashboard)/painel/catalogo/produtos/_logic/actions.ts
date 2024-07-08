@@ -52,6 +52,8 @@ export async function updateProduct(
   product: SafeProduct,
 ): Promise<ActionResponse<UpdateActionResponseData>> {
   try {
+    delete product.images
+
     const response = await payload.update({
       collection: 'products',
       where: { id: { equals: id } },
@@ -59,6 +61,8 @@ export async function updateProduct(
     })
 
     if (response.errors.length > 0) {
+      // console.error(response.errors)
+
       return {
         data: null,
         status: false,
