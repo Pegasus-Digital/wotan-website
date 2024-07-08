@@ -17,8 +17,9 @@ export const newProductSchema = z.object({
   sku: z
     .string()
     .refine(
-      (value) => /^[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(value),
-      'SKU deve ser alfanumérico e pode conter hífens, porém não no início nem no fim do código.',
+      (value) => (value) =>
+        /^[^\s-][\w$@#&*()+={}[\]:;',.?/~!%^_\\-]*(?<!-)$/.test(value),
+      'SKU deve conter caracteres alfanuméricos ou especiais sem espaços.',
     ),
 
   /* Optional fields */
@@ -45,8 +46,9 @@ export const updateProductSchema = z.object({
   sku: z
     .string()
     .refine(
-      (value) => /^[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(value),
-      'SKU deve ser alfanumérico e pode conter hífens, porém não no início nem no fim do código.',
+      (value) => (value) =>
+        /^[^\s-][\w$@#&*()+={}[\]:;',.?/~!%^_\\-]*(?<!-)$/.test(value),
+      'SKU deve conter caracteres alfanuméricos ou especiais sem espaços.',
     ),
 
   /* Optional fields */
