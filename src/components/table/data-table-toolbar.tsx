@@ -82,7 +82,7 @@ export function DataTableToolbar<TData>({
       <div className='flex-1' />
 
       {/* Actions */}
-      <div className='space-x-2'>
+      <div className=' flex flex-row space-x-2'>
         {actions?.map((ActionJSX, index) => (
           <span key={ActionJSX.valueOf().toString() + index}>
             <ActionJSX />

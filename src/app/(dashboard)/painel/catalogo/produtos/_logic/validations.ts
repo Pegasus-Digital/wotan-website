@@ -61,3 +61,16 @@ export const updateProductSchema = z.object({
   attributes: z.array(z.string()).optional(),
   categories: z.array(z.string()).optional(),
 })
+
+export const bulkUpdateProductSchema = z.object({
+  sku: z
+    .string()
+    .refine(
+      (value) => (value) =>
+        /^[^\s-][\w$@#&*()+={}[\]:;',.?/~!%^_\\-]*(?<!-)$/.test(value),
+      'SKU deve conter caracteres alfanuméricos ou especiais sem espaços.',
+    ),
+
+  categories: z.array(z.string()),
+  id: z.string(),
+})

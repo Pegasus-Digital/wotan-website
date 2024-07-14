@@ -10,6 +10,7 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { DataTable } from '@/components/table/data-table'
 import { useDataTable } from '@/components/table/hooks/use-data-table'
 import { NewProductDialog } from '../_components/new-product-dialog'
+import { BulkUpdateProductDialog } from '../_components/bulk-update-dialog-content'
 
 import { getProducts } from '../_logic/queries'
 import { DataTableToolbar } from '@/components/table/data-table-toolbar'
@@ -38,7 +39,7 @@ export function ProductsTable({ productsPromise }: ProductsTableProps) {
       <DataTableToolbar
         table={table}
         filterFields={filterFields}
-        actions={[NewProductDialog]}
+        actions={[NewProductDialog, BulkUpdateProductDialog]}
       />
 
       <DataTable table={table} columns={columns} />
