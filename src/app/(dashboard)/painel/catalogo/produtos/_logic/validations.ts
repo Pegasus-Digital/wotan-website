@@ -61,3 +61,7 @@ export const updateProductSchema = z.object({
   attributes: z.array(z.string()).optional(),
   categories: z.array(z.string()).optional(),
 })
+
+export const bulkUpdateProductSchema = z.object({
+  categories: z.array(z.string()),
+})

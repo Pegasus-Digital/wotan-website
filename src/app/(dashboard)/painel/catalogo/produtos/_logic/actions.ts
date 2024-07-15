@@ -10,6 +10,10 @@ import { ActionResponse } from '@/lib/actions'
 // The user should not be able to directly modify the omitted fields
 type SafeProduct = Omit<Product, 'createdAt' | 'id' | 'sizes' | 'updatedAt'>
 
+export type ProductInfo = Pick<Product, 'sku' | 'id'>
+
+type ProductThings = Pick<Product, 'categories'>
+
 interface CreateProductResponseData {
   product: Product | null
 }
@@ -150,3 +154,59 @@ interface CreateMediaResponseData {}
 //     }
 //   }
 // }
+
+interface BulkUpdateActionResponseData {
+  products: Product[] | null
+}
+
+export async function bulkUpdateProductCategories(
+  products: ProductInfo[],
+  productThings: ProductThings,
+): Promise<ActionResponse<BulkUpdateActionResponseData>> {
+  // console.log(products)
+  try {
+    for (const product of products) {
+      const { sku, id } = product
+      try {
+        const { categories } = productThings
+
+        const response = await payload.update({
+          collection: 'products',
+          where: { id: { equals: id } },
+          data: { categories },
+        })
+
+        if (response.errors.length > 0) {
+          // console.error(response.errors)
+          return {
+            data: null,
+            status: false,
+            message: `[400] Ocorreu um erro ao atualizar o produto. SKU: ${sku}`,
+          }
+        }
+      } catch (err) {
+        // console.error(err)
+
+        return {
+          data: null,
+          status: false,
+          message: `[500] Ocorreu um erro ao atualizar o produto. SKU: ${sku}`,
+        }
+      }
+    }
+    revalidatePath('/painel/catalogo/produtos')
+    return {
+      data: null,
+      status: true,
+      message: 'Produtos atualizados com sucesso.',
+    }
+  } catch (err) {
+    // console.error(err)
+
+    return {
+      data: null,
+      status: false,
+      message: '[500] Ocorreu um erro ao atualizar os produtos.',
+    }
+  }
+}

@@ -103,7 +103,23 @@ export function ProductInteraction({
         break
     }
   }
+  function onIncrement(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault()
+    const quantity = 1
 
+    setItemState({ ...itemState, amount: itemState.amount + quantity })
+  }
+
+  function onDecrement(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault()
+    const quantity = 1
+
+    itemState.amount - quantity >= product.minimumQuantity
+      ? setItemState({ ...itemState, amount: itemState.amount - quantity })
+      : toast.warning(
+          `A quantidade mínima deste produto é de ${product.minimumQuantity} unidades`,
+        )
+  }
   function onAddToCart(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
 
@@ -253,7 +269,6 @@ export function ProductInteraction({
         <div className='mt-1 flex items-center space-x-1'>
           {biggerQuantity ? (
             <>
-              {' '}
               <Button
                 value='decrement'
                 variant='outline'
@@ -278,10 +293,10 @@ export function ProductInteraction({
               value='decrement'
               variant='outline'
               size='sm'
-              onClick={onAmountChange}
+              onClick={onDecrement}
               className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
             >
-              -1
+              -
             </Button>
           )}
 
@@ -293,7 +308,6 @@ export function ProductInteraction({
           />
           {biggerQuantity ? (
             <>
-              {' '}
               <Button
                 value='increment'
                 variant='outline'
@@ -318,10 +332,10 @@ export function ProductInteraction({
               value='increment'
               variant='outline'
               size='sm'
-              onClick={onAmountChange}
+              onClick={onIncrement}
               className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
             >
-              +1
+              +
             </Button>
           )}
         </div>
