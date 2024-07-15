@@ -10,7 +10,9 @@ import { ActionResponse } from '@/lib/actions'
 // The user should not be able to directly modify the omitted fields
 type SafeProduct = Omit<Product, 'createdAt' | 'id' | 'sizes' | 'updatedAt'>
 
-type ProductCategories = Pick<Product, 'categories' | 'sku' | 'id'>
+export type ProductInfo = Pick<Product, 'sku' | 'id'>
+
+type ProductThings = Pick<Product, 'categories'>
 
 interface CreateProductResponseData {
   product: Product | null
@@ -158,12 +160,15 @@ interface BulkUpdateActionResponseData {
 }
 
 export async function bulkUpdateProductCategories(
-  products: ProductCategories[],
+  products: ProductInfo[],
+  productThings: ProductThings,
 ): Promise<ActionResponse<BulkUpdateActionResponseData>> {
+  // console.log(products)
   try {
     for (const product of products) {
+      const { sku, id } = product
       try {
-        const { sku, categories, id } = product
+        const { categories } = productThings
 
         const response = await payload.update({
           collection: 'products',
@@ -185,7 +190,7 @@ export async function bulkUpdateProductCategories(
         return {
           data: null,
           status: false,
-          message: '[500] Ocorreu um erro ao atualizar o produto.',
+          message: `[500] Ocorreu um erro ao atualizar o produto. SKU: ${sku}`,
         }
       }
     }

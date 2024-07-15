@@ -39,7 +39,7 @@ export function BulkUpdateProductDialog({
             Atualize as categorias dos produtos selecionados.
           </DialogDescription>
         </DialogHeader>
-        <BulkUpdateProductForm products={products} />
+        <BulkUpdateProductForm products={products} setOpen={setOpen} />
       </DialogContent>
     </Dialog>
   )
