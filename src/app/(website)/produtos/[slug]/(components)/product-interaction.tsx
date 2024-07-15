@@ -28,7 +28,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Heading } from '@/pegasus/heading'
 import { Large, Muted } from '@/components/typography/texts'
 
-import { Heart, PlusCircle, ShoppingCart } from 'lucide-react'
+import { Heart, Minus, Plus, PlusCircle, ShoppingCart } from 'lucide-react'
 
 import {
   Tooltip,
@@ -103,6 +103,22 @@ export function ProductInteraction({
         break
     }
   }
+
+  function onSetAmount(e: React.ChangeEvent<HTMLInputElement>) {
+    const quantity = Math.abs(parseInt(e.target.value))
+
+    if (quantity < product.minimumQuantity) {
+      toast.warning(
+        `A quantidade mínima deste produto é de ${product.minimumQuantity} unidades`,
+      )
+
+      setItemState({ ...itemState, amount: product.minimumQuantity })
+
+      return
+    }
+    setItemState({ ...itemState, amount: quantity })
+  }
+
   function onIncrement(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
     const quantity = 1
@@ -292,19 +308,20 @@ export function ProductInteraction({
             <Button
               value='decrement'
               variant='outline'
-              size='sm'
+              size='icon'
               onClick={onDecrement}
               className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
             >
-              -
+              <Minus className='h-4 w-4' />
             </Button>
           )}
 
           <Input
-            className='pointer-events-none max-w-12 bg-wotanRed-400 px-0 text-center text-lg font-bold text-primary-foreground'
+            className='h-10 max-w-16 bg-wotanRed-400 px-0 text-center text-lg font-bold text-primary-foreground'
             min={product.minimumQuantity}
             value={itemState.amount}
-            readOnly
+            readOnly={biggerQuantity}
+            onChange={onSetAmount}
           />
           {biggerQuantity ? (
             <>
@@ -331,11 +348,11 @@ export function ProductInteraction({
             <Button
               value='increment'
               variant='outline'
-              size='sm'
+              size='icon'
               onClick={onIncrement}
               className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
             >
-              +
+              <Plus className='h-4 w-4' />
             </Button>
           )}
         </div>
