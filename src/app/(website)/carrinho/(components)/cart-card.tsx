@@ -32,9 +32,9 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 import { Heading } from '@/pegasus/heading'
-import { Large, Small } from '@/components/typography/texts'
+import { Small } from '@/components/typography/texts'
 
-import { Trash } from 'lucide-react'
+import { Minus, Plus, Trash } from 'lucide-react'
 
 interface CartCardProps {
   cartItem: CartItem
@@ -42,9 +42,8 @@ interface CartCardProps {
 }
 
 export function CartCard({ cartItem, product }: CartCardProps) {
-  const { remove, incrementAmount, decrementAmount, updateAttr } = useCartStore(
-    (state) => state,
-  )
+  const { remove, incrementAmount, decrementAmount, setAmount, updateAttr } =
+    useCartStore((state) => state)
 
   const attributes = product ? getProductAttributes(product) : null
   const colors = attributes ? filterAttributesByType(attributes, 'color') : null
@@ -95,23 +94,27 @@ export function CartCard({ cartItem, product }: CartCardProps) {
     updateAttr(cartItem.id, attribute)
   }
 
-  if (!product) return <LoadingSpinner />
+  if (!product)
+    return (
+      <div className='flex w-full items-center justify-center'>
+        <LoadingSpinner />
+      </div>
+    )
 
   return (
-    <Card className='w-full shadow-xl tablet:flex'>
-      <CardHeader className='text-center'>
-        <Heading variant='h3'>{product.title}</Heading>
-        <Media
-          className='rounded-md shadow-2xl'
-          resource={product.featuredImage}
-          imgClassName='rounded-md aspect-square shadow-lg object-contain'
-        />
-      </CardHeader>
-
-      <CardContent className='flex w-full flex-col space-y-2 tablet:p-6'>
+    <div className='grid w-full grid-flow-row grid-cols-1 items-center gap-4 rounded-md bg-background p-4 tablet:grid-cols-[128px_1fr_256px] tablet:p-2'>
+      <Media
+        className=' mx-8 rounded-md shadow-2xl tablet:mx-0'
+        resource={product.featuredImage}
+        imgClassName='rounded-md aspect-square shadow-lg object-contain'
+      />
+      <div className='grid h-full items-start gap-1'>
+        <Heading variant='h3' className=' font-bold'>
+          {product.title}
+        </Heading>
         {otherAttributes && otherAttributes.length > 0 ? (
           <div className='space-y-1'>
-            <Large>Atributos:</Large>
+            <Small>Atributos:</Small>
 
             {types.length > 0 ? (
               types.map((type) => {
@@ -141,20 +144,20 @@ export function CartCard({ cartItem, product }: CartCardProps) {
                 )
               })
             ) : (
-              <Large className='w-full py-2'>
+              <Small className='w-full py-2 text-foreground opacity-0'>
                 Não há atributos para selecionar
-              </Large>
+              </Small>
             )}
           </div>
         ) : (
-          <Large className='w-full py-2'>
+          <Small className='w-full py-2 text-foreground opacity-0 '>
             Não há atributos para selecionar
-          </Large>
+          </Small>
         )}
 
         {colors && colors.length > 0 ? (
           <div className='space-y-1'>
-            <Large>Cores:</Large>
+            <Small>Cores:</Small>
 
             <RadioGroup
               defaultValue={getAttributeColor()}
@@ -177,20 +180,21 @@ export function CartCard({ cartItem, product }: CartCardProps) {
             </RadioGroup>
           </div>
         ) : (
-          <Large className='w-full py-2'>Não há cores para selecionar</Large>
+          <Small className='w-full py-2 text-foreground opacity-0'>
+            Não há cores para selecionar
+          </Small>
         )}
+      </div>
 
-        <div className='flex-1' />
-
-        <CartInteraction
-          item={cartItem}
-          minimumQuantity={product.minimumQuantity}
-          decrementAmount={decrementAmount}
-          incrementAmount={incrementAmount}
-          remove={remove}
-        />
-      </CardContent>
-    </Card>
+      <CartInteraction
+        item={cartItem}
+        minimumQuantity={product.minimumQuantity}
+        decrementAmount={decrementAmount}
+        incrementAmount={incrementAmount}
+        setAmount={setAmount}
+        remove={remove}
+      />
+    </div>
   )
 }
 
@@ -199,6 +203,7 @@ interface CartInteractionProps {
   minimumQuantity: number
   incrementAmount: (id: string, quantity: number) => void
   decrementAmount: (id: string, quantity: number) => void
+  setAmount: (id: string, quantity: number) => void
   remove: (id: string) => void
 }
 
@@ -207,6 +212,7 @@ function CartInteraction({
   minimumQuantity,
   incrementAmount,
   decrementAmount,
+  setAmount,
   remove,
 }: CartInteractionProps) {
   function onCartRemove() {
@@ -237,45 +243,58 @@ function CartInteraction({
     }
   }
 
+  function onSetAmount(e: React.ChangeEvent<HTMLInputElement>) {
+    const quantity = Math.abs(parseInt(e.target.value))
+
+    if (quantity < minimumQuantity || Number.isNaN(quantity)) {
+      toast.warning(
+        `A quantidade mínima deste produto é de ${minimumQuantity} unidades`,
+      )
+
+      setAmount(item.id, minimumQuantity)
+
+      return
+    }
+    setAmount(item.id, quantity)
+  }
+
   return (
-    <div className='flex w-full flex-col space-y-2'>
-      <div className='flex flex-col items-center space-y-1 self-center'>
-        <Large>Quantidade:</Large>
-        <div className='flex items-center space-x-1 transition-all'>
-          <Button
-            value='decrement'
-            variant='ghost'
-            size='sm'
-            onClick={onAmountChange}
-            className='aspect-square text-lg font-semibold hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
-          >
-            -
-          </Button>
+    <div className=' flex w-full flex-row items-center justify-end gap-8'>
+      <div className='flex w-full items-center justify-center gap-1 transition-all tablet:w-auto '>
+        <Button
+          value='decrement'
+          variant='ghost'
+          size='icon'
+          onClick={onAmountChange}
+          className='aspect-square text-lg font-semibold hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
+        >
+          <Minus className='h-5 w-5' />
+        </Button>
 
-          <Input
-            className='pointer-events-none max-w-12 bg-primary px-0 text-center text-lg font-bold text-primary-foreground'
-            value={item.amount}
-            readOnly
-          />
+        <Input
+          className='max-w-16 bg-primary px-0 text-center text-lg font-bold text-primary-foreground'
+          value={item.amount}
+          min={minimumQuantity}
+          onChange={onSetAmount}
+        />
 
-          <Button
-            value='increment'
-            variant='ghost'
-            size='sm'
-            onClick={onAmountChange}
-            className='aspect-square text-lg font-semibold hover:bg-primary hover:text-primary-foreground active:scale-110'
-          >
-            +
-          </Button>
-        </div>
+        <Button
+          value='increment'
+          variant='ghost'
+          size='icon'
+          onClick={onAmountChange}
+          className='aspect-square text-lg font-semibold hover:bg-primary hover:text-primary-foreground active:scale-110'
+        >
+          <Plus className='h-5 w-5' />
+        </Button>
       </div>
       <Button
         variant='outline'
-        className='w-full shadow-lg'
+        className='shadow-lg'
         onClick={onCartRemove}
+        size='icon'
       >
-        <Trash className='mr-2 h-5 w-5' />
-        Remover
+        <Trash className='h-5 w-5' />
       </Button>
     </div>
   )
