@@ -27,6 +27,7 @@ interface Actions {
   flushToilet: () => void
   incrementAmount: (id: string, quantity: number) => void
   decrementAmount: (id: string, quantity: number) => void
+  setAmount: (id: string, quantity: number) => void
   updateAttr: (id: string, attr: Attribute) => void
 
   addFavorite: (productId: string) => void
@@ -88,6 +89,20 @@ export const createCartStore = (initState: State = defaultInitState) => {
           const updatedCart = cart.map((item) => {
             if (item.id === id) {
               item.amount -= quantity
+            }
+
+            return item
+          })
+
+          set({ cart: updatedCart })
+        },
+
+        setAmount: (id, quantity) => {
+          const { cart } = get()
+
+          const updatedCart = cart.map((item) => {
+            if (item.id === id) {
+              item.amount = quantity
             }
 
             return item
