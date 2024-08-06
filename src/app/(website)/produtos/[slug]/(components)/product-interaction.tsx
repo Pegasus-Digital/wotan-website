@@ -106,17 +106,18 @@ export function ProductInteraction({
 
   function onSetAmount(e: React.ChangeEvent<HTMLInputElement>) {
     const quantity = Math.abs(parseInt(e.target.value))
+    if (!Number.isNaN(quantity)) {
+      if (quantity < product.minimumQuantity) {
+        toast.warning(
+          `A quantidade mínima deste produto é de ${product.minimumQuantity} unidades`,
+        )
 
-    if (quantity < product.minimumQuantity) {
-      toast.warning(
-        `A quantidade mínima deste produto é de ${product.minimumQuantity} unidades`,
-      )
+        // setItemState({ ...itemState, amount: product.minimumQuantity })
 
-      setItemState({ ...itemState, amount: product.minimumQuantity })
-
-      return
+        // return
+      }
+      setItemState({ ...itemState, amount: quantity })
     }
-    setItemState({ ...itemState, amount: quantity })
   }
 
   function onIncrement(e: React.MouseEvent<HTMLButtonElement>) {
@@ -141,6 +142,12 @@ export function ProductInteraction({
 
     const typesAmount = types ? types.length : 0
     const colorAmount = colors && colors.length > 0 ? 1 : 0
+
+    if (itemState.amount < product.minimumQuantity) {
+      toast.warning(
+        `A quantidade mínima deste produto é de ${product.minimumQuantity} unidades`,
+      )
+    }
 
     if (itemState.attributes.length !== typesAmount + colorAmount) {
       return toast.info(
@@ -318,9 +325,9 @@ export function ProductInteraction({
 
           <Input
             className='h-10 max-w-16 bg-wotanRed-400 px-0 text-center text-lg font-bold text-primary-foreground'
-            min={product.minimumQuantity}
+            // min={product.minimumQuantity}
             value={itemState.amount}
-            readOnly={biggerQuantity}
+            // readOnly={biggerQuantity}
             onChange={onSetAmount}
           />
           {biggerQuantity ? (
