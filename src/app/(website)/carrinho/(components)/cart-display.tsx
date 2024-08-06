@@ -105,7 +105,7 @@ export function CartDisplay() {
             cart.map((item) => (
               <div className='flex items-center justify-between'>
                 <div>{item.productName}</div>
-                <div className='font-bold'>{item.amount}x</div>
+                <div className='font-bold'>{item.amount}</div>
               </div>
             ))}
           <Separator />

@@ -105,19 +105,29 @@ export function ProductInteraction({
   }
 
   function onSetAmount(e: React.ChangeEvent<HTMLInputElement>) {
-    const quantity = Math.abs(parseInt(e.target.value))
-    if (!Number.isNaN(quantity)) {
-      if (quantity < product.minimumQuantity) {
-        toast.warning(
-          `A quantidade mínima deste produto é de ${product.minimumQuantity} unidades`,
-        )
+    const inputValue = e.target.value
+    const quantity = Math.abs(parseInt(inputValue, 10))
 
-        // setItemState({ ...itemState, amount: product.minimumQuantity })
-
-        // return
-      }
-      setItemState({ ...itemState, amount: quantity })
+    if (inputValue === '') {
+      setItemState({ ...itemState, amount: 0 })
+      return
     }
+
+    if (Number.isNaN(quantity)) {
+      toast.warning('Por favor, insira um valor numérico válido')
+      setItemState({ ...itemState, amount: 0 })
+      return
+    }
+
+    if (quantity < product.minimumQuantity) {
+      toast.warning(
+        `A quantidade mínima deste produto é de ${product.minimumQuantity} unidades`,
+      )
+      // setItemState({ ...itemState, amount: product.minimumQuantity })
+      // return
+    }
+
+    setItemState({ ...itemState, amount: quantity })
   }
 
   function onIncrement(e: React.MouseEvent<HTMLButtonElement>) {

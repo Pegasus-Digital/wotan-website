@@ -244,19 +244,29 @@ function CartInteraction({
   }
 
   function onSetAmount(e: React.ChangeEvent<HTMLInputElement>) {
-    const quantity = Math.abs(parseInt(e.target.value))
-    if (!Number.isNaN(quantity)) {
-      if (quantity < minimumQuantity) {
-        toast.warning(
-          `A quantidade mínima deste produto é de ${minimumQuantity} unidades`,
-        )
+    const inputValue = e.target.value
+    const quantity = Math.abs(parseInt(inputValue, 10))
 
-        // setAmount(item.id, minimumQuantity)
-
-        // return
-      }
-      setAmount(item.id, quantity)
+    if (inputValue === '') {
+      setAmount(item.id, 0)
+      return
     }
+
+    if (Number.isNaN(quantity)) {
+      toast.warning('Por favor, insira um valor numérico válido')
+      setAmount(item.id, 0)
+      return
+    }
+
+    if (quantity < minimumQuantity) {
+      toast.warning(
+        `A quantidade mínima deste produto é de ${minimumQuantity} unidades`,
+      )
+      // setAmount(item.id, quantity)
+      // return
+    }
+
+    setAmount(item.id, quantity)
   }
 
   return (
@@ -277,6 +287,7 @@ function CartInteraction({
           value={item.amount}
           // min={minimumQuantity}
           onChange={onSetAmount}
+          type='number'
         />
 
         <Button
