@@ -34,7 +34,7 @@ export function AddToCartDialog({ productId }: AddToCartDialogProps) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className='w-full max-w-screen-xl'>
+      <DialogContent className=' w-[calc(100%-1rem)] max-w-screen-xl overflow-clip'>
         <DialogHeader>
           <DialogTitle>Adicionar ao carrinho</DialogTitle>
           <DialogDescription>
