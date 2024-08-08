@@ -44,7 +44,7 @@ export function AddToCartDialog({ productId }: AddToCartDialogProps) {
 
         <Separator />
 
-        <AddToCartContent productId={productId} />
+        <AddToCartContent productId={productId} setOpen={setOpen} />
       </DialogContent>
     </Dialog>
   )
