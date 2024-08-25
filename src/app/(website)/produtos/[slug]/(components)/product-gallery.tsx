@@ -30,7 +30,42 @@ export function ProductGallery({ product }) {
                 <Image
                   key={entry.id}
                   resource={entry.image}
-                  imgClassName={`aspect-square rounded-lg border object-cover object-center col-span-1 row-span-1 shadow-wotan-light h-28 w-28 tablet:h-32 tablet:w-32  desktop:h-36 desktop:w-36 m-2 cursor-pointer border  ${bigImage === entry.image ? ' border-2 border-wotanRed-500' : 'hover:border-wotanRed-700'}`}
+                  imgClassName={`aspect-square rounded-lg border object-cover object-center col-span-1 row-span-1 shadow-wotan-light h-24 w-24 tablet:h-32 tablet:w-32  desktop:h-36 desktop:w-36 tablet:m-2 m-1 cursor-pointer border  ${bigImage === entry.image ? ' border-2 border-wotanRed-500' : 'hover:border-wotanRed-700'}`}
+                  onClick={() => {
+                    setBigImage(entry.image)
+                  }}
+                />
+              ))
+            : null}
+        </CarouselContent>
+        <CarouselPrevious className='hidden desktop:flex' />
+        <CarouselNext className='hidden desktop:flex' />
+      </Carousel>
+    </div>
+  )
+}
+
+export function ProductGalleryDialog({ product }) {
+  const [bigImage, setBigImage] = useState(product.featuredImage)
+
+  return (
+    <div className='flex w-full min-w-80 max-w-screen-md flex-col items-center justify-center gap-4 desktop:mx-8'>
+      <Image
+        imgClassName=' w-full border max-w-md rounded-lg shadow-wotan-light aspect-square'
+        resource={bigImage}
+      />
+
+      <Carousel
+        className=' w-full max-w-md select-none border-x  '
+        opts={{ align: 'start', loop: true }}
+      >
+        <CarouselContent>
+          {product.images.length > 0
+            ? product.images.map((entry: any) => (
+                <Image
+                  key={entry.id}
+                  resource={entry.image}
+                  imgClassName={`aspect-square rounded-lg border object-cover object-center col-span-1 row-span-1 shadow-wotan-light h-24 w-24 tablet:h-28 tablet:w-28  desktop:h-32 desktop:w-32 tablet:m-2 m-1 cursor-pointer border  ${bigImage === entry.image ? ' border-2 border-wotanRed-500' : 'hover:border-wotanRed-700'}`}
                   onClick={() => {
                     setBigImage(entry.image)
                   }}
