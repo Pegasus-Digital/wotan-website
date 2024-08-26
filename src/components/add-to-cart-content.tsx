@@ -62,7 +62,7 @@ export function AddToCartContent({ productId, setOpen }: AddToCartFormProps) {
       </div>
     </ScrollArea>
   ) : (
-    <div className='flex h-[calc(100vh-12rem)] w-full items-center justify-center '>
+    <div className='flex h-[calc(100vh-10rem)] w-full items-center justify-center '>
       <LoadingSpinner />
     </div>
   )

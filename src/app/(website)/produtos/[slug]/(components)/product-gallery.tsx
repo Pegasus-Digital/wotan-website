@@ -49,14 +49,14 @@ export function ProductGalleryDialog({ product }) {
   const [bigImage, setBigImage] = useState(product.featuredImage)
 
   return (
-    <div className='flex w-full min-w-80 max-w-screen-md flex-col items-center justify-center gap-4 desktop:mx-8'>
+    <div className='flex w-full min-w-80 max-w-screen-sm flex-col items-center justify-center gap-2 '>
       <Image
-        imgClassName=' w-full border max-w-md rounded-lg shadow-wotan-light aspect-square'
+        imgClassName=' w-full border max-w-sm rounded-lg shadow-wotan-light aspect-square'
         resource={bigImage}
       />
 
       <Carousel
-        className=' w-full max-w-md select-none border-x  '
+        className=' w-full max-w-sm select-none border-x  '
         opts={{ align: 'start', loop: true }}
       >
         <CarouselContent>
@@ -65,7 +65,7 @@ export function ProductGalleryDialog({ product }) {
                 <Image
                   key={entry.id}
                   resource={entry.image}
-                  imgClassName={`aspect-square rounded-lg border object-cover object-center col-span-1 row-span-1 shadow-wotan-light h-24 w-24 tablet:h-28 tablet:w-28  desktop:h-32 desktop:w-32 tablet:m-2 m-1 cursor-pointer border  ${bigImage === entry.image ? ' border-2 border-wotanRed-500' : 'hover:border-wotanRed-700'}`}
+                  imgClassName={`aspect-square rounded-lg border object-cover object-center col-span-1 row-span-1 shadow-wotan-light h-20 w-20 tablet:m-2 m-1 cursor-pointer border  ${bigImage === entry.image ? ' border-2 border-wotanRed-500' : 'hover:border-wotanRed-700'}`}
                   onClick={() => {
                     setBigImage(entry.image)
                   }}
@@ -73,8 +73,8 @@ export function ProductGalleryDialog({ product }) {
               ))
             : null}
         </CarouselContent>
-        <CarouselPrevious className='hidden desktop:flex' />
-        <CarouselNext className='hidden desktop:flex' />
+        <CarouselPrevious className='hidden desktop:hover:flex' />
+        <CarouselNext className='hidden desktop:hover:flex' />
       </Carousel>
     </div>
   )
