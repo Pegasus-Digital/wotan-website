@@ -34,15 +34,15 @@ export function AddToCartDialog({ productId }: AddToCartDialogProps) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className=' w-[calc(100%-1rem)] max-w-screen-xl overflow-clip'>
-        <DialogHeader>
+      <DialogContent className='  max-w-96 overflow-clip  px-2  tablet:max-w-screen-md desktop:max-w-screen-xl'>
+        {/* <DialogHeader>
           <DialogTitle>Adicionar ao carrinho</DialogTitle>
           <DialogDescription>
             Complete as informações para adicionar ao carrinho
           </DialogDescription>
         </DialogHeader>
 
-        <Separator />
+        <Separator /> */}
 
         <AddToCartContent productId={productId} setOpen={setOpen} />
       </DialogContent>
