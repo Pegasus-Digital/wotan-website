@@ -40,10 +40,11 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Heading } from '@/pegasus/heading'
 import { Small } from '@/components/typography/texts'
 
-import { Eye, MoreHorizontal } from 'lucide-react'
+import { Eye, MoreHorizontal, Pencil, Printer } from 'lucide-react'
 import { DataTableFilterField } from '@/components/table/types/table-types'
 import { toast } from 'sonner'
 import { deleteEstimate } from '../_logic/actions'
+import { useRouter } from 'next/navigation'
 
 export const filterFields: DataTableFilterField<Budget>[] = [
   // {
@@ -59,6 +60,8 @@ export const filterFields: DataTableFilterField<Budget>[] = [
 ]
 
 export function getColumns(): ColumnDef<Budget>[] {
+  const router = useRouter()
+
   return [
     {
       id: 'select',
@@ -84,12 +87,17 @@ export function getColumns(): ColumnDef<Budget>[] {
       enableHiding: false,
     },
     {
+      id: 'id',
+      accessorFn: (row) => row.id,
+      header: 'Número',
+    },
+    {
       id: 'company',
       accessorFn: (row) => row.contact.companyName,
       header: 'Cliente',
     },
     {
-      id: 'customer',
+      id: 'salesperson',
       accessorFn: (row) => row.contact.customerName,
       header: 'Responsável',
       cell: ({ row }) => {
@@ -125,157 +133,157 @@ export function getColumns(): ColumnDef<Budget>[] {
         )
       },
     },
-    {
-      id: 'budget-details',
-      cell: ({ row }) => {
-        const budget = row.original
+    // {
+    //   id: 'budget-details',
+    //   cell: ({ row }) => {
+    //     const budget = row.original
 
-        function DetailsDialog() {
-          const [isOpen, setOpen] = useState<boolean>(false)
+    //     function DetailsDialog() {
+    //       const [isOpen, setOpen] = useState<boolean>(false)
 
-          return (
-            <Dialog open={isOpen} onOpenChange={isOpen ? setOpen : () => null}>
-              <DialogTrigger asChild>
-                <Button
-                  onClick={() => setOpen(true)}
-                  size='icon'
-                  variant='ghost'
-                  className='rounded-full'
-                >
-                  <Eye className='h-5 w-5' />
-                </Button>
-              </DialogTrigger>
+    //       return (
+    //         <Dialog open={isOpen} onOpenChange={isOpen ? setOpen : () => null}>
+    //           <DialogTrigger asChild>
+    //             <Button
+    //               onClick={() => setOpen(true)}
+    //               size='icon'
+    //               variant='ghost'
+    //               // className='rounded-full'
+    //             >
+    //               <Eye className='h-5 w-5' />
+    //             </Button>
+    //           </DialogTrigger>
 
-              <DialogContent className='m-0 max-w-5xl p-0'>
-                <ScrollArea className='max-h-[80vh] overflow-hidden rounded-md p-6'>
-                  <DialogHeader>
-                    <Heading variant='h2'>Orçamento</Heading>
-                    <DialogDescription>
-                      Criado:{' '}
-                      {formatRelative(budget.createdAt, new Date(), {
-                        locale: ptBR,
-                      })}
-                    </DialogDescription>
+    //           <DialogContent className='m-0 max-w-5xl p-0'>
+    //             <ScrollArea className='max-h-[80vh] overflow-hidden rounded-md p-6'>
+    //               <DialogHeader>
+    //                 <Heading variant='h2'>Orçamento</Heading>
+    //                 <DialogDescription>
+    //                   Criado:{' '}
+    //                   {formatRelative(budget.createdAt, new Date(), {
+    //                     locale: ptBR,
+    //                   })}
+    //                 </DialogDescription>
 
-                    <Card className='border-none shadow-sm'>
-                      <CardContent className='p-2'>
-                        <Heading variant='h4'>Contato</Heading>
-                        <div className='grid grid-cols-2 gap-x-6 gap-y-2 px-3'>
-                          <div className='space-y-1'>
-                            <Label>Empresa</Label>
-                            <Input
-                              disabled
-                              value={budget.contact.companyName}
-                              className='disabled:cursor-text disabled:opacity-100'
-                            />
-                          </div>
+    //                 <Card className='border-none shadow-sm'>
+    //                   <CardContent className='p-2'>
+    //                     <Heading variant='h4'>Contato</Heading>
+    //                     <div className='grid grid-cols-2 gap-x-6 gap-y-2 px-3'>
+    //                       <div className='space-y-1'>
+    //                         <Label>Empresa</Label>
+    //                         <Input
+    //                           disabled
+    //                           value={budget.contact.companyName}
+    //                           className='disabled:cursor-text disabled:opacity-100'
+    //                         />
+    //                       </div>
 
-                          <div className='space-y-1'>
-                            <Label>Responsável</Label>
-                            <Input
-                              disabled
-                              value={budget.contact.customerName}
-                              className='disabled:cursor-text disabled:opacity-100'
-                            />
-                          </div>
+    //                       <div className='space-y-1'>
+    //                         <Label>Responsável</Label>
+    //                         <Input
+    //                           disabled
+    //                           value={budget.contact.customerName}
+    //                           className='disabled:cursor-text disabled:opacity-100'
+    //                         />
+    //                       </div>
 
-                          <div className='space-y-1'>
-                            <Label>Email</Label>
-                            <Input
-                              disabled
-                              value={budget.contact.email}
-                              className='disabled:cursor-text disabled:opacity-100'
-                            />
-                          </div>
+    //                       <div className='space-y-1'>
+    //                         <Label>Email</Label>
+    //                         <Input
+    //                           disabled
+    //                           value={budget.contact.email}
+    //                           className='disabled:cursor-text disabled:opacity-100'
+    //                         />
+    //                       </div>
 
-                          <div className='space-y-1'>
-                            <Label>Telefone</Label>
-                            <Input
-                              disabled
-                              value={budget.contact.phone}
-                              className='disabled:cursor-text disabled:opacity-100'
-                            />
-                          </div>
+    //                       <div className='space-y-1'>
+    //                         <Label>Telefone</Label>
+    //                         <Input
+    //                           disabled
+    //                           value={budget.contact.phone}
+    //                           className='disabled:cursor-text disabled:opacity-100'
+    //                         />
+    //                       </div>
 
-                          <div className='col-span-2'>
-                            <Label>Detalhes</Label>
-                            <Textarea
-                              value={budget.contact.details}
-                              className='min-h-24 disabled:cursor-text disabled:opacity-100'
-                              disabled
-                            />
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+    //                       <div className='col-span-2'>
+    //                         <Label>Detalhes</Label>
+    //                         <Textarea
+    //                           value={budget.contact.details}
+    //                           className='min-h-24 disabled:cursor-text disabled:opacity-100'
+    //                           disabled
+    //                         />
+    //                       </div>
+    //                     </div>
+    //                   </CardContent>
+    //                 </Card>
 
-                    <Separator className='my-1' />
+    //                 <Separator className='my-1' />
 
-                    {budget.items?.map((item) => (
-                      <Card key={item.id}>
-                        <CardContent className='items-start justify-between p-2 shadow-sm tablet:flex'>
-                          {typeof item.product === 'object' && (
-                            <div>
-                              <Heading variant='h4'>
-                                {item.product.title}
-                              </Heading>
-                              <Small>Quantidade: {item.quantity}</Small>
-                              <div className='flex items-center space-x-2 space-y-1'>
-                                {item.attributes?.map(
-                                  (attribute: Attribute) => (
-                                    <div
-                                      key={item.id + attribute.id}
-                                      className='mx-auto'
-                                    >
-                                      <Small>
-                                        {typeof attribute.type === 'object' &&
-                                          attribute.type.name}
-                                        {': '}
-                                      </Small>
-                                      <Badge className='w-fit border-2 border-accent bg-transparent text-foreground hover:bg-primary hover:text-primary-foreground'>
-                                        {typeof attribute === 'object' &&
-                                          attribute.name}
+    //                 {budget.items?.map((item) => (
+    //                   <Card key={item.id}>
+    //                     <CardContent className='items-start justify-between p-2 shadow-sm tablet:flex'>
+    //                       {typeof item.product === 'object' && (
+    //                         <div>
+    //                           <Heading variant='h4'>
+    //                             {item.product.title}
+    //                           </Heading>
+    //                           <Small>Quantidade: {item.quantity}</Small>
+    //                           <div className='flex items-center space-x-2 space-y-1'>
+    //                             {item.attributes?.map(
+    //                               (attribute: Attribute) => (
+    //                                 <div
+    //                                   key={item.id + attribute.id}
+    //                                   className='mx-auto'
+    //                                 >
+    //                                   <Small>
+    //                                     {typeof attribute.type === 'object' &&
+    //                                       attribute.type.name}
+    //                                     {': '}
+    //                                   </Small>
+    //                                   <Badge className='w-fit border-2 border-accent bg-transparent text-foreground hover:bg-primary hover:text-primary-foreground'>
+    //                                     {typeof attribute === 'object' &&
+    //                                       attribute.name}
 
-                                        {typeof attribute.type === 'object' &&
-                                          attribute.type.type === 'color' && (
-                                            <div
-                                              style={{
-                                                backgroundColor:
-                                                  attribute.value,
-                                              }}
-                                              className='ml-2 h-5 w-5 rounded-full border-2'
-                                            />
-                                          )}
-                                      </Badge>
-                                    </div>
-                                  ),
-                                )}
-                              </div>
-                            </div>
-                          )}
+    //                                     {typeof attribute.type === 'object' &&
+    //                                       attribute.type.type === 'color' && (
+    //                                         <div
+    //                                           style={{
+    //                                             backgroundColor:
+    //                                               attribute.value,
+    //                                           }}
+    //                                           className='ml-2 h-5 w-5 rounded-full border-2'
+    //                                         />
+    //                                       )}
+    //                                   </Badge>
+    //                                 </div>
+    //                               ),
+    //                             )}
+    //                           </div>
+    //                         </div>
+    //                       )}
 
-                          <div>
-                            <Image
-                              resource={
-                                typeof item.product === 'object' &&
-                                item.product.featuredImage
-                              }
-                              imgClassName='w-24 h-24 aspect-square rounded-md shadow-wotan-light border hidden tablet:block'
-                            />
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </DialogHeader>
-                </ScrollArea>
-              </DialogContent>
-            </Dialog>
-          )
-        }
+    //                       <div>
+    //                         <Image
+    //                           resource={
+    //                             typeof item.product === 'object' &&
+    //                             item.product.featuredImage
+    //                           }
+    //                           imgClassName='w-24 h-24 aspect-square rounded-md shadow-wotan-light border hidden tablet:block'
+    //                         />
+    //                       </div>
+    //                     </CardContent>
+    //                   </Card>
+    //                 ))}
+    //               </DialogHeader>
+    //             </ScrollArea>
+    //           </DialogContent>
+    //         </Dialog>
+    //       )
+    //     }
 
-        return <DetailsDialog />
-      },
-    },
+    //     return <DetailsDialog />
+    //   },
+    // },
     {
       id: 'actions',
       header: () => <span className='text-right'>Interações</span>,
@@ -303,26 +311,52 @@ export function getColumns(): ColumnDef<Budget>[] {
             </DropdownMenuItem>
           )
         }
+
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button size='icon' variant='ghost' className='rounded-full'>
-                <span className='sr-only'>Abrir menu</span>
-                <MoreHorizontal className='h-4 w-4' />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align='end'>
-              <DropdownMenuLabel>Interações</DropdownMenuLabel>
+          <div className='flex w-min gap-1'>
+            <Button
+              onClick={() => {
+                router.push(`/painel/orcamentos/${estimate.id}`)
+              }}
+              size='icon'
+              variant='ghost'
+            >
+              <Eye className='h-5 w-5' />
+            </Button>{' '}
+            <Button
+              onClick={() => {
+                router.push(`/painel/orcamentos/${estimate.id}?edit`)
+              }}
+              size='icon'
+              variant='ghost'
+            >
+              <Pencil className='h-5 w-5' />
+            </Button>
+            <Button
+              onClick={() => {
+                window.print()
+              }}
+              size='icon'
+              variant='ghost'
+            >
+              <Printer className='h-5 w-5' />
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size='icon' variant='ghost'>
+                  <span className='sr-only'>Abrir menu</span>
+                  <MoreHorizontal className='h-4 w-4' />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align='end'>
+                <DropdownMenuLabel>Interações</DropdownMenuLabel>
 
-              <DropdownMenuSeparator />
+                <DropdownMenuSeparator />
 
-              <DropdownMenuItem className='cursor-pointer'>
-                Editar orçamento
-              </DropdownMenuItem>
-
-              <DeleteEstimateAction />
-            </DropdownMenuContent>
-          </DropdownMenu>
+                <DeleteEstimateAction />
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         )
       },
     },

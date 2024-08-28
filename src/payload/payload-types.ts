@@ -51,7 +51,15 @@ export interface Product {
   stockQuantity?: number | null;
   active: boolean;
   attributes?: (string | Attribute)[] | null;
-  price?: number | null;
+  priceJSON?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
   description?: string | null;
   tags?: string | null;
   featuredImage: string | Media;
@@ -137,13 +145,16 @@ export interface Category {
  */
 export interface Budget {
   id: string;
-  total?: number | null;
-  status?: ('pendente' | 'cancelado') | null;
+  salesperson?: (string | null) | Salesperson;
+  origin?: ('website' | 'interno') | null;
+  status?: ('criado' | 'contato' | 'enviado' | 'pendente' | 'aprovado' | 'cancelado') | null;
+  conditions?: string | null;
   items: {
     product: string | Product;
     attributes?: (string | Attribute)[] | null;
+    description?: string | null;
     quantity: number;
-    price?: number | null;
+    price?: string | null;
     id?: string | null;
   }[];
   contact: {
@@ -155,6 +166,25 @@ export interface Budget {
   };
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "salespersons".
+ */
+export interface Salesperson {
+  id: string;
+  name: string;
+  roles: 'internal' | 'representative';
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  password: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -439,25 +469,6 @@ export interface Client {
   roles: 'active' | 'inactive' | 'prospect';
   updatedAt: string;
   createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "salespersons".
- */
-export interface Salesperson {
-  id: string;
-  name: string;
-  roles: 'internal' | 'representative';
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  password: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

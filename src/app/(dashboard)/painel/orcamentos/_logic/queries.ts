@@ -30,3 +30,20 @@ export async function getEstimates(
     return { data: [], pageCount: 0 }
   }
 }
+
+export async function getEstimateById(id: string) {
+  noStore()
+
+  try {
+    const response = await payload.findByID({
+      collection: 'budget',
+      id: id,
+    })
+
+    return {
+      data: response,
+    }
+  } catch (err) {
+    return { data: null }
+  }
+}

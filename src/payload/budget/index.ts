@@ -23,25 +23,37 @@ export const Budget: CollectionConfig = {
   //   delete: admins,
   // },
   fields: [
-    // {
-    //   name: 'orderedBy',
-    //   type: 'relationship',
-    //   relationTo: 'clients',
-    //   // hooks: {
-    //   //   beforeChange: [populateOrderedBy],
-    //   // },
-    // },
     {
-      name: 'total',
-      type: 'number',
+      name: 'salesperson',
+      type: 'relationship',
+      relationTo: 'salespersons',
+      // required: true,
+    },
+    {
+      name: 'origin',
+      type: 'select',
+      options: [
+        { label: 'Site', value: 'website' },
+        { label: 'Interno', value: 'interno' },
+      ],
     },
     {
       name: 'status',
       type: 'select',
       options: [
-        { label: 'pendente', value: 'pendente' },
-        { label: 'cancelado', value: 'cancelado' },
+        { label: 'Criado', value: 'criado' },
+        { label: 'Em contato', value: 'contato' },
+        { label: 'Enviado p/ Cliente', value: 'enviado' },
+        { label: 'Aguardando provação ', value: 'pendente' },
+        { label: 'Aprovado', value: 'aprovado' },
+        { label: 'Cancelado', value: 'cancelado' },
       ],
+    },
+    {
+      name: 'conditions',
+      type: 'textarea',
+      defaultValue:
+        'Pagamento: 28 dd\nEntrega: 12 dd\nFrete:\nValidade da proposta: 10 dias\nPRODUTOS SUJEITOS Á DISPONIBILIDADE DE ESTOQUE',
     },
     {
       name: 'items',
@@ -61,6 +73,10 @@ export const Budget: CollectionConfig = {
           hasMany: true,
         },
         {
+          name: 'description',
+          type: 'textarea',
+        },
+        {
           name: 'quantity',
           type: 'number',
           min: 1,
@@ -68,8 +84,7 @@ export const Budget: CollectionConfig = {
         },
         {
           name: 'price',
-          type: 'number',
-          min: 0,
+          type: 'text',
         },
       ],
     },

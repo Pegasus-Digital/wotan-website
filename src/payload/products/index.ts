@@ -80,7 +80,11 @@ const Products: CollectionConfig = {
               //   return { type: { equals: 'text' } }
               // },
             },
-            { name: 'price', type: 'number' },
+            {
+              name: 'priceJSON',
+              label: 'Price JSON',
+              type: 'json',
+            },
             { name: 'description', type: 'textarea' },
             { name: 'tags', type: 'textarea' },
           ],

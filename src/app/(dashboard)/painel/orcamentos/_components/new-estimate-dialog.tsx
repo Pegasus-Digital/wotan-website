@@ -10,25 +10,17 @@ import {
 
 import { Button } from '@/components/ui/button'
 
-import { NewEstimateForm } from './new-estimate-form'
+import { useRouter } from 'next/navigation'
 
 export function NewEstimateDialog() {
+  const router = useRouter()
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant='outline' size='sm'>
-          Novo orçamento
-        </Button>
-      </DialogTrigger>
-      <DialogContent className='max-h-[832px] max-w-screen-lg'>
-        <DialogHeader>
-          <DialogTitle className='text-xl font-semibold'>
-            Criando novo orçamento
-          </DialogTitle>
-        </DialogHeader>
-
-        <NewEstimateForm />
-      </DialogContent>
-    </Dialog>
+    <Button
+      variant='outline'
+      size='sm'
+      onClick={() => router.push('/painel/orcamentos/novo')}
+    >
+      Novo orçamento
+    </Button>
   )
 }
