@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 
-import { Attribute, Budget } from '@/payload/payload-types'
+import { Attribute, Budget, Salesperson } from '@/payload/payload-types'
 
 import { ColumnDef } from '@tanstack/react-table'
 
@@ -30,7 +30,6 @@ import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Image } from '@/components/media/image'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Separator } from '@/components/ui/separator'
@@ -40,11 +39,13 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Heading } from '@/pegasus/heading'
 import { Small } from '@/components/typography/texts'
 
-import { Eye, MoreHorizontal, Pencil, Printer } from 'lucide-react'
+import { Eye, MoreHorizontal, Pencil, Printer, UserRound } from 'lucide-react'
 import { DataTableFilterField } from '@/components/table/types/table-types'
 import { toast } from 'sonner'
 import { deleteEstimate } from '../_logic/actions'
 import { useRouter } from 'next/navigation'
+import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
+import Image from 'next/image'
 
 export const filterFields: DataTableFilterField<Budget>[] = [
   // {
@@ -87,9 +88,18 @@ export function getColumns(): ColumnDef<Budget>[] {
       enableHiding: false,
     },
     {
-      id: 'id',
-      accessorFn: (row) => row.id,
-      header: 'Número',
+      id: 'incrementalId',
+      accessorFn: (row) => row.incrementalId,
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title='Número' />
+      ),
+      cell: ({ row }) => {
+        const value: number = row.getValue('incrementalId')
+
+        if (!value) return <p className='font-bold'>#000000</p>
+
+        return <p className='font-bold'>#{value.toString().padStart(6, '0')}</p>
+      },
     },
     {
       id: 'company',
@@ -98,17 +108,47 @@ export function getColumns(): ColumnDef<Budget>[] {
     },
     {
       id: 'salesperson',
-      accessorFn: (row) => row.contact.customerName,
-      header: 'Responsável',
+      accessorFn: (row) => row.salesperson,
+      header: 'Vendedor/Representante',
       cell: ({ row }) => {
-        const customer: string = row.getValue('customer')
+        const value: Salesperson = row.getValue('salesperson')
 
-        return <p className='min-w-32 max-w-32'>{customer}</p>
+        if (!value)
+          return (
+            <div className='flex items-center space-x-2'>
+              <div className='flex h-5 w-5 items-center justify-center rounded-full bg-gray-300  p-1'>
+                <UserRound className='h-3 w-3 text-gray-600' />
+              </div>
+
+              <p className='font-bold'>Nenhum</p>
+            </div>
+          )
+        const { name, avatar } = value
+
+        return (
+          <div className='flex items-center space-x-2'>
+            {avatar && typeof avatar === 'object' && avatar.url ? (
+              <Image
+                width={20}
+                height={20}
+                src={avatar.url}
+                alt={name} // Use name for the alt attribute for better accessibility
+                className='select-none rounded-full'
+              />
+            ) : (
+              <div className='flex h-5 w-5 items-center justify-center rounded-full bg-gray-300 p-1'>
+                <UserRound className='h-3 w-3 text-gray-600' />
+              </div>
+            )}
+
+            <p className='font-bold'>{name}</p>
+          </div>
+        )
       },
     },
     {
       accessorKey: 'items',
-      header: 'Carrinho',
+      header: 'Produtos',
       cell: ({ row }) => {
         const items: any[] = row.getValue('items')
 

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
-import { Attribute, Budget } from '@/payload/payload-types'
+import { Attribute, Budget, Client, Salesperson } from '@/payload/payload-types'
 import { Heading } from '@/pegasus/heading'
 import { formatRelative } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -15,12 +15,24 @@ import { useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { z } from 'zod'
 import { Content, ContentHeader } from '@/components/content'
-import { Select, SelectTrigger } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
+import { getClients, getSalespeople } from '../_logic/queries'
 
 interface SeeBudgetContentProps {
   budget: Budget
   edit: boolean
+  salespeople: Salesperson[]
+  clients: Client[]
 }
 
 const productSchema = z.object({
@@ -37,9 +49,16 @@ const formSchema = z.object({
   products: z.array(productSchema),
 })
 
-export function SeeBudgetContent({ budget }: SeeBudgetContentProps) {
-  const params = useSearchParams()
-  const edit = params.has('edit')
+export function SeeBudgetContent({
+  budget,
+  edit,
+  salespeople,
+  clients,
+}: SeeBudgetContentProps) {
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null)
+  console.log(salespeople)
+  // const params = useSearchParams()
+  // const edit = params.has('edit')
 
   const [editMode, toggleEditMode] = useState<boolean>(!edit)
 
@@ -55,7 +74,7 @@ export function SeeBudgetContent({ budget }: SeeBudgetContentProps) {
   return (
     <Content>
       <ContentHeader
-        title={`${edit ? 'Editar o' : 'O'}rçamento #${budget.id}`}
+        title={`${edit ? 'Editar o' : 'O'}rçamento #${budget.incrementalId}`}
         description={`Criado em ${formatRelative(budget.createdAt, new Date(), { locale: ptBR })}`}
       />
       <Separator className='mb-4' />
@@ -64,7 +83,7 @@ export function SeeBudgetContent({ budget }: SeeBudgetContentProps) {
         <CardHeader className=''>
           <Heading variant='h3'>Cliente</Heading>
         </CardHeader>
-        <CardContent className='p-2'>
+        <CardContent className=''>
           <div className='grid grid-cols-[1fr_auto_1fr]  items-center gap-x-6 gap-y-2 px-3'>
             <div className='grid gap-1'>
               <div className='space-y-1'>
@@ -113,7 +132,16 @@ export function SeeBudgetContent({ budget }: SeeBudgetContentProps) {
                 <Label>Cliente</Label>
 
                 <Select disabled={editMode}>
-                  <SelectTrigger />
+                  <SelectTrigger>
+                    <SelectValue placeholder='Selecione um Cliente' />
+                  </SelectTrigger>
+                  <SelectContent side='bottom'>
+                    {clients.map((client) => (
+                      <SelectItem key={client.id} value='client'>
+                        {client.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
                 </Select>
               </div>
               <div className='space-y-1'>
@@ -141,13 +169,35 @@ export function SeeBudgetContent({ budget }: SeeBudgetContentProps) {
       <div className='grid grid-cols-2'>
         <div className='space-y-1'>
           <Label>Vendedor</Label>
-          <Select
-            disabled={editMode}
-
-            // value={budget.salesperson.valueOf}
-            // className='disabled:cursor-text disabled:opacity-100'
-          >
-            <SelectTrigger />
+          <Select disabled={editMode}>
+            <SelectTrigger>
+              <SelectValue placeholder='Selecione um Vendedor' />
+            </SelectTrigger>
+            <SelectContent side='bottom'>
+              <SelectGroup>
+                <SelectLabel>Vendedor Interno</SelectLabel>
+                {typeof salespeople === 'object' &&
+                  salespeople
+                    .filter((person) => person.roles === 'internal')
+                    .map((person) => (
+                      <SelectItem key={person.id} value={person.name}>
+                        {person.name}
+                      </SelectItem>
+                    ))}
+              </SelectGroup>
+              <SelectSeparator />
+              <SelectGroup>
+                <SelectLabel>Representante Externo</SelectLabel>
+                {salespeople &&
+                  salespeople
+                    .filter((person) => person.roles === 'representative')
+                    .map((person) => (
+                      <SelectItem key={person.id} value='salesperson'>
+                        {person.name}
+                      </SelectItem>
+                    ))}
+              </SelectGroup>
+            </SelectContent>
           </Select>
         </div>
         <div className='space-y-1'>

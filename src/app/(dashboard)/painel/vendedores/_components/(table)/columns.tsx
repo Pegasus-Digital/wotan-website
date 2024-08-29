@@ -7,7 +7,8 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import { getRelativeDate } from '@/lib/date'
 
-import { Salesperson } from '@/payload/payload-types'
+import { Media, Salesperson } from '@/payload/payload-types'
+import Image from 'next/image'
 
 import {
   DropdownMenu,
@@ -23,7 +24,7 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 
-import { MoreHorizontal } from 'lucide-react'
+import { MoreHorizontal, UserRound } from 'lucide-react'
 
 import { deleteUser } from '../../_logic/actions'
 import { DataTableFilterField } from '@/components/table/types/table-types'
@@ -60,6 +61,30 @@ export function getColumns(): ColumnDef<Salesperson>[] {
       ),
       enableSorting: false,
       enableHiding: false,
+    },
+    {
+      accessorKey: 'avatar',
+      header: 'Avatar',
+      cell: ({ row }) => {
+        const value: Media = row.getValue('avatar')
+        console.log(value)
+        if (!value)
+          return (
+            <div className='flex h-8 w-8 items-center justify-center rounded-full bg-gray-300  p-1'>
+              <UserRound className='h-5 w-5 text-gray-600' />
+            </div>
+          )
+
+        return (
+          <Image
+            src={value.url}
+            width={32}
+            height={32}
+            alt={value.url}
+            className='select-none rounded-full'
+          />
+        )
+      },
     },
     {
       accessorKey: 'name',

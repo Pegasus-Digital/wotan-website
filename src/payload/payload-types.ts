@@ -145,6 +145,7 @@ export interface Category {
  */
 export interface Budget {
   id: string;
+  incrementalId?: number | null;
   salesperson?: (string | null) | Salesperson;
   origin?: ('website' | 'interno') | null;
   status?: ('criado' | 'contato' | 'enviado' | 'pendente' | 'aprovado' | 'cancelado') | null;
@@ -174,6 +175,7 @@ export interface Budget {
 export interface Salesperson {
   id: string;
   name: string;
+  avatar?: string | Media | null;
   roles: 'internal' | 'representative';
   updatedAt: string;
   createdAt: string;

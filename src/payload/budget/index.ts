@@ -1,5 +1,8 @@
 import type { CollectionConfig } from 'payload/types'
-
+import {
+  assignIncrementalId,
+  generateIncrementalId,
+} from '../utilities/genIncrementalId'
 // import { clearUserCart } from './hooks/clearUserCart'
 // import { populateOrderedBy } from './hooks/populateOrderedBy'
 // import { updateUserPurchases } from './hooks/updateUserPurchases'
@@ -13,9 +16,9 @@ export const Budget: CollectionConfig = {
     // preview: (doc) =>
     //   `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/budget/${doc.id}`,
   },
-  // hooks: {
-  //   afterChange: [updateUserPurchases, clearUserCart],
-  // },
+  hooks: {
+    beforeChange: [assignIncrementalId],
+  },
   // access: {
   //   read: adminsOrOrderedBy,
   //   update: admins,
@@ -23,6 +26,14 @@ export const Budget: CollectionConfig = {
   //   delete: admins,
   // },
   fields: [
+    {
+      name: 'incrementalId',
+      type: 'number',
+      // required: true,
+      admin: {
+        // readOnly: true,
+      },
+    },
     {
       name: 'salesperson',
       type: 'relationship',

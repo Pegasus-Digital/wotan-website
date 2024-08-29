@@ -47,3 +47,35 @@ export async function getEstimateById(id: string) {
     return { data: null }
   }
 }
+
+export async function getClients() {
+  noStore()
+
+  try {
+    const response = await payload.find({
+      collection: 'clients',
+    })
+
+    return {
+      data: response.docs,
+    }
+  } catch (err) {
+    return { data: [] }
+  }
+}
+
+export async function getSalespeople() {
+  noStore()
+
+  try {
+    const response = await payload.find({
+      collection: 'salespersons',
+    })
+
+    return {
+      data: response.docs,
+    }
+  } catch (err) {
+    return { data: [] }
+  }
+}
