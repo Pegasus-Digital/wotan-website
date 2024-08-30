@@ -108,7 +108,9 @@ export function ImageUploader({ setMedia }: ImageUploaderProps) {
               <UploadCloud size={20} />
             </div>
 
-            <Lead className='text-md mt-2 font-semibold'>Arraste arquivos</Lead>
+            <Lead className='text-md mt-2 font-semibold'>
+              Arraste imagens aqui
+            </Lead>
 
             <Small className='text-xs text-gray-500'>
               ou clique para encontrar imagens na sua máquina

@@ -17,8 +17,7 @@ export const newProductSchema = z.object({
   sku: z
     .string()
     .refine(
-      (value) => (value) =>
-        /^[^\s-][\w$@#&*()+={}[\]:;',.?/~!%^_\\-]*(?<!-)$/.test(value),
+      (value) => /^[^\s-][\w$@#&*()+={}[\]:;',.?/~!%^_\\-]*(?<!-)$/.test(value),
       'SKU deve conter caracteres alfanuméricos ou especiais sem espaços.',
     ),
 

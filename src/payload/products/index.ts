@@ -81,9 +81,14 @@ const Products: CollectionConfig = {
               // },
             },
             {
-              name: 'priceJSON',
-              label: 'Price JSON',
-              type: 'json',
+              name: 'priceQuantityTable',
+              label: 'Price-Quantity Table',
+              type: 'array',
+              interfaceName: 'PriceQuantityTable',
+              fields: [
+                { name: 'quantity', type: 'number' },
+                { name: 'unitPrice', type: 'number' },
+              ],
             },
             { name: 'description', type: 'textarea' },
             { name: 'tags', type: 'textarea' },
