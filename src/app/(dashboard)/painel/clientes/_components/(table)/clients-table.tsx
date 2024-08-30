@@ -13,6 +13,8 @@ import { useDataTable } from '@/components/table/hooks/use-data-table'
 import { getClients } from '../../_logic/queries'
 
 import { DataTableToolbar } from '@/components/table/data-table-toolbar'
+import { useRouter } from 'next/navigation'
+import { Button } from '@/pegasus/button'
 
 interface ClientsTableProps {
   clientsPromise: ReturnType<typeof getClients>
@@ -35,9 +37,26 @@ export function ClientsTable({ clientsPromise }: ClientsTableProps) {
 
   return (
     <div>
-      <DataTableToolbar table={table} filterFields={filterFields} />
+      <DataTableToolbar
+        table={table}
+        filterFields={filterFields}
+        actions={[NewClientButton]}
+      />
 
       <DataTable table={table} columns={columns} />
     </div>
+  )
+}
+
+export function NewClientButton() {
+  const router = useRouter()
+  return (
+    <Button
+      variant='outline'
+      size='sm'
+      onClick={() => router.push('/painel/cliente/novo')}
+    >
+      Novo cliente
+    </Button>
   )
 }

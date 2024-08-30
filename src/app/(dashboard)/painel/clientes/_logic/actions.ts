@@ -3,32 +3,31 @@
 import { revalidatePath } from 'next/cache'
 
 import payload from 'payload'
-import { User } from '@/payload/payload-types'
+import { Client } from '@/payload/payload-types'
 
 import { ActionResponse } from '@/lib/actions'
 
-// The user should not be able to directly modify the omitted fields
-type SafeUser = Omit<User, 'createdAt' | 'id' | 'sizes' | 'updatedAt'>
+type SafeClient = Omit<Client, 'createdAt' | 'sizes' | 'updatedAt' | 'id'>
 
-interface CreateUserResponseData {
-  user: User | null
+interface CreateClientResponseData {
+  client: Client | null
 }
 
-export async function createUser(
-  user: SafeUser,
-): Promise<ActionResponse<CreateUserResponseData>> {
+export async function createClient(
+  client: SafeClient,
+): Promise<ActionResponse<CreateClientResponseData>> {
   try {
     const response = await payload.create({
-      collection: 'users',
-      data: { ...user },
+      collection: 'clients',
+      data: { ...client },
     })
 
-    revalidatePath('/painel/catalogo/produtos')
+    revalidatePath('/painel/clientes')
 
     return {
-      data: { user: response },
+      data: { client: response },
       status: true,
-      message: 'Produto criado com sucesso.',
+      message: 'Cliente cadastrado com sucesso.',
     }
   } catch (err) {
     console.error(err)
@@ -36,40 +35,42 @@ export async function createUser(
     return {
       data: null,
       status: false,
-      message: '[500] Ocorreu um erro ao criar o produto.',
+      message: '[500] Ocorreu um erro ao cadastrar o cliente.',
     }
   }
 }
 
 interface UpdateActionResponseData {
-  user: User | null
+  client: Client | null
 }
 
-export async function updateUser(
+export async function updateClient(
+  client: SafeClient,
   id: string,
-  product: SafeUser,
 ): Promise<ActionResponse<UpdateActionResponseData>> {
   try {
     const response = await payload.update({
-      collection: 'users',
+      collection: 'clients',
       where: { id: { equals: id } },
-      data: { ...product, id },
+      data: { ...client, id },
     })
 
     if (response.errors.length > 0) {
+      // console.error(response.errors)
+
       return {
         data: null,
         status: false,
-        message: '[400] Ocorreu um erro ao atualizar o produto.',
+        message: '[400] Ocorreu um erro ao atualizar o cliente.',
       }
     }
 
     revalidatePath('/painel/catalogo/produtos')
 
     return {
-      data: { user: response.docs[0] },
+      data: { client: response.docs[0] },
       status: true,
-      message: 'Produto atualizado com sucesso.',
+      message: 'Cliente atualizado com sucesso.',
     }
   } catch (err) {
     console.error(err)
@@ -77,44 +78,7 @@ export async function updateUser(
     return {
       data: null,
       status: false,
-      message: '[500] Ocorreu um erro ao atualizar o produto.',
-    }
-  }
-}
-
-interface DeleteUserResponseData {}
-
-export async function deleteUser(
-  id: string,
-): Promise<ActionResponse<DeleteUserResponseData>> {
-  try {
-    const response = await payload.delete({
-      collection: 'users',
-      where: { id: { equals: id } },
-    })
-
-    if (response.errors.length > 0) {
-      return {
-        data: null,
-        status: false,
-        message: '[400] Ocorreu um erro ao deletar o arquivo.',
-      }
-    }
-
-    revalidatePath('/painel/arquivos')
-
-    return {
-      data: null,
-      status: true,
-      message: 'Arquivo deletado com sucesso.',
-    }
-  } catch (err) {
-    console.error(err)
-
-    return {
-      data: null,
-      status: false,
-      message: '[500] Ocorreu um erro ao deletar o arquivo.',
+      message: '[500] Ocorreu um erro ao atualizar o cliente.',
     }
   }
 }

@@ -1,61 +1,71 @@
 import { z } from 'zod'
 
-export const ACCEPTED_IMAGE_TYPES = ['image/png', 'image/jpg', 'image/jpeg']
-
-export const MAX_FILE_SIZE = 8 * 1024 * 1024 // 8 MB
-
-export const newProductSchema = z.object({
-  /* Non-optional fields */
-  title: z.string().min(3, 'Título do produto deve conter no mínimo 3 letras.'),
-  active: z.boolean(),
-  minimumQuantity: z.coerce
-    .number({
-      required_error: 'Campo deve ser preenchido.',
-      invalid_type_error: 'Campo deve conter um número.',
+export const clientSchema = z.object({
+  name: z.string().nullable(),
+  razaosocial: z.string().optional().nullable(),
+  type: z.enum(['company', 'individual']),
+  document: z.string().nullable(),
+  contacts: z.array(
+    z.object({
+      name: z.string().optional().nullable(),
+      email: z.string().optional().nullable(),
+      phone: z.string().optional().nullable(),
+      whatsapp: z.string().optional().nullable(),
+    }),
+  ),
+  adress: z
+    .object({
+      street: z.string().nullable(),
+      number: z.string().nullable(),
+      neighborhood: z.string().nullable(),
+      city: z.string().nullable(),
+      state: z
+        .enum([
+          'AC',
+          'AL',
+          'AP',
+          'AM',
+          'BA',
+          'CE',
+          'DF',
+          'ES',
+          'GO',
+          'MA',
+          'MS',
+          'MT',
+          'MG',
+          'PA',
+          'PB',
+          'PR',
+          'PE',
+          'PI',
+          'RJ',
+          'RN',
+          'RS',
+          'RO',
+          'RR',
+          'SC',
+          'SP',
+          'SE',
+          'TO',
+        ])
+        .nullable(),
+      cep: z.string().nullable(),
     })
-    .min(1, 'Quantidade mínima deve ser pelo menos 1 unidade.'),
-  sku: z
-    .string()
-    .refine(
-      (value) => /^[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(value),
-      'SKU deve ser alfanumérico e pode conter hífens, porém não no início nem no fim do código.',
-    ),
-
-  /* Optional fields */
-  description: z
-    .string()
-    .max(300, 'Uma descrição pode ter no máximo 300 caracteres.')
-    .optional(),
-
-  /* Relationship fields */
-  attributes: z.array(z.string()).optional(),
-  categories: z.array(z.string()).optional(),
-})
-
-export const updateProductSchema = z.object({
-  /* Non-optional fields */
-  title: z.string().min(3, 'Título do produto deve conter no mínimo 3 letras.'),
-  active: z.boolean(),
-  minimumQuantity: z.coerce
-    .number({
-      required_error: 'Campo deve ser preenchido.',
-      invalid_type_error: 'Campo deve conter um número.',
-    })
-    .min(1, 'Quantidade mínima deve ser pelo menos 1 unidade.'),
-  sku: z
-    .string()
-    .refine(
-      (value) => /^[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(value),
-      'SKU deve ser alfanumérico e pode conter hífens, porém não no início nem no fim do código.',
-    ),
-
-  /* Optional fields */
-  description: z
-    .string()
-    .max(300, 'Uma descrição pode ter no máximo 300 caracteres.')
-    .optional(),
-
-  /* Relationship fields */
-  attributes: z.array(z.string()).optional(),
-  categories: z.array(z.string()).optional(),
+    .nullable(),
+  clientSince: z.date().optional().nullable(),
+  observations: z.string().optional().nullable(),
+  ramo: z.string().optional().nullable(),
+  salesperson: z.string(),
+  origin: z.enum([
+    'ads',
+    'indication',
+    'fiergs-list',
+    'telephone-list',
+    'direct',
+    'prospect',
+    'website',
+    'other',
+  ]),
+  status: z.enum(['active', 'inactive', 'prospect']),
 })

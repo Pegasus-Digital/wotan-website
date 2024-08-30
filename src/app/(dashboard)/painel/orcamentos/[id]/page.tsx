@@ -17,10 +17,18 @@ export default async function SeeBudget({
   let salespeople = null
   let clients = null
   if (edit) {
-    // console.log('edit')
-    salespeople = await getSalespeople()
-    clients = await getClients()
-    console.log({ salespeople, clients })
+    // Fetch salespeople data
+    // console.log('Fetching salespeople data...')
+
+    const { data: salespeopleData } = await getSalespeople()
+    salespeople = salespeopleData // Assign data to the outer variable
+
+    // Fetch clients data
+    const { data: clientsData } = await getClients()
+    clients = clientsData // Assign data to the outer variable
+
+    // console.log('salespeople', salespeople)
+    // console.log('clients', clients)
   }
 
   const budget = data
@@ -34,8 +42,8 @@ export default async function SeeBudget({
       <SeeBudgetContent
         budget={budget}
         edit={edit}
-        salespeople={salespeople.data}
-        clients={clients.data}
+        salespeople={salespeople}
+        clients={clients}
       />
     </div>
   )

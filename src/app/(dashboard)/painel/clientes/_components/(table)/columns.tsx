@@ -7,7 +7,7 @@ import { ColumnDef } from '@tanstack/react-table'
 
 import { getRelativeDate } from '@/lib/date'
 
-import { Client } from '@/payload/payload-types'
+import { Client, Salesperson } from '@/payload/payload-types'
 
 import {
   DropdownMenu,
@@ -23,12 +23,14 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 
-import { MoreHorizontal } from 'lucide-react'
+import { Eye, MoreHorizontal, Pencil, UserRound } from 'lucide-react'
 
-import { deleteUser } from '../../_logic/actions'
+// import { deleteUser } from '../../_logic/actions'
+import Image from 'next/image'
 import { DataTableFilterField } from '@/components/table/types/table-types'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export const filterFields: DataTableFilterField<Client>[] = [
   {
@@ -39,6 +41,8 @@ export const filterFields: DataTableFilterField<Client>[] = [
 ]
 
 export function getColumns(): ColumnDef<Client>[] {
+  const router = useRouter()
+
   return [
     {
       id: 'select',
@@ -65,7 +69,13 @@ export function getColumns(): ColumnDef<Client>[] {
     },
     {
       accessorKey: 'razaosocial',
-      header: 'Razão social',
+      header: 'Nome/Razão social',
+      cell: ({ row }) => {
+        const value = row.original
+        const { razaosocial, name } = value
+
+        return razaosocial ? razaosocial : name
+      },
     },
     {
       accessorKey: 'document',
@@ -89,14 +99,42 @@ export function getColumns(): ColumnDef<Client>[] {
       },
     },
     {
-      accessorKey: 'salesperson',
-      header: 'Vendedor',
+      id: 'salesperson',
+      accessorFn: (row) => row.salesperson,
+      header: 'Vendedor/Representante',
       cell: ({ row }) => {
-        const value: string = row.getValue('salesperson')
+        const value: Salesperson = row.getValue('salesperson')
+
+        if (!value)
+          return (
+            <div className='flex items-center space-x-2'>
+              <div className='flex h-5 w-5 items-center justify-center rounded-full bg-gray-300  p-1'>
+                <UserRound className='h-3 w-3 text-gray-600' />
+              </div>
+
+              <p className='font-bold'>Nenhum</p>
+            </div>
+          )
+        const { name, avatar } = value
+
         return (
-          <Link href={`/painel/vendedores/${value['id']}`}>
-            <Badge className='w-fit'>{value['name']}</Badge>
-          </Link>
+          <div className='flex items-center space-x-2'>
+            {avatar && typeof avatar === 'object' && avatar.url ? (
+              <Image
+                width={20}
+                height={20}
+                src={avatar.url}
+                alt={name} // Use name for the alt attribute for better accessibility
+                className='select-none rounded-full'
+              />
+            ) : (
+              <div className='flex h-5 w-5 items-center justify-center rounded-full bg-gray-300 p-1'>
+                <UserRound className='h-3 w-3 text-gray-600' />
+              </div>
+            )}
+
+            <p className='font-bold'>{name}</p>
+          </div>
         )
       },
     },
@@ -122,54 +160,90 @@ export function getColumns(): ColumnDef<Client>[] {
       id: 'actions',
       header: () => <span className='text-right'>Interações</span>,
       cell: ({ row }) => {
-        const product = row.original
+        const client = row.original
 
-        // Precisa ser assim porque não é possível usar hooks no contexto de cell
-        function Actions() {
+        function DeleteClientAction() {
           const [isDeletePending, startDeleteTransition] = useTransition()
-          const [isUpdateOpen, setIsUpdateOpen] = useState<boolean>(false)
 
           return (
-            <Dialog
-              open={isUpdateOpen}
-              onOpenChange={isUpdateOpen ? setIsUpdateOpen : () => {}}
+            <DropdownMenuItem
+              // onClick={() => {
+              //   startDeleteTransition(() => {
+              //     toast.promise(deleteEstimate({ clientId: client.id }), {
+              //       loading: 'Deletando...',
+              //       success: 'Orçamento deletado com sucesso',
+              //       error: 'Erro ao deletar orçamento...',
+              //     })
+              //   })
+              // }}
+              className='cursor-pointer'
+              disabled={isDeletePending}
             >
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant='ghost' className='h-8 w-8 p-0'>
-                    <span className='sr-only'>Abrir menu</span>
-                    <MoreHorizontal className='h-4 w-4' />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align='end'>
-                  <DropdownMenuItem
-                    className='cursor-pointer'
-                    onClick={() => setIsUpdateOpen(true)}
-                  >
-                    Editar cadastro
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className='cursor-pointer'
-                    onClick={() => {
-                      startDeleteTransition(() => {
-                        toast.promise(deleteUser(product.id), {
-                          loading: 'Deletando...',
-                          success: 'Cliente deletado com sucesso',
-                          error: 'Erro ao deletar cliente...',
-                        })
-                      })
-                    }}
-                    disabled={isDeletePending}
-                  >
-                    Remover cliente
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </Dialog>
+              Deletar cliente
+            </DropdownMenuItem>
           )
         }
 
-        return <Actions />
+        function TransferClientAction() {
+          const [isTransferPending, startTransferTransition] = useTransition()
+
+          return (
+            <DropdownMenuItem
+              // onClick={() => {
+              //   startDeleteTransition(() => {
+              //     toast.promise(deleteEstimate({ clientId: client.id }), {
+              //       loading: 'Deletando...',
+              //       success: 'Orçamento deletado com sucesso',
+              //       error: 'Erro ao deletar orçamento...',
+              //     })
+              //   })
+              // }}
+              className='cursor-pointer'
+              disabled={isTransferPending}
+            >
+              Transferir cliente
+            </DropdownMenuItem>
+          )
+        }
+
+        return (
+          <div className='flex w-min gap-1'>
+            <Button
+              onClick={() => {
+                router.push(`/painel/clientes/${client.document}`)
+              }}
+              size='icon'
+              variant='ghost'
+            >
+              <Eye className='h-5 w-5' />
+            </Button>
+            <Button
+              onClick={() => {
+                router.push(`/painel/clientes/${client.document}?edit=true`)
+              }}
+              size='icon'
+              variant='ghost'
+            >
+              <Pencil className='h-5 w-5' />
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size='icon' variant='ghost'>
+                  <span className='sr-only'>Abrir menu</span>
+                  <MoreHorizontal className='h-4 w-4' />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align='end'>
+                <DropdownMenuLabel>Interações</DropdownMenuLabel>
+
+                <DropdownMenuSeparator />
+
+                <TransferClientAction />
+                <DeleteClientAction />
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )
       },
     },
   ]

@@ -61,6 +61,10 @@ const Clients: CollectionConfig = {
             },
           ],
         },
+        {
+          label: 'Adress',
+          fields: [adress],
+        },
       ],
     },
     {
@@ -73,6 +77,9 @@ const Clients: CollectionConfig = {
         },
       },
     },
+    { name: 'observations', type: 'textarea' },
+    { name: 'ramo', type: 'text' },
+    // adress,
     {
       name: 'salesperson',
       type: 'relationship',
@@ -80,7 +87,47 @@ const Clients: CollectionConfig = {
       required: true,
     },
     {
-      name: 'roles',
+      name: 'origin',
+      type: 'select',
+      required: true,
+      options: [
+        {
+          label: 'Anuncio',
+          value: 'ads',
+        },
+        {
+          label: 'Indicação',
+          value: 'indication',
+        },
+        {
+          label: 'Lista FIERGS',
+          value: 'fiergs-list',
+        },
+        {
+          label: 'Lista Telefonica',
+          value: 'telephone-list',
+        },
+
+        {
+          label: 'Mala Direta',
+          value: 'direct',
+        },
+        {
+          label: 'Prospecção',
+          value: 'prospect',
+        },
+        {
+          label: 'Site',
+          value: 'website',
+        },
+        {
+          label: 'Outro',
+          value: 'other',
+        },
+      ],
+    },
+    {
+      name: 'status',
       type: 'select',
       defaultValue: ['active'],
       required: true,
