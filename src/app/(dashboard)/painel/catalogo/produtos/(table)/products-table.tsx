@@ -17,7 +17,7 @@ import { DataTableToolbar } from '@/components/table/data-table-toolbar'
 import { ProductInfo } from '../_logic/actions'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import { buttonVariants } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { usePathname } from 'next/navigation'
 
 interface ProductsTableProps {
@@ -26,7 +26,6 @@ interface ProductsTableProps {
 
 export function ProductsTable({ productsPromise }: ProductsTableProps) {
   const { data, pageCount } = React.use(productsPromise)
-  const path = usePathname()
   // const [selectedProducts, setSelectedProducts] = React.useState<ProductInfo[]>(
   //   [],
   // )
@@ -53,17 +52,22 @@ export function ProductsTable({ productsPromise }: ProductsTableProps) {
         table={table}
         filterFields={filterFields}
         actions={[
-          () => {<Link
-          href={`${path}/novo`}
-          className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
-        >
-          Novo produto
-        </Link>},
+          () => <NewProductButton />,
           () => <BulkUpdateProductDialog products={selectedProducts} />,
         ]}
       />
 
       <DataTable table={table} columns={columns} />
     </div>
+  )
+}
+
+function NewProductButton() {
+  const path = usePathname()
+
+  return (
+    <Button variant='outline' size='sm' asChild>
+      <Link href={`${path}/novo`}>Novo produto</Link>
+    </Button>
   )
 }
