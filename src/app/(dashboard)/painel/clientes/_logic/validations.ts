@@ -1,10 +1,13 @@
 import { z } from 'zod'
 
+const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/
+const cnpjRegex = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/
+
 export const clientSchema = z.object({
   name: z.string().nullable(),
   razaosocial: z.string().optional().nullable(),
   type: z.enum(['company', 'individual']),
-  document: z.string().nullable(),
+  document: z.string().min(1, { message: 'Documento é obrigatório' }),
   contacts: z.array(
     z.object({
       name: z.string().optional().nullable(),

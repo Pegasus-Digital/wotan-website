@@ -18,7 +18,16 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-import { Dialog } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
@@ -31,6 +40,17 @@ import { DataTableFilterField } from '@/components/table/types/table-types'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { deleteClient, updateClientSalesperson } from '../../_logic/actions'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 export const filterFields: DataTableFilterField<Client>[] = [
   {
@@ -40,7 +60,11 @@ export const filterFields: DataTableFilterField<Client>[] = [
   },
 ]
 
-export function getColumns(): ColumnDef<Client>[] {
+export function getColumns({
+  salespeople,
+}: {
+  salespeople: Salesperson[]
+}): ColumnDef<Client>[] {
   const router = useRouter()
 
   return [
@@ -161,43 +185,173 @@ export function getColumns(): ColumnDef<Client>[] {
       header: () => <span className='text-right'>Interações</span>,
       cell: ({ row }) => {
         const client = row.original
+        const [dialogTransferState, setDialogTransferState] = useState(false)
+        const [dialogDeleteState, setDialogDeleteState] = useState(false)
+        const [isTransferPending, startTransferTransition] = useTransition()
+
+        const [isDeletePending, startDeleteTransition] = useTransition()
+
+        function DeleteClientDialog() {
+          return (
+            <Dialog
+              open={dialogDeleteState}
+              onOpenChange={setDialogDeleteState}
+            >
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Confirmar deleção</DialogTitle>
+                </DialogHeader>
+                <DialogDescription className='font-bold'>
+                  Atenção, você está prestes a deletar o cliente do sistema.
+                  Esta operação não pode ser revertida.
+                </DialogDescription>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant='default'>Voltar</Button>
+                  </DialogClose>
+                  <Button
+                    variant='outline'
+                    onClick={() => {
+                      startDeleteTransition(() => {
+                        toast.promise(deleteClient({ clientId: client.id }), {
+                          loading: 'Deletando...',
+                          success: 'Cliente deletado com sucesso',
+                          error: 'Erro ao deletar cliente...',
+                        })
+                      })
+                    }}
+                  >
+                    Confirmar
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )
+        }
 
         function DeleteClientAction() {
-          const [isDeletePending, startDeleteTransition] = useTransition()
-
           return (
             <DropdownMenuItem
-              // onClick={() => {
-              //   startDeleteTransition(() => {
-              //     toast.promise(deleteEstimate({ clientId: client.id }), {
-              //       loading: 'Deletando...',
-              //       success: 'Orçamento deletado com sucesso',
-              //       error: 'Erro ao deletar orçamento...',
-              //     })
-              //   })
-              // }}
               className='cursor-pointer'
               disabled={isDeletePending}
+              onClick={() => setDialogDeleteState(true)}
             >
               Deletar cliente
             </DropdownMenuItem>
           )
         }
 
-        function TransferClientAction() {
-          const [isTransferPending, startTransferTransition] = useTransition()
+        function TransferClientDialog() {
+          return (
+            <Dialog
+              open={dialogTransferState}
+              onOpenChange={setDialogTransferState}
+            >
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Confirmar transferência</DialogTitle>
+                  <DialogDescription>
+                    Atenção, você irá transferir o cliente para outro vendedor.
+                    Apenas o administrador do sistema poderá reverter esta
+                    operação.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className='mt-2 flex flex-col space-y-2'>
+                  {typeof client.salesperson === 'object' && (
+                    <div className='flex items-center space-x-2'>
+                      {client.salesperson.avatar &&
+                      typeof client.salesperson.avatar === 'object' &&
+                      client.salesperson.avatar.url ? (
+                        <Image
+                          width={20}
+                          height={20}
+                          src={client.salesperson.avatar.url}
+                          alt={client.salesperson.name} // Use name for the alt attribute for better accessibility
+                          className='select-none rounded-full'
+                        />
+                      ) : (
+                        <div className='flex h-5 w-5 items-center justify-center rounded-full bg-gray-300 p-1'>
+                          <UserRound className='h-3 w-3 text-gray-600' />
+                        </div>
+                      )}
 
+                      <p className='font-semibold'>{client.salesperson.name}</p>
+                    </div>
+                  )}
+                  <Select
+                  // onValueChange={(value) => {
+                  //   field.onChange(value)
+                  //   // setSalespersonId(value)
+                  // }}
+                  // value={field.value}
+                  >
+                    <SelectTrigger className='disabled:opacity-100'>
+                      <SelectValue placeholder='Selecione um Vendedor' />
+                    </SelectTrigger>
+
+                    <SelectContent side='bottom'>
+                      <SelectGroup>
+                        <SelectLabel>Vendedor Interno</SelectLabel>
+                        {typeof salespeople === 'object' &&
+                          salespeople
+                            .filter((person) => person.roles === 'internal')
+                            .map((person) => (
+                              <SelectItem key={person.id} value={person.id}>
+                                {person.name}
+                              </SelectItem>
+                            ))}
+                      </SelectGroup>
+                      <SelectSeparator />
+                      <SelectGroup>
+                        <SelectLabel>Representante Externo</SelectLabel>
+                        {salespeople &&
+                          salespeople
+                            .filter(
+                              (person) => person.roles === 'representative',
+                            )
+                            .map((person) => (
+                              <SelectItem key={person.id} value={person.id}>
+                                {person.name}
+                              </SelectItem>
+                            ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant='default'>Voltar</Button>
+                  </DialogClose>
+                  <Button
+                    variant='outline'
+                    onClick={() => {
+                      startTransferTransition(() => {
+                        toast.promise(
+                          updateClientSalesperson({
+                            id: client.id,
+                            salespersonId: null,
+                          }),
+                          {
+                            loading: 'Transferindo...',
+                            success: 'Cliente transferido com sucesso',
+                            error: 'Erro ao transferir cliente...',
+                          },
+                        )
+                      })
+                    }}
+                  >
+                    Confirmar
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )
+        }
+
+        function TransferClientAction() {
           return (
             <DropdownMenuItem
-              // onClick={() => {
-              //   startDeleteTransition(() => {
-              //     toast.promise(deleteEstimate({ clientId: client.id }), {
-              //       loading: 'Deletando...',
-              //       success: 'Orçamento deletado com sucesso',
-              //       error: 'Erro ao deletar orçamento...',
-              //     })
-              //   })
-              // }}
+              onClick={() => setDialogTransferState(true)}
               className='cursor-pointer'
               disabled={isTransferPending}
             >
@@ -235,13 +389,13 @@ export function getColumns(): ColumnDef<Client>[] {
               </DropdownMenuTrigger>
               <DropdownMenuContent align='end'>
                 <DropdownMenuLabel>Interações</DropdownMenuLabel>
-
                 <DropdownMenuSeparator />
-
                 <TransferClientAction />
                 <DeleteClientAction />
               </DropdownMenuContent>
             </DropdownMenu>
+            <TransferClientDialog />
+            <DeleteClientDialog />
           </div>
         )
       },

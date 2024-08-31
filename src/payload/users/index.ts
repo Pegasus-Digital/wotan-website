@@ -46,10 +46,10 @@ const Users: CollectionConfig = {
         update: admins,
       },
     },
-    {
-      name: 'email',
-      type: 'email',
-    },
+    // {
+    //   name: 'email',
+    //   type: 'email',
+    // },
   ],
   timestamps: true,
 }

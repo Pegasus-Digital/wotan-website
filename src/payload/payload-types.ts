@@ -472,7 +472,7 @@ export interface Client {
   ramo?: string | null;
   salesperson: string | Salesperson;
   origin: 'ads' | 'indication' | 'fiergs-list' | 'telephone-list' | 'direct' | 'prospect' | 'website' | 'other';
-  status: 'active' | 'inactive' | 'prospect';
+  status?: ('active' | 'inactive' | 'prospect') | null;
   updatedAt: string;
   createdAt: string;
 }
