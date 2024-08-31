@@ -459,13 +459,15 @@ export interface Client {
   razaosocial?: string | null;
   type: 'company' | 'individual';
   document?: string | null;
-  contacts: {
-    name?: string | null;
-    email?: string | null;
-    phone?: string | null;
-    whatsapp?: string | null;
-    id?: string | null;
-  }[];
+  contacts?:
+    | {
+        name?: string | null;
+        email?: string | null;
+        phone?: string | null;
+        whatsapp?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   adress?: Address;
   clientSince?: string | null;
   observations?: string | null;

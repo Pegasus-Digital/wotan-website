@@ -191,3 +191,45 @@ export async function updateClientSalesperson({
     }
   }
 }
+
+interface UpdateClientStatusProps {
+  id: string
+  status: 'active' | 'inactive' | 'prospect'
+}
+
+export async function updateClientStatus({
+  id,
+  status,
+}: UpdateClientStatusProps): Promise<ActionResponse<UpdateActionResponseData>> {
+  try {
+    const response = await payload.update({
+      collection: 'clients',
+      where: { id: { equals: id } },
+      data: { status },
+    })
+
+    if (!response.docs[0]) {
+      return {
+        data: null,
+        status: false,
+        message: '[400] Ocorreu um erro ao atualizar o vendedor.',
+      }
+    }
+
+    revalidatePath('/painel/clientes')
+
+    return {
+      data: { client: response.docs[0] },
+      status: true,
+      message: 'Vendedor atualizado com sucesso.',
+    }
+  } catch (err) {
+    console.error(err)
+
+    return {
+      data: null,
+      status: false,
+      message: '[500] Ocorreu um erro ao atualizar o vendedor.',
+    }
+  }
+}

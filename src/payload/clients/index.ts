@@ -51,7 +51,7 @@ const Clients: CollectionConfig = {
             {
               type: 'array',
               name: 'contacts',
-              required: true,
+              // required: true,
               fields: [
                 { type: 'text', name: 'name' },
                 { type: 'email', name: 'email' },
