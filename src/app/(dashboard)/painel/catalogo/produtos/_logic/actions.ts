@@ -24,6 +24,9 @@ export async function createProduct(
   try {
     // await payload.find({ collection: 'media' })
 
+    console.log('Criando produto')
+    console.log(JSON.stringify(product, null, 2))
+
     const response = await payload.create({
       collection: 'products',
       data: { ...product, _status: 'published' },

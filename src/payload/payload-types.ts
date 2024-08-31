@@ -8,6 +8,17 @@
 
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PriceQuantityTable".
+ */
+export type PriceQuantityTable =
+  | {
+      quantity?: number | null;
+      unitPrice?: number | null;
+      id?: string | null;
+    }[]
+  | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "NavLinkColumn".
  */
 export type NavLinkColumn =
@@ -51,15 +62,7 @@ export interface Product {
   stockQuantity?: number | null;
   active: boolean;
   attributes?: (string | Attribute)[] | null;
-  priceJSON?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
+  priceQuantityTable?: PriceQuantityTable;
   description?: string | null;
   tags?: string | null;
   featuredImage: string | Media;

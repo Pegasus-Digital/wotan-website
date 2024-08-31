@@ -15,6 +15,10 @@ import { BulkUpdateProductDialog } from '../_components/bulk-update-dialog-conte
 import { getProducts } from '../_logic/queries'
 import { DataTableToolbar } from '@/components/table/data-table-toolbar'
 import { ProductInfo } from '../_logic/actions'
+import Link from 'next/link'
+import { cn } from '@/lib/utils'
+import { buttonVariants } from '@/components/ui/button'
+import { usePathname } from 'next/navigation'
 
 interface ProductsTableProps {
   productsPromise: ReturnType<typeof getProducts>
@@ -22,6 +26,7 @@ interface ProductsTableProps {
 
 export function ProductsTable({ productsPromise }: ProductsTableProps) {
   const { data, pageCount } = React.use(productsPromise)
+  const path = usePathname()
   // const [selectedProducts, setSelectedProducts] = React.useState<ProductInfo[]>(
   //   [],
   // )
@@ -48,7 +53,12 @@ export function ProductsTable({ productsPromise }: ProductsTableProps) {
         table={table}
         filterFields={filterFields}
         actions={[
-          () => <NewProductDialog />,
+          () => {<Link
+          href={`${path}/novo`}
+          className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
+        >
+          Novo produto
+        </Link>},
           () => <BulkUpdateProductDialog products={selectedProducts} />,
         ]}
       />
