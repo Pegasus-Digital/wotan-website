@@ -42,25 +42,17 @@ export function ProductsTable({ productsPromise }: ProductsTableProps) {
     .getSelectedRowModel()
     .rows.map((row) => row.original)
 
-  // setSelectedProducts(
-  //   table.getSelectedRowModel().rows.map((row) => {
-  //     return { id: row.original.id, sku: row.original.sku }
-  //   }),
-  // )
-
-  // console.log(selectedProducts)
-
   return (
     <div>
       <DataTableToolbar
         table={table}
         filterFields={filterFields}
-        // actions={[NewProductDialog, BulkUpdateProductDialog]}
+        actions={[
+          () => <NewProductDialog />,
+          () => <BulkUpdateProductDialog products={selectedProducts} />,
+        ]}
       />
-      <div className='flex w-full justify-end p-2'>
-        <NewProductDialog />
-        <BulkUpdateProductDialog products={selectedProducts} />
-      </div>
+
       <DataTable table={table} columns={columns} />
     </div>
   )
