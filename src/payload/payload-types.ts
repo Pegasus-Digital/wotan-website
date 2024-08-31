@@ -462,18 +462,66 @@ export interface Client {
   razaosocial?: string | null;
   type: 'company' | 'individual';
   document?: string | null;
-  contacts: {
-    name?: string | null;
-    email?: string | null;
-    phone?: string | null;
-    whatsapp?: string | null;
-    id?: string | null;
-  }[];
+  contacts?:
+    | {
+        name?: string | null;
+        email?: string | null;
+        phone?: string | null;
+        whatsapp?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  adress?: Address;
   clientSince?: string | null;
+  observations?: string | null;
+  ramo?: string | null;
   salesperson: string | Salesperson;
-  roles: 'active' | 'inactive' | 'prospect';
+  origin: 'ads' | 'indication' | 'fiergs-list' | 'telephone-list' | 'direct' | 'prospect' | 'website' | 'other';
+  status?: ('active' | 'inactive' | 'prospect') | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Address".
+ */
+export interface Address {
+  street?: string | null;
+  number?: string | null;
+  neighborhood?: string | null;
+  city?: string | null;
+  state?:
+    | (
+        | 'AC'
+        | 'AL'
+        | 'AP'
+        | 'AM'
+        | 'BA'
+        | 'CE'
+        | 'DF'
+        | 'ES'
+        | 'GO'
+        | 'MA'
+        | 'MS'
+        | 'MT'
+        | 'MG'
+        | 'PA'
+        | 'PB'
+        | 'PR'
+        | 'PE'
+        | 'PI'
+        | 'RJ'
+        | 'RN'
+        | 'RS'
+        | 'RO'
+        | 'RR'
+        | 'SC'
+        | 'SP'
+        | 'SE'
+        | 'TO'
+      )
+    | null;
+  cep?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -633,48 +681,6 @@ export interface Company {
     instagram?: string | null;
     linkedin?: string | null;
   };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "Address".
- */
-export interface Address {
-  street?: string | null;
-  number?: string | null;
-  neighborhood?: string | null;
-  city?: string | null;
-  state?:
-    | (
-        | 'AC'
-        | 'AL'
-        | 'AP'
-        | 'AM'
-        | 'BA'
-        | 'CE'
-        | 'DF'
-        | 'ES'
-        | 'GO'
-        | 'MA'
-        | 'MS'
-        | 'MT'
-        | 'MG'
-        | 'PA'
-        | 'PB'
-        | 'PR'
-        | 'PE'
-        | 'PI'
-        | 'RJ'
-        | 'RN'
-        | 'RS'
-        | 'RO'
-        | 'RR'
-        | 'SC'
-        | 'SP'
-        | 'SE'
-        | 'TO'
-      )
-    | null;
-  cep?: string | null;
 }
 
 

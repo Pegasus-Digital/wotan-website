@@ -26,21 +26,31 @@ export function BulkUpdateProductDialog({
   const [open, setOpen] = useState<boolean>(false)
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant='outline' size='sm'>
-          Atualização em massa
-        </Button>
-      </DialogTrigger>
-      <DialogContent className='max-h-[832px] max-w-screen-lg overflow-y-auto'>
-        <DialogHeader>
-          <DialogTitle>Atualizando produtos</DialogTitle>
-          <DialogDescription>
-            Atualize as categorias dos produtos selecionados.
-          </DialogDescription>
-        </DialogHeader>
-        <BulkUpdateProductForm products={products} setOpen={setOpen} />
-      </DialogContent>
-    </Dialog>
+    <>
+      <Button
+        variant='outline'
+        size='sm'
+        onClick={() => {
+          if (products.length >= 2) {
+            setOpen(true)
+          } else toast.error('Selecione pelo menos dois produtos')
+        }}
+        disabled={products.length < 2}
+      >
+        Atualização em massa
+      </Button>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className='max-h-[832px] max-w-screen-lg overflow-y-auto'>
+          <DialogHeader>
+            <DialogTitle>Atualizando produtos</DialogTitle>
+            <DialogDescription>
+              Atualize as categorias dos produtos selecionados.
+            </DialogDescription>
+          </DialogHeader>
+          <BulkUpdateProductForm products={products} setOpen={setOpen} />
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }

@@ -1,6 +1,7 @@
 import { cn } from '@/lib/utils'
 import { H1 } from './typography/headings'
 import { Lead } from './typography/texts'
+import { Heading } from '@/pegasus/heading'
 
 type ContentProps = React.ComponentProps<'div'>
 
@@ -21,10 +22,10 @@ export function ContentHeader({
 }: ContentHeaderProps) {
   return (
     <section
-      className={cn('mb-1 flex flex-col text-primary', className)}
+      className={cn('mb-1 flex flex-col py-1 text-primary', className)}
       {...props}
     >
-      <H1>{title}</H1>
+      <Heading variant='h2'>{title}</Heading>
       <Lead className='text-lg'>{description}</Lead>
     </section>
   )

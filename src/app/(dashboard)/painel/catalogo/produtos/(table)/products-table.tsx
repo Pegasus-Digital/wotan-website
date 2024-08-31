@@ -47,31 +47,22 @@ export function ProductsTable({ productsPromise }: ProductsTableProps) {
     .getSelectedRowModel()
     .rows.map((row) => row.original)
 
-  // setSelectedProducts(
-  //   table.getSelectedRowModel().rows.map((row) => {
-  //     return { id: row.original.id, sku: row.original.sku }
-  //   }),
-  // )
-
-  // console.log(selectedProducts)
-
   return (
     <div>
       <DataTableToolbar
         table={table}
         filterFields={filterFields}
-        // actions={[NewProductDialog, BulkUpdateProductDialog]}
-      />
-      <div className='flex w-full justify-end p-2'>
-        <Link
+        actions={[
+          () => {<Link
           href={`${path}/novo`}
           className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
         >
           Novo produto
-        </Link>
-        {/* <NewProductDialog /> */}
-        <BulkUpdateProductDialog products={selectedProducts} />
-      </div>
+        </Link>},
+          () => <BulkUpdateProductDialog products={selectedProducts} />,
+        ]}
+      />
+
       <DataTable table={table} columns={columns} />
     </div>
   )

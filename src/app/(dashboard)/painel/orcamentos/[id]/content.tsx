@@ -27,6 +27,8 @@ import {
 } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
 import { getClients, getSalespeople } from '../_logic/queries'
+import Image from 'next/image'
+import { UserRound } from 'lucide-react'
 
 interface SeeBudgetContentProps {
   budget: Budget
@@ -70,6 +72,8 @@ export function SeeBudgetContent({
   function handleToggleEdit() {
     toggleEditMode(!editMode)
   }
+
+  console.log(budget)
 
   return (
     <Content>
@@ -135,20 +139,43 @@ export function SeeBudgetContent({
                   <SelectTrigger>
                     <SelectValue placeholder='Selecione um Cliente' />
                   </SelectTrigger>
-                  <SelectContent side='bottom'>
-                    {clients.map((client) => (
-                      <SelectItem key={client.id} value='client'>
-                        {client.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
+                  {!editMode ? (
+                    <SelectContent side='bottom'>
+                      {typeof clients === 'object' && clients.length === 0 ? (
+                        <SelectItem value='nenhum' disabled>
+                          Você ainda não possui nenhum cliente.
+                        </SelectItem>
+                      ) : (
+                        typeof clients === 'object' &&
+                        clients.map((client) => (
+                          <SelectItem key={client.id} value={client.id}>
+                            {client.name}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  ) : (
+                    <></>
+                  )}
                 </Select>
               </div>
               <div className='space-y-1'>
                 <Label>Contato</Label>
 
                 <Select disabled={editMode}>
-                  <SelectTrigger />
+                  <SelectTrigger>
+                    <SelectValue placeholder='Selecione um Contato' />
+                  </SelectTrigger>
+                  <SelectContent side='bottom'>
+                    {selectedClient === null ? (
+                      <SelectItem value='nenhum' disabled>
+                        Por favor, selecione um cliente primeiro.
+                      </SelectItem>
+                    ) : (
+                      //
+                      <SelectItem value='contact1'>Contato 1</SelectItem>
+                    )}
+                  </SelectContent>
                 </Select>
               </div>
             </div>
@@ -164,15 +191,39 @@ export function SeeBudgetContent({
           </div>
         </CardContent>
       </Card>
-      <Separator className='my-1' />
+      <Separator className='my-2' />
 
-      <div className='grid grid-cols-2'>
-        <div className='space-y-1'>
-          <Label>Vendedor</Label>
-          <Select disabled={editMode}>
-            <SelectTrigger>
+      <div className='grid grid-cols-2 items-center gap-2 px-1 py-2'>
+        <Label>Vendedor</Label>
+        <Label>Comissão</Label>
+
+        <Select disabled={editMode}>
+          <SelectTrigger className='disabled:opacity-100'>
+            {typeof budget.salesperson === 'object' ? (
+              <div className='flex items-center space-x-2'>
+                {budget.salesperson.avatar &&
+                typeof budget.salesperson.avatar === 'object' &&
+                budget.salesperson.avatar.url ? (
+                  <Image
+                    width={20}
+                    height={20}
+                    src={budget.salesperson.avatar.url}
+                    alt={budget.salesperson.name} // Use name for the alt attribute for better accessibility
+                    className='select-none rounded-full'
+                  />
+                ) : (
+                  <div className='flex h-5 w-5 items-center justify-center rounded-full bg-gray-300 p-1'>
+                    <UserRound className='h-3 w-3 text-gray-600' />
+                  </div>
+                )}
+
+                <p className='font-semibold'>{budget.salesperson.name}</p>
+              </div>
+            ) : (
               <SelectValue placeholder='Selecione um Vendedor' />
-            </SelectTrigger>
+            )}
+          </SelectTrigger>
+          {!editMode ? (
             <SelectContent side='bottom'>
               <SelectGroup>
                 <SelectLabel>Vendedor Interno</SelectLabel>
@@ -198,24 +249,27 @@ export function SeeBudgetContent({
                     ))}
               </SelectGroup>
             </SelectContent>
-          </Select>
-        </div>
-        <div className='space-y-1'>
-          <Label>Comissão</Label>
+          ) : (
+            <></>
+          )}
+        </Select>
+        <div className='flex items-center gap-1'>
           <Checkbox disabled={editMode} />
+
+          <Label>Ativa</Label>
         </div>
       </div>
 
-      <div className=''>
+      <div className='space-y-1 px-1'>
         <Label>Condições</Label>
         <Textarea
           disabled={editMode}
           value={budget.conditions}
-          className='min-h-24 disabled:cursor-text disabled:opacity-100'
+          className='min-h-32 disabled:cursor-text disabled:opacity-100 '
         />
       </div>
 
-      <Separator className='my-1' />
+      <Separator className='my-2' />
 
       <Heading variant='h3'>Produtos</Heading>
       {budget.items?.map((item) => (
@@ -223,7 +277,7 @@ export function SeeBudgetContent({
           <CardContent className='items-start justify-between p-2 shadow-sm tablet:flex'>
             {typeof item.product === 'object' && (
               <div>
-                <Heading variant='h4'>{item.product.title}</Heading>
+                <Heading variant='h5'>{item.product.title}</Heading>
                 <Small>Quantidade: {item.quantity}</Small>
                 <div className='flex items-center space-x-2 space-y-1'>
                   {item.attributes?.map((attribute: Attribute) => (

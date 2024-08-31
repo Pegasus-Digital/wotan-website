@@ -51,15 +51,19 @@ const Clients: CollectionConfig = {
             {
               type: 'array',
               name: 'contacts',
-              required: true,
+              // required: true,
               fields: [
                 { type: 'text', name: 'name' },
-                { type: 'text', name: 'email' },
+                { type: 'email', name: 'email' },
                 { type: 'text', name: 'phone' },
                 { type: 'text', name: 'whatsapp' },
               ],
             },
           ],
+        },
+        {
+          label: 'Adress',
+          fields: [adress],
         },
       ],
     },
@@ -73,6 +77,9 @@ const Clients: CollectionConfig = {
         },
       },
     },
+    { name: 'observations', type: 'textarea' },
+    { name: 'ramo', type: 'text' },
+    // adress,
     {
       name: 'salesperson',
       type: 'relationship',
@@ -80,10 +87,51 @@ const Clients: CollectionConfig = {
       required: true,
     },
     {
-      name: 'roles',
+      name: 'origin',
       type: 'select',
-      defaultValue: ['active'],
       required: true,
+      options: [
+        {
+          label: 'Anuncio',
+          value: 'ads',
+        },
+        {
+          label: 'Indicação',
+          value: 'indication',
+        },
+        {
+          label: 'Lista FIERGS',
+          value: 'fiergs-list',
+        },
+        {
+          label: 'Lista Telefonica',
+          value: 'telephone-list',
+        },
+
+        {
+          label: 'Mala Direta',
+          value: 'direct',
+        },
+        {
+          label: 'Prospecção',
+          value: 'prospect',
+        },
+        {
+          label: 'Site',
+          value: 'website',
+        },
+        {
+          label: 'Outro',
+          value: 'other',
+        },
+      ],
+    },
+    {
+      name: 'status',
+      type: 'select',
+      defaultValue: 'active', // Correct: This should be a string
+
+      // required: true,
       options: [
         {
           label: 'Active',

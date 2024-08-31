@@ -2,12 +2,15 @@ import { Content, ContentHeader } from '@/components/content'
 import { Separator } from '@/components/ui/separator'
 import { ClientsTable } from './_components/(table)/clients-table'
 import { getClients } from './_logic/queries'
+import { getSalespeople } from '../orcamentos/_logic/queries'
 
 interface ClientsContentProps {
   clients: ReturnType<typeof getClients>
 }
 
-export function ClientsContent({ clients }: ClientsContentProps) {
+export async function ClientsContent({ clients }: ClientsContentProps) {
+  const { data: salespeopleData } = await getSalespeople()
+
   return (
     <Content>
       <ContentHeader
@@ -16,7 +19,7 @@ export function ClientsContent({ clients }: ClientsContentProps) {
       />
       <Separator className='mb-4' />
 
-      <ClientsTable clientsPromise={clients} />
+      <ClientsTable clientsPromise={clients} salespeople={salespeopleData} />
     </Content>
   )
 }

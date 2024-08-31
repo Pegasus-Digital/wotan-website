@@ -3,32 +3,51 @@
 import { revalidatePath } from 'next/cache'
 
 import payload from 'payload'
-import { User } from '@/payload/payload-types'
+import { Client } from '@/payload/payload-types'
 
 import { ActionResponse } from '@/lib/actions'
 
-// The user should not be able to directly modify the omitted fields
-type SafeUser = Omit<User, 'createdAt' | 'id' | 'sizes' | 'updatedAt'>
+type SafeClient = Omit<Client, 'createdAt' | 'sizes' | 'updatedAt' | 'id'>
 
-interface CreateUserResponseData {
-  user: User | null
+interface CreateClientResponseData {
+  client: Client | null
 }
 
-export async function createUser(
-  user: SafeUser,
-): Promise<ActionResponse<CreateUserResponseData>> {
+export async function createClient(
+  client: SafeClient,
+): Promise<ActionResponse<CreateClientResponseData>> {
   try {
-    const response = await payload.create({
-      collection: 'users',
-      data: { ...user },
+    // Check if a client with the same document already exists
+    const existingClient = await payload.find({
+      collection: 'clients',
+      where: {
+        document: {
+          equals: client.document,
+        },
+      },
     })
 
-    revalidatePath('/painel/catalogo/produtos')
+    // If a client with the same document exists, return a response indicating this
+    if (existingClient.docs.length > 0) {
+      return {
+        data: null,
+        status: false,
+        message: 'Cliente com este documento já existe.',
+      }
+    }
+
+    // If no client with the same document exists, proceed to create the client
+    const response = await payload.create({
+      collection: 'clients',
+      data: { ...client },
+    })
+
+    revalidatePath('/painel/clientes')
 
     return {
-      data: { user: response },
+      data: { client: response },
       status: true,
-      message: 'Produto criado com sucesso.',
+      message: 'Cliente cadastrado com sucesso.',
     }
   } catch (err) {
     console.error(err)
@@ -36,40 +55,42 @@ export async function createUser(
     return {
       data: null,
       status: false,
-      message: '[500] Ocorreu um erro ao criar o produto.',
+      message: '[500] Ocorreu um erro ao cadastrar o cliente.',
     }
   }
 }
 
 interface UpdateActionResponseData {
-  user: User | null
+  client: Client | null
 }
 
-export async function updateUser(
+export async function updateClient(
+  client: SafeClient,
   id: string,
-  product: SafeUser,
 ): Promise<ActionResponse<UpdateActionResponseData>> {
   try {
     const response = await payload.update({
-      collection: 'users',
+      collection: 'clients',
       where: { id: { equals: id } },
-      data: { ...product, id },
+      data: { ...client, id },
     })
 
     if (response.errors.length > 0) {
+      // console.error(response.errors)
+
       return {
         data: null,
         status: false,
-        message: '[400] Ocorreu um erro ao atualizar o produto.',
+        message: '[400] Ocorreu um erro ao atualizar o cliente.',
       }
     }
 
     revalidatePath('/painel/catalogo/produtos')
 
     return {
-      data: { user: response.docs[0] },
+      data: { client: response.docs[0] },
       status: true,
-      message: 'Produto atualizado com sucesso.',
+      message: 'Cliente atualizado com sucesso.',
     }
   } catch (err) {
     console.error(err)
@@ -77,36 +98,40 @@ export async function updateUser(
     return {
       data: null,
       status: false,
-      message: '[500] Ocorreu um erro ao atualizar o produto.',
+      message: '[500] Ocorreu um erro ao atualizar o cliente.',
     }
   }
 }
 
-interface DeleteUserResponseData {}
+interface DeleteClientProps {
+  clientId: string
+}
 
-export async function deleteUser(
-  id: string,
-): Promise<ActionResponse<DeleteUserResponseData>> {
+interface DeleteActionResponseData {}
+
+export async function deleteClient({
+  clientId,
+}: DeleteClientProps): Promise<ActionResponse<DeleteActionResponseData>> {
   try {
     const response = await payload.delete({
-      collection: 'users',
-      where: { id: { equals: id } },
+      collection: 'clients',
+      where: { id: { equals: clientId } },
     })
 
-    if (response.errors.length > 0) {
+    if (!response.docs[0]) {
       return {
         data: null,
         status: false,
-        message: '[400] Ocorreu um erro ao deletar o arquivo.',
+        message: '[400] Ocorreu um erro ao deletar o cliente.',
       }
     }
 
-    revalidatePath('/painel/arquivos')
+    revalidatePath('/painel/clientes')
 
     return {
       data: null,
       status: true,
-      message: 'Arquivo deletado com sucesso.',
+      message: 'Cliente deletado com sucesso.',
     }
   } catch (err) {
     console.error(err)
@@ -114,7 +139,97 @@ export async function deleteUser(
     return {
       data: null,
       status: false,
-      message: '[500] Ocorreu um erro ao deletar o arquivo.',
+      message: '[500] Ocorreu um erro ao deletar o cliente.',
+    }
+  }
+}
+
+interface updateClientSalespersonProps {
+  id: string
+  salespersonId: string
+}
+
+interface UpdateSalespersonActionResponseData {
+  client: Client | null
+}
+
+export async function updateClientSalesperson({
+  id,
+  salespersonId,
+}: updateClientSalespersonProps): Promise<
+  ActionResponse<UpdateSalespersonActionResponseData>
+> {
+  try {
+    const response = await payload.update({
+      collection: 'clients',
+      where: { id: { equals: id } },
+      data: { salesperson: salespersonId }, // Update only the salespersonId
+    })
+
+    if (!response.docs[0]) {
+      return {
+        data: null,
+        status: false,
+        message: '[400] Ocorreu um erro ao atualizar o vendedor.',
+      }
+    }
+
+    revalidatePath('/painel/clientes')
+
+    return {
+      data: { client: response.docs[0] },
+      status: true,
+      message: 'Vendedor atualizado com sucesso.',
+    }
+  } catch (err) {
+    console.error(err)
+
+    return {
+      data: null,
+      status: false,
+      message: '[500] Ocorreu um erro ao atualizar o vendedor.',
+    }
+  }
+}
+
+interface UpdateClientStatusProps {
+  id: string
+  status: 'active' | 'inactive' | 'prospect'
+}
+
+export async function updateClientStatus({
+  id,
+  status,
+}: UpdateClientStatusProps): Promise<ActionResponse<UpdateActionResponseData>> {
+  try {
+    const response = await payload.update({
+      collection: 'clients',
+      where: { id: { equals: id } },
+      data: { status },
+    })
+
+    if (!response.docs[0]) {
+      return {
+        data: null,
+        status: false,
+        message: '[400] Ocorreu um erro ao atualizar o vendedor.',
+      }
+    }
+
+    revalidatePath('/painel/clientes')
+
+    return {
+      data: { client: response.docs[0] },
+      status: true,
+      message: 'Vendedor atualizado com sucesso.',
+    }
+  } catch (err) {
+    console.error(err)
+
+    return {
+      data: null,
+      status: false,
+      message: '[500] Ocorreu um erro ao atualizar o vendedor.',
     }
   }
 }
