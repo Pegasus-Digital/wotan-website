@@ -3,13 +3,13 @@ import { Content, ContentHeader } from '@/components/content'
 
 import { OrdersTable } from './(table)/orders-table'
 
-import { getEstimates } from './_logic/queries'
+import { getOrders } from './_logic/queries'
 
 interface OrdersContentProps {
-  estimates: ReturnType<typeof getEstimates>
+  orders: ReturnType<typeof getOrders>
 }
 
-export function OrdersContent({ estimates }: OrdersContentProps) {
+export function OrdersContent({ orders }: OrdersContentProps) {
   return (
     <Content>
       <ContentHeader
@@ -19,7 +19,7 @@ export function OrdersContent({ estimates }: OrdersContentProps) {
 
       <Separator className='mb-4' />
 
-      <OrdersTable ordersPromise={estimates} />
+      <OrdersTable ordersPromise={orders} />
     </Content>
   )
 }

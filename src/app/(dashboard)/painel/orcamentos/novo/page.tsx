@@ -1,7 +1,14 @@
 import { Heading } from '@/pegasus/heading'
-import { getEstimateById } from '../_logic/queries'
+import { getClients, getEstimateById, getSalespeople } from '../_logic/queries'
 import { NewBudgetContent } from './content'
 
 export default async function NewBudget() {
-  return <NewBudgetContent />
+  const { data: salespeopleData } = await getSalespeople()
+
+  // Fetch clients data
+  const { data: clientsData } = await getClients()
+
+  return (
+    <NewBudgetContent salespeople={salespeopleData} clients={clientsData} />
+  )
 }

@@ -3,7 +3,7 @@ import { OrdersContent } from './content'
 
 import { ISearchParams, searchParamsSchema } from '@/lib/validations'
 
-import { getEstimates } from './_logic/queries'
+import { getOrders } from './_logic/queries'
 
 // This page is meant to be responsible for SEO, data fetching and/or other asynchronous functions
 
@@ -11,14 +11,14 @@ export const metadata: Metadata = {
   title: 'Pedidos',
 }
 
-interface EstimatesPageProps {
+interface OrdersPageProps {
   searchParams: ISearchParams
 }
 
-export default async function Estimates({ searchParams }: EstimatesPageProps) {
+export default async function Orders({ searchParams }: OrdersPageProps) {
   const search = searchParamsSchema.parse(searchParams)
 
-  const estimatesPromise = getEstimates(search)
+  const ordersPromise = getOrders(search)
 
-  return <OrdersContent estimates={estimatesPromise} />
+  return <OrdersContent orders={ordersPromise} />
 }

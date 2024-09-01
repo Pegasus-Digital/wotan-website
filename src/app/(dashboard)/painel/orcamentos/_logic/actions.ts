@@ -3,6 +3,7 @@
 import payload from 'payload'
 import { revalidatePath } from 'next/cache'
 import { ActionResponse } from '@/lib/actions'
+import { Budget } from '@/payload/payload-types'
 
 interface DeleteEstimateProps {
   estimateId: string
@@ -40,6 +41,40 @@ export async function deleteEstimate({
       data: null,
       status: false,
       message: '[500] Ocorreu um erro ao deletar o orçamento.',
+    }
+  }
+}
+
+type SafeBudget = Omit<Budget, 'createdAt' | 'updatedAt' | 'id'>
+
+interface CreateBudgetResponseData {
+  budget: Budget | null
+}
+export async function createBudget(
+  budget: SafeBudget,
+): Promise<ActionResponse<CreateBudgetResponseData>> {
+  try {
+    const response = await payload.create({
+      collection: 'budget',
+      data: { ...budget },
+    })
+
+    revalidatePath('/painel/orcamentos')
+
+    console.log(response)
+
+    return {
+      data: { budget: response },
+      status: true,
+      message: 'Orçamento criado com sucesso.',
+    }
+  } catch (err) {
+    console.error(err)
+
+    return {
+      data: null,
+      status: false,
+      message: '[500] Ocorreu um erro ao criar orçamento.',
     }
   }
 }

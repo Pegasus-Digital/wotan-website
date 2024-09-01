@@ -25,6 +25,7 @@ const generateTitle: GenerateTitle = () => {
   return 'Wotan Brindes'
 }
 import { Contact } from './contact'
+import Order from './order'
 
 export default buildConfig({
   admin: {
@@ -46,6 +47,7 @@ export default buildConfig({
     Attributes,
     AttributeTypes,
     Budget,
+    Order,
     Users,
     Media,
     Pages,

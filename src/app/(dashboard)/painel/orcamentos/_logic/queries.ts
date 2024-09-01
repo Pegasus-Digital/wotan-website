@@ -48,6 +48,30 @@ export async function getEstimateById(id: string) {
   }
 }
 
+export async function getEstimateByIncrementalId(id: string) {
+  noStore()
+
+  try {
+    const response = await payload.find({
+      collection: 'budget',
+      where: {
+        incrementalId: {
+          equals: id,
+        },
+      },
+      limit: 1,
+    })
+
+    // console.log('response', response)
+
+    return {
+      data: response.docs[0],
+    }
+  } catch (err) {
+    return { data: null }
+  }
+}
+
 export async function getClients() {
   noStore()
 

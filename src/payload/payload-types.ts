@@ -36,6 +36,7 @@ export interface Config {
     attributes: Attribute;
     'attribute-types': AttributeType;
     budget: Budget;
+    order: Order;
     users: User;
     media: Media;
     pages: Page;
@@ -191,6 +192,102 @@ export interface Salesperson {
   loginAttempts?: number | null;
   lockUntil?: string | null;
   password: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "order".
+ */
+export interface Order {
+  id: string;
+  incrementalId?: number | null;
+  client: string | Client;
+  contact: string;
+  salesperson?: (string | null) | Salesperson;
+  products?:
+    | {
+        code: string;
+        description: string;
+        quantity: number;
+        price: number;
+        print?: string | null;
+        sample?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  status?: ('pending' | 'completed' | 'cancelled') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clients".
+ */
+export interface Client {
+  id: string;
+  name?: string | null;
+  razaosocial?: string | null;
+  type: 'company' | 'individual';
+  document?: string | null;
+  contacts?:
+    | {
+        name?: string | null;
+        email?: string | null;
+        phone?: string | null;
+        whatsapp?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  adress?: Address;
+  clientSince?: string | null;
+  observations?: string | null;
+  ramo?: string | null;
+  salesperson: string | Salesperson;
+  origin: 'ads' | 'indication' | 'fiergs-list' | 'telephone-list' | 'direct' | 'prospect' | 'website' | 'other';
+  status?: ('active' | 'inactive' | 'prospect') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Address".
+ */
+export interface Address {
+  street?: string | null;
+  number?: string | null;
+  neighborhood?: string | null;
+  city?: string | null;
+  state?:
+    | (
+        | 'AC'
+        | 'AL'
+        | 'AP'
+        | 'AM'
+        | 'BA'
+        | 'CE'
+        | 'DF'
+        | 'ES'
+        | 'GO'
+        | 'MA'
+        | 'MS'
+        | 'MT'
+        | 'MG'
+        | 'PA'
+        | 'PB'
+        | 'PR'
+        | 'PE'
+        | 'PI'
+        | 'RJ'
+        | 'RN'
+        | 'RS'
+        | 'RO'
+        | 'RR'
+        | 'SC'
+        | 'SP'
+        | 'SE'
+        | 'TO'
+      )
+    | null;
+  cep?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -452,77 +549,6 @@ export interface TimelineSection {
   id?: string | null;
   blockName?: string | null;
   blockType: 'timeline-section';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "clients".
- */
-export interface Client {
-  id: string;
-  name?: string | null;
-  razaosocial?: string | null;
-  type: 'company' | 'individual';
-  document?: string | null;
-  contacts?:
-    | {
-        name?: string | null;
-        email?: string | null;
-        phone?: string | null;
-        whatsapp?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  adress?: Address;
-  clientSince?: string | null;
-  observations?: string | null;
-  ramo?: string | null;
-  salesperson: string | Salesperson;
-  origin: 'ads' | 'indication' | 'fiergs-list' | 'telephone-list' | 'direct' | 'prospect' | 'website' | 'other';
-  status?: ('active' | 'inactive' | 'prospect') | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "Address".
- */
-export interface Address {
-  street?: string | null;
-  number?: string | null;
-  neighborhood?: string | null;
-  city?: string | null;
-  state?:
-    | (
-        | 'AC'
-        | 'AL'
-        | 'AP'
-        | 'AM'
-        | 'BA'
-        | 'CE'
-        | 'DF'
-        | 'ES'
-        | 'GO'
-        | 'MA'
-        | 'MS'
-        | 'MT'
-        | 'MG'
-        | 'PA'
-        | 'PB'
-        | 'PR'
-        | 'PE'
-        | 'PI'
-        | 'RJ'
-        | 'RN'
-        | 'RS'
-        | 'RO'
-        | 'RR'
-        | 'SC'
-        | 'SP'
-        | 'SE'
-        | 'TO'
-      )
-    | null;
-  cep?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

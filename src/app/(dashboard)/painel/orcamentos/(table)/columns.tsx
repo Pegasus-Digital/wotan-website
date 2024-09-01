@@ -43,51 +43,43 @@ import { Eye, MoreHorizontal, Pencil, Printer, UserRound } from 'lucide-react'
 import { DataTableFilterField } from '@/components/table/types/table-types'
 import { toast } from 'sonner'
 import { deleteEstimate } from '../_logic/actions'
-import { useRouter } from 'next/navigation'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 import Image from 'next/image'
 import Link from 'next/link'
 
 export const filterFields: DataTableFilterField<Budget>[] = [
-  // {
-  //   label: 'Company Name',
-  //   value: '',
-  //   placeholder: 'Filtrar nome da empresa...',
-  // },
-  // {
-  //   label: 'Company',
-  //   value: 'companyName',
-  //   placeholder: 'Filtrar nome da empresa...',
-  // },
+  {
+    label: 'Número',
+    value: 'incrementalId',
+    placeholder: 'Filtrar por o número...',
+  },
 ]
 
 export function getColumns(): ColumnDef<Budget>[] {
-  const router = useRouter()
-
   return [
-    {
-      id: 'select',
-      header: ({ table }) => (
-        <Checkbox
-          // @ts-ignore TODO: Solve this TypeScript error
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label='Select all'
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label='Select row'
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
+    // {
+    //   id: 'select',
+    //   header: ({ table }) => (
+    //     <Checkbox
+    //       // @ts-ignore TODO: Solve this TypeScript error
+    //       checked={
+    //         table.getIsAllPageRowsSelected() ||
+    //         (table.getIsSomePageRowsSelected() && 'indeterminate')
+    //       }
+    //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+    //       aria-label='Select all'
+    //     />
+    //   ),
+    //   cell: ({ row }) => (
+    //     <Checkbox
+    //       checked={row.getIsSelected()}
+    //       onCheckedChange={(value) => row.toggleSelected(!!value)}
+    //       aria-label='Select row'
+    //     />
+    //   ),
+    //   enableSorting: false,
+    //   enableHiding: false,
+    // },
     {
       id: 'incrementalId',
       accessorFn: (row) => row.incrementalId,
@@ -153,183 +145,78 @@ export function getColumns(): ColumnDef<Budget>[] {
       cell: ({ row }) => {
         const items: any[] = row.getValue('items')
 
+        // Get the first 2 items
+        const displayedItems = items.slice(0, 2)
+        // Calculate the remaining items (from the 3rd item onwards)
+        const remainingItems = items.slice(2)
+
         return (
-          <Card className='w-fit border-transparent p-2'>
+          <Card className='w-full border-transparent p-2 px-4'>
             <CardContent className='m-0 space-y-2 p-0'>
-              {items.map((item, index) => {
-                return (
-                  <div
-                    key={item.id + '-' + index}
-                    className='flex items-center'
-                  >
-                    <Small className='mr-2 font-semibold'>
-                      {item.quantity}x
-                    </Small>
-                    <Badge className='w-fit'>{item.product.title}</Badge>
-                  </div>
-                )
-              })}
+              {displayedItems.map((item, index) => (
+                <div key={item.id + '-' + index} className='flex items-center'>
+                  <Small className='mr-2 w-12 text-right font-semibold'>
+                    {item.quantity}x
+                  </Small>
+                  <Badge className='w-fit'>
+                    {item.product.title
+                      ? item.product.title
+                      : 'PRODUTO NÃO ENCONTRADO'}
+                  </Badge>
+                </div>
+              ))}
+
+              {remainingItems.length === 1 && (
+                <div className='flex items-center'>
+                  <Small className='mr-2 w-12 text-right font-semibold'>
+                    {remainingItems[0].quantity}x
+                  </Small>
+                  <Badge className='w-fit'>
+                    {remainingItems[0].product.title}
+                  </Badge>
+                </div>
+              )}
+
+              {remainingItems.length > 1 && (
+                <div className='flex items-center'>
+                  <Small className='mr-2 w-12  text-right font-semibold'>
+                    {remainingItems.reduce(
+                      (total, item) => total + item.quantity,
+                      0,
+                    )}
+                    x
+                  </Small>
+                  <Badge className='w-fit'>
+                    + {remainingItems.length} outros{' '}
+                    {remainingItems.length === 1 ? 'item' : 'itens'}
+                  </Badge>
+                </div>
+              )}
             </CardContent>
           </Card>
         )
       },
     },
-    // {
-    //   id: 'budget-details',
-    //   cell: ({ row }) => {
-    //     const budget = row.original
 
-    //     function DetailsDialog() {
-    //       const [isOpen, setOpen] = useState<boolean>(false)
+    {
+      id: 'status',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title='Status' />
+      ),
+      cell: ({ row }) => {
+        const value: string = row.getValue('status')
 
-    //       return (
-    //         <Dialog open={isOpen} onOpenChange={isOpen ? setOpen : () => null}>
-    //           <DialogTrigger asChild>
-    //             <Button
-    //               onClick={() => setOpen(true)}
-    //               size='icon'
-    //               variant='ghost'
-    //               // className='rounded-full'
-    //             >
-    //               <Eye className='h-5 w-5' />
-    //             </Button>
-    //           </DialogTrigger>
+        if (!value) return <p className='font-bold'>Nenhum</p>
 
-    //           <DialogContent className='m-0 max-w-5xl p-0'>
-    //             <ScrollArea className='max-h-[80vh] overflow-hidden rounded-md p-6'>
-    //               <DialogHeader>
-    //                 <Heading variant='h2'>Orçamento</Heading>
-    //                 <DialogDescription>
-    //                   Criado:{' '}
-    //                   {formatRelative(budget.createdAt, new Date(), {
-    //                     locale: ptBR,
-    //                   })}
-    //                 </DialogDescription>
-
-    //                 <Card className='border-none shadow-sm'>
-    //                   <CardContent className='p-2'>
-    //                     <Heading variant='h4'>Contato</Heading>
-    //                     <div className='grid grid-cols-2 gap-x-6 gap-y-2 px-3'>
-    //                       <div className='space-y-1'>
-    //                         <Label>Empresa</Label>
-    //                         <Input
-    //                           disabled
-    //                           value={budget.contact.companyName}
-    //                           className='disabled:cursor-text disabled:opacity-100'
-    //                         />
-    //                       </div>
-
-    //                       <div className='space-y-1'>
-    //                         <Label>Responsável</Label>
-    //                         <Input
-    //                           disabled
-    //                           value={budget.contact.customerName}
-    //                           className='disabled:cursor-text disabled:opacity-100'
-    //                         />
-    //                       </div>
-
-    //                       <div className='space-y-1'>
-    //                         <Label>Email</Label>
-    //                         <Input
-    //                           disabled
-    //                           value={budget.contact.email}
-    //                           className='disabled:cursor-text disabled:opacity-100'
-    //                         />
-    //                       </div>
-
-    //                       <div className='space-y-1'>
-    //                         <Label>Telefone</Label>
-    //                         <Input
-    //                           disabled
-    //                           value={budget.contact.phone}
-    //                           className='disabled:cursor-text disabled:opacity-100'
-    //                         />
-    //                       </div>
-
-    //                       <div className='col-span-2'>
-    //                         <Label>Detalhes</Label>
-    //                         <Textarea
-    //                           value={budget.contact.details}
-    //                           className='min-h-24 disabled:cursor-text disabled:opacity-100'
-    //                           disabled
-    //                         />
-    //                       </div>
-    //                     </div>
-    //                   </CardContent>
-    //                 </Card>
-
-    //                 <Separator className='my-1' />
-
-    //                 {budget.items?.map((item) => (
-    //                   <Card key={item.id}>
-    //                     <CardContent className='items-start justify-between p-2 shadow-sm tablet:flex'>
-    //                       {typeof item.product === 'object' && (
-    //                         <div>
-    //                           <Heading variant='h4'>
-    //                             {item.product.title}
-    //                           </Heading>
-    //                           <Small>Quantidade: {item.quantity}</Small>
-    //                           <div className='flex items-center space-x-2 space-y-1'>
-    //                             {item.attributes?.map(
-    //                               (attribute: Attribute) => (
-    //                                 <div
-    //                                   key={item.id + attribute.id}
-    //                                   className='mx-auto'
-    //                                 >
-    //                                   <Small>
-    //                                     {typeof attribute.type === 'object' &&
-    //                                       attribute.type.name}
-    //                                     {': '}
-    //                                   </Small>
-    //                                   <Badge className='w-fit border-2 border-accent bg-transparent text-foreground hover:bg-primary hover:text-primary-foreground'>
-    //                                     {typeof attribute === 'object' &&
-    //                                       attribute.name}
-
-    //                                     {typeof attribute.type === 'object' &&
-    //                                       attribute.type.type === 'color' && (
-    //                                         <div
-    //                                           style={{
-    //                                             backgroundColor:
-    //                                               attribute.value,
-    //                                           }}
-    //                                           className='ml-2 h-5 w-5 rounded-full border-2'
-    //                                         />
-    //                                       )}
-    //                                   </Badge>
-    //                                 </div>
-    //                               ),
-    //                             )}
-    //                           </div>
-    //                         </div>
-    //                       )}
-
-    //                       <div>
-    //                         <Image
-    //                           resource={
-    //                             typeof item.product === 'object' &&
-    //                             item.product.featuredImage
-    //                           }
-    //                           imgClassName='w-24 h-24 aspect-square rounded-md shadow-wotan-light border hidden tablet:block'
-    //                         />
-    //                       </div>
-    //                     </CardContent>
-    //                   </Card>
-    //                 ))}
-    //               </DialogHeader>
-    //             </ScrollArea>
-    //           </DialogContent>
-    //         </Dialog>
-    //       )
-    //     }
-
-    //     return <DetailsDialog />
-    //   },
-    // },
+        return <p className='font-bold'>{value}</p>
+      },
+    },
     {
       id: 'actions',
       header: () => <span className='text-right'>Interações</span>,
+
       cell: ({ row }) => {
-        const estimate = row.original
+        const budget = row.original
 
         function DeleteEstimateAction() {
           const [isDeletePending, startDeleteTransition] = useTransition()
@@ -338,7 +225,7 @@ export function getColumns(): ColumnDef<Budget>[] {
             <DropdownMenuItem
               onClick={() => {
                 startDeleteTransition(() => {
-                  toast.promise(deleteEstimate({ estimateId: estimate.id }), {
+                  toast.promise(deleteEstimate({ estimateId: budget.id }), {
                     loading: 'Deletando...',
                     success: 'Orçamento deletado com sucesso',
                     error: 'Erro ao deletar orçamento...',
@@ -353,15 +240,50 @@ export function getColumns(): ColumnDef<Budget>[] {
           )
         }
 
+        function PlaceOrderAction() {
+          // const [isDeletePending, startDeleteTransition] = useTransition()
+
+          return (
+            <DropdownMenuItem
+              // onClick={() => {
+              //   startDeleteTransition(() => {
+              //     toast.promise(deleteEstimate({ estimateId: budget.id }), {
+              //       loading: 'Deletando...',
+              //       success: 'Orçamento deletado com sucesso',
+              //       error: 'Erro ao deletar orçamento...',
+              //     })
+              //   })
+              // }}
+              className='cursor-pointer'
+              // disabled={isDeletePending}
+            >
+              Fazer pedido
+            </DropdownMenuItem>
+          )
+        }
+
+        function ChangeBudgetStatusAction() {
+          return (
+            <DropdownMenuItem
+              className='cursor-pointer'
+              // disabled={isChangeStatusPending}
+              // onClick={() => setDialogStatusState(true)}
+            >
+              Alterar status
+            </DropdownMenuItem>
+          )
+        }
         return (
           <div className='flex w-min gap-1'>
             <Button size='icon' variant='ghost' asChild>
-              <Link href={`/painel/orcamentos/${estimate.id}`}>
+              <Link href={`/painel/orcamentos/${budget.incrementalId}`}>
                 <Eye className='h-5 w-5' />
               </Link>
             </Button>
             <Button size='icon' variant='ghost' asChild>
-              <Link href={`/painel/orcamentos/${estimate.id}?edit=true`}>
+              <Link
+                href={`/painel/orcamentos/${budget.incrementalId}?edit=true`}
+              >
                 <Pencil className='h-5 w-5' />
               </Link>
             </Button>
@@ -383,8 +305,9 @@ export function getColumns(): ColumnDef<Budget>[] {
               </DropdownMenuTrigger>
               <DropdownMenuContent align='end'>
                 <DropdownMenuLabel>Interações</DropdownMenuLabel>
-
                 <DropdownMenuSeparator />
+                <ChangeBudgetStatusAction />
+                <PlaceOrderAction />
 
                 <DeleteEstimateAction />
               </DropdownMenuContent>

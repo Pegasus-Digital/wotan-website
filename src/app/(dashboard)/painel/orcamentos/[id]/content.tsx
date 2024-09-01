@@ -18,7 +18,7 @@ import { Heading } from '@/pegasus/heading'
 import { formatRelative } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { useState } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
@@ -73,6 +73,8 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import update from 'payload/dist/collections/operations/update'
+import { createBudget } from '../_logic/actions'
+import { toast } from 'sonner'
 
 type BudgetProps = z.infer<typeof budgetSchema>
 
@@ -92,6 +94,8 @@ export function SeeBudgetContent({
   const [selectedClient, setSelectedClient] = useState<Client | null>(null)
   const [addProductDialog, setAddProductDialog] = useState<boolean>(false)
 
+  const router = useRouter()
+
   const [editMode, toggleEditMode] = useState<boolean>(!edit)
 
   const form = useForm<BudgetProps>({
@@ -99,9 +103,10 @@ export function SeeBudgetContent({
     defaultValues: {
       incrementalId: budget.incrementalId,
       salesperson:
-        typeof budget.salesperson === 'string'
+        budget.salesperson &&
+        (typeof budget.salesperson === 'string'
           ? budget.salesperson
-          : budget.salesperson.id,
+          : budget.salesperson.id),
       origin: budget.origin,
       status: budget.status,
       conditions: budget.conditions,
@@ -111,6 +116,23 @@ export function SeeBudgetContent({
         email: budget.contact.email,
         phone: budget.contact.phone,
       },
+      items: budget.items.map((item) => ({
+        product:
+          typeof item.product === 'string'
+            ? item.product
+            : {
+                id: item.product.id,
+                title: item.product.title,
+                sku: item.product.sku,
+                minimumQuantity: item.product.minimumQuantity,
+                active: item.product.active,
+                featuredImage: item.product.featuredImage,
+              },
+        // attributes: item.attributes,
+        description: item.description ? item.description : '',
+        quantity: item.quantity,
+        price: item.price ? item.price.toString() : '',
+      })),
     },
   })
 
@@ -120,12 +142,13 @@ export function SeeBudgetContent({
     name: 'items',
   })
 
+  // console.log(fields)
+
   const { isSubmitting } = useFormState({ control: form.control })
 
   async function onSubmit(values: BudgetProps) {
     console.log('foi carai', values)
   }
-
   // console.log(budget)
 
   return (
@@ -168,7 +191,11 @@ export function SeeBudgetContent({
                       <FormItem>
                         <FormLabel>Empresa</FormLabel>
                         <FormControl>
-                          <Input {...field} disabled={editMode} />
+                          <Input
+                            {...field}
+                            disabled={editMode}
+                            className='disabled:opacity-100'
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -181,7 +208,11 @@ export function SeeBudgetContent({
                       <FormItem>
                         <FormLabel>Responsável</FormLabel>
                         <FormControl>
-                          <Input {...field} disabled={editMode} />
+                          <Input
+                            {...field}
+                            disabled={editMode}
+                            className='disabled:opacity-100'
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -195,7 +226,11 @@ export function SeeBudgetContent({
                       <FormItem>
                         <FormLabel>E-mail</FormLabel>
                         <FormControl>
-                          <Input {...field} disabled={editMode} />
+                          <Input
+                            {...field}
+                            disabled={editMode}
+                            className='disabled:opacity-100'
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -209,7 +244,11 @@ export function SeeBudgetContent({
                       <FormItem>
                         <FormLabel>Telefone</FormLabel>
                         <FormControl>
-                          <Input {...field} disabled={editMode} />
+                          <Input
+                            {...field}
+                            disabled={editMode}
+                            className='disabled:opacity-100'
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -382,7 +421,7 @@ export function SeeBudgetContent({
                   <div className='flex items-center gap-2.5 space-y-0'>
                     <FormControl>
                       <Checkbox
-                        className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground'
+                        className='disabled:opacity-100 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground'
                         checked={field.value}
                         onCheckedChange={field.onChange}
                         disabled={editMode}
@@ -432,101 +471,105 @@ export function SeeBudgetContent({
               <PlusCircle className=' h-5 w-5' />
             </Button>
           </div>
-          {fields.length > 0 && (
-            <Table>
-              <TableHeader className='w-full'>
-                <TableRow className='w-full'>
-                  <TableHead className='w-32'></TableHead>
-                  <TableHead className='w-24'>Código</TableHead>
-                  <TableHead>Descrição</TableHead>
-                  <TableHead className='w-48'>Quantidade</TableHead>
-                  <TableHead className='w-48'>Valor Unitário</TableHead>
+          <Table>
+            <TableHeader className='w-full'>
+              <TableRow className='w-full'>
+                <TableHead className='w-32'></TableHead>
+                <TableHead className='w-24'>Código</TableHead>
+                <TableHead>Descrição</TableHead>
+                <TableHead className='w-48'>Quantidade</TableHead>
+                <TableHead className='w-48'>Valor Unitário</TableHead>
+                {!editMode && (
                   <TableHead className='text-end'>Interações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {fields.map((field, index) => (
-                  <TableRow key={field.id}>
-                    {typeof field.product === 'object' && (
-                      <>
-                        <TableCell>
-                          <Image
-                            src={
-                              typeof field.product.featuredImage === 'object'
-                                ? field.product.featuredImage.url
-                                : ''
-                            }
-                            alt={field.product.title}
-                            className='h-24 w-24 rounded-md object-cover'
-                            width={96}
-                            height={96}
-                          />
-                        </TableCell>
-                        <TableCell>{field.product.sku}</TableCell>
-                        <TableCell>
-                          <FormField
-                            name={`items.${index}.description`}
-                            control={form.control}
-                            render={({ field }) => (
-                              <FormItem className='col-span-2'>
-                                <FormControl>
-                                  <Textarea
-                                    disabled={editMode}
-                                    placeholder='Descrição do produto'
-                                    maxLength={300}
-                                    {...field}
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </TableCell>
-                        <TableCell className='font-medium'>
-                          <FormField
-                            control={form.control}
-                            name={`items.${index}.quantity`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormControl>
+                )}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {fields.map((field, index) => (
+                <TableRow key={field.id}>
+                  {typeof field.product === 'object' && (
+                    <>
+                      <TableCell>
+                        <Image
+                          src={
+                            typeof field.product.featuredImage === 'object'
+                              ? field.product.featuredImage.url
+                              : ''
+                          }
+                          alt={field.product.title}
+                          className='h-24 w-24 rounded-md object-cover'
+                          width={96}
+                          height={96}
+                        />
+                      </TableCell>
+                      <TableCell>{field.product.sku}</TableCell>
+                      <TableCell>
+                        <FormField
+                          name={`items.${index}.description`}
+                          control={form.control}
+                          render={({ field }) => (
+                            <FormItem className='col-span-2'>
+                              <FormControl>
+                                <Textarea
+                                  disabled={editMode}
+                                  maxLength={300}
+                                  {...field}
+                                  className='disabled:opacity-100'
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </TableCell>
+                      <TableCell className='font-medium'>
+                        <FormField
+                          control={form.control}
+                          name={`items.${index}.quantity`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <Input
+                                  {...field}
+                                  disabled={editMode}
+                                  placeholder='A partir de X produtos'
+                                  className='disabled:opacity-100'
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </TableCell>
+                      <TableCell className='text-right'>
+                        <FormField
+                          control={form.control}
+                          name={`items.${index}.price`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <div className='flex items-center gap-2 font-medium'>
+                                  <Label>R$</Label>
+
                                   <Input
                                     {...field}
                                     disabled={editMode}
-                                    placeholder='A partir de X produtos'
+                                    // value={formatValue(field.value)}
+                                    // onChange={(e) => {
+                                    //   field.onChange(parseValue(e.target.value))
+                                    // }}
+                                    inputMode='numeric'
+                                    placeholder='0,00'
+                                    className='disabled:opacity-100'
                                   />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </TableCell>
-                        <TableCell className='text-right'>
-                          <FormField
-                            control={form.control}
-                            name={`items.${index}.price`}
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormControl>
-                                  <div className='flex items-center gap-2 font-medium'>
-                                    <Label>R$</Label>
-
-                                    <Input
-                                      {...field}
-                                      disabled={editMode}
-                                      // value={formatValue(field.value)}
-                                      // onChange={(e) => {
-                                      //   field.onChange(parseValue(e.target.value))
-                                      // }}
-                                      inputMode='numeric'
-                                      placeholder='0,00'
-                                    />
-                                  </div>
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </TableCell>
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </TableCell>
+                      {!editMode && (
                         <TableCell className='text-right'>
                           <Button
                             type='button'
@@ -538,20 +581,19 @@ export function SeeBudgetContent({
                             <Trash2 className='h-5 w-5' />
                           </Button>
                         </TableCell>
-                      </>
-                    )}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
+                      )}
+                    </>
+                  )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </form>
       </Form>
       <AddProductDialog
         open={addProductDialog}
         onClose={() => setAddProductDialog(false)}
         addProduct={(product) => {
-          // console.log('product', product)
           append({
             quantity: product.minimumQuantity,
             description: product.description,
