@@ -79,3 +79,25 @@ export async function getSalespeople() {
     return { data: [] }
   }
 }
+
+export async function getProducts({ sku }: { sku: string }) {
+  noStore()
+
+  try {
+    const response = await payload.find({
+      collection: 'products',
+      where: {
+        sku: {
+          equals: sku,
+        },
+      },
+      limit: 3,
+    })
+
+    return {
+      data: response.docs,
+    }
+  } catch (err) {
+    return { data: [] }
+  }
+}

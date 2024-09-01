@@ -40,6 +40,7 @@ export const Budget: CollectionConfig = {
       relationTo: 'salespersons',
       // required: true,
     },
+    { name: 'comissioned', type: 'checkbox', defaultValue: false },
     {
       name: 'origin',
       type: 'select',
@@ -95,7 +96,7 @@ export const Budget: CollectionConfig = {
         },
         {
           name: 'price',
-          type: 'text',
+          type: 'number',
         },
       ],
     },

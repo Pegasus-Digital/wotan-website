@@ -46,6 +46,7 @@ import { deleteEstimate } from '../_logic/actions'
 import { useRouter } from 'next/navigation'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 import Image from 'next/image'
+import Link from 'next/link'
 
 export const filterFields: DataTableFilterField<Budget>[] = [
   // {
@@ -354,23 +355,15 @@ export function getColumns(): ColumnDef<Budget>[] {
 
         return (
           <div className='flex w-min gap-1'>
-            <Button
-              onClick={() => {
-                router.push(`/painel/orcamentos/${estimate.id}`)
-              }}
-              size='icon'
-              variant='ghost'
-            >
-              <Eye className='h-5 w-5' />
-            </Button>{' '}
-            <Button
-              onClick={() => {
-                router.push(`/painel/orcamentos/${estimate.id}?edit`)
-              }}
-              size='icon'
-              variant='ghost'
-            >
-              <Pencil className='h-5 w-5' />
+            <Button size='icon' variant='ghost' asChild>
+              <Link href={`/painel/orcamentos/${estimate.id}`}>
+                <Eye className='h-5 w-5' />
+              </Link>
+            </Button>
+            <Button size='icon' variant='ghost' asChild>
+              <Link href={`/painel/orcamentos/${estimate.id}?edit=true`}>
+                <Pencil className='h-5 w-5' />
+              </Link>
             </Button>
             <Button
               onClick={() => {

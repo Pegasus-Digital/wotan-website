@@ -150,6 +150,7 @@ export interface Budget {
   id: string;
   incrementalId?: number | null;
   salesperson?: (string | null) | Salesperson;
+  comissioned?: boolean | null;
   origin?: ('website' | 'interno') | null;
   status?: ('criado' | 'contato' | 'enviado' | 'pendente' | 'aprovado' | 'cancelado') | null;
   conditions?: string | null;
@@ -158,7 +159,7 @@ export interface Budget {
     attributes?: (string | Attribute)[] | null;
     description?: string | null;
     quantity: number;
-    price?: string | null;
+    price?: number | null;
     id?: string | null;
   }[];
   contact: {
