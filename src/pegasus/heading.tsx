@@ -39,4 +39,4 @@ const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(
 )
 Heading.displayName = 'Heading'
 
-export { Heading }
+export { Heading, headingStyles }

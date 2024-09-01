@@ -9,7 +9,6 @@ import { type ColumnDef } from '@tanstack/react-table'
 
 import { DataTable } from '@/components/table/data-table'
 import { useDataTable } from '@/components/table/hooks/use-data-table'
-import { NewProductDialog } from '../_components/new-product-dialog'
 import { BulkUpdateProductDialog } from '../_components/bulk-update-dialog-content'
 
 import { getProducts } from '../_logic/queries'

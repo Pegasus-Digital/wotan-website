@@ -25,7 +25,6 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { DataTableFilterField } from '@/components/table/types/table-types'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
-import { UpdateProductDialog } from '../_components/update-product-dialog-content'
 
 import { Eye, MoreHorizontal, Pencil, Printer, Trash2 } from 'lucide-react'
 
@@ -122,7 +121,7 @@ export function getColumns(): ColumnDef<Product>[] {
                   buttonVariants({
                     size: 'icon',
                     variant: 'ghost',
-                    className: 'rounded-full',
+                    // className: 'rounded-full',
                   }),
                 )}
               >
@@ -134,7 +133,7 @@ export function getColumns(): ColumnDef<Product>[] {
                   buttonVariants({
                     size: 'icon',
                     variant: 'ghost',
-                    className: 'rounded-full',
+                    // className: 'rounded-full',
                   }),
                 )}
               >
@@ -149,12 +148,12 @@ export function getColumns(): ColumnDef<Product>[] {
                 size='icon'
                 variant='ghost'
                 type='button'
-                className='rounded-full'
+                // className='rounded-full'
               >
                 <Printer className='h-5 w-5' />
               </Button>
               <Button
-                className='rounded-full'
+                // className='rounded-full'
                 size='icon'
                 variant='ghost'
                 type='button'
