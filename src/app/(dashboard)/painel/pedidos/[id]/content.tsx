@@ -94,7 +94,7 @@ export function SeeOrderContent({
   const { isSubmitting } = useFormState({ control: form.control })
 
   async function onSubmit(values: OrderProps) {
-    console.log('Order submitted:', values)
+    // console.log('Order submitted:', values)
   }
 
   return (

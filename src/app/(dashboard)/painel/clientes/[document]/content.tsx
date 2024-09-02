@@ -165,7 +165,7 @@ export function SeeClientContent({
 
   async function confirmSubmit() {
     if (!formData) {
-      console.log(formData)
+      // console.log(formData)
       toast.error('Por favor, preencha todos os campos obrigatórios.')
       return
     }

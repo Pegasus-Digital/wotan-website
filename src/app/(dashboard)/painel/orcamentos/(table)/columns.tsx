@@ -20,9 +20,12 @@ import {
 
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
 
@@ -46,6 +49,14 @@ import { deleteEstimate } from '../_logic/actions'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 import Image from 'next/image'
 import Link from 'next/link'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { updateBudgetStatus } from '../_logic/actions'
 
 export const filterFields: DataTableFilterField<Budget>[] = [
   {
@@ -197,18 +208,34 @@ export function getColumns(): ColumnDef<Budget>[] {
         )
       },
     },
-
     {
       id: 'status',
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title='Status' />
-      ),
+      header: 'Status',
       cell: ({ row }) => {
-        const value: string = row.getValue('status')
+        const { status } = row.original
+        // console.log(status)
 
-        if (!value) return <p className='font-bold'>Nenhum</p>
+        if (!status)
+          return (
+            <Badge variant={'outline'} className='capitalize'>
+              Nenhum
+            </Badge>
+          )
 
-        return <p className='font-bold'>{value}</p>
+        return (
+          <Badge
+            variant={
+              status === 'aprovado'
+                ? 'affirmative'
+                : status === 'cancelado'
+                  ? 'destructive'
+                  : 'outline'
+            }
+            className='capitalize'
+          >
+            {status}
+          </Badge>
+        )
       },
     },
     {
@@ -217,6 +244,8 @@ export function getColumns(): ColumnDef<Budget>[] {
 
       cell: ({ row }) => {
         const budget = row.original
+
+        const [statusDialog, setStatusDialog] = useState(false)
 
         function DeleteEstimateAction() {
           const [isDeletePending, startDeleteTransition] = useTransition()
@@ -240,20 +269,62 @@ export function getColumns(): ColumnDef<Budget>[] {
           )
         }
 
+        function PlaceOrderDialog() {
+          const [selectedStatus, setSelectedStatus] = useState<
+            Budget['status']
+          >(budget.status)
+
+          return (
+            <Dialog open={statusDialog} onOpenChange={setStatusDialog}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Alterar Status do Orçamento</DialogTitle>
+                </DialogHeader>
+                <DialogDescription className='font-bold'>
+                  Atualize o status do orçamento.
+                </DialogDescription>
+
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant='default'>Voltar</Button>
+                  </DialogClose>
+                  <Button
+                    variant='outline'
+                    onClick={() => {
+                      setStatusDialog(false)
+
+                      toast.promise(
+                        updateBudgetStatus({
+                          id: budget.id,
+                          status: selectedStatus,
+                        }),
+                        {
+                          loading: 'Atualizando...',
+                          success: 'Status atualizado com sucesso',
+                          error: 'Erro ao atualizado status...',
+                        },
+                      )
+                    }}
+                  >
+                    Confirmar
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )
+        }
+
         function PlaceOrderAction() {
           // const [isDeletePending, startDeleteTransition] = useTransition()
 
           return (
             <DropdownMenuItem
-              // onClick={() => {
-              //   startDeleteTransition(() => {
-              //     toast.promise(deleteEstimate({ estimateId: budget.id }), {
-              //       loading: 'Deletando...',
-              //       success: 'Orçamento deletado com sucesso',
-              //       error: 'Erro ao deletar orçamento...',
-              //     })
-              //   })
-              // }}
+              onClick={() => {
+                updateBudgetStatus({
+                  id: budget.id,
+                  status: 'aprovado',
+                })
+              }}
               className='cursor-pointer'
               // disabled={isDeletePending}
             >
@@ -262,12 +333,77 @@ export function getColumns(): ColumnDef<Budget>[] {
           )
         }
 
+        function ChangeBudgetStatusDialog() {
+          const [selectedStatus, setSelectedStatus] = useState<
+            Budget['status']
+          >(budget.status)
+
+          return (
+            <Dialog open={statusDialog} onOpenChange={setStatusDialog}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Alterar Status do Orçamento</DialogTitle>
+                </DialogHeader>
+                <DialogDescription className='font-bold'>
+                  Atualize o status do orçamento.
+                </DialogDescription>
+                <Select
+                  onValueChange={(value) =>
+                    setSelectedStatus(value as Budget['status'])
+                  }
+                  value={selectedStatus}
+                >
+                  <SelectTrigger className='w-full'>
+                    <SelectValue placeholder='Selecione um Status' />
+                  </SelectTrigger>
+
+                  <SelectContent side='bottom'>
+                    <SelectItem value='criado'>Criado</SelectItem>
+                    <SelectItem value='contato'>Em contato</SelectItem>
+                    <SelectItem value='enviado'>Enviado p/ Cliente</SelectItem>
+                    <SelectItem value='pendente'>
+                      Aguardando provação
+                    </SelectItem>
+                    <SelectItem value='aprovado'>Aprovado</SelectItem>
+                    <SelectItem value='cancelado'>Cancelado</SelectItem>
+                  </SelectContent>
+                </Select>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant='default'>Voltar</Button>
+                  </DialogClose>
+                  <Button
+                    variant='outline'
+                    onClick={() => {
+                      setStatusDialog(false)
+
+                      toast.promise(
+                        updateBudgetStatus({
+                          id: budget.id,
+                          status: selectedStatus,
+                        }),
+                        {
+                          loading: 'Atualizando...',
+                          success: 'Status atualizado com sucesso',
+                          error: 'Erro ao atualizado status...',
+                        },
+                      )
+                    }}
+                  >
+                    Confirmar
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )
+        }
+
         function ChangeBudgetStatusAction() {
           return (
             <DropdownMenuItem
               className='cursor-pointer'
               // disabled={isChangeStatusPending}
-              // onClick={() => setDialogStatusState(true)}
+              onClick={() => setStatusDialog(true)}
             >
               Alterar status
             </DropdownMenuItem>
@@ -312,6 +448,9 @@ export function getColumns(): ColumnDef<Budget>[] {
                 <DeleteEstimateAction />
               </DropdownMenuContent>
             </DropdownMenu>
+
+            <ChangeBudgetStatusDialog />
+            <PlaceOrderDialog />
           </div>
         )
       },

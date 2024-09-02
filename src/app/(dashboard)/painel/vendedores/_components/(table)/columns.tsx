@@ -67,7 +67,7 @@ export function getColumns(): ColumnDef<Salesperson>[] {
       header: 'Avatar',
       cell: ({ row }) => {
         const value: Media = row.getValue('avatar')
-        console.log(value)
+        // console.log(value)
         if (!value)
           return (
             <div className='flex h-8 w-8 items-center justify-center rounded-full bg-gray-300  p-1'>
