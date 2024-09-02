@@ -29,7 +29,7 @@ import {
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Separator } from '@/components/ui/separator'
@@ -46,6 +46,8 @@ import { deleteEstimate } from '../_logic/actions'
 import { useRouter } from 'next/navigation'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 import Image from 'next/image'
+import Link from 'next/link'
+import { cn } from '@/lib/utils'
 
 export const filterFields: DataTableFilterField<Budget>[] = [
   // {
@@ -372,15 +374,12 @@ export function getColumns(): ColumnDef<Budget>[] {
             >
               <Pencil className='h-5 w-5' />
             </Button>
-            <Button
-              onClick={() => {
-                window.print()
-              }}
-              size='icon'
-              variant='ghost'
+            <Link
+              href={`/painel/orcamentos/${estimate.id}/documento`}
+              className={cn(buttonVariants({ size: 'icon', variant: 'ghost' }))}
             >
               <Printer className='h-5 w-5' />
-            </Button>
+            </Link>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button size='icon' variant='ghost'>
