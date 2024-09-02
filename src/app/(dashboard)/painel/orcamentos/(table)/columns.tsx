@@ -58,6 +58,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { updateBudgetStatus } from '../_logic/actions'
+import { BudgetDocumentDownloader } from '../_components/pdf-downloader'
 
 export const filterFields: DataTableFilterField<Budget>[] = [
   {
@@ -247,6 +248,7 @@ export function getColumns(): ColumnDef<Budget>[] {
         const budget = row.original
 
         const [statusDialog, setStatusDialog] = useState(false)
+        const [placeOrderDialog, setPlaceOrderDialog] = useState(false)
 
         function DeleteEstimateAction() {
           const [isDeletePending, startDeleteTransition] = useTransition()
@@ -276,7 +278,7 @@ export function getColumns(): ColumnDef<Budget>[] {
           >(budget.status)
 
           return (
-            <Dialog open={statusDialog} onOpenChange={setStatusDialog}>
+            <Dialog open={placeOrderDialog} onOpenChange={setPlaceOrderDialog}>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Alterar Status do Orçamento</DialogTitle>
@@ -371,10 +373,10 @@ export function getColumns(): ColumnDef<Budget>[] {
                 </Select>
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button variant='default'>Voltar</Button>
+                    <Button variant='outline'>Voltar</Button>
                   </DialogClose>
                   <Button
-                    variant='outline'
+                    variant='default'
                     onClick={() => {
                       setStatusDialog(false)
 
@@ -410,6 +412,19 @@ export function getColumns(): ColumnDef<Budget>[] {
             </DropdownMenuItem>
           )
         }
+
+        function SeeBudgetDoc() {
+          return (
+            <DropdownMenuItem className='cursor-pointer' asChild>
+              <Link
+                href={`/painel/orcamentos/${budget.incrementalId}/documento`}
+              >
+                Ver PDF do orçamento
+              </Link>
+            </DropdownMenuItem>
+          )
+        }
+
         return (
           <div className='flex w-min gap-1'>
             <Button size='icon' variant='ghost' asChild>
@@ -424,12 +439,8 @@ export function getColumns(): ColumnDef<Budget>[] {
                 <Pencil className='h-5 w-5' />
               </Link>
             </Button>
-            <Link
-              href={`/painel/orcamentos/${estimate.id}/documento`}
-              className={cn(buttonVariants({ size: 'icon', variant: 'ghost' }))}
-            >
-              <Printer className='h-5 w-5' />
-            </Link>
+            <BudgetDocumentDownloader budget={budget} />
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button size='icon' variant='ghost'>
@@ -442,7 +453,7 @@ export function getColumns(): ColumnDef<Budget>[] {
                 <DropdownMenuSeparator />
                 <ChangeBudgetStatusAction />
                 <PlaceOrderAction />
-
+                <SeeBudgetDoc />
                 <DeleteEstimateAction />
               </DropdownMenuContent>
             </DropdownMenu>

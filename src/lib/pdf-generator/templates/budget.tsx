@@ -84,7 +84,10 @@ export function BudgetDocument({ budget }: BudgetDocumentProps) {
     typeof budget.salesperson === 'object' ? budget.salesperson : null
 
   return (
-    <Document>
+    <Document
+      title={`Orçamento_n${budget.incrementalId}`}
+      author='Wotan Brindes'
+    >
       <Page size='A4' style={styles.page}>
         <DocumentHeader />
 
@@ -168,17 +171,18 @@ export function BudgetDocument({ budget }: BudgetDocumentProps) {
                     >
                       {product.title}
                     </Text>
-                    {attributes.map((attr) => {
-                      const attributeType = attr.type as AttributeType
-                      return (
-                        <Text
-                          key={attr.id}
-                          style={{ fontSize: 10, textAlign: 'justify' }}
-                        >
-                          {attributeType.name}: {attr.name}
-                        </Text>
-                      )
-                    })}
+                    {attributes &&
+                      attributes.map((attr) => {
+                        const attributeType = attr.type as AttributeType
+                        return (
+                          <Text
+                            key={attr.id}
+                            style={{ fontSize: 10, textAlign: 'justify' }}
+                          >
+                            {attributeType.name}: {attr.name}
+                          </Text>
+                        )
+                      })}
                   </View>
                   <View style={styles.cell}>
                     <Text style={{ textAlign: 'center' }}>{item.quantity}</Text>
