@@ -1,8 +1,10 @@
 'use client'
 
+import Link from 'next/link'
 import { useState, useTransition } from 'react'
 
 import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
 import { ColumnDef } from '@tanstack/react-table'
 
 import { getRelativeDate } from '@/lib/date'
@@ -19,15 +21,14 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { Dialog } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Button, buttonVariants } from '@/components/ui/button'
+import { DataTableFilterField } from '@/components/table/types/table-types'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
-import { UpdateProductDialog } from '../_components/update-product-dialog-content'
 
-import { MoreHorizontal } from 'lucide-react'
+import { Eye, MoreHorizontal, Pencil, Printer, Trash2 } from 'lucide-react'
 
 import { deleteProduct } from '../_logic/actions'
-import { DataTableFilterField } from '@/components/table/types/table-types'
 
 export const filterFields: DataTableFilterField<Product>[] = [
   {
@@ -113,51 +114,63 @@ export function getColumns(): ColumnDef<Product>[] {
           const [isUpdateOpen, setIsUpdateOpen] = useState<boolean>(false)
 
           return (
-            <Dialog
-              open={isUpdateOpen}
-              onOpenChange={isUpdateOpen ? setIsUpdateOpen : () => {}}
-            >
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant='ghost' className='h-8 w-8 p-0'>
-                    <span className='sr-only'>Abrir menu</span>
-                    <MoreHorizontal className='h-4 w-4' />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align='end'>
-                  <DropdownMenuLabel>Interações</DropdownMenuLabel>
+            <div className='flex items-center gap-2.5'>
+              <Link
+                href={`/painel/catalogo/produtos/${product.sku}`}
+                className={cn(
+                  buttonVariants({
+                    size: 'icon',
+                    variant: 'ghost',
+                    // className: 'rounded-full',
+                  }),
+                )}
+              >
+                <Eye className='h-5 w-5' />
+              </Link>
+              <Link
+                href={`/painel/catalogo/produtos/${product.sku}?edit=true`}
+                className={cn(
+                  buttonVariants({
+                    size: 'icon',
+                    variant: 'ghost',
+                    // className: 'rounded-full',
+                  }),
+                )}
+              >
+                <Pencil className='h-5 w-5' />
+              </Link>
 
-                  <DropdownMenuSeparator />
-
-                  <DropdownMenuItem
-                    className='cursor-pointer'
-                    onClick={() => setIsUpdateOpen(true)}
-                  >
-                    Editar produto
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className='cursor-pointer'
-                    onClick={() => {
-                      startDeleteTransition(() => {
-                        toast.promise(deleteProduct(product.id), {
-                          loading: 'Deletando...',
-                          success: 'Produto deletado com sucesso',
-                          error: 'Erro ao deletar produto...',
-                        })
-                      })
-                    }}
-                    disabled={isDeletePending}
-                  >
-                    Remover produto
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <UpdateProductDialog
-                currentProduct={product}
-                setOpen={setIsUpdateOpen}
-              />
-            </Dialog>
+              <Button
+                onClick={(e) => {
+                  e.preventDefault()
+                  window.print()
+                }}
+                size='icon'
+                variant='ghost'
+                type='button'
+                // className='rounded-full'
+              >
+                <Printer className='h-5 w-5' />
+              </Button>
+              <Button
+                // className='rounded-full'
+                size='icon'
+                variant='ghost'
+                type='button'
+                onClick={() => {
+                  startDeleteTransition(() => {
+                    toast.promise(deleteProduct(product.id), {
+                      loading: 'Deletando...',
+                      success: 'Produto deletado com sucesso',
+                      error: 'Erro ao deletar produto...',
+                    })
+                  })
+                }}
+                disabled={isDeletePending}
+              >
+                <Trash2 className='h-5 w-5' />
+              </Button>
+            </div>
           )
         }
 

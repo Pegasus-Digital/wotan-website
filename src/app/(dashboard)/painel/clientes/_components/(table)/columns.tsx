@@ -1,14 +1,21 @@
 'use client'
 
+// External libraries
 import React, { useState, useTransition } from 'react'
-
 import { toast } from 'sonner'
 import { ColumnDef } from '@tanstack/react-table'
+import Image from 'next/image'
+import Link from 'next/link'
+import { Eye, MoreHorizontal, MoveRight, Pencil, UserRound } from 'lucide-react'
 
+// Utility functions
 import { getRelativeDate } from '@/lib/date'
 
+// Types
 import { Client, Salesperson } from '@/payload/payload-types'
+import { DataTableFilterField } from '@/components/table/types/table-types'
 
+// UI components
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,20 +24,39 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-
-import { Dialog } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
-
-import { Eye, MoreHorizontal, Pencil, UserRound } from 'lucide-react'
-
-// import { deleteUser } from '../../_logic/actions'
-import Image from 'next/image'
-import { DataTableFilterField } from '@/components/table/types/table-types'
 import { Badge } from '@/components/ui/badge'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+
+// Actions
+import {
+  deleteClient,
+  updateClientSalesperson,
+  updateClientStatus,
+} from '../../_logic/actions'
+
+// Table components
+import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 
 export const filterFields: DataTableFilterField<Client>[] = [
   {
@@ -40,33 +66,35 @@ export const filterFields: DataTableFilterField<Client>[] = [
   },
 ]
 
-export function getColumns(): ColumnDef<Client>[] {
-  const router = useRouter()
-
+export function getColumns({
+  salespeople,
+}: {
+  salespeople: Salesperson[]
+}): ColumnDef<Client>[] {
   return [
-    {
-      id: 'select',
-      header: ({ table }) => (
-        <Checkbox
-          // @ts-ignore TODO: Solve this TypeScript error
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label='Select all'
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label='Select row'
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
+    // {
+    //   id: 'select',
+    //   header: ({ table }) => (
+    //     <Checkbox
+    //       // @ts-ignore TODO: Solve this TypeScript error
+    //       checked={
+    //         table.getIsAllPageRowsSelected() ||
+    //         (table.getIsSomePageRowsSelected() && 'indeterminate')
+    //       }
+    //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+    //       aria-label='Select all'
+    //     />
+    //   ),
+    //   cell: ({ row }) => (
+    //     <Checkbox
+    //       checked={row.getIsSelected()}
+    //       onCheckedChange={(value) => row.toggleSelected(!!value)}
+    //       aria-label='Select row'
+    //     />
+    //   ),
+    //   enableSorting: false,
+    //   enableHiding: false,
+    // },
     {
       accessorKey: 'razaosocial',
       header: 'Nome/Razão social',
@@ -82,6 +110,9 @@ export function getColumns(): ColumnDef<Client>[] {
       header: 'Documento',
       cell: ({ row }) => {
         const value: string = row.getValue('document')
+
+        if (!value) return null
+
         // Check if it's a CPF (11 digits) or CNPJ (14 digits)
         if (value.length === 11) {
           // Format CPF
@@ -139,6 +170,31 @@ export function getColumns(): ColumnDef<Client>[] {
       },
     },
     {
+      accessorKey: 'status',
+      header: 'Status',
+      cell: ({ row }) => {
+        const value: string = row.getValue('status')
+        return (
+          <Badge
+            variant={
+              value === 'active'
+                ? 'affirmative'
+                : value === 'inactive'
+                  ? 'destructive'
+                  : 'outline'
+            }
+            className='capitalize'
+          >
+            {value === 'active'
+              ? 'Ativo'
+              : value === 'inactive'
+                ? 'Inativo'
+                : 'Prospect'}
+          </Badge>
+        )
+      },
+    },
+    {
       accessorKey: 'updatedAt',
       enableHiding: true,
 
@@ -161,70 +217,284 @@ export function getColumns(): ColumnDef<Client>[] {
       header: () => <span className='text-right'>Interações</span>,
       cell: ({ row }) => {
         const client = row.original
+        const [dialogTransferState, setDialogTransferState] = useState(false)
+        const [dialogDeleteState, setDialogDeleteState] = useState(false)
+        const [dialogStatusState, setDialogStatusState] = useState(false)
+        // const [isTransferPending, startTransferTransition] = useTransition()
+        // const [isDeletePending, startDeleteTransition] = useTransition()
+
+        function DeleteClientDialog() {
+          return (
+            <Dialog
+              open={dialogDeleteState}
+              onOpenChange={setDialogDeleteState}
+            >
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Confirmar deleção</DialogTitle>
+                </DialogHeader>
+                <DialogDescription className='font-bold'>
+                  Atenção, você está prestes a deletar o cliente do sistema.
+                  Esta operação não pode ser revertida.
+                </DialogDescription>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant='default'>Voltar</Button>
+                  </DialogClose>
+                  <Button
+                    variant='outline'
+                    onClick={() => {
+                      // startDeleteTransition(() => {
+                      setDialogDeleteState(false)
+                      toast.promise(deleteClient({ clientId: client.id }), {
+                        loading: 'Deletando...',
+                        success: 'Cliente deletado com sucesso',
+                        error: 'Erro ao deletar cliente...',
+                      })
+                      // })
+                    }}
+                  >
+                    Confirmar
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )
+        }
 
         function DeleteClientAction() {
-          const [isDeletePending, startDeleteTransition] = useTransition()
-
           return (
             <DropdownMenuItem
-              // onClick={() => {
-              //   startDeleteTransition(() => {
-              //     toast.promise(deleteEstimate({ clientId: client.id }), {
-              //       loading: 'Deletando...',
-              //       success: 'Orçamento deletado com sucesso',
-              //       error: 'Erro ao deletar orçamento...',
-              //     })
-              //   })
-              // }}
               className='cursor-pointer'
-              disabled={isDeletePending}
+              // disabled={isDeletePending}
+              onClick={() => setDialogDeleteState(true)}
             >
               Deletar cliente
             </DropdownMenuItem>
           )
         }
 
-        function TransferClientAction() {
-          const [isTransferPending, startTransferTransition] = useTransition()
+        function TransferClientDialog() {
+          // console.log('rendering transfer client dialog')
+          const [selectedSalesperson, setSelectedSalesperson] =
+            useState<string>(undefined)
 
           return (
+            <Dialog
+              open={dialogTransferState}
+              onOpenChange={setDialogTransferState}
+            >
+              <DialogContent className='max-w-2xl'>
+                <DialogHeader>
+                  <DialogTitle>Transferir cliente</DialogTitle>
+                  <DialogDescription>
+                    Atenção, você irá transferir o cliente para outro vendedor.
+                    Apenas o administrador do sistema poderá reverter esta
+                    operação.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className=' grid grid-cols-1 items-center  justify-center gap-8 tablet:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]'>
+                  {typeof client.salesperson === 'object' && (
+                    <div className='flex items-center space-x-2 justify-self-center'>
+                      {client.salesperson.avatar &&
+                      typeof client.salesperson.avatar === 'object' &&
+                      client.salesperson.avatar.url ? (
+                        <Image
+                          width={20}
+                          height={20}
+                          src={client.salesperson.avatar.url}
+                          alt={client.salesperson.name} // Use name for the alt attribute for better accessibility
+                          className='select-none rounded-full'
+                        />
+                      ) : (
+                        <div className='flex h-5 w-5 items-center justify-center rounded-full bg-gray-300 p-1'>
+                          <UserRound className='h-3 w-3 text-gray-600' />
+                        </div>
+                      )}
+
+                      <p className='text-nowrap font-semibold'>
+                        {client.salesperson.name}
+                      </p>
+                    </div>
+                  )}
+                  <MoveRight className='h-6 w-6 text-primary' />
+                  <Select
+                    onValueChange={setSelectedSalesperson}
+                    value={selectedSalesperson}
+                  >
+                    <SelectTrigger className='w-64 disabled:opacity-100'>
+                      <SelectValue placeholder='Selecione um Vendedor' />
+                    </SelectTrigger>
+
+                    <SelectContent side='bottom'>
+                      <SelectGroup>
+                        <SelectLabel>Vendedor Interno</SelectLabel>
+                        {typeof salespeople === 'object' &&
+                          salespeople
+                            .filter((person) => person.roles === 'internal')
+                            .map((person) => (
+                              <SelectItem key={person.id} value={person.id}>
+                                {person.name}
+                              </SelectItem>
+                            ))}
+                      </SelectGroup>
+                      <SelectSeparator />
+                      <SelectGroup>
+                        <SelectLabel>Representante Externo</SelectLabel>
+                        {salespeople &&
+                          salespeople
+                            .filter(
+                              (person) => person.roles === 'representative',
+                            )
+                            .map((person) => (
+                              <SelectItem key={person.id} value={person.id}>
+                                {person.name}
+                              </SelectItem>
+                            ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant='default'>Voltar</Button>
+                  </DialogClose>
+                  <Button
+                    variant='outline'
+                    // disabled
+                    onClick={() => {
+                      // startTransferTransition(() => {
+                      if (
+                        selectedSalesperson ===
+                        (typeof client.salesperson === 'object'
+                          ? client.salesperson.id
+                          : client.salesperson)
+                      ) {
+                        toast.error('Escolha outro vendedor')
+                        return
+                      }
+                      setDialogTransferState(false)
+
+                      toast.promise(
+                        updateClientSalesperson({
+                          id: client.id,
+                          salespersonId: selectedSalesperson,
+                        }),
+                        {
+                          loading: 'Transferindo...',
+                          success: 'Cliente transferido com sucesso',
+                          error: 'Erro ao transferir cliente...',
+                        },
+                      )
+                      // })
+                    }}
+                  >
+                    Confirmar
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )
+        }
+
+        function TransferClientAction() {
+          return (
             <DropdownMenuItem
-              // onClick={() => {
-              //   startDeleteTransition(() => {
-              //     toast.promise(deleteEstimate({ clientId: client.id }), {
-              //       loading: 'Deletando...',
-              //       success: 'Orçamento deletado com sucesso',
-              //       error: 'Erro ao deletar orçamento...',
-              //     })
-              //   })
-              // }}
+              onClick={() => setDialogTransferState(true)}
               className='cursor-pointer'
-              disabled={isTransferPending}
+              // disabled={isTransferPending}
             >
               Transferir cliente
             </DropdownMenuItem>
           )
         }
 
+        function ChangeClientStatusDialog() {
+          const [selectedStatus, setSelectedStatus] = useState<
+            Client['status']
+          >(client.status)
+
+          return (
+            <Dialog
+              open={dialogStatusState}
+              onOpenChange={setDialogStatusState}
+            >
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Alterar Status do Cliente</DialogTitle>
+                </DialogHeader>
+                <DialogDescription className='font-bold'>
+                  Selecione um novo status para o cliente.
+                </DialogDescription>
+                <Select
+                  onValueChange={(value) =>
+                    setSelectedStatus(value as Client['status'])
+                  }
+                  value={selectedStatus}
+                >
+                  <SelectTrigger className='w-full'>
+                    <SelectValue placeholder='Selecione um Status' />
+                  </SelectTrigger>
+
+                  <SelectContent side='bottom'>
+                    <SelectItem value='active'>Ativo</SelectItem>
+                    <SelectItem value='inactive'>Inativo</SelectItem>
+                    <SelectItem value='prospect'>Prospect</SelectItem>
+                  </SelectContent>
+                </Select>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant='default'>Voltar</Button>
+                  </DialogClose>
+                  <Button
+                    variant='outline'
+                    onClick={() => {
+                      setDialogStatusState(false)
+
+                      toast.promise(
+                        updateClientStatus({
+                          id: client.id,
+                          status: selectedStatus,
+                        }),
+                        {
+                          loading: 'Atualizando...',
+                          success: 'Status atualizado com sucesso',
+                          error: 'Erro ao atualizado status...',
+                        },
+                      )
+                    }}
+                  >
+                    Confirmar
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )
+        }
+
+        function ChangeClientStatusAction() {
+          return (
+            <DropdownMenuItem
+              className='cursor-pointer'
+              // disabled={isChangeStatusPending}
+              onClick={() => setDialogStatusState(true)}
+            >
+              Alterar status do cliente
+            </DropdownMenuItem>
+          )
+        }
+
         return (
           <div className='flex w-min gap-1'>
-            <Button
-              onClick={() => {
-                router.push(`/painel/clientes/${client.document}`)
-              }}
-              size='icon'
-              variant='ghost'
-            >
-              <Eye className='h-5 w-5' />
+            <Button asChild size='icon' variant='ghost'>
+              <Link href={`/painel/clientes/${client.document}`}>
+                <Eye className='h-5 w-5' />
+              </Link>
             </Button>
-            <Button
-              onClick={() => {
-                router.push(`/painel/clientes/${client.document}?edit=true`)
-              }}
-              size='icon'
-              variant='ghost'
-            >
-              <Pencil className='h-5 w-5' />
+            <Button asChild size='icon' variant='ghost'>
+              <Link href={`/painel/clientes/${client.document}?edit=true`}>
+                <Pencil className='h-5 w-5' />
+              </Link>
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -235,13 +505,15 @@ export function getColumns(): ColumnDef<Client>[] {
               </DropdownMenuTrigger>
               <DropdownMenuContent align='end'>
                 <DropdownMenuLabel>Interações</DropdownMenuLabel>
-
                 <DropdownMenuSeparator />
-
+                <ChangeClientStatusAction />
                 <TransferClientAction />
                 <DeleteClientAction />
               </DropdownMenuContent>
             </DropdownMenu>
+            <ChangeClientStatusDialog />
+            <TransferClientDialog />
+            <DeleteClientDialog />
           </div>
         )
       },

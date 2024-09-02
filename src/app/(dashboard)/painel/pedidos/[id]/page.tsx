@@ -1,17 +1,17 @@
 import { Heading } from '@/pegasus/heading'
 import {
   getClients,
-  getEstimateByIncrementalId,
+  getOrderByIncrementalId,
   getSalespeople,
 } from '../_logic/queries'
-import { SeeBudgetContent } from './content'
+import { SeeOrderContent } from './content'
 // import { useSearchParams } from 'next/navigation'
 
 export default async function SeeBudget({
   params: { id },
   searchParams: { edit },
 }) {
-  const { data } = await getEstimateByIncrementalId(id)
+  const { data } = await getOrderByIncrementalId(id)
 
   // const salespeople = await getSalespeople()
   // const clients = await getClients()
@@ -35,16 +35,16 @@ export default async function SeeBudget({
     // console.log('clients', clients)
   }
 
-  const budget = data
+  const order = data
 
-  if (!budget) {
-    return <Heading>Budget não encontrado</Heading>
+  if (!order) {
+    return <Heading>Pedido não encontrado</Heading>
   }
 
   return (
     <div>
-      <SeeBudgetContent
-        budget={budget}
+      <SeeOrderContent
+        order={order}
         edit={edit}
         salespeople={salespeople}
         clients={clients}

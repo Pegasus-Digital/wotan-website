@@ -36,7 +36,11 @@ export function EstimatesTable({ estimatesPromise }: EstimatesTableProps) {
 
   return (
     <div className='space-y-1.5'>
-      <DataTableToolbar table={table} actions={[NewEstimateDialog]} />
+      <DataTableToolbar
+        table={table}
+        filterFields={filterFields}
+        actions={[NewEstimateDialog]}
+      />
 
       <DataTable table={table} columns={columns} />
     </div>

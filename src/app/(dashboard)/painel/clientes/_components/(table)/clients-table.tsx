@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 
-import { Client } from '@/payload/payload-types'
+import { Client, Salesperson } from '@/payload/payload-types'
 
 import { filterFields, getColumns } from './columns'
 import { type ColumnDef } from '@tanstack/react-table'
@@ -18,13 +18,17 @@ import { Button } from '@/pegasus/button'
 
 interface ClientsTableProps {
   clientsPromise: ReturnType<typeof getClients>
+  salespeople: Salesperson[]
 }
 
-export function ClientsTable({ clientsPromise }: ClientsTableProps) {
+export function ClientsTable({
+  clientsPromise,
+  salespeople,
+}: ClientsTableProps) {
   const { data, pageCount } = React.use(clientsPromise)
 
   const columns = React.useMemo<ColumnDef<Client, unknown>[]>(
-    () => getColumns(),
+    () => getColumns({ salespeople }),
     [],
   )
 
@@ -54,7 +58,7 @@ export function NewClientButton() {
     <Button
       variant='outline'
       size='sm'
-      onClick={() => router.push('/painel/cliente/novo')}
+      onClick={() => router.push('/painel/clientes/novo')}
     >
       Novo cliente
     </Button>

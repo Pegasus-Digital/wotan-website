@@ -1,4 +1,5 @@
 'use client'
+
 import { useState } from 'react'
 import { Content, ContentHeader } from '@/components/content'
 import { Separator } from '@/components/ui/separator'
@@ -39,13 +40,26 @@ import { Calendar } from '@/components/ui/calendar'
 import { cn } from '@/lib/utils'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { toast } from 'sonner'
-import { useFieldArray, useForm, useFormState } from 'react-hook-form'
+import {
+  Controller,
+  useFieldArray,
+  useForm,
+  useFormState,
+} from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import { updateClient } from '../_logic/actions'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { clientSchema } from '../_logic/validations'
 import { z } from 'zod'
 import Image from 'next/image'
+import {
+  Dialog,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogContent,
+} from '@/components/ui/dialog'
 
 interface SeeClientContentProps {
   edit: boolean
@@ -61,11 +75,24 @@ export function SeeClientContent({
   edit,
 }: SeeClientContentProps) {
   const [editMode, toggleEditMode] = useState<boolean>(!edit)
-
-  // const form = useForm<z.infer<typeof formSchema>>({
-  //   resolver: zodResolver(formSchema),
-  //   defaultValues: {},
-  // })
+  const [isDialogOpen, setDialogOpen] = useState(false)
+  const [formData, setFormData] = useState<ClientProps>({
+    contacts: client.contacts,
+    adress: client.adress,
+    type: client.type,
+    document: client.document,
+    name: client.name,
+    razaosocial: client.razaosocial,
+    // clientSince: client.clientSince,
+    observations: client.observations,
+    ramo: client.ramo,
+    salesperson:
+      typeof client.salesperson === 'string'
+        ? client.salesperson
+        : client.salesperson.id,
+    origin: client.origin,
+    status: client.status,
+  })
 
   const router = useRouter()
 
@@ -81,7 +108,10 @@ export function SeeClientContent({
       // clientSince: client.clientSince,
       observations: client.observations,
       ramo: client.ramo,
-      // salesperson: client.salesperson,
+      salesperson:
+        typeof client.salesperson === 'string'
+          ? client.salesperson
+          : client.salesperson.id,
       origin: client.origin,
       status: client.status,
     },
@@ -96,6 +126,49 @@ export function SeeClientContent({
   const { isSubmitting } = useFormState({ control: form.control })
 
   async function onSubmit(values: ClientProps) {
+    await setFormData(values)
+
+    if (
+      form.getValues('salesperson') !==
+      (typeof client.salesperson === 'string'
+        ? client.salesperson
+        : client.salesperson.id)
+    ) {
+      setDialogOpen(true)
+
+      return
+    }
+
+    await confirmSubmit()
+  }
+
+  function formatDocument(value, type) {
+    const numericValue = value.replace(/\D/g, '')
+
+    if (type === 'company') {
+      // CNPJ: 00.000.000/0000-00
+      return numericValue
+        .replace(/^(\d{2})(\d)/, '$1.$2')
+        .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+        .replace(/\.(\d{3})(\d)/, '.$1/$2')
+        .replace(/(\d{4})(\d)/, '$1-$2')
+        .slice(0, 18)
+    } else {
+      // CPF: 000.000.000-00
+      return numericValue
+        .replace(/^(\d{3})(\d)/, '$1.$2')
+        .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+        .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+        .slice(0, 14)
+    }
+  }
+
+  async function confirmSubmit() {
+    if (!formData) {
+      // console.log(formData)
+      toast.error('Por favor, preencha todos os campos obrigatórios.')
+      return
+    }
     const {
       name,
       razaosocial,
@@ -109,7 +182,21 @@ export function SeeClientContent({
       salesperson,
       origin,
       status,
-    } = values
+    } = formData
+
+    const numericDocument = document.replace(/\D/g, '') // Strip non-numeric characters
+
+    if (
+      (type === 'company' && numericDocument.length !== 14) ||
+      (type === 'individual' && numericDocument.length !== 11)
+    ) {
+      toast.error(
+        type === 'company'
+          ? 'CNPJ deve ter 14 dígitos'
+          : 'CPF deve ter 11 dígitos',
+      )
+      return
+    }
 
     const response = await updateClient(
       {
@@ -128,6 +215,7 @@ export function SeeClientContent({
       client.id,
     )
 
+    setDialogOpen(false)
     if (response.status === true) {
       toast.success(response.message)
 
@@ -137,6 +225,7 @@ export function SeeClientContent({
     if (response.status === false) {
       toast.error(response.message)
     }
+    return
   }
 
   const type = watch('type')
@@ -149,6 +238,7 @@ export function SeeClientContent({
         description={`Criado em ${formatRelative(client.createdAt, new Date(), { locale: ptBR })}`}
       />
       <Separator className='mb-4' />
+
       <Form {...form}>
         {!editMode && (
           <div className='sticky top-0 z-10 flex  items-center justify-between border-b bg-background px-4 pb-6 pt-8 '>
@@ -161,6 +251,11 @@ export function SeeClientContent({
             >
               <Save className='mr-2 h-4 w-4' /> Salvar
             </Button>
+            <ConfirmationModal
+              isDialogOpen={isDialogOpen}
+              setDialogOpen={setDialogOpen}
+              onConfirm={confirmSubmit}
+            />
           </div>
         )}
         <form
@@ -239,14 +334,24 @@ export function SeeClientContent({
                 <FormItem>
                   <FormLabel>{type === 'company' ? 'CNPJ' : 'CPF'}</FormLabel>
                   <FormControl>
-                    <Input
-                      disabled={editMode}
-                      placeholder={
-                        type === 'company'
-                          ? '__.___.___/____-__'
-                          : '___.___.___-__'
-                      }
-                      {...field}
+                    <Controller
+                      control={control}
+                      name='document'
+                      render={({ field }) => (
+                        <Input
+                          {...field}
+                          disabled={editMode}
+                          placeholder={
+                            type === 'company'
+                              ? '__.___.___/____-__'
+                              : '___.___.___-__'
+                          }
+                          value={formatDocument(field.value, type)}
+                          onChange={(e) =>
+                            field.onChange(e.target.value.replace(/\D/g, ''))
+                          }
+                        />
+                      )}
                     />
                   </FormControl>
                   <FormMessage />
@@ -266,9 +371,10 @@ export function SeeClientContent({
                       // setSalespersonId(value)
                     }}
                     disabled={editMode}
+                    value={field.value}
                   >
                     <SelectTrigger className='disabled:opacity-100'>
-                      {typeof client.salesperson === 'object' ? (
+                      {editMode && typeof client.salesperson === 'object' ? (
                         <div className='flex items-center space-x-2'>
                           {client.salesperson.avatar &&
                           typeof client.salesperson.avatar === 'object' &&
@@ -680,5 +786,38 @@ export function SeeClientContent({
         </form>
       </Form>
     </Content>
+  )
+}
+
+interface ConfirmationModalProps {
+  isDialogOpen: boolean
+  setDialogOpen: (state: boolean) => void
+  onConfirm: () => void
+}
+
+function ConfirmationModal({
+  isDialogOpen,
+  setDialogOpen,
+  onConfirm,
+}: ConfirmationModalProps) {
+  return (
+    <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Confirmar transferência</DialogTitle>
+          <DialogDescription>
+            Atenção, você irá transferir o cliente para outro vendedor.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button variant='default' onClick={() => setDialogOpen(false)}>
+            Voltar
+          </Button>
+          <Button variant='outline' onClick={onConfirm}>
+            Confirmar
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }

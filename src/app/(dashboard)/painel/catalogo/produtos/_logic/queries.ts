@@ -7,6 +7,29 @@ import { searchParamsSchema } from '@/lib/validations'
 
 import { unstable_noStore as noStore } from 'next/cache'
 
+export async function getProductBySKU(sku: string) {
+  noStore()
+
+  try {
+    const response = await payload.find({
+      collection: 'products',
+      where: {
+        sku: { equals: sku },
+      },
+    })
+
+    if (response.totalDocs === 0) {
+      return { data: null }
+    }
+
+    return {
+      data: response.docs[0],
+    }
+  } catch (err) {
+    return { data: null }
+  }
+}
+
 export async function getProducts(
   searchParams: z.infer<typeof searchParamsSchema>,
 ) {

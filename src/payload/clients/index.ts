@@ -51,10 +51,10 @@ const Clients: CollectionConfig = {
             {
               type: 'array',
               name: 'contacts',
-              required: true,
+              // required: true,
               fields: [
                 { type: 'text', name: 'name' },
-                { type: 'text', name: 'email' },
+                { type: 'email', name: 'email' },
                 { type: 'text', name: 'phone' },
                 { type: 'text', name: 'whatsapp' },
               ],
@@ -129,8 +129,9 @@ const Clients: CollectionConfig = {
     {
       name: 'status',
       type: 'select',
-      defaultValue: ['active'],
-      required: true,
+      defaultValue: 'active', // Correct: This should be a string
+
+      // required: true,
       options: [
         {
           label: 'Active',
