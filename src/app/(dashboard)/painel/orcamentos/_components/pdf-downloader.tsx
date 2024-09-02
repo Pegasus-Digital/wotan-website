@@ -7,13 +7,25 @@ import { BudgetDocument } from '@/lib/pdf-generator/templates/budget'
 import { LoadingSpinner } from '@/components/spinner'
 import { Budget } from '@/payload/payload-types'
 import { Button } from '@/pegasus/button'
-import { Printer } from 'lucide-react'
+import { Download, Loader2, Printer } from 'lucide-react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
 const PDFDownloadLink = dynamic(
   () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
   {
     ssr: false,
-    loading: () => <LoadingSpinner />,
+    loading: () => (
+      <Button variant='outline' className='w-full' disabled>
+        <Loader2 className='mr-2 animate-spin' />
+        Baixar PDF
+      </Button>
+    ),
   },
 )
 
@@ -25,13 +37,25 @@ export function BudgetDocumentDownloader({
   budget,
 }: BudgetDocumentDownloaderProps) {
   return (
-    <PDFDownloadLink
-      document={<BudgetDocument budget={budget} />}
-      fileName={`Orcamento_n${budget.incrementalId}.pdf`}
-    >
-      <Button size='icon' variant='ghost' type='button'>
-        <Printer className='h-5 w-5' />
-      </Button>
-    </PDFDownloadLink>
+    <>
+      <PDFDownloadLink
+        document={<BudgetDocument budget={budget} />}
+        fileName={`Orcamento_n${budget.incrementalId}.pdf`}
+      >
+        {({ url, loading }) =>
+          loading ? (
+            <Button variant='outline' className='w-full' disabled>
+              <Loader2 className='mr-2 animate-spin' />
+              Baixar PDF
+            </Button>
+          ) : (
+            <Button variant='outline' className='w-full'>
+              <Download className='mr-2' />
+              Baixar PDF
+            </Button>
+          )
+        }
+      </PDFDownloadLink>
+    </>
   )
 }
