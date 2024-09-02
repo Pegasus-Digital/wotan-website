@@ -32,7 +32,7 @@ import {
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Separator } from '@/components/ui/separator'
@@ -49,6 +49,7 @@ import { deleteEstimate } from '../_logic/actions'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 import Image from 'next/image'
 import Link from 'next/link'
+import { cn } from '@/lib/utils'
 import {
   Select,
   SelectContent,
@@ -57,6 +58,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { updateBudgetStatus } from '../_logic/actions'
+import { BudgetDocumentDownloader } from '../_components/pdf-downloader'
 
 export const filterFields: DataTableFilterField<Budget>[] = [
   {
@@ -246,6 +248,7 @@ export function getColumns(): ColumnDef<Budget>[] {
         const budget = row.original
 
         const [statusDialog, setStatusDialog] = useState(false)
+        const [placeOrderDialog, setPlaceOrderDialog] = useState(false)
 
         function DeleteEstimateAction() {
           const [isDeletePending, startDeleteTransition] = useTransition()
@@ -275,7 +278,7 @@ export function getColumns(): ColumnDef<Budget>[] {
           >(budget.status)
 
           return (
-            <Dialog open={statusDialog} onOpenChange={setStatusDialog}>
+            <Dialog open={placeOrderDialog} onOpenChange={setPlaceOrderDialog}>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Alterar Status do Orçamento</DialogTitle>
@@ -370,10 +373,10 @@ export function getColumns(): ColumnDef<Budget>[] {
                 </Select>
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button variant='default'>Voltar</Button>
+                    <Button variant='outline'>Voltar</Button>
                   </DialogClose>
                   <Button
-                    variant='outline'
+                    variant='default'
                     onClick={() => {
                       setStatusDialog(false)
 
@@ -409,6 +412,19 @@ export function getColumns(): ColumnDef<Budget>[] {
             </DropdownMenuItem>
           )
         }
+
+        function SeeBudgetDoc() {
+          return (
+            <DropdownMenuItem className='cursor-pointer' asChild>
+              <Link
+                href={`/painel/orcamentos/${budget.incrementalId}/documento`}
+              >
+                Ver PDF do orçamento
+              </Link>
+            </DropdownMenuItem>
+          )
+        }
+
         return (
           <div className='flex w-min gap-1'>
             <Button size='icon' variant='ghost' asChild>
@@ -423,15 +439,8 @@ export function getColumns(): ColumnDef<Budget>[] {
                 <Pencil className='h-5 w-5' />
               </Link>
             </Button>
-            <Button
-              onClick={() => {
-                window.print()
-              }}
-              size='icon'
-              variant='ghost'
-            >
-              <Printer className='h-5 w-5' />
-            </Button>
+            <BudgetDocumentDownloader budget={budget} />
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button size='icon' variant='ghost'>
@@ -444,7 +453,7 @@ export function getColumns(): ColumnDef<Budget>[] {
                 <DropdownMenuSeparator />
                 <ChangeBudgetStatusAction />
                 <PlaceOrderAction />
-
+                <SeeBudgetDoc />
                 <DeleteEstimateAction />
               </DropdownMenuContent>
             </DropdownMenu>
