@@ -42,7 +42,14 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Heading } from '@/pegasus/heading'
 import { Small } from '@/components/typography/texts'
 
-import { Eye, MoreHorizontal, Pencil, Printer, UserRound } from 'lucide-react'
+import {
+  Eye,
+  LinkIcon,
+  MoreHorizontal,
+  Pencil,
+  Printer,
+  UserRound,
+} from 'lucide-react'
 import { DataTableFilterField } from '@/components/table/types/table-types'
 import { toast } from 'sonner'
 import { deleteEstimate } from '../_logic/actions'
@@ -249,6 +256,7 @@ export function getColumns(): ColumnDef<Budget>[] {
 
         const [statusDialog, setStatusDialog] = useState(false)
         const [placeOrderDialog, setPlaceOrderDialog] = useState(false)
+        const [downloaderDialog, setDownloaderDialog] = useState(false)
 
         function DeleteEstimateAction() {
           const [isDeletePending, startDeleteTransition] = useTransition()
@@ -413,15 +421,29 @@ export function getColumns(): ColumnDef<Budget>[] {
           )
         }
 
-        function SeeBudgetDoc() {
+        function BudgetDocumentDownloaderDialog() {
           return (
-            <DropdownMenuItem className='cursor-pointer' asChild>
-              <Link
-                href={`/painel/orcamentos/${budget.incrementalId}/documento`}
-              >
-                Ver PDF do orçamento
-              </Link>
-            </DropdownMenuItem>
+            <Dialog open={downloaderDialog} onOpenChange={setDownloaderDialog}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Download do Documento</DialogTitle>
+                </DialogHeader>
+                <DialogDescription>
+                  Abra ou baixe o PDF do orçamento.
+                </DialogDescription>
+                <div className='mt-2 grid grid-cols-2 gap-2'>
+                  <BudgetDocumentDownloader budget={budget} />
+                  <Button variant='outline' asChild>
+                    <Link
+                      href={`/painel/orcamentos/${budget.incrementalId}/documento`}
+                    >
+                      <LinkIcon className='mr-2 h-5 w-5' />
+                      Ver PDF do orçamento
+                    </Link>
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           )
         }
 
@@ -439,7 +461,17 @@ export function getColumns(): ColumnDef<Budget>[] {
                 <Pencil className='h-5 w-5' />
               </Link>
             </Button>
-            <BudgetDocumentDownloader budget={budget} />
+            {/* <BudgetDocumentDownloader budget={budget} /> */}
+
+            <Button
+              onClick={() => {
+                setDownloaderDialog(true)
+              }}
+              size='icon'
+              variant='ghost'
+            >
+              <Printer className='h-5 w-5' />
+            </Button>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -453,11 +485,10 @@ export function getColumns(): ColumnDef<Budget>[] {
                 <DropdownMenuSeparator />
                 <ChangeBudgetStatusAction />
                 <PlaceOrderAction />
-                <SeeBudgetDoc />
                 <DeleteEstimateAction />
               </DropdownMenuContent>
             </DropdownMenu>
-
+            <BudgetDocumentDownloaderDialog />
             <ChangeBudgetStatusDialog />
             <PlaceOrderDialog />
           </div>
