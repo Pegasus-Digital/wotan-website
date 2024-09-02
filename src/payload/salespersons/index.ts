@@ -23,13 +23,18 @@ const Salespersons: CollectionConfig = {
       required: true,
     },
     {
+      name: 'avatar',
+      type: 'upload',
+      relationTo: 'media',
+    },
+    {
       name: 'roles',
       type: 'select',
       required: true,
       defaultValue: ['representative'],
       options: [
-        { label: 'internal', value: 'internal' },
-        { label: 'representative', value: 'representative' },
+        { label: 'Vendedor Interno', value: 'internal' },
+        { label: 'Representante', value: 'representative' },
       ],
       // hooks: {
       //   beforeChange: [ensureFirstUserIsAdmin],
@@ -40,10 +45,10 @@ const Salespersons: CollectionConfig = {
         update: admins,
       },
     },
-    {
-      name: 'email',
-      type: 'email',
-    },
+    // {
+    //   name: 'email',
+    //   type: 'email',
+    // },
   ],
   timestamps: true,
 }

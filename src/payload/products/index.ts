@@ -80,7 +80,16 @@ const Products: CollectionConfig = {
               //   return { type: { equals: 'text' } }
               // },
             },
-            { name: 'price', type: 'number' },
+            {
+              name: 'priceQuantityTable',
+              label: 'Price-Quantity Table',
+              type: 'array',
+              interfaceName: 'PriceQuantityTable',
+              fields: [
+                { name: 'quantity', type: 'number' },
+                { name: 'unitPrice', type: 'number' },
+              ],
+            },
             { name: 'description', type: 'textarea' },
             { name: 'tags', type: 'textarea' },
           ],

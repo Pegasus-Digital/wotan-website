@@ -8,6 +8,17 @@
 
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PriceQuantityTable".
+ */
+export type PriceQuantityTable =
+  | {
+      quantity?: number | null;
+      unitPrice?: number | null;
+      id?: string | null;
+    }[]
+  | null;
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "NavLinkColumn".
  */
 export type NavLinkColumn =
@@ -25,6 +36,7 @@ export interface Config {
     attributes: Attribute;
     'attribute-types': AttributeType;
     budget: Budget;
+    order: Order;
     users: User;
     media: Media;
     pages: Page;
@@ -51,7 +63,7 @@ export interface Product {
   stockQuantity?: number | null;
   active: boolean;
   attributes?: (string | Attribute)[] | null;
-  price?: number | null;
+  priceQuantityTable?: PriceQuantityTable;
   description?: string | null;
   tags?: string | null;
   featuredImage: string | Media;
@@ -137,11 +149,16 @@ export interface Category {
  */
 export interface Budget {
   id: string;
-  total?: number | null;
-  status?: ('pendente' | 'cancelado') | null;
+  incrementalId?: number | null;
+  salesperson?: (string | null) | Salesperson;
+  comissioned?: boolean | null;
+  origin?: ('website' | 'interno') | null;
+  status?: ('criado' | 'contato' | 'enviado' | 'pendente' | 'aprovado' | 'cancelado') | null;
+  conditions?: string | null;
   items: {
     product: string | Product;
     attributes?: (string | Attribute)[] | null;
+    description?: string | null;
     quantity: number;
     price?: number | null;
     id?: string | null;
@@ -155,6 +172,122 @@ export interface Budget {
   };
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "salespersons".
+ */
+export interface Salesperson {
+  id: string;
+  name: string;
+  avatar?: string | Media | null;
+  roles: 'internal' | 'representative';
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  password: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "order".
+ */
+export interface Order {
+  id: string;
+  incrementalId?: number | null;
+  client: string | Client;
+  contact: string;
+  salesperson?: (string | null) | Salesperson;
+  products?:
+    | {
+        code: string;
+        description: string;
+        quantity: number;
+        price: number;
+        print?: string | null;
+        sample?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  status?: ('pending' | 'completed' | 'cancelled') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clients".
+ */
+export interface Client {
+  id: string;
+  name?: string | null;
+  razaosocial?: string | null;
+  type: 'company' | 'individual';
+  document?: string | null;
+  contacts?:
+    | {
+        name?: string | null;
+        email?: string | null;
+        phone?: string | null;
+        whatsapp?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  adress?: Address;
+  clientSince?: string | null;
+  observations?: string | null;
+  ramo?: string | null;
+  salesperson: string | Salesperson;
+  origin: 'ads' | 'indication' | 'fiergs-list' | 'telephone-list' | 'direct' | 'prospect' | 'website' | 'other';
+  status?: ('active' | 'inactive' | 'prospect') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "Address".
+ */
+export interface Address {
+  street?: string | null;
+  number?: string | null;
+  neighborhood?: string | null;
+  city?: string | null;
+  state?:
+    | (
+        | 'AC'
+        | 'AL'
+        | 'AP'
+        | 'AM'
+        | 'BA'
+        | 'CE'
+        | 'DF'
+        | 'ES'
+        | 'GO'
+        | 'MA'
+        | 'MS'
+        | 'MT'
+        | 'MG'
+        | 'PA'
+        | 'PB'
+        | 'PR'
+        | 'PE'
+        | 'PI'
+        | 'RJ'
+        | 'RN'
+        | 'RS'
+        | 'RO'
+        | 'RR'
+        | 'SC'
+        | 'SP'
+        | 'SE'
+        | 'TO'
+      )
+    | null;
+  cep?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -419,48 +552,6 @@ export interface TimelineSection {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "clients".
- */
-export interface Client {
-  id: string;
-  name?: string | null;
-  razaosocial?: string | null;
-  type: 'company' | 'individual';
-  document?: string | null;
-  contacts: {
-    name?: string | null;
-    email?: string | null;
-    phone?: string | null;
-    whatsapp?: string | null;
-    id?: string | null;
-  }[];
-  clientSince?: string | null;
-  salesperson: string | Salesperson;
-  roles: 'active' | 'inactive' | 'prospect';
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "salespersons".
- */
-export interface Salesperson {
-  id: string;
-  name: string;
-  roles: 'internal' | 'representative';
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  password: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "contact-messages".
  */
 export interface ContactMessage {
@@ -617,48 +708,6 @@ export interface Company {
     instagram?: string | null;
     linkedin?: string | null;
   };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "Address".
- */
-export interface Address {
-  street?: string | null;
-  number?: string | null;
-  neighborhood?: string | null;
-  city?: string | null;
-  state?:
-    | (
-        | 'AC'
-        | 'AL'
-        | 'AP'
-        | 'AM'
-        | 'BA'
-        | 'CE'
-        | 'DF'
-        | 'ES'
-        | 'GO'
-        | 'MA'
-        | 'MS'
-        | 'MT'
-        | 'MG'
-        | 'PA'
-        | 'PB'
-        | 'PR'
-        | 'PE'
-        | 'PI'
-        | 'RJ'
-        | 'RN'
-        | 'RS'
-        | 'RO'
-        | 'RR'
-        | 'SC'
-        | 'SP'
-        | 'SE'
-        | 'TO'
-      )
-    | null;
-  cep?: string | null;
 }
 
 

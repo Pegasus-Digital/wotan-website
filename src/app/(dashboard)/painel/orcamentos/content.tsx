@@ -21,7 +21,7 @@ export function EstimatesContent({ estimates }: EstimatesContentProps) {
 
       <Separator className='mb-4' />
 
-      <Tabs defaultValue='table'>
+      {/* <Tabs defaultValue='table'>
         <Small className='mr-2 inline'>Modos:</Small>
 
         <TabsList>
@@ -29,19 +29,19 @@ export function EstimatesContent({ estimates }: EstimatesContentProps) {
           <TabsTrigger value='interactive'>Interativo</TabsTrigger>
         </TabsList>
 
-        <TabsContent value='table'>
-          <EstimatesTable estimatesPromise={estimates} />
-        </TabsContent>
+        <TabsContent value='table'> */}
+      <EstimatesTable estimatesPromise={estimates} />
+      {/* </TabsContent>
 
         <TabsContent value='interactive'>
-          {/* <div className='grid grid-cols-dashboard gap-2'>
+        <div className='grid grid-cols-dashboard gap-2'>
             <div className='rounded-sm border'>
               <EstimateCard />
             </div>
             <div className='flex-1 bg-blue-300'>b</div>
-          </div> */}
+          </div> 
         </TabsContent>
-      </Tabs>
+      </Tabs> */}
     </Content>
   )
 }

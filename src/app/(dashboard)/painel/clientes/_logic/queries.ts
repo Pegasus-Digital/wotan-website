@@ -31,3 +31,21 @@ export async function getClients(
     return { data: [], pageCount: 0 }
   }
 }
+
+export async function getClientByDocument(document: string) {
+  noStore()
+
+  try {
+    const response = await payload.find({
+      collection: 'clients',
+      where: {
+        document: { equals: document },
+      },
+      limit: 1,
+    })
+    // console.log(response)
+    return { data: response.docs[0] }
+  } catch (err) {
+    return { data: null }
+  }
+}

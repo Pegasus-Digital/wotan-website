@@ -69,7 +69,7 @@ const formSchema = z.object({
 
 export function NewEstimateForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log('Trying to submit form.', values)
+    // console.log('Trying to submit form.', values)
   }
 
   const form = useForm<z.infer<typeof formSchema>>({

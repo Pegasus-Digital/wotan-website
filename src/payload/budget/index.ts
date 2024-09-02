@@ -1,5 +1,8 @@
 import type { CollectionConfig } from 'payload/types'
-
+import {
+  assignIncrementalId,
+  generateIncrementalId,
+} from '../utilities/genIncrementalId'
 // import { clearUserCart } from './hooks/clearUserCart'
 // import { populateOrderedBy } from './hooks/populateOrderedBy'
 // import { updateUserPurchases } from './hooks/updateUserPurchases'
@@ -13,9 +16,9 @@ export const Budget: CollectionConfig = {
     // preview: (doc) =>
     //   `${process.env.PAYLOAD_PUBLIC_SERVER_URL}/budget/${doc.id}`,
   },
-  // hooks: {
-  //   afterChange: [updateUserPurchases, clearUserCart],
-  // },
+  hooks: {
+    beforeChange: [assignIncrementalId],
+  },
   // access: {
   //   read: adminsOrOrderedBy,
   //   update: admins,
@@ -23,25 +26,46 @@ export const Budget: CollectionConfig = {
   //   delete: admins,
   // },
   fields: [
-    // {
-    //   name: 'orderedBy',
-    //   type: 'relationship',
-    //   relationTo: 'clients',
-    //   // hooks: {
-    //   //   beforeChange: [populateOrderedBy],
-    //   // },
-    // },
     {
-      name: 'total',
+      name: 'incrementalId',
       type: 'number',
+      // required: true,
+      admin: {
+        // readOnly: true,
+      },
+    },
+    {
+      name: 'salesperson',
+      type: 'relationship',
+      relationTo: 'salespersons',
+      // required: true,
+    },
+    { name: 'comissioned', type: 'checkbox', defaultValue: false },
+    {
+      name: 'origin',
+      type: 'select',
+      options: [
+        { label: 'Site', value: 'website' },
+        { label: 'Interno', value: 'interno' },
+      ],
     },
     {
       name: 'status',
       type: 'select',
       options: [
-        { label: 'pendente', value: 'pendente' },
-        { label: 'cancelado', value: 'cancelado' },
+        { label: 'Criado', value: 'criado' },
+        { label: 'Em contato', value: 'contato' },
+        { label: 'Enviado p/ Cliente', value: 'enviado' },
+        { label: 'Aguardando provação ', value: 'pendente' },
+        { label: 'Aprovado', value: 'aprovado' },
+        { label: 'Cancelado', value: 'cancelado' },
       ],
+    },
+    {
+      name: 'conditions',
+      type: 'textarea',
+      defaultValue:
+        'Pagamento: 28 dd\nEntrega: 12 dd\nFrete:\nValidade da proposta: 10 dias\nPRODUTOS SUJEITOS Á DISPONIBILIDADE DE ESTOQUE',
     },
     {
       name: 'items',
@@ -61,6 +85,10 @@ export const Budget: CollectionConfig = {
           hasMany: true,
         },
         {
+          name: 'description',
+          type: 'textarea',
+        },
+        {
           name: 'quantity',
           type: 'number',
           min: 1,
@@ -69,7 +97,6 @@ export const Budget: CollectionConfig = {
         {
           name: 'price',
           type: 'number',
-          min: 0,
         },
       ],
     },

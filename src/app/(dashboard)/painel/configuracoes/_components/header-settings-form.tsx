@@ -49,7 +49,7 @@ export default function HeaderSettingsForm({ header }: HeaderSettingsProps) {
   } = form
 
   async function onSubmit(values: z.infer<typeof headerSchema>) {
-    console.log('trying to submit form', values)
+    // console.log('trying to submit form', values)
     const response = await updateHeaderSettings({
       ...header,
       navigation: {

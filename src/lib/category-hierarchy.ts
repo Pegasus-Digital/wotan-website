@@ -8,35 +8,35 @@ export interface NestedCategory {
 }
 
 export function nestCategories(categories: Category[]): NestedCategory[] {
-  const categoryMap: Map<string, NestedCategory> = new Map()
+  const categoryMap = new Map<string, NestedCategory>()
 
-  // Create a dictionary of categories by their IDs
-  for (const category of categories) {
+  // Create a dictionary of categories by their IDs and initialize children arrays
+  categories.forEach((category) => {
     categoryMap.set(category.id, {
       id: category.id,
       title: category.title,
-      url: category.breadcrumbs[category.breadcrumbs.length - 1]?.url || '',
+      url: category.breadcrumbs.at(-1)?.url ?? '',
       children: [],
     })
-  }
+  })
 
-  // Traverse the categories to build the nested structure
-  for (const category of categories) {
+  // Build the nested structure
+  categories.forEach((category) => {
     if (category.parent && typeof category.parent === 'object') {
       const parentCategory = categoryMap.get(category.parent.id)
       if (parentCategory) {
         parentCategory.children.push(categoryMap.get(category.id)!)
       }
     }
-  }
+  })
 
-  // Find and return top-level categories
-  const topLevelCategories: NestedCategory[] = []
-  for (const category of categories) {
-    if (!category.parent) {
-      topLevelCategories.push(categoryMap.get(category.id)!)
-    }
-  }
+  // Find and return top-level categories, inverting the array
+  const topLevelCategories = Array.from(categoryMap.values())
+    .filter(
+      (category) =>
+        !categories.find((cat) => cat.id === category.id && cat.parent),
+    )
+    .reverse()
 
   return topLevelCategories
 }
