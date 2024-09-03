@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 import { Attribute, Category, Media, Product } from '@/payload/payload-types'
 
@@ -70,6 +71,8 @@ export function UpdateProductForm({
   currentProduct,
   edit = false,
 }: UpdateProductFormProps) {
+  const router = useRouter()
+
   const currentFeaturedImage = currentProduct.featuredImage as Media
 
   const [images, setMedia] = useState<Media[]>(
@@ -202,6 +205,11 @@ export function UpdateProductForm({
 
     if (response.status === true) {
       toast.success(response.message)
+
+      // If SKU is updated, then redirect user to the new page
+      if (currentProduct.sku !== sku) {
+        router.push(`/painel/catalogo/produtos/${sku}?edit=true`)
+      }
     }
 
     if (response.status === false) {
