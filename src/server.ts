@@ -29,7 +29,6 @@ const start = async (): Promise<void> => {
   const dashboardMiddleware = (req, res, next) => {
     // Check if the requested URL path starts with /painel
 
-    // TODO find better solution for next server actions
     if (req.path !== '/login' && !req.headers['next-action']) {
       isAuthenticated(req).then((loggedIn) => {
         if (!loggedIn) {

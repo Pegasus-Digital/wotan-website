@@ -1,5 +1,4 @@
 import { CollectionConfig } from 'payload/types'
-import { contactForm } from '../fields/contact-form'
 
 const Contact: CollectionConfig = {
   slug: 'contact-messages',
@@ -7,7 +6,6 @@ const Contact: CollectionConfig = {
     group: 'Clients',
   },
   fields: [
-    // ...contactForm,
     {
       name: 'name',
       required: true,

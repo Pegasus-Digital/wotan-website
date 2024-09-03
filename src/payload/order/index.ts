@@ -161,4 +161,4 @@ const Order: CollectionConfig = {
   ],
 }
 
-export default Order
+export { Order }

@@ -15,7 +15,6 @@ import { Button, buttonVariants } from '@/pegasus/button'
 import { FacebookIcon } from 'lucide-react'
 import { LinkedInLogoIcon, InstagramLogoIcon } from '@radix-ui/react-icons'
 
-// TODO: Acho que da pra deixar essa tipagem mais limpa
 type FooterProps = FooterType & {
   staticImage?: StaticImageData
   id?: string

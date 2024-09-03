@@ -2,7 +2,7 @@ import path from 'path'
 import type { CollectionConfig } from 'payload/types'
 import { admins, anyone } from '../access'
 
-export const Media: CollectionConfig = {
+const Media: CollectionConfig = {
   slug: 'media',
   admin: {
     group: 'Files',
@@ -33,3 +33,5 @@ export const Media: CollectionConfig = {
     // },
   ],
 }
+
+export { Media }

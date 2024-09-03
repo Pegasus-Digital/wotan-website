@@ -7,7 +7,7 @@ import {
 // import { populateOrderedBy } from './hooks/populateOrderedBy'
 // import { updateUserPurchases } from './hooks/updateUserPurchases'
 
-export const Budget: CollectionConfig = {
+const Budget: CollectionConfig = {
   slug: 'budget',
   admin: {
     useAsTitle: 'createdAt',
@@ -113,3 +113,5 @@ export const Budget: CollectionConfig = {
     },
   ],
 }
+
+export { Budget }

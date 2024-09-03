@@ -156,4 +156,4 @@ const Products: CollectionConfig = {
   ],
 }
 
-export default Products
+export { Products }

@@ -19,7 +19,6 @@ import { Heading } from '@/pegasus/heading'
 
 import { Icons } from './icons'
 
-// TODO: Acho que da pra simplificar essas tipagens
 export type ProductSliderProps = Extract<
   Page['layout'][0],
   { blockType: 'product-carousel' }
