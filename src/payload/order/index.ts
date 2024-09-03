@@ -22,18 +22,32 @@ const Order: CollectionConfig = {
       },
     },
     {
-      name: 'client', // This is the equivalent of the *Cliente field in the form
+      name: 'client',
       label: 'Client',
       type: 'relationship',
-      relationTo: 'clients', // Assuming you have a clients collection
+      relationTo: 'clients',
       required: true,
     },
     {
-      name: 'contact', // Now just a string field for the selected contact
+      name: 'contact',
       label: 'Contact',
       type: 'text',
       required: true,
     },
+
+    {
+      type: 'group',
+      name: 'alternativeContact',
+      // required: true,
+      fields: [
+        { type: 'text', name: 'name' },
+        { type: 'email', name: 'email' },
+        { type: 'text', name: 'phone' },
+        { type: 'text', name: 'whatsapp' },
+      ],
+    },
+
+    adress,
     {
       name: 'salesperson',
       type: 'relationship',
@@ -41,38 +55,32 @@ const Order: CollectionConfig = {
       // required: true,
     },
     {
-      name: 'products', // Produto section
+      name: 'itens', // Produto section
       label: 'Products',
       type: 'array',
       fields: [
         {
-          name: 'code', // Codigo field
-          label: 'Code',
-          type: 'text',
-          required: true,
-        },
-        {
-          name: 'description', // Produto field
-          label: 'Product Description',
-          type: 'text',
+          name: 'product',
+          type: 'relationship',
+          relationTo: 'products',
           required: true,
         },
         {
           name: 'quantity', // Quantidade field
           label: 'Quantity',
           type: 'number',
-          required: true,
-          validate: (value) => {
-            if (value <= 0) {
-              return 'Quantity must be a positive number'
-            }
-          },
         },
         {
           name: 'price', // Preco field
           label: 'Price',
           type: 'number',
           required: true,
+        },
+        {
+          name: 'attributes',
+          type: 'relationship',
+          relationTo: 'attributes',
+          hasMany: true,
         },
         {
           name: 'print', // Impressao field
@@ -82,25 +90,69 @@ const Order: CollectionConfig = {
         {
           name: 'sample', // Amostra field
           label: 'Sample Provided',
-          type: 'text',
+          type: 'checkbox',
+        },
+        {
+          name: 'layoutSent',
+          type: 'checkbox',
+        },
+        {
+          name: 'layoutApproved',
+          type: 'checkbox',
         },
       ],
     },
     {
-      name: 'status', // Status of the order (might be active, pending, etc.)
+      name: 'shippingTime',
+      type: 'text',
+    },
+    {
+      name: 'shippingCompany',
+      type: 'text',
+    },
+    {
+      name: 'shippingType',
+      type: 'select',
+      options: [
+        {
+          label: 'CIF',
+          value: 'cif',
+        },
+        {
+          label: 'FOB',
+          value: 'fob',
+        },
+      ],
+    },
+    { name: 'paymentConditions', type: 'text' },
+    {
+      name: 'paymentType',
+      type: 'select',
+      options: [
+        { label: 'Boleto', value: 'boleto' },
+        { label: 'Cheque', value: 'cheque' },
+        { label: 'Depósito', value: 'deposito' },
+      ],
+    },
+    { name: 'agency', type: 'text' },
+    { name: 'commission', type: 'number' },
+    { name: 'notes', type: 'textarea' },
+
+    {
+      name: 'status',
       label: 'Status',
       type: 'select',
       options: [
         {
-          label: 'Pending',
+          label: 'Pendente',
           value: 'pending',
         },
         {
-          label: 'Completed',
+          label: 'Completo',
           value: 'completed',
         },
         {
-          label: 'Cancelled',
+          label: 'Cancelado',
           value: 'cancelled',
         },
       ],

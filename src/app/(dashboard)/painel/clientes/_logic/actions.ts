@@ -85,7 +85,7 @@ export async function updateClient(
       }
     }
 
-    revalidatePath('/painel/catalogo/produtos')
+    revalidatePath('/painel/clientes')
 
     return {
       data: { client: response.docs[0] },
