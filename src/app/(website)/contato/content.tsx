@@ -73,7 +73,7 @@ export function ContactContent({ address, contact }) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!values.acceptPrivacyPolicy) {
       toast.warning(
-        'Formulário não enviado, é necessário aceitar os termos da Política de Privacidade.',
+        'Para enviar a mensagem é necessário aceitar os termos da Política de Privacidade.',
       )
       return
     }
@@ -91,6 +91,7 @@ export function ContactContent({ address, contact }) {
     })
 
     if (response.status === true) {
+      form.reset()
       return toast.success('Recebemos o contato com sucesso!')
     }
 
