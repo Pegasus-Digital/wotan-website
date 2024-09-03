@@ -22,10 +22,19 @@ export async function createProduct(
   product: SafeProduct,
 ): Promise<ActionResponse<CreateProductResponseData>> {
   try {
-    // await payload.find({ collection: 'media' })
+    const productsWithSameSku = await payload.find({
+      collection: 'products',
+      where: { sku: { equals: product.sku } },
+      limit: 1,
+    })
 
-    // console.log('Criando produto')
-    // console.log(JSON.stringify(product, null, 2))
+    if (productsWithSameSku.docs.length > 0) {
+      return {
+        data: null,
+        status: false,
+        message: 'Não é possível criar o produto. SKU já está em uso.',
+      }
+    }
 
     const response = await payload.create({
       collection: 'products',
@@ -59,17 +68,31 @@ export async function updateProduct(
   product: SafeProduct,
 ): Promise<ActionResponse<UpdateActionResponseData>> {
   try {
+    const productsWithSameSku = await payload.find({
+      collection: 'products',
+      where: {
+        and: [{ sku: { equals: product.sku } }, { id: { not_equals: id } }],
+      },
+      limit: 1,
+    })
+
+    if (productsWithSameSku.docs.length > 0) {
+      return {
+        data: null,
+        status: false,
+        message: 'Não é possível criar o produto. SKU já está em uso.',
+      }
+    }
+
     delete product.images
 
     const response = await payload.update({
+      id,
       collection: 'products',
-      where: { id: { equals: id } },
-      data: { ...product, id },
+      data: { ...product },
     })
 
-    if (response.errors.length > 0) {
-      // console.error(response.errors)
-
+    if (!response) {
       return {
         data: null,
         status: false,
@@ -80,7 +103,7 @@ export async function updateProduct(
     revalidatePath('/painel/catalogo/produtos')
 
     return {
-      data: { product: response.docs[0] },
+      data: { product: response },
       status: true,
       message: 'Produto atualizado com sucesso.',
     }
