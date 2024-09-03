@@ -4,8 +4,7 @@ import { Attribute, AttributeType } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
 
-import { Trash } from 'lucide-react'
-
+import { Icons } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import { UpdateAttributeDialog } from './update-attribute-dialog'
 
@@ -34,12 +33,12 @@ export function AttributeActions({ attribute, types }: AttributeActionsProps) {
       <UpdateAttributeDialog attribute={attribute} types={types} />
 
       <Button
-        onClick={handleDeleteAttribute}
-        variant='outline'
         size='icon'
+        variant='outline'
         className='h-6 w-6'
+        onClick={handleDeleteAttribute}
       >
-        <Trash className='h-4 w-4' />
+        <Icons.Trash className='h-4 w-4' />
       </Button>
     </div>
   )

@@ -4,17 +4,17 @@ import { useState } from 'react'
 
 import { AttributeType } from '@/payload/payload-types'
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+
+import {
+  Dialog,
+  DialogTitle,
+  DialogHeader,
+  DialogTrigger,
+  DialogContent,
+  DialogDescription,
+} from '@/components/ui/dialog'
 
 import { CreateAttributeForm } from './create-attribute-form'
 

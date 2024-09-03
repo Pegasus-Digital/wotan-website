@@ -1,19 +1,15 @@
-import React from 'react'
 import { Metadata } from 'next'
 
-import { LoginContent } from './content'
 import { getAdminUser } from '@/app/_utilities/get-admin-user'
+
+import { LoginContent } from './content'
 
 export default async function Login() {
   await getAdminUser({
     validUserRedirect: `/painel?warning=${encodeURIComponent('Você já está logado.')}`,
   })
 
-  return (
-    <>
-      <LoginContent />
-    </>
-  )
+  return <LoginContent />
 }
 
 export const metadata: Metadata = {

@@ -1,6 +1,5 @@
-import { Attribute, AttributeType, Category } from '@/payload/payload-types'
+import { Category } from '@/payload/payload-types'
 
-import { Heading } from '@/pegasus/heading'
 import { Separator } from '@/components/ui/separator'
 import { CategoryList } from './_components/category-list'
 import { Content, ContentHeader } from '@/components/content'

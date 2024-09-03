@@ -1,22 +1,19 @@
 import Link from 'next/link'
-import { getHref } from './link'
 import { StaticImageData } from 'next/image'
 
 import { Company, Footer as FooterType } from '@/payload/payload-types'
 
-import { Image } from './media/image'
-
-import {
-  LinkedInLogoIcon,
-  TwitterLogoIcon,
-  InstagramLogoIcon,
-} from '@radix-ui/react-icons'
-import { FacebookIcon, Mail, MapPin, Phone } from 'lucide-react'
+import { getHref } from './link'
 
 import { Lead, LinkIcon, Small } from './typography/texts'
 
-import { Button, buttonVariants } from '@/pegasus/button'
+import { Icons } from './icons'
+import { Image } from './media/image'
 import { PegasusStamp } from '@/pegasus/pegasus-stamp'
+import { Button, buttonVariants } from '@/pegasus/button'
+
+import { FacebookIcon } from 'lucide-react'
+import { LinkedInLogoIcon, InstagramLogoIcon } from '@radix-ui/react-icons'
 
 // TODO: Acho que da pra deixar essa tipagem mais limpa
 type FooterProps = FooterType & {
@@ -50,7 +47,7 @@ export function Footer({
 
             {companyInfo.showAddress === true && adress && (
               <Small className='flex items-center whitespace-nowrap leading-snug'>
-                <MapPin className='mr-2 h-5 w-5' />
+                <Icons.Pin className='mr-2 h-5 w-5' />
 
                 {`${adress.street}, ${adress.number} - ${adress.neighborhood}`}
                 <br />
@@ -64,7 +61,7 @@ export function Footer({
                 target='_blank'
                 href={`tel:${contact.phone}`}
               >
-                <Phone className='h-5 w-5' />
+                <Icons.Phone className='h-5 w-5' />
                 <Small className={buttonVariants({ variant: 'linkHover2' })}>
                   {contact.phone}
                 </Small>
@@ -77,7 +74,7 @@ export function Footer({
                 target='_blank'
                 href={`mailto:${contact.email}`}
               >
-                <Mail className='h-5 w-5' />
+                <Icons.Mail className='h-5 w-5' />
                 <Small className={buttonVariants({ variant: 'linkHover2' })}>
                   {contact.email}
                 </Small>

@@ -1,31 +1,34 @@
 'use client'
 
+import { usePathname } from 'next/navigation'
+
+import { useAdminAuth } from './admin-auth-provider'
+
 import {
+  Tags,
   Users,
-  Settings,
-  PackageOpen,
-  PackageCheck,
-  LayoutDashboard,
-  HelpCircle,
   FileUp,
   UserCog,
   Mailbox,
-  ShoppingCart,
   Barcode,
-  Tags,
   Bookmark,
+  Settings,
   AppWindow,
+  HelpCircle,
+  PackageOpen,
+  PackageCheck,
+  LayoutDashboard,
 } from 'lucide-react'
 
-import { Large, List, Muted } from './typography/texts'
-
-import { Separator } from './ui/separator'
-import { SidebarCollapsible, SidebarNavigationItem } from './sidebar-navigation'
 import WotanLogo from './logo-wotan'
-import { useAdminAuth } from './admin-auth-provider'
+
+import { Icons } from './icons'
 import { Skeleton } from './ui/skeleton'
+import { Separator } from './ui/separator'
 import { LoadingSpinner } from './spinner'
-import { usePathname } from 'next/navigation'
+import { SidebarCollapsible, SidebarNavigationItem } from './sidebar-navigation'
+
+import { Large, List, Muted } from './typography/texts'
 
 export function Sidebar() {
   const { status } = useAdminAuth()
@@ -50,7 +53,7 @@ export function Sidebar() {
 
             <SidebarCollapsible
               text='Catálogo'
-              icon={ShoppingCart}
+              icon={Icons.Cart}
               navItems={[
                 {
                   text: 'Produtos',

@@ -1,33 +1,31 @@
 'use client'
 
+import Image from 'next/image'
 import { useState, useTransition } from 'react'
 
-import { toast } from 'sonner'
-import { ColumnDef } from '@tanstack/react-table'
+import { Media, Salesperson } from '@/payload/payload-types'
 
 import { getRelativeDate } from '@/lib/date'
 
-import { Media, Salesperson } from '@/payload/payload-types'
-import Image from 'next/image'
+import { toast } from 'sonner'
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { ColumnDef } from '@tanstack/react-table'
+import { DataTableFilterField } from '@/components/table/types/table-types'
+import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 
+import { Icons } from '@/components/icons'
 import { Dialog } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 
-import { MoreHorizontal, UserRound } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+} from '@/components/ui/dropdown-menu'
 
 import { deleteUser } from '../../_logic/actions'
-import { DataTableFilterField } from '@/components/table/types/table-types'
 
 export const filterFields: DataTableFilterField<Salesperson>[] = [
   {
@@ -71,7 +69,7 @@ export function getColumns(): ColumnDef<Salesperson>[] {
         if (!value)
           return (
             <div className='flex h-8 w-8 items-center justify-center rounded-full bg-gray-300  p-1'>
-              <UserRound className='h-5 w-5 text-gray-600' />
+              <Icons.User className='h-5 w-5 text-gray-600' />
             </div>
           )
 
@@ -145,7 +143,7 @@ export function getColumns(): ColumnDef<Salesperson>[] {
                 <DropdownMenuTrigger asChild>
                   <Button variant='ghost' className='h-8 w-8 p-0'>
                     <span className='sr-only'>Abrir menu</span>
-                    <MoreHorizontal className='h-4 w-4' />
+                    <Icons.Dots className='h-4 w-4' />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align='end'>

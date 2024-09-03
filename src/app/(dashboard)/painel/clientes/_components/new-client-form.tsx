@@ -1,57 +1,55 @@
 'use client'
 
-import { useState } from 'react'
-import {
-  Controller,
-  useFieldArray,
-  useForm,
-  useFormState,
-} from 'react-hook-form'
+import { useRouter } from 'next/navigation'
+
+import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm, useFormState, useFieldArray } from 'react-hook-form'
 
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-
+import { Icons } from '@/components/icons'
+import { Heading } from '@/pegasus/heading'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { Heading } from '@/pegasus/heading'
-import { CalendarIcon, PlusCircle, Save, Trash, UserRound } from 'lucide-react'
 import { Calendar } from '@/components/ui/calendar'
+import { Textarea } from '@/components/ui/textarea'
 import { Separator } from '@/components/ui/separator'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+
+import {
+  Form,
+  FormItem,
+  FormLabel,
+  FormField,
+  FormMessage,
+  FormControl,
+} from '@/components/ui/form'
+
+import {
+  Select,
+  SelectItem,
+  SelectLabel,
+  SelectValue,
+  SelectGroup,
+  SelectTrigger,
+  SelectContent,
+  SelectSeparator,
+} from '@/components/ui/select'
+
 import { Salesperson } from '@/payload/payload-types'
-import { toast } from 'sonner'
+
 import { createClient } from '../_logic/actions'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { clientSchema } from '../_logic/validations'
 
 type ClientProps = z.infer<typeof clientSchema>
@@ -139,7 +137,7 @@ export function ClientForm({ salespeople }: ClientFormProps) {
           onClick={handleSubmit(onSubmit)}
           variant='default'
         >
-          <Save className='mr-2 h-4 w-4' /> Salvar
+          <Icons.Save className='mr-2 h-5 w-5' /> Salvar
         </Button>
       </div>
       <form
@@ -298,7 +296,7 @@ export function ClientForm({ salespeople }: ClientFormProps) {
                         ) : (
                           <span>Selecione uma data</span>
                         )}
-                        <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+                        <Icons.Calendar className='ml-auto h-5 w-5 opacity-75' />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
@@ -392,7 +390,7 @@ export function ClientForm({ salespeople }: ClientFormProps) {
               append({ name: '', email: '', phone: '', whatsapp: '' })
             }
           >
-            <PlusCircle className=' h-5 w-5' />
+            <Icons.Add className=' h-5 w-5' />
           </Button>
         </div>
         {/* Contacts Array */}
@@ -412,7 +410,7 @@ export function ClientForm({ salespeople }: ClientFormProps) {
                   onClick={() => remove(index)}
                   className='m-0 mt-0'
                 >
-                  <Trash className='h-4 w-4' />
+                  <Icons.Trash className='h-5 w-5' />
                 </Button>
               </CardHeader>
               <CardContent className='grid grid-cols-2 items-center gap-2 gap-x-4'>

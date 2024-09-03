@@ -1,20 +1,21 @@
 'use client'
 
-import { Category, Product } from '@/payload/payload-types'
+import { useState } from 'react'
+
+import { toast } from 'sonner'
+
+import { Product } from '@/payload/payload-types'
+
+import { Button } from '@/components/ui/button'
+import { BulkUpdateProductForm } from './bulk-update-form'
 
 import {
+  Dialog,
+  DialogTitle,
+  DialogHeader,
   DialogContent,
   DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Dialog,
 } from '@/components/ui/dialog'
-
-import { BulkUpdateProductForm } from './bulk-update-form'
-import { Button } from '@/components/ui/button'
-import { useEffect, useState } from 'react'
-import { toast } from 'sonner'
 
 interface BulkUpdateProductDialogProps {
   products: Product[]
@@ -48,6 +49,7 @@ export function BulkUpdateProductDialog({
               Atualize as categorias dos produtos selecionados.
             </DialogDescription>
           </DialogHeader>
+
           <BulkUpdateProductForm products={products} setOpen={setOpen} />
         </DialogContent>
       </Dialog>

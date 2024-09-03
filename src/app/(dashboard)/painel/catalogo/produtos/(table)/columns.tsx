@@ -5,28 +5,17 @@ import { useState, useTransition } from 'react'
 
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
-import { ColumnDef } from '@tanstack/react-table'
-
 import { getRelativeDate } from '@/lib/date'
 
 import { Product } from '@/payload/payload-types'
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-
-import { Dialog } from '@/components/ui/dialog'
+import { Icons } from '@/components/icons'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button, buttonVariants } from '@/components/ui/button'
+
+import { ColumnDef } from '@tanstack/react-table'
 import { DataTableFilterField } from '@/components/table/types/table-types'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
-
-import { Eye, MoreHorizontal, Pencil, Printer, Trash2 } from 'lucide-react'
 
 import { deleteProduct } from '../_logic/actions'
 
@@ -121,11 +110,10 @@ export function getColumns(): ColumnDef<Product>[] {
                   buttonVariants({
                     size: 'icon',
                     variant: 'ghost',
-                    // className: 'rounded-full',
                   }),
                 )}
               >
-                <Eye className='h-5 w-5' />
+                <Icons.Look className='h-5 w-5' />
               </Link>
               <Link
                 href={`/painel/catalogo/produtos/${product.sku}?edit=true`}
@@ -133,11 +121,10 @@ export function getColumns(): ColumnDef<Product>[] {
                   buttonVariants({
                     size: 'icon',
                     variant: 'ghost',
-                    // className: 'rounded-full',
                   }),
                 )}
               >
-                <Pencil className='h-5 w-5' />
+                <Icons.Edit className='h-5 w-5' />
               </Link>
 
               <Button
@@ -145,18 +132,16 @@ export function getColumns(): ColumnDef<Product>[] {
                   e.preventDefault()
                   window.print()
                 }}
+                type='button'
                 size='icon'
                 variant='ghost'
-                type='button'
-                // className='rounded-full'
               >
-                <Printer className='h-5 w-5' />
+                <Icons.Print className='h-5 w-5' />
               </Button>
               <Button
-                // className='rounded-full'
+                type='button'
                 size='icon'
                 variant='ghost'
-                type='button'
                 onClick={() => {
                   startDeleteTransition(() => {
                     toast.promise(deleteProduct(product.id), {
@@ -168,7 +153,7 @@ export function getColumns(): ColumnDef<Product>[] {
                 }}
                 disabled={isDeletePending}
               >
-                <Trash2 className='h-5 w-5' />
+                <Icons.Trash className='h-5 w-5' />
               </Button>
             </div>
           )

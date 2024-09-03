@@ -7,18 +7,7 @@ import { toast } from 'sonner'
 
 import { Category, Product } from '@/payload/payload-types'
 
-import { Heart, Trash, X } from 'lucide-react'
-
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from './ui/drawer'
+import { Icons } from './icons'
 import { Card } from './ui/card'
 import { Badge } from './ui/badge'
 import { Button } from './ui/button'
@@ -28,6 +17,17 @@ import { ScrollArea } from './ui/scroll-area'
 
 import { Small } from './typography/texts'
 import { Heading } from '@/pegasus/heading'
+
+import {
+  Drawer,
+  DrawerTitle,
+  DrawerClose,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTrigger,
+  DrawerContent,
+  DrawerDescription,
+} from './ui/drawer'
 
 import { useCartStore } from './cart-store-provider'
 
@@ -96,7 +96,7 @@ export function FavoritesDrawer() {
           variant='ghost'
           onClick={() => setOpen(true)}
         >
-          <Heart className='h-6 w-6 group-hover:fill-white' />
+          <Icons.Favorite className='h-6 w-6 group-hover:fill-white' />
 
           {favorites.length > 0 && (
             <span className='absolute -right-2 -top-2 flex aspect-square min-h-5 w-fit items-center justify-center rounded-full bg-wotanRed-400 text-center leading-none'>
@@ -157,7 +157,7 @@ export function FavoritesDrawer() {
                     onClick={() => handleRemoveFavorite(product.id)}
                     className='z-50'
                   >
-                    <Trash />
+                    <Icons.Trash />
                   </Button>
                 </Card>
               ))}
@@ -165,14 +165,14 @@ export function FavoritesDrawer() {
 
           <DrawerFooter className='mt-6'>
             <Button onClick={() => handleClearFavorites()}>
-              <Trash className='mr-2 h-5 w-5' />
+              <Icons.Trash className='mr-2 h-5 w-5' />
               Limpar
             </Button>
           </DrawerFooter>
         </ScrollArea>
 
         <DrawerClose className='absolute right-4 top-12'>
-          <X className='h-5 w-5' />
+          <Icons.Close className='h-5 w-5' />
         </DrawerClose>
       </DrawerContent>
     </Drawer>

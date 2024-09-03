@@ -24,12 +24,12 @@ export async function getAttributes() {
 export async function getAttributeTypes() {
   noStore()
 
-  const response = await payload.find({
-    collection: 'attribute-types',
-    pagination: false,
-  })
-
   try {
+    const response = await payload.find({
+      collection: 'attribute-types',
+      pagination: false,
+    })
+
     return {
       data: response.docs,
     }

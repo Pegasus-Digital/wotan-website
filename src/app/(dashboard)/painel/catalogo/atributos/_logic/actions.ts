@@ -7,7 +7,7 @@ import { Attribute } from '@/payload/payload-types'
 
 import { ActionResponse } from '@/lib/actions'
 
-type SafeAttribute = Omit<Attribute, 'id' | 'createdAt' | 'updatedAt'>
+type SafeAttribute = Omit<Attribute, 'id' | 'createdAt' | 'updatedAt' | 'sizes'>
 
 interface CreateAttributeResponseData {
   attribute: Attribute | null
@@ -61,22 +61,23 @@ export async function deleteAttribute(
       return {
         data: null,
         status: false,
-        message: `[400] Não foi possível remover o atributo, é necessário remover o atributo de todos os produtos existentes.`,
+        message: `Não foi possível concluir a ação. Para remover um atributo é necessário que este não esteja contido em nenhum produto.`,
       }
     }
 
     const response = await payload.delete({
+      id: attributeId,
       collection: 'attributes',
-      where: {
-        id: { equals: attributeId },
-      },
     })
 
+    // @ts-ignore
     if (response.errors.length > 0) {
+      // @ts-ignore
+      console.log(JSON.stringify(response.errors.map((error) => error.message)))
       return {
         data: null,
         status: false,
-        message: `[400] Ocorreu um erro ao deletar o atributo. ${JSON.stringify(response.errors.map((error) => error.message))}`,
+        message: `[400] Ocorreu um erro ao deletar o atributo.`,
       }
     }
 
@@ -106,16 +107,14 @@ export async function updateAttribute(
 ): Promise<ActionResponse<UpdateAttributeResponseData>> {
   try {
     const response = await payload.update({
+      id: attribute.id,
       collection: 'attributes',
-      where: {
-        id: { equals: attribute.id },
-      },
       data: {
         ...attribute,
       },
     })
 
-    if (!response.docs[0]) {
+    if (!response) {
       return {
         data: null,
         status: false,
@@ -126,7 +125,7 @@ export async function updateAttribute(
     revalidatePath('/painel/catalogo/atributos')
 
     return {
-      data: { attribute: response.docs[0] },
+      data: { attribute: response },
       status: true,
       message: 'Atributo atualizado com sucesso.',
     }

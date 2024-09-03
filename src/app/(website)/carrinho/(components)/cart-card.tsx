@@ -5,11 +5,11 @@ import { Attribute, Product } from '@/payload/payload-types'
 import { toast } from 'sonner'
 
 import {
-  filterAttributesByNotType,
-  filterAttributesByType,
+  getUniqueTypes,
   findAttributeByValue,
   getProductAttributes,
-  getUniqueTypes,
+  filterAttributesByType,
+  filterAttributesByNotType,
 } from '@/lib/attribute-hooks'
 import { getForegroundColor } from '@/lib/color'
 
@@ -18,23 +18,21 @@ import { useCartStore } from '@/components/cart-store-provider'
 
 import {
   Select,
-  SelectContent,
   SelectItem,
-  SelectTrigger,
   SelectValue,
+  SelectTrigger,
+  SelectContent,
 } from '@/components/ui/select'
 
+import { Icons } from '@/components/icons'
 import { Media } from '@/components/media'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { LoadingSpinner } from '@/components/spinner'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 import { Heading } from '@/pegasus/heading'
 import { Small } from '@/components/typography/texts'
-
-import { Minus, Plus, Trash } from 'lucide-react'
 
 interface CartCardProps {
   cartItem: CartItem
@@ -219,7 +217,7 @@ function CartInteraction({
     remove(item.id)
 
     toast.error('Item removido do carrinho.', {
-      icon: <Trash className='h-5 w-5' />,
+      icon: <Icons.Trash className='h-5 w-5' />,
     })
   }
 
@@ -279,7 +277,7 @@ function CartInteraction({
           onClick={onAmountChange}
           className='aspect-square text-lg font-semibold hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
         >
-          <Minus className='h-5 w-5' />
+          <Icons.Minus className='h-5 w-5' />
         </Button>
 
         <Input
@@ -297,7 +295,7 @@ function CartInteraction({
           onClick={onAmountChange}
           className='aspect-square text-lg font-semibold hover:bg-primary hover:text-primary-foreground active:scale-110'
         >
-          <Plus className='h-5 w-5' />
+          <Icons.Plus className='h-5 w-5' />
         </Button>
       </div>
       <Button
@@ -306,7 +304,7 @@ function CartInteraction({
         onClick={onCartRemove}
         size='icon'
       >
-        <Trash className='h-5 w-5' />
+        <Icons.Trash className='h-5 w-5' />
       </Button>
     </div>
   )

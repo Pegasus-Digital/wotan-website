@@ -11,6 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { LowImpactHero } from '@/app/_sections/heros/lowImpact'
 
 import { Button } from '@/pegasus/button'
+import { Icons } from '@/components/icons'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -22,14 +23,12 @@ import { H3 } from '@/components/typography/headings'
 
 import {
   Form,
-  FormControl,
-  FormField,
   FormItem,
   FormLabel,
+  FormField,
   FormMessage,
+  FormControl,
 } from '@/components/ui/form'
-
-import { ArrowRight, Mail, MapPin, Phone } from 'lucide-react'
 
 const formSchema = z.object({
   name: z
@@ -312,7 +311,7 @@ export function ContactContent({ address, contact }) {
               <Button
                 type='submit'
                 variant='expandIcon'
-                Icon={ArrowRight}
+                Icon={Icons.ArrowRight}
                 iconPlacement='right'
                 className='font-medium shadow-wotan-light transition hover:brightness-125'
               >
@@ -339,7 +338,7 @@ export function ContactContent({ address, contact }) {
 
               {/* Address information */}
               <div className='flex items-center gap-2'>
-                <MapPin className='mr-2 h-5 w-5 shrink-0' />
+                <Icons.Pin className='mr-2 h-5 w-5 shrink-0' />
                 <Small className='flex items-center leading-snug'>
                   {`${address.street}, ${address.number} - ${address.neighborhood}, ${address.city} - ${address.state}, ${address.cep}`}
                 </Small>
@@ -352,7 +351,7 @@ export function ContactContent({ address, contact }) {
                   className='flex items-center'
                   target='_blank'
                 >
-                  <Phone className='mr-2 h-5 w-5' />
+                  <Icons.Phone className='mr-2 h-5 w-5' />
                   <Small className='whitespace-nowrap'>{contact.phone}</Small>
                 </Link>
 
@@ -361,7 +360,7 @@ export function ContactContent({ address, contact }) {
                   className='flex items-center'
                   target='_blank'
                 >
-                  <Mail className='mr-2 h-5 w-5' />
+                  <Icons.Mail className='mr-2 h-5 w-5' />
                   <Small className='whitespace-nowrap'>{contact.email}</Small>
                 </Link>
               </div>

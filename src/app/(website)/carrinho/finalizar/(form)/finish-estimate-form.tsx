@@ -8,33 +8,32 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 import { toast } from 'sonner'
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-
-import { useCartStore } from '@/components/cart-store-provider'
-
 import { Button } from '@/pegasus/button'
+import { Icons } from '@/components/icons'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Lead, P, Small } from '@/components/typography/texts'
 
-import { Send } from 'lucide-react'
+import {
+  Card,
+  CardTitle,
+  CardFooter,
+  CardHeader,
+  CardContent,
+  CardDescription,
+} from '@/components/ui/card'
+
+import {
+  Form,
+  FormItem,
+  FormLabel,
+  FormField,
+  FormControl,
+  FormMessage,
+} from '@/components/ui/form'
+
+import { useCartStore } from '@/components/cart-store-provider'
 
 const cartSchema = z.array(
   z.object({
@@ -277,7 +276,7 @@ export function FinishEstimateForm() {
             <Button
               className='self-end transition-colors hover:brightness-125'
               variant='expandIcon'
-              Icon={Send}
+              Icon={Icons.Message}
               iconPlacement='right'
               size='lg'
             >

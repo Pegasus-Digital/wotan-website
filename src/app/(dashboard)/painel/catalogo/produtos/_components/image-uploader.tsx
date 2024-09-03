@@ -1,16 +1,14 @@
 'use client'
 
 import { useCallback, useState } from 'react'
+
+import { toast } from 'sonner'
 import { useDropzone } from 'react-dropzone'
+import { getFileIconAndColor } from '@/lib/upload'
 
 import { Media } from '@/payload/payload-types'
 
-import { toast } from 'sonner'
-
-import { getFileIconAndColor } from '@/lib/upload'
-
-import { UploadCloud, X } from 'lucide-react'
-
+import { Icons } from '@/components/icons'
 import { Input } from '@/components/ui/input'
 import { ProgressBar } from '@/components/ui/progress'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -25,9 +23,13 @@ interface FileUploadProgress {
 
 interface ImageUploaderProps {
   setMedia: any
+  readonly?: boolean
 }
 
-export function ImageUploader({ setMedia }: ImageUploaderProps) {
+export function ImageUploader({
+  setMedia,
+  readonly = false,
+}: ImageUploaderProps) {
   const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([])
 
   const uploadImageToPayload = async (formData: FormData) => {
@@ -96,6 +98,10 @@ export function ImageUploader({ setMedia }: ImageUploaderProps) {
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop })
 
+  if (readonly === true) {
+    return
+  }
+
   return (
     <div>
       <div>
@@ -105,7 +111,7 @@ export function ImageUploader({ setMedia }: ImageUploaderProps) {
         >
           <div className='text-center'>
             <div className='mx-auto max-w-min rounded-full bg-emerald-100 p-2'>
-              <UploadCloud size={20} />
+              <Icons.Upload className='h-5 w-5' />
             </div>
 
             <Lead className='text-md mt-2 font-semibold'>
@@ -166,9 +172,9 @@ export function ImageUploader({ setMedia }: ImageUploaderProps) {
                       onClick={() => {
                         removeFile(fileUploadProgress.File)
                       }}
-                      className='hidden cursor-pointer items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex'
+                      className='hidden cursor-pointer items-center justify-center bg-destructive px-2 text-white transition-all group-hover:flex'
                     >
-                      <X size={20} />
+                      <Icons.Close className='h-5 w-5' />
                     </button>
                   </div>
                 )

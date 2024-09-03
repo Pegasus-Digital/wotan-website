@@ -1,8 +1,18 @@
 'use client'
 
+import { Company } from '@/payload/payload-types'
+
+import { toast } from 'sonner'
+import { BRAZIL_STATES } from '@/lib/brazil-states'
+
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { H3 } from '@/components/typography/headings'
 
 import {
   Form,
@@ -13,22 +23,15 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { H3 } from '@/components/typography/headings'
-import { Company } from '@/payload/payload-types'
-import { updateCompanySettings } from '../_logic/actions'
 import {
   Select,
-  SelectContent,
   SelectItem,
-  SelectTrigger,
   SelectValue,
+  SelectTrigger,
+  SelectContent,
 } from '@/components/ui/select'
 
-import { BRAZIL_STATES } from '@/lib/brazil-states'
-import { toast } from 'sonner'
-import { Textarea } from '@/components/ui/textarea'
+import { updateCompanySettings } from '../_logic/actions'
 
 const addressSettingsFormSchema = z.object({
   street: z.string(),
