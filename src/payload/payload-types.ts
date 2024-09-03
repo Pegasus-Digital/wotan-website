@@ -202,18 +202,35 @@ export interface Order {
   incrementalId?: number | null;
   client: string | Client;
   contact: string;
+  alternativeContact?: {
+    name?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    whatsapp?: string | null;
+  };
+  adress?: Address;
   salesperson?: (string | null) | Salesperson;
-  products?:
+  itens?:
     | {
-        code: string;
-        description: string;
-        quantity: number;
+        product: string | Product;
+        quantity?: number | null;
         price: number;
+        attributes?: (string | Attribute)[] | null;
         print?: string | null;
-        sample?: string | null;
+        sample?: boolean | null;
+        layoutSent?: boolean | null;
+        layoutApproved?: boolean | null;
         id?: string | null;
       }[]
     | null;
+  shippingTime?: string | null;
+  shippingCompany?: string | null;
+  shippingType?: ('cif' | 'fob') | null;
+  paymentConditions?: string | null;
+  paymentType?: ('boleto' | 'cheque' | 'deposito') | null;
+  agency?: string | null;
+  commission?: number | null;
+  notes?: string | null;
   status?: ('pending' | 'completed' | 'cancelled') | null;
   updatedAt: string;
   createdAt: string;
