@@ -3,6 +3,7 @@
 import { Company } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
+import { formatPhoneNumber } from '@/lib/format'
 
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -42,17 +43,6 @@ export function ContactSettingsForm({ company }: CompanyProps) {
       whatsapp: company.contact.whatsapp,
     },
   })
-
-  function formatPhoneNumber(value: string) {
-    const phoneNumber = value // <-- nº de celular não formatado
-
-    const formattedPhoneNumber = phoneNumber
-      .replace(/\D/g, '')
-      .replace(/(\d{2})(\d)/, '($1) $2')
-      .replace(/(\d)(\d{4})$/, '$1-$2')
-
-    return formattedPhoneNumber
-  }
 
   async function onSubmit(values: z.infer<typeof contactSettingsSchema>) {
     const response = await updateCompanySettings({

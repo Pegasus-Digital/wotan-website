@@ -2,7 +2,9 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+
 import { toast } from 'sonner'
+import { formatCNPJ, formatPhoneNumber } from '@/lib/format'
 
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -29,6 +31,8 @@ import {
   FormMessage,
   FormControl,
 } from '@/components/ui/form'
+
+import { createMessage } from '@/app/(dashboard)/painel/contato/_logic/actions'
 
 const formSchema = z.object({
   name: z
@@ -74,54 +78,25 @@ export function ContactContent({ address, contact }) {
       return
     }
 
-    try {
-      const response = await fetch('api/contact-form', {
-        method: 'POST',
-        body: JSON.stringify({
-          acceptPrivacy: values.acceptPrivacyPolicy,
-          email: values.email,
-          cnpj: values.cnpj,
-          message: values.message,
-          phone: values.phone,
-          name: values.name,
-          acceptEmail: values.allowNotifications,
-        }),
-      })
-      const data = await response.json()
-      if (data) {
-        toast.success('Formulário enviado com sucesso!')
-      } else {
-        toast.warning('Ocorreu um erro ao enviar os dados.')
-      }
-    } catch (err) {
-      toast.warning('Ocorreu um erro ao enviar os dados.')
-      console.log(err)
+    const response = await createMessage({
+      message: {
+        acceptPrivacy: values.acceptPrivacyPolicy,
+        email: values.email,
+        cnpj: values.cnpj,
+        message: values.message,
+        fone: values.phone,
+        name: values.name,
+        acceptEmail: values.allowNotifications,
+      },
+    })
+
+    if (response.status === true) {
+      return toast.success('Recebemos o contato com sucesso!')
     }
-  }
 
-  function formatCNPJ(value: string) {
-    const unformattedCNPJ = value
-
-    const formattedCNPJ = unformattedCNPJ
-      .replace(/\D/g, '')
-      .replace(/(\d{2})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1/$2')
-      .replace(/(\d{4})(\d)/, '$1-$2')
-      .replace(/(-\d{2})\d+?$/, '$1')
-
-    return formattedCNPJ
-  }
-
-  function formatPhoneNumber(value: string) {
-    const phoneNumber = value // <-- nº de celular não formatado
-
-    const formattedPhoneNumber = phoneNumber
-      .replace(/\D/g, '')
-      .replace(/(\d{2})(\d)/, '($1) $2')
-      .replace(/(\d)(\d{4})$/, '$1-$2')
-
-    return formattedPhoneNumber
+    if (response.status === false) {
+      return toast.error('Ocorreu um erro ao receber sua mensagem.')
+    }
   }
 
   function changeCNPJRadio(e: string) {

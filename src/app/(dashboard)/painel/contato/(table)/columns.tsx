@@ -34,7 +34,7 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
 
-import { readMessage } from '../_logic/actions'
+import { archiveMessage, readMessage } from '../_logic/actions'
 
 export const filterFields: DataTableFilterField<ContactMessage>[] = [
   {
@@ -170,7 +170,21 @@ export function getColumns(): ColumnDef<ContactMessage>[] {
     {
       id: 'actions',
       header: () => <span className='text-right'>Interações</span>,
-      cell: () => {
+      cell: ({ row }) => {
+        const message = row.original
+
+        async function handleArchiveMessage() {
+          const response = await archiveMessage({ message })
+
+          if (response.status === true) {
+            toast.success(response.message)
+          }
+
+          if (response.status === false) {
+            toast.error(response.message)
+          }
+        }
+
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -184,7 +198,10 @@ export function getColumns(): ColumnDef<ContactMessage>[] {
 
               <DropdownMenuSeparator />
 
-              <DropdownMenuItem className='cursor-pointer'>
+              <DropdownMenuItem
+                onClick={handleArchiveMessage}
+                className='cursor-pointer'
+              >
                 Arquivar mensagem
               </DropdownMenuItem>
             </DropdownMenuContent>

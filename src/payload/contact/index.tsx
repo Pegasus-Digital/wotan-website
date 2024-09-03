@@ -52,6 +52,12 @@ const Contact: CollectionConfig = {
       relationTo: 'salespersons',
       type: 'relationship',
     },
+    {
+      name: 'archived',
+      type: 'checkbox',
+      defaultValue: false,
+      required: true,
+    },
   ],
   timestamps: true,
 }

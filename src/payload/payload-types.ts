@@ -582,6 +582,7 @@ export interface ContactMessage {
   acceptPrivacy: boolean;
   read?: boolean | null;
   contactedBy?: (string | null) | Salesperson;
+  archived?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
