@@ -89,8 +89,8 @@ export function getColumns(): ColumnDef<Budget>[] {
         if (!value)
           return (
             <div className='flex items-center space-x-2'>
-              <div className='flex h-5 w-5 items-center justify-center rounded-full bg-gray-300  p-1'>
-                <Icons.Add className='h-3 w-3 text-gray-600' />
+              <div className='flex h-5 w-5 items-center justify-center rounded-full bg-muted  p-1'>
+                <Icons.User className='h-3 w-3 text-muted-foreground' />
               </div>
 
               <p className='font-bold'>Nenhum</p>

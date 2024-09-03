@@ -68,8 +68,8 @@ export function getColumns(): ColumnDef<Salesperson>[] {
         // console.log(value)
         if (!value)
           return (
-            <div className='flex h-8 w-8 items-center justify-center rounded-full bg-gray-300  p-1'>
-              <Icons.User className='h-5 w-5 text-gray-600' />
+            <div className='flex h-8 w-8 items-center justify-center rounded-full bg-muted p-1'>
+              <Icons.User className='h-5 w-5 text-muted-foreground' />
             </div>
           )
 
