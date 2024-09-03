@@ -3,12 +3,10 @@ import { NewBudgetContent } from './content'
 import { getClients, getSalespeople } from '../_logic/queries'
 
 export default async function NewBudget() {
-  const { data: salespeopleData } = await getSalespeople()
-
-  // Fetch clients data
-  const { data: clientsData } = await getClients()
+  const salespeople = await getSalespeople()
+  const clients = await getClients()
 
   return (
-    <NewBudgetContent salespeople={salespeopleData} clients={clientsData} />
+    <NewBudgetContent salespeople={salespeople.data} clients={clients.data} />
   )
 }

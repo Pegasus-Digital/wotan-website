@@ -142,7 +142,7 @@ export function UpdateProductForm({
     },
   })
 
-  const { fields, append, remove, update } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: 'priceQuantityTable',
   })
@@ -161,6 +161,22 @@ export function UpdateProductForm({
       priceQuantityTable,
     } = values
 
+    const quantities = priceQuantityTable.map((entry) => entry.quantity)
+    const quantitiesSet = new Set(quantities)
+
+    if (quantitiesSet.size !== quantities.length) {
+      return toast.error(
+        'A tabela preço-quantidades contém entradas duplicadas.',
+      )
+    }
+
+    // Order quantities
+    const sortedQuantityTable = priceQuantityTable.sort((a, b) => {
+      if (a.quantity > b.quantity) return 1
+      if (a.quantity < b.quantity) return -1
+      if (a.quantity === b.quantity) return 0
+    })
+
     if (!featured || featured === '') {
       return toast.error(
         'Você deve escolher uma imagem em destaque para o produto.',
@@ -172,7 +188,7 @@ export function UpdateProductForm({
       title,
       description,
       minimumQuantity,
-      priceQuantityTable,
+      priceQuantityTable: sortedQuantityTable,
       active,
 
       featuredImage: featured,
@@ -200,6 +216,11 @@ export function UpdateProductForm({
   }
 
   const parseValue = (formattedValue: string) => {
+    // Solves edge case - CTRL + A -> Backspace was resulting in NaN,NaN
+    if (formattedValue.length === 0) {
+      return parseInt('0,00')
+    }
+
     const numericValue = formattedValue.replace(/\D/g, '') // Remove non-numeric characters
     return parseInt(numericValue, 10)
   }
@@ -343,13 +364,13 @@ export function UpdateProductForm({
             <p className='my-2 text-sm font-medium text-muted-foreground'>
               Arquivos salvos
             </p>
-            <div className='space-y-2 pr-3'>
+            <div className='space-y-2 rounded-lg transition-all hover:bg-muted/40'>
               <RadioGroup onValueChange={(value) => setFeatured(value)}>
                 {images.map((file) => {
                   return (
                     <div
                       key={file.id}
-                      className='group flex w-full justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 pr-2 transition-all hover:border-slate-300 hover:pr-0'
+                      className='group flex w-full justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 hover:border-slate-300'
                     >
                       <div className='flex flex-1 items-center p-2'>
                         <div>

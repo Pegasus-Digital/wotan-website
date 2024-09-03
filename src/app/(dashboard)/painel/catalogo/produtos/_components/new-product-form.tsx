@@ -140,8 +140,6 @@ export function NewProductForm() {
   const { isSubmitting } = useFormState({ control: form.control })
 
   async function onSubmit(values: z.infer<typeof newProductSchema>) {
-    // console.log(values)
-
     const {
       sku,
       title,
@@ -159,12 +157,19 @@ export function NewProductForm() {
       )
     }
 
+    // Order quantities
+    const sortedQuantityTable = priceQuantityTable.sort((a, b) => {
+      if (a.quantity > b.quantity) return 1
+      if (a.quantity < b.quantity) return -1
+      if (a.quantity === b.quantity) return 0
+    })
+
     const response = await createProduct({
       sku,
       title,
       description,
       minimumQuantity,
-      priceQuantityTable,
+      priceQuantityTable: sortedQuantityTable,
       active,
 
       // Placeholder image id
@@ -196,6 +201,11 @@ export function NewProductForm() {
   }
 
   const parseValue = (formattedValue: string) => {
+    // Solves edge case - CTRL + A -> Backspace was resulting in NaN,NaN
+    if (formattedValue.length === 0) {
+      return parseInt('0,00')
+    }
+
     const numericValue = formattedValue.replace(/\D/g, '') // Remove non-numeric characters
     return parseInt(numericValue, 10)
   }
@@ -320,13 +330,13 @@ export function NewProductForm() {
             <p className='my-2 text-sm font-medium text-muted-foreground'>
               Arquivos salvos
             </p>
-            <div className='space-y-2 pr-3'>
+            <div className='space-y-2 rounded-lg transition-all hover:bg-muted/40'>
               <RadioGroup onValueChange={(value) => setFeatured(value)}>
                 {images.map((file) => {
                   return (
                     <div
                       key={file.id}
-                      className='group flex w-full justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 pr-2 transition-all hover:border-slate-300 hover:pr-0'
+                      className='group flex w-full justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 hover:border-slate-300'
                     >
                       <div className='flex flex-1 items-center p-2'>
                         <div>
