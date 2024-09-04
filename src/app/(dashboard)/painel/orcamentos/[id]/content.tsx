@@ -68,6 +68,11 @@ import {
 
 import { UpdateBudget } from '../_logic/actions'
 import { budgetSchema } from '../_logic/validation'
+import {
+  formatBRLWithoutPrefix,
+  formatPhoneNumber,
+  parseValue,
+} from '@/lib/format'
 
 type BudgetProps = z.infer<typeof budgetSchema>
 
@@ -108,7 +113,9 @@ export function SeeBudgetContent({
         customerName: budget.contact.customerName,
         email: budget.contact.email,
         phone: budget.contact.phone,
+        details: budget.contact.details,
       },
+      comissioned: budget.comissioned,
       items: budget.items.map((item) => ({
         product:
           typeof item.product === 'string'
@@ -124,7 +131,7 @@ export function SeeBudgetContent({
         // attributes: item.attributes,
         description: item.description ? item.description : '',
         quantity: item.quantity,
-        price: item.price ? item.price.toString() : '',
+        price: item.price,
       })),
     },
   })
@@ -139,9 +146,20 @@ export function SeeBudgetContent({
 
   const { isSubmitting } = useFormState({ control: form.control })
 
-  async function onSubmit(values: BudgetProps) {
-    // console.log('foi carai', values)
+  function getSalespersonName(salespersonId: string): string {
+    // If we're not in edit mode, salesperson name needs to come from budget.salesperson.name
+    if (editMode) {
+      const salesperson = budget.salesperson as Salesperson
+      return salesperson.name
+    }
 
+    return (
+      salespeople.find((person) => person.id === salespersonId).name ??
+      'Não encontrado'
+    )
+  }
+
+  async function onSubmit(values: BudgetProps) {
     const response = await UpdateBudget({
       budget: {
         ...values,
@@ -156,6 +174,7 @@ export function SeeBudgetContent({
             : null,
           email: values.contact.email ? values.contact.email : null,
           phone: values.contact.phone ? values.contact.phone : null,
+          details: values.contact.details ? values.contact.details : null,
         },
         items: values.items.map((item) => ({
           // ...item,
@@ -189,7 +208,7 @@ export function SeeBudgetContent({
       <Separator className='mb-4' />
       <Form {...form}>
         {!editMode && (
-          <div className='sticky top-0 z-10 flex  items-center justify-between border-b bg-background px-4 pb-6 pt-8 '>
+          <div className='sticky top-0 z-30 flex  items-center justify-between border-b bg-background px-4 pb-6 pt-8 '>
             <Heading variant='h5'>
               {budget.contact.companyName || 'Novo orçamento'}
             </Heading>
@@ -275,6 +294,13 @@ export function SeeBudgetContent({
                         <FormControl>
                           <Input
                             {...field}
+                            minLength={14}
+                            maxLength={15}
+                            onChange={(e) => {
+                              const { value } = e.target
+                              e.target.value = formatPhoneNumber(value)
+                              field.onChange(e)
+                            }}
                             disabled={editMode}
                             className='disabled:opacity-100'
                           />
@@ -293,11 +319,16 @@ export function SeeBudgetContent({
                   <div className='space-y-1'>
                     <Label>Cliente</Label>
 
-                    <Select disabled={editMode}>
+                    <Select
+                      onValueChange={(e) => {
+                        console.log('detectei mudança nessa porra', e)
+                      }}
+                      disabled={editMode}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder='Selecione um Cliente' />
                       </SelectTrigger>
-                      {!editMode ? (
+                      {!editMode && (
                         <SelectContent side='bottom'>
                           {typeof clients === 'object' &&
                           clients.length === 0 ? (
@@ -305,7 +336,6 @@ export function SeeBudgetContent({
                               Você ainda não possui nenhum cliente.
                             </SelectItem>
                           ) : (
-                            typeof clients === 'object' &&
                             clients.map((client) => (
                               <SelectItem key={client.id} value={client.id}>
                                 {client.name}
@@ -313,8 +343,6 @@ export function SeeBudgetContent({
                             ))
                           )}
                         </SelectContent>
-                      ) : (
-                        <></>
                       )}
                     </Select>
                   </div>
@@ -342,16 +370,15 @@ export function SeeBudgetContent({
                 <div className='col-span-3'>
                   <FormField
                     control={form.control}
-                    name='contact.companyName'
+                    name='contact.details'
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Observações</FormLabel>
                         <FormControl>
                           <Textarea
-                            {...field}
                             disabled={editMode}
-                            value={budget.contact.details}
                             className='min-h-24 disabled:cursor-text disabled:opacity-100'
+                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
@@ -371,14 +398,8 @@ export function SeeBudgetContent({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Vendedor</FormLabel>
-                  <Select
-                    onValueChange={(value) => {
-                      field.onChange(value)
-                      // setSalespersonId(value)
-                    }}
-                    disabled={editMode}
-                    value={field.value}
-                  >
+
+                  <Select onValueChange={field.onChange} disabled={editMode}>
                     <SelectTrigger className='disabled:opacity-100'>
                       {typeof budget.salesperson === 'object' ? (
                         <div className='flex items-center space-x-2'>
@@ -389,7 +410,7 @@ export function SeeBudgetContent({
                               width={20}
                               height={20}
                               src={budget.salesperson.avatar.url}
-                              alt={budget.salesperson.name} // Use name for the alt attribute for better accessibility
+                              alt={budget.salesperson.name}
                               className='select-none rounded-full'
                             />
                           ) : (
@@ -399,44 +420,41 @@ export function SeeBudgetContent({
                           )}
 
                           <p className='font-semibold'>
-                            {budget.salesperson.name}
+                            {getSalespersonName(field.value)}
                           </p>
                         </div>
                       ) : (
                         <SelectValue placeholder='Selecione um Vendedor' />
                       )}
                     </SelectTrigger>
-                    {!editMode ? (
-                      <SelectContent side='bottom'>
-                        <SelectGroup>
-                          <SelectLabel>Vendedor Interno</SelectLabel>
-                          {typeof salespeople === 'object' &&
-                            salespeople
-                              .filter((person) => person.roles === 'internal')
-                              .map((person) => (
-                                <SelectItem key={person.id} value={person.name}>
-                                  {person.name}
-                                </SelectItem>
-                              ))}
-                        </SelectGroup>
-                        <SelectSeparator />
-                        <SelectGroup>
-                          <SelectLabel>Representante Externo</SelectLabel>
-                          {salespeople &&
-                            salespeople
-                              .filter(
-                                (person) => person.roles === 'representative',
-                              )
-                              .map((person) => (
-                                <SelectItem key={person.id} value='salesperson'>
-                                  {person.name}
-                                </SelectItem>
-                              ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    ) : (
-                      <></>
-                    )}
+                    <SelectContent side='bottom'>
+                      <SelectGroup>
+                        <SelectLabel>Vendedor Interno</SelectLabel>
+                        {salespeople &&
+                          typeof salespeople === 'object' &&
+                          salespeople
+                            .filter((person) => person.roles === 'internal')
+                            .map((person) => (
+                              <SelectItem key={person.id} value={person.id}>
+                                {person.name}
+                              </SelectItem>
+                            ))}
+                      </SelectGroup>
+                      <SelectSeparator />
+                      <SelectGroup>
+                        <SelectLabel>Representante Externo</SelectLabel>
+                        {salespeople &&
+                          salespeople
+                            .filter(
+                              (person) => person.roles === 'representative',
+                            )
+                            .map((person) => (
+                              <SelectItem key={person.id} value={person.id}>
+                                {person.name}
+                              </SelectItem>
+                            ))}
+                      </SelectGroup>
+                    </SelectContent>
                   </Select>
                   <FormMessage />
                 </FormItem>
@@ -475,7 +493,6 @@ export function SeeBudgetContent({
                   <Textarea
                     {...field}
                     disabled={editMode}
-                    value={budget.conditions}
                     className='min-h-32 disabled:cursor-text disabled:opacity-100'
                   />
                 </FormControl>
@@ -583,10 +600,12 @@ export function SeeBudgetContent({
                                   <Input
                                     {...field}
                                     disabled={editMode}
-                                    // value={formatValue(field.value)}
-                                    // onChange={(e) => {
-                                    //   field.onChange(parseValue(e.target.value))
-                                    // }}
+                                    value={formatBRLWithoutPrefix(
+                                      Number(field.value),
+                                    )}
+                                    onChange={(e) => {
+                                      field.onChange(parseValue(e.target.value))
+                                    }}
                                     inputMode='numeric'
                                     placeholder='0,00'
                                     className='disabled:opacity-100'
@@ -603,7 +622,14 @@ export function SeeBudgetContent({
                           <Button
                             type='button'
                             size='icon'
-                            onClick={() => remove(index)}
+                            onClick={() => {
+                              if (fields.length === 1) {
+                                return toast.error(
+                                  'Não foi possível remover o produto. Um orçamento deve conter pelo menos um item.',
+                                )
+                              }
+                              remove(index)
+                            }}
                             variant='destructive'
                             disabled={editMode}
                           >
@@ -626,7 +652,7 @@ export function SeeBudgetContent({
           append({
             quantity: product.minimumQuantity,
             description: product.description,
-            price: '',
+            price: 0,
             product: {
               featuredImage: product.featuredImage,
               title: product.title,

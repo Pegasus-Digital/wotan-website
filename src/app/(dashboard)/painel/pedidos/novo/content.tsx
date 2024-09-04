@@ -89,6 +89,7 @@ import {
 
 import { createOrder } from '../_logic/actions'
 import { orderSchema } from '../_logic/validation'
+import { parseValue } from '@/lib/format'
 
 type OrderProps = z.infer<typeof orderSchema>
 
@@ -126,11 +127,6 @@ export function SeeOrderContent({
     const integerPart = Math.floor(value / 100).toString()
     const decimalPart = (value % 100).toString().padStart(2, '0')
     return `${integerPart},${decimalPart}`
-  }
-
-  const parseValue = (formattedValue: string) => {
-    const numericValue = formattedValue.replace(/\D/g, '') // Remove non-numeric characters
-    return parseInt(numericValue, 10)
   }
 
   const { isSubmitting } = useFormState({ control: form.control })
