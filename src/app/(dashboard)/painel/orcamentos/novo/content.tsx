@@ -126,6 +126,7 @@ export function NewBudgetContent({
         quantity: item.quantity,
         price: Number(item.price),
       })),
+      origin: 'interno',
     })
 
     if (response.status === true) {

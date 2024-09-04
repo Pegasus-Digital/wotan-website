@@ -73,7 +73,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import update from 'payload/dist/collections/operations/update'
-import { createBudget } from '../_logic/actions'
+import { UpdateBudget, createBudget } from '../_logic/actions'
 import { toast } from 'sonner'
 
 type BudgetProps = z.infer<typeof budgetSchema>
@@ -148,8 +148,44 @@ export function SeeBudgetContent({
 
   async function onSubmit(values: BudgetProps) {
     // console.log('foi carai', values)
+
+    const response = await UpdateBudget({
+      budget: {
+        ...values,
+
+        contact: {
+          // ...values.contact,
+          companyName: values.contact.companyName
+            ? values.contact.companyName
+            : null,
+          customerName: values.contact.customerName
+            ? values.contact.customerName
+            : null,
+          email: values.contact.email ? values.contact.email : null,
+          phone: values.contact.phone ? values.contact.phone : null,
+        },
+        items: values.items.map((item) => ({
+          // ...item,
+          product:
+            typeof item.product === 'string' ? item.product : item.product.id,
+          // attributes: item.attributes,
+          description: item.description ? item.description : '',
+          quantity: item.quantity,
+          price: item.price ? Number(item.price) : null,
+        })),
+      },
+      id: budget.id,
+    })
+
+    if (response.status === true) {
+      toast.success('Orcamento atualizado com sucesso')
+      router.push('/painel/orcamentos')
+    }
+
+    if (response.status === false) {
+      toast.error(response.message)
+    }
   }
-  // console.log(budget)
 
   return (
     <Content>

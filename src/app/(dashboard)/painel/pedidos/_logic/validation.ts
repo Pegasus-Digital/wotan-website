@@ -19,7 +19,38 @@ export const orderSchema = z.object({
       neighborhood: z.string().optional(),
       zipCode: z.string().optional(),
       city: z.string().optional(),
-      state: z.string().optional(),
+      state: z
+        .enum([
+          'AC',
+          'AL',
+          'AP',
+          'AM',
+          'BA',
+          'CE',
+          'DF',
+          'ES',
+          'GO',
+          'MA',
+          'MS',
+          'MT',
+          'MG',
+          'PA',
+          'PB',
+          'PR',
+          'PE',
+          'PI',
+          'RJ',
+          'RN',
+          'RS',
+          'RO',
+          'RR',
+          'SC',
+          'SP',
+          'SE',
+          'TO',
+        ])
+        .nullable()
+        .optional(),
     })
     .optional(),
   salesperson: z.string(),
@@ -27,8 +58,10 @@ export const orderSchema = z.object({
     .array(
       z.object({
         product: z.union([z.string(), productSchema]),
-        quantity: z.number().positive().optional(),
-        price: z.number().positive({ message: 'Preço deve ser positivo' }),
+        quantity: z.coerce.number().positive().optional(),
+        price: z.coerce
+          .number()
+          .positive({ message: 'Preço deve ser positivo' }),
         attributes: z.array(z.string()).optional(),
         print: z.string().optional(),
         sample: z.boolean().optional(),
@@ -43,7 +76,7 @@ export const orderSchema = z.object({
   paymentConditions: z.string().optional(),
   paymentType: z.enum(['boleto', 'cheque', 'deposito']).optional(),
   agency: z.string().optional(),
-  commission: z.number().optional(),
+  commission: z.coerce.number().optional(),
   notes: z.string().optional(),
   status: z.enum(['pending', 'completed', 'cancelled']).optional(),
 })

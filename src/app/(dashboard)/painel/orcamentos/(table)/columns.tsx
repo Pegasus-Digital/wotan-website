@@ -52,7 +52,7 @@ import {
 } from 'lucide-react'
 import { DataTableFilterField } from '@/components/table/types/table-types'
 import { toast } from 'sonner'
-import { deleteEstimate } from '../_logic/actions'
+import { deleteBudget } from '../_logic/actions'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -218,6 +218,18 @@ export function getColumns(): ColumnDef<Budget>[] {
       },
     },
     {
+      id: 'origin',
+      header: 'Origem',
+      cell: ({ row }) => {
+        const { origin } = row.original
+        return (
+          <Label className='capitalize'>
+            {origin === 'interno' ? 'Interno' : 'Website'}
+          </Label>
+        )
+      },
+    },
+    {
       id: 'status',
       header: 'Status',
       cell: ({ row }) => {
@@ -265,7 +277,7 @@ export function getColumns(): ColumnDef<Budget>[] {
             <DropdownMenuItem
               onClick={() => {
                 startDeleteTransition(() => {
-                  toast.promise(deleteEstimate({ estimateId: budget.id }), {
+                  toast.promise(deleteBudget({ budgetId: budget.id }), {
                     loading: 'Deletando...',
                     success: 'Orçamento deletado com sucesso',
                     error: 'Erro ao deletar orçamento...',

@@ -92,10 +92,10 @@ export const budgetSchema = z.object({
     }),
   ),
   contact: z.object({
-    companyName: z.string(),
-    customerName: z.string(),
-    email: z.string(),
-    phone: z.string(),
+    companyName: z.string().optional().nullable(),
+    customerName: z.string().optional().nullable(),
+    email: z.string().optional().nullable(),
+    phone: z.string().optional().nullable(),
     details: z.string().optional().nullable(),
   }),
 })

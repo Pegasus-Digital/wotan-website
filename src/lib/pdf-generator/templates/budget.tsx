@@ -120,8 +120,7 @@ export function BudgetDocument({ budget }: BudgetDocumentProps) {
                 {salesperson ? salesperson.name : 'Não há vendedor associado.'}
               </Text>
               <Text>Email: {salesperson ? salesperson.email : '-'}</Text>
-              {/* TODO: Definir o que é essa classe */}
-              <Text>Classe: (?)</Text>
+              <Text>Classe: {budget.comissioned ? 'S' : 'N'}</Text>
             </View>
           </View>
         </View>

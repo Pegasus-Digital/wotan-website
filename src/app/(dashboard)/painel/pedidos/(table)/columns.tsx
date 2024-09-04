@@ -23,6 +23,7 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
 
@@ -39,13 +40,21 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Heading } from '@/pegasus/heading'
 import { Small } from '@/components/typography/texts'
 
-import { Eye, MoreHorizontal, Pencil, Printer, UserRound } from 'lucide-react'
+import {
+  Eye,
+  LinkIcon,
+  MoreHorizontal,
+  Pencil,
+  Printer,
+  UserRound,
+} from 'lucide-react'
 import { DataTableFilterField } from '@/components/table/types/table-types'
 import { toast } from 'sonner'
-import { deleteEstimate } from '../_logic/actions'
+import { deleteOrder } from '../_logic/actions'
 import Link from 'next/link'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 import Image from 'next/image'
+import { OrderDocumentDownloader } from '../_components/pdf-downloader'
 
 export const filterFields: DataTableFilterField<Order>[] = [
   // {
@@ -100,9 +109,21 @@ export function getColumns(): ColumnDef<Order>[] {
       },
     },
     {
-      id: 'company',
+      id: 'client',
       // accessorFn: (row) => row.contact.companyName,
       header: 'Cliente',
+      cell: ({ row }) => {
+        const { client } = row.original
+        return (
+          <p className='font-bold'>
+            {typeof client === 'object'
+              ? client.razaosocial
+                ? client.razaosocial
+                : client.name
+              : client}
+          </p>
+        )
+      },
     },
     {
       id: 'salesperson',
@@ -145,15 +166,15 @@ export function getColumns(): ColumnDef<Order>[] {
       },
     },
     {
-      accessorKey: 'items',
+      accessorKey: 'itens',
       header: 'Itens',
       cell: ({ row }) => {
-        const items: any[] = row.getValue('items')
+        const items: any[] = row.getValue('itens')
 
         return (
           <Card className='w-fit border-transparent p-2'>
             <CardContent className='m-0 space-y-2 p-0'>
-              {/* {items.map((item, index) => {
+              {items.map((item, index) => {
                 return (
                   <div
                     key={item.id + '-' + index}
@@ -165,7 +186,7 @@ export function getColumns(): ColumnDef<Order>[] {
                     <Badge className='w-fit'>{item.product.title}</Badge>
                   </div>
                 )
-              })} */}
+              })}
             </CardContent>
           </Card>
         )
@@ -187,9 +208,10 @@ export function getColumns(): ColumnDef<Order>[] {
     {
       id: 'actions',
       header: () => <span className='text-right'>Interações</span>,
-
       cell: ({ row }) => {
         const order = row.original
+
+        const [downloaderDialog, setDownloaderDialog] = useState(false)
 
         function DeleteEstimateAction() {
           const [isDeletePending, startDeleteTransition] = useTransition()
@@ -198,44 +220,22 @@ export function getColumns(): ColumnDef<Order>[] {
             <DropdownMenuItem
               onClick={() => {
                 startDeleteTransition(() => {
-                  toast.promise(deleteEstimate({ estimateId: order.id }), {
+                  toast.promise(deleteOrder({ orderId: order.id }), {
                     loading: 'Deletando...',
-                    success: 'Orçamento deletado com sucesso',
-                    error: 'Erro ao deletar orçamento...',
+                    success: 'Pedido deletado com sucesso',
+                    error: 'Erro ao deletar pedido...',
                   })
                 })
               }}
               className='cursor-pointer'
               disabled={isDeletePending}
             >
-              Deletar orçamento
+              Deletar pedido
             </DropdownMenuItem>
           )
         }
 
-        function PlaceOrderAction() {
-          // const [isDeletePending, startDeleteTransition] = useTransition()
-
-          return (
-            <DropdownMenuItem
-              // onClick={() => {
-              //   startDeleteTransition(() => {
-              //     toast.promise(deleteEstimate({ estimateId: budget.id }), {
-              //       loading: 'Deletando...',
-              //       success: 'Orçamento deletado com sucesso',
-              //       error: 'Erro ao deletar orçamento...',
-              //     })
-              //   })
-              // }}
-              className='cursor-pointer'
-              // disabled={isDeletePending}
-            >
-              Fazer pedido
-            </DropdownMenuItem>
-          )
-        }
-
-        function ChangeBudgetStatusAction() {
+        function ChangeOrderStatusAction() {
           return (
             <DropdownMenuItem
               className='cursor-pointer'
@@ -244,6 +244,32 @@ export function getColumns(): ColumnDef<Order>[] {
             >
               Alterar status
             </DropdownMenuItem>
+          )
+        }
+
+        function OrderDocumentDownloaderDialog() {
+          return (
+            <Dialog open={downloaderDialog} onOpenChange={setDownloaderDialog}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Download do Documento</DialogTitle>
+                </DialogHeader>
+                <DialogDescription>
+                  Abra ou baixe o PDF do pedido.
+                </DialogDescription>
+                <div className='mt-2 grid grid-cols-2 gap-2'>
+                  <OrderDocumentDownloader order={order} />
+                  <Button variant='outline' asChild>
+                    <Link
+                      href={`/painel/orcamentos/${order.incrementalId}/documento`}
+                    >
+                      <LinkIcon className='mr-2 h-5 w-5' />
+                      Ver PDF do pedido
+                    </Link>
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           )
         }
         return (
@@ -260,7 +286,7 @@ export function getColumns(): ColumnDef<Order>[] {
             </Button>
             <Button
               onClick={() => {
-                window.print()
+                setDownloaderDialog(true)
               }}
               size='icon'
               variant='ghost'
@@ -277,12 +303,12 @@ export function getColumns(): ColumnDef<Order>[] {
               <DropdownMenuContent align='end'>
                 <DropdownMenuLabel>Interações</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <ChangeBudgetStatusAction />
-                <PlaceOrderAction />
+                <ChangeOrderStatusAction />
 
                 <DeleteEstimateAction />
               </DropdownMenuContent>
             </DropdownMenu>
+            <OrderDocumentDownloaderDialog />
           </div>
         )
       },

@@ -67,7 +67,7 @@ const formSchema = z.object({
   products: z.array(productSchema),
 })
 
-export function NewEstimateForm() {
+export function NewOrderForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // console.log('Trying to submit form.', values)
   }
