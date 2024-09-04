@@ -2,7 +2,7 @@ import { Heading } from '@/pegasus/heading'
 import { getOrderByIncrementalId } from '../../_logic/queries'
 import { OrderDocumentContent } from './content'
 
-export default async function BudgetDocumentPage({ params: { id } }) {
+export default async function OrderDocumentPage({ params: { id } }) {
   const { data } = await getOrderByIncrementalId(id)
 
   if (!data) {

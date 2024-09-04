@@ -261,7 +261,7 @@ export function getColumns(): ColumnDef<Order>[] {
                   <OrderDocumentDownloader order={order} />
                   <Button variant='outline' asChild>
                     <Link
-                      href={`/painel/orcamentos/${order.incrementalId}/documento`}
+                      href={`/painel/pedidos/${order.incrementalId}/documento`}
                     >
                       <LinkIcon className='mr-2 h-5 w-5' />
                       Ver PDF do pedido
