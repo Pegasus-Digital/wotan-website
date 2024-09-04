@@ -87,6 +87,7 @@ export function ContactContent({ address, contact }) {
         fone: values.phone,
         name: values.name,
         acceptEmail: values.allowNotifications,
+        archived: false,
       },
     })
 
