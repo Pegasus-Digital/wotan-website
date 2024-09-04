@@ -33,7 +33,7 @@ export async function updateCompanySettings(
       message: 'Configurações atualizadas com sucesso.',
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
     return {
       data: null,
       status: false,
@@ -114,7 +114,7 @@ export async function updateHeaderSettings(
       message: 'Configurações atualizadas com sucesso.',
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
     return {
       data: null,
       status: false,

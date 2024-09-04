@@ -40,7 +40,7 @@ export async function deleteBudget({
       message: 'Orçamento deletado com sucesso.',
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
     return {
       data: null,
       status: false,
@@ -73,7 +73,7 @@ export async function createBudget(
       message: 'Orçamento criado com sucesso.',
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
 
     return {
       data: null,
@@ -149,7 +149,7 @@ export async function updateBudgetStatus({
       message: 'Vendedor atualizado com sucesso.',
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
 
     return {
       data: null,
