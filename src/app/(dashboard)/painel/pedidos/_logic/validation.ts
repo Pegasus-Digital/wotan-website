@@ -74,7 +74,7 @@ export const orderSchema = z.object({
   shippingCompany: z.string().optional(),
   shippingType: z.enum(['cif', 'fob']).optional(),
   paymentConditions: z.string().optional(),
-  paymentType: z.enum(['boleto', 'cheque', 'deposito']).optional(),
+  paymentType: z.enum(['boleto', 'pix', 'deposito']).optional(),
   agency: z.string().optional(),
   commission: z.coerce.number().optional(),
   notes: z.string().optional(),

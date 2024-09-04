@@ -130,7 +130,7 @@ const Order: CollectionConfig = {
       type: 'select',
       options: [
         { label: 'Boleto', value: 'boleto' },
-        { label: 'Cheque', value: 'cheque' },
+        { label: 'PIX', value: 'pix' },
         { label: 'Depósito', value: 'deposito' },
       ],
     },

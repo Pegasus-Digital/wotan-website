@@ -529,7 +529,7 @@ export function SeeOrderContent({
                           </SelectTrigger>
                           <SelectContent side='bottom'>
                             <SelectItem value='boleto'>Boleto</SelectItem>
-                            <SelectItem value='cheque'>Cheque</SelectItem>
+                            <SelectItem value='pix'>PIX</SelectItem>
                             <SelectItem value='deposito'>Depósito</SelectItem>
                           </SelectContent>
                         </Select>
