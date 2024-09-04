@@ -38,7 +38,7 @@ export async function deleteOrder({
       message: 'Orçamento deletado com sucesso.',
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
     return {
       data: null,
       status: false,
@@ -84,6 +84,34 @@ export async function updateOrder({
       data: null,
       status: false,
       message: '[500] Ocorreu um erro ao atualizar o pedido.',
+    }
+  }
+}
+
+export async function createOrder(
+  order: SafeOrder,
+): Promise<ActionResponse<UpdateOrderResponseData>> {
+  try {
+    // console.log('foi', order)
+    const response = await payload.create({
+      collection: 'order',
+      data: {
+        ...order,
+      },
+    })
+
+    revalidatePath('/painel/pedidos')
+    return {
+      data: { order: response },
+      status: true,
+      message: 'Pedido criado com sucesso.',
+    }
+  } catch (err) {
+    // console.error(err)
+    return {
+      data: null,
+      status: false,
+      message: '[500] Ocorreu um erro ao criar o pedido.',
     }
   }
 }
