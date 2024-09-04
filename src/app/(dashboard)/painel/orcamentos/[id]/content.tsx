@@ -6,6 +6,13 @@ import { useRouter } from 'next/navigation'
 
 import { Budget, Client, Product, Salesperson } from '@/payload/payload-types'
 
+import {
+  formatBRL,
+  parseValue,
+  formatPhoneNumber,
+  formatBRLWithoutPrefix,
+} from '@/lib/format'
+
 import { toast } from 'sonner'
 import { ptBR } from 'date-fns/locale'
 import { formatRelative } from 'date-fns'
@@ -26,6 +33,14 @@ import { Textarea } from '@/components/ui/textarea'
 import { Separator } from '@/components/ui/separator'
 import { Content, ContentHeader } from '@/components/content'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import { TooltipArrow } from '@radix-ui/react-tooltip'
 
 import {
   Form,
@@ -68,11 +83,6 @@ import {
 
 import { UpdateBudget } from '../_logic/actions'
 import { budgetSchema } from '../_logic/validation'
-import {
-  formatBRLWithoutPrefix,
-  formatPhoneNumber,
-  parseValue,
-} from '@/lib/format'
 
 type BudgetProps = z.infer<typeof budgetSchema>
 
@@ -127,6 +137,7 @@ export function SeeBudgetContent({
                 minimumQuantity: item.product.minimumQuantity,
                 active: item.product.active,
                 featuredImage: item.product.featuredImage,
+                priceQuantityTable: item.product.priceQuantityTable,
               },
         // attributes: item.attributes,
         description: item.description ? item.description : '',
@@ -142,8 +153,6 @@ export function SeeBudgetContent({
     name: 'items',
   })
 
-  // console.log(fields)
-
   const { isSubmitting } = useFormState({ control: form.control })
 
   function getSalespersonName(salespersonId: string): string {
@@ -156,6 +165,60 @@ export function SeeBudgetContent({
     return (
       salespeople.find((person) => person.id === salespersonId).name ??
       'Não encontrado'
+    )
+  }
+
+  function getPriceForQuantity(productId: string, quantity: number) {
+    const product = fields.find(
+      (item) => (item.product as Product).id === productId,
+    ).product as Product
+
+    const table = product.priceQuantityTable
+
+    if (!table) {
+      return { quantity: 0, unitPrice: 0 }
+    }
+
+    table.sort((a, b) => {
+      if (a.quantity > b.quantity) return -1
+      if (a.quantity === b.quantity) return 0
+      if (a.quantity < b.quantity) return 1
+    })
+
+    const firstLowestQuantityIndex = table.findIndex(
+      (entry) => entry.quantity <= quantity,
+    )
+
+    const item = table[firstLowestQuantityIndex]
+
+    return { quantity: item.quantity, unitPrice: item.unitPrice / 100 }
+  }
+
+  form.watch('items')
+
+  interface PriceQuantityTooltipContentProps {
+    productId: string
+    quantity: number
+  }
+
+  function PriceQuantityTooltipContent({
+    productId,
+    quantity,
+  }: PriceQuantityTooltipContentProps) {
+    const { quantity: nearestLowerQuantity, unitPrice } = getPriceForQuantity(
+      productId,
+      quantity,
+    )
+
+    return (
+      <TooltipContent
+        side='top'
+        sideOffset={12}
+        className='text-justify font-medium'
+      >
+        <TooltipArrow />O valor sugerido a partir de <br />
+        {nearestLowerQuantity} unidades é de: {formatBRL(unitPrice)}
+      </TooltipContent>
     )
   }
 
@@ -321,7 +384,7 @@ export function SeeBudgetContent({
 
                     <Select
                       onValueChange={(e) => {
-                        console.log('detectei mudança nessa porra', e)
+                        console.log('detectei mudança', e)
                       }}
                       disabled={editMode}
                     >
@@ -531,24 +594,24 @@ export function SeeBudgetContent({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {fields.map((field, index) => (
-                <TableRow key={field.id}>
-                  {typeof field.product === 'object' && (
+              {fields.map((item, index) => (
+                <TableRow key={item.id}>
+                  {typeof item.product === 'object' && (
                     <>
                       <TableCell>
                         <Image
                           src={
-                            typeof field.product.featuredImage === 'object'
-                              ? field.product.featuredImage.url
+                            typeof item.product.featuredImage === 'object'
+                              ? item.product.featuredImage.url
                               : ''
                           }
-                          alt={field.product.title}
+                          alt={item.product.title}
                           className='h-24 w-24 rounded-md object-cover'
                           width={96}
                           height={96}
                         />
                       </TableCell>
-                      <TableCell>{field.product.sku}</TableCell>
+                      <TableCell>{item.product.sku}</TableCell>
                       <TableCell>
                         <FormField
                           name={`items.${index}.description`}
@@ -578,8 +641,8 @@ export function SeeBudgetContent({
                                 <Input
                                   {...field}
                                   disabled={editMode}
-                                  placeholder='A partir de X produtos'
                                   className='disabled:opacity-100'
+                                  type='number'
                                 />
                               </FormControl>
                               <FormMessage />
@@ -594,23 +657,37 @@ export function SeeBudgetContent({
                           render={({ field }) => (
                             <FormItem>
                               <FormControl>
-                                <div className='flex items-center gap-2 font-medium'>
-                                  <Label>R$</Label>
+                                <TooltipProvider>
+                                  <Tooltip delayDuration={100}>
+                                    <TooltipTrigger type='button'>
+                                      <div className='flex items-center gap-2 font-medium'>
+                                        <Label>R$</Label>
 
-                                  <Input
-                                    {...field}
-                                    disabled={editMode}
-                                    value={formatBRLWithoutPrefix(
-                                      Number(field.value),
-                                    )}
-                                    onChange={(e) => {
-                                      field.onChange(parseValue(e.target.value))
-                                    }}
-                                    inputMode='numeric'
-                                    placeholder='0,00'
-                                    className='disabled:opacity-100'
-                                  />
-                                </div>
+                                        <Input
+                                          {...field}
+                                          disabled={editMode}
+                                          value={formatBRLWithoutPrefix(
+                                            Number(field.value),
+                                          )}
+                                          onChange={(e) => {
+                                            field.onChange(
+                                              parseValue(e.target.value),
+                                            )
+                                          }}
+                                          inputMode='numeric'
+                                          placeholder='0,00'
+                                          className='disabled:opacity-100'
+                                        />
+                                      </div>
+                                    </TooltipTrigger>
+                                    <PriceQuantityTooltipContent
+                                      productId={(item.product as Product).id}
+                                      quantity={
+                                        form.getValues('items')[index].quantity
+                                      }
+                                    />
+                                  </Tooltip>
+                                </TooltipProvider>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -692,7 +769,6 @@ function AddProductDialog({
       })
       if (response.ok) {
         const results = await response.json()
-        // console.log('results', results)
         setSearchResults(results.docs)
       } else {
         console.error('Error fetching products:', response.statusText)
@@ -704,7 +780,6 @@ function AddProductDialog({
 
   const handleSearch = () => {
     handleProductSearch(searchTerm) // Call the search function passed as a prop
-    // console.log(searchResults)
   }
   return (
     <Dialog open={open} onOpenChange={onClose}>
