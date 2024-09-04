@@ -1,93 +1,94 @@
 'use client'
 
+import Image from 'next/image'
 import { useState } from 'react'
-import { useForm, useFormState, useFieldArray } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
 
-import { Button } from '@/pegasus/button'
-import { Input } from '@/components/ui/input'
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
-import { Heading } from '@/pegasus/heading'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Content, ContentHeader } from '@/components/content'
-import {
-  Attribute,
-  Client,
   Order,
+  Client,
   Product,
+  Attribute,
   Salesperson,
 } from '@/payload/payload-types'
-import { orderSchema } from '../_logic/validation'
-import {
-  Check,
-  ChevronsUpDown,
-  PlusCircle,
-  Save,
-  Search,
-  Shirt,
-  Trash2,
-  UserRound,
-} from 'lucide-react'
-import Image from 'next/image'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+
+import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
+
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm, useFormState, useFieldArray } from 'react-hook-form'
+
+import { Heading } from '@/pegasus/heading'
 import { P } from '@/components/typography/texts'
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+
+import { Icons } from '@/components/icons'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Textarea } from '@/components/ui/textarea'
+import { Separator } from '@/components/ui/separator'
+import { Content, ContentHeader } from '@/components/content'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+
+import {
+  Form,
+  FormItem,
+  FormLabel,
+  FormField,
+  FormMessage,
+  FormControl,
+} from '@/components/ui/form'
+
+import {
+  Table,
+  TableRow,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+} from '@/components/ui/table'
+
 import {
   Command,
+  CommandItem,
+  CommandList,
   CommandEmpty,
   CommandGroup,
   CommandInput,
-  CommandItem,
-  CommandList,
 } from '@/components/ui/command'
-import { cn } from '@/lib/utils'
+
+import {
+  Select,
+  SelectItem,
+  SelectLabel,
+  SelectValue,
+  SelectGroup,
+  SelectTrigger,
+  SelectContent,
+  SelectSeparator,
+} from '@/components/ui/select'
+
+import {
+  Dialog,
+  DialogClose,
+  DialogTitle,
+  DialogFooter,
+  DialogHeader,
+  DialogContent,
+  DialogDescription,
+} from '@/components/ui/dialog'
+
 import { createOrder } from '../_logic/actions'
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
-// Define the validation schema
+import { orderSchema } from '../_logic/validation'
 
 type OrderProps = z.infer<typeof orderSchema>
 
@@ -121,8 +122,6 @@ export function SeeOrderContent({
 
   const [addProductDialog, setAddProductDialog] = useState<boolean>(false)
 
-  // const
-
   const formatValue = (value: number) => {
     const integerPart = Math.floor(value / 100).toString()
     const decimalPart = (value % 100).toString().padStart(2, '0')
@@ -137,8 +136,6 @@ export function SeeOrderContent({
   const { isSubmitting } = useFormState({ control: form.control })
 
   async function onSubmit(values: OrderProps) {
-    // console.log('Order submitted:', values)
-
     const response = await createOrder({
       ...values,
       itens: values.itens.map((item) => ({
@@ -191,7 +188,7 @@ export function SeeOrderContent({
               onClick={handleSubmit(onSubmit)}
               variant='default'
             >
-              <Save className='mr-2 h-4 w-4' /> Salvar
+              <Icons.Save className='mr-2 h-4 w-4' /> Salvar
             </Button>
           </div>
         }
@@ -640,7 +637,7 @@ export function SeeOrderContent({
               size='icon'
               onClick={() => setAddProductDialog(true)}
             >
-              <PlusCircle className=' h-5 w-5' />
+              <Icons.Add className=' h-5 w-5' />
             </Button>
           </div>
           <Table>
@@ -843,7 +840,7 @@ export function SeeOrderContent({
                             onClick={() => remove(index)}
                             variant='destructive'
                           >
-                            <Trash2 className='h-5 w-5' />
+                            <Icons.Trash className='h-5 w-5' />
                           </Button>
                         </TableCell>
                       }
@@ -977,7 +974,7 @@ export function AttributesCombobox({
               className='w-[200px] justify-between'
             >
               {'Selecione atributo...'}
-              <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+              <Icons.ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
             </Button>
           </PopoverTrigger>
           <PopoverContent className='w-[200px] p-0'>
@@ -995,7 +992,7 @@ export function AttributesCombobox({
                         setOpen(false)
                       }}
                     >
-                      <Check
+                      <Icons.Check
                         className={cn(
                           'mr-2 h-4 w-4',
                           value.some((attr) => attr.value === attribute.value)
@@ -1079,7 +1076,7 @@ function AddProductDialog({
             className='bg-background text-primary hover:bg-background'
             onClick={handleSearch}
           >
-            <Search className='h-5 w-5' />
+            <Icons.Search className='h-5 w-5' />
           </Button>
         </div>
         <div className='rounded-lg border p-2'>
@@ -1099,7 +1096,7 @@ function AddProductDialog({
                   />
                 ) : (
                   <div className='flex h-24 w-24 items-center justify-center rounded-md bg-neutral-200'>
-                    <Shirt className='m-4 h-16 w-16 text-neutral-400' />
+                    <Icons.Shirt className='m-4 h-16 w-16 text-neutral-400' />
                   </div>
                 )}
                 <div className='flex flex-col justify-center'>
@@ -1114,7 +1111,7 @@ function AddProductDialog({
           ) : (
             <div className='flex h-full items-center gap-2 self-center'>
               <div className='flex h-24 w-24 items-center justify-center rounded-md bg-neutral-200'>
-                <Shirt className='m-4 h-16 w-16 text-neutral-400' />
+                <Icons.Shirt className='m-4 h-16 w-16 text-neutral-400' />
               </div>
               <div className='flex flex-col justify-center'>
                 <Heading variant='h6'>Título</Heading>

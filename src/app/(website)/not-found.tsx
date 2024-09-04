@@ -1,7 +1,7 @@
+import Link from 'next/link'
+
 import { Button } from '@/pegasus/button'
 import { Heading } from '@/pegasus/heading'
-import Image from 'next/image'
-import Link from 'next/link'
 
 export default function NotFound() {
   return (

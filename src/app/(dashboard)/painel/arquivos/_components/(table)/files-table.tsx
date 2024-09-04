@@ -6,13 +6,11 @@ import { Media } from '@/payload/payload-types'
 
 import { filterFields, getColumns } from './columns'
 import { type ColumnDef } from '@tanstack/react-table'
-
 import { DataTable } from '@/components/table/data-table'
 import { useDataTable } from '@/components/table/hooks/use-data-table'
+import { DataTableToolbar } from '@/components/table/data-table-toolbar'
 
 import { getFiles } from '../../_logic/queries'
-
-import { DataTableToolbar } from '@/components/table/data-table-toolbar'
 
 interface FilesTableProps {
   filesPromise: ReturnType<typeof getFiles>

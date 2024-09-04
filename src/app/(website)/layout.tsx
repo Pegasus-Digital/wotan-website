@@ -1,17 +1,15 @@
-import { Toaster } from 'sonner'
+import payload from 'payload'
+import { Suspense } from 'react'
 
+import { Toaster } from 'sonner'
+import { nestCategories } from '@/lib/category-hierarchy'
+
+import Loading from '../loading'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { SearchBar } from '@/components/search-bar'
-import { CartStoreProvider } from '@/components/cart-store-provider'
-
-import { Setting } from '@/payload/payload-types'
-import { fetchSettings } from '../_api/fetchGlobals'
-import payload from 'payload'
-import { NestedCategory, nestCategories } from '@/lib/category-hierarchy'
-import Loading from '../loading'
-import { Suspense } from 'react'
 import WhatsAppButton from '@/components/whats-button'
+import { CartStoreProvider } from '@/components/cart-store-provider'
 
 interface WebsiteLayoutProps {
   children: React.ReactNode

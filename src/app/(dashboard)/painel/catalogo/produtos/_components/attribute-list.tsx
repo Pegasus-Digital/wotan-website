@@ -1,11 +1,9 @@
 import { Attribute } from '@/payload/payload-types'
 
-import { motion } from 'framer-motion'
-
 import {
+  getUniqueTypes,
   filterAttributesByName,
   filterAttributesByType,
-  getUniqueTypes,
 } from '@/lib/attribute-hooks'
 
 import { Checkbox } from '@/components/ui/checkbox'
@@ -15,9 +13,15 @@ interface AttributeListProps {
   attributes: Attribute[]
   field: any
   set: (name: string, value: any) => void
+  readonly?: boolean
 }
 
-export function AttributeList({ attributes, field, set }: AttributeListProps) {
+export function AttributeList({
+  attributes,
+  field,
+  set,
+  readonly = false,
+}: AttributeListProps) {
   const colors = filterAttributesByType(attributes, 'color')
   const labels = filterAttributesByType(attributes, 'label')
   const types = getUniqueTypes(labels)
@@ -33,11 +37,7 @@ export function AttributeList({ attributes, field, set }: AttributeListProps) {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className='grid w-full grid-cols-2 gap-4'
-    >
+    <div className='grid w-full grid-cols-2 gap-4'>
       <div className='space-y-2.5'>
         <Large>Cores</Large>
 
@@ -47,6 +47,7 @@ export function AttributeList({ attributes, field, set }: AttributeListProps) {
               id={color.id}
               name={color.name}
               value={color.id}
+              disabled={readonly}
               defaultChecked={field.value.includes(color.id)}
               onCheckedChange={(state) =>
                 handleCheckedChange(color.id, !!state)
@@ -75,6 +76,7 @@ export function AttributeList({ attributes, field, set }: AttributeListProps) {
                   id={label.id}
                   name={label.name}
                   value={label.id}
+                  disabled={readonly}
                   defaultChecked={field.value.includes(label.id)}
                   onCheckedChange={(state) =>
                     handleCheckedChange(label.id, !!state)
@@ -87,6 +89,6 @@ export function AttributeList({ attributes, field, set }: AttributeListProps) {
           </div>
         )
       })}
-    </motion.div>
+    </div>
   )
 }

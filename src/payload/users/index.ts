@@ -54,4 +54,4 @@ const Users: CollectionConfig = {
   timestamps: true,
 }
 
-export default Users
+export { Users }

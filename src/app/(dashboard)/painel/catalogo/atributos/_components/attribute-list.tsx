@@ -1,9 +1,9 @@
+import { Attribute, AttributeType } from '@/payload/payload-types'
+
 import {
   filterAttributesByType,
   filterAttributesByName,
 } from '@/lib/attribute-hooks'
-
-import { Attribute, AttributeType } from '@/payload/payload-types'
 
 import { Large, Small } from '@/components/typography/texts'
 

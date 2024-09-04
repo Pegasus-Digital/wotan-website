@@ -2,7 +2,9 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+
 import { toast } from 'sonner'
+import { formatCNPJ, formatPhoneNumber } from '@/lib/format'
 
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -11,6 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { LowImpactHero } from '@/app/_sections/heros/lowImpact'
 
 import { Button } from '@/pegasus/button'
+import { Icons } from '@/components/icons'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -22,14 +25,14 @@ import { H3 } from '@/components/typography/headings'
 
 import {
   Form,
-  FormControl,
-  FormField,
   FormItem,
   FormLabel,
+  FormField,
   FormMessage,
+  FormControl,
 } from '@/components/ui/form'
 
-import { ArrowRight, Mail, MapPin, Phone } from 'lucide-react'
+import { createMessage } from '@/app/(dashboard)/painel/contato/_logic/actions'
 
 const formSchema = z.object({
   name: z
@@ -70,59 +73,31 @@ export function ContactContent({ address, contact }) {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     if (!values.acceptPrivacyPolicy) {
       toast.warning(
-        'Formulário não enviado, é necessário aceitar os termos da Política de Privacidade.',
+        'Para enviar a mensagem é necessário aceitar os termos da Política de Privacidade.',
       )
       return
     }
 
-    try {
-      const response = await fetch('api/contact-form', {
-        method: 'POST',
-        body: JSON.stringify({
-          acceptPrivacy: values.acceptPrivacyPolicy,
-          email: values.email,
-          cnpj: values.cnpj,
-          message: values.message,
-          phone: values.phone,
-          name: values.name,
-          acceptEmail: values.allowNotifications,
-        }),
-      })
-      const data = await response.json()
-      if (data) {
-        toast.success('Formulário enviado com sucesso!')
-      } else {
-        toast.warning('Ocorreu um erro ao enviar os dados.')
-      }
-    } catch (err) {
-      toast.warning('Ocorreu um erro ao enviar os dados.')
-      console.log(err)
+    const response = await createMessage({
+      message: {
+        acceptPrivacy: values.acceptPrivacyPolicy,
+        email: values.email,
+        cnpj: values.cnpj,
+        message: values.message,
+        fone: values.phone,
+        name: values.name,
+        acceptEmail: values.allowNotifications,
+      },
+    })
+
+    if (response.status === true) {
+      form.reset()
+      return toast.success('Recebemos o contato com sucesso!')
     }
-  }
 
-  function formatCNPJ(value: string) {
-    const unformattedCNPJ = value
-
-    const formattedCNPJ = unformattedCNPJ
-      .replace(/\D/g, '')
-      .replace(/(\d{2})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1/$2')
-      .replace(/(\d{4})(\d)/, '$1-$2')
-      .replace(/(-\d{2})\d+?$/, '$1')
-
-    return formattedCNPJ
-  }
-
-  function formatPhoneNumber(value: string) {
-    const phoneNumber = value // <-- nº de celular não formatado
-
-    const formattedPhoneNumber = phoneNumber
-      .replace(/\D/g, '')
-      .replace(/(\d{2})(\d)/, '($1) $2')
-      .replace(/(\d)(\d{4})$/, '$1-$2')
-
-    return formattedPhoneNumber
+    if (response.status === false) {
+      return toast.error('Ocorreu um erro ao receber sua mensagem.')
+    }
   }
 
   function changeCNPJRadio(e: string) {
@@ -312,7 +287,7 @@ export function ContactContent({ address, contact }) {
               <Button
                 type='submit'
                 variant='expandIcon'
-                Icon={ArrowRight}
+                Icon={Icons.ArrowRight}
                 iconPlacement='right'
                 className='font-medium shadow-wotan-light transition hover:brightness-125'
               >
@@ -339,7 +314,7 @@ export function ContactContent({ address, contact }) {
 
               {/* Address information */}
               <div className='flex items-center gap-2'>
-                <MapPin className='mr-2 h-5 w-5 shrink-0' />
+                <Icons.Pin className='mr-2 h-5 w-5 shrink-0' />
                 <Small className='flex items-center leading-snug'>
                   {`${address.street}, ${address.number} - ${address.neighborhood}, ${address.city} - ${address.state}, ${address.cep}`}
                 </Small>
@@ -352,7 +327,7 @@ export function ContactContent({ address, contact }) {
                   className='flex items-center'
                   target='_blank'
                 >
-                  <Phone className='mr-2 h-5 w-5' />
+                  <Icons.Phone className='mr-2 h-5 w-5' />
                   <Small className='whitespace-nowrap'>{contact.phone}</Small>
                 </Link>
 
@@ -361,7 +336,7 @@ export function ContactContent({ address, contact }) {
                   className='flex items-center'
                   target='_blank'
                 >
-                  <Mail className='mr-2 h-5 w-5' />
+                  <Icons.Mail className='mr-2 h-5 w-5' />
                   <Small className='whitespace-nowrap'>{contact.email}</Small>
                 </Link>
               </div>

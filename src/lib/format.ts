@@ -17,3 +17,28 @@ export function formatBRL(amount: number) {
     currency: 'BRL',
   }).format(amount)
 }
+
+export function formatCNPJ(value: string) {
+  const unformattedCNPJ = value
+
+  const formattedCNPJ = unformattedCNPJ
+    .replace(/\D/g, '')
+    .replace(/(\d{2})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1/$2')
+    .replace(/(\d{4})(\d)/, '$1-$2')
+    .replace(/(-\d{2})\d+?$/, '$1')
+
+  return formattedCNPJ
+}
+
+export function formatPhoneNumber(value: string) {
+  const phoneNumber = value // <-- nº de celular não formatado
+
+  const formattedPhoneNumber = phoneNumber
+    .replace(/\D/g, '')
+    .replace(/(\d{2})(\d)/, '($1) $2')
+    .replace(/(\d)(\d{4})$/, '$1-$2')
+
+  return formattedPhoneNumber
+}

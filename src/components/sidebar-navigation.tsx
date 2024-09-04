@@ -10,7 +10,7 @@ import {
   CollapsibleTrigger,
 } from './ui/collapsible'
 
-import { ChevronDown } from 'lucide-react'
+import { Icons } from './icons'
 
 interface SidebarNavItem {
   text: string
@@ -83,7 +83,7 @@ export function SidebarCollapsible({
             <span>{text}</span>
           </div>
 
-          <ChevronDown className='h-5 w-5 stroke-1 transition group-hover:scale-125 group-hover:text-primary-foreground group-data-[state=open]:rotate-180' />
+          <Icons.ChevronDown className='h-5 w-5 stroke-1 transition group-hover:scale-125 group-hover:text-primary-foreground group-data-[state=open]:rotate-180' />
         </button>
       </CollapsibleTrigger>
       <CollapsibleContent className='ml-2 mt-1 space-y-1 rounded-b-md border-l pl-2'>

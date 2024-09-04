@@ -1,6 +1,7 @@
-import { Content, ContentHeader } from '@/components/content'
 import { Separator } from '@/components/ui/separator'
+import { Content, ContentHeader } from '@/components/content'
 import { FilesTable } from './_components/(table)/files-table'
+
 import { getFiles } from './_logic/queries'
 
 interface FilesContentProps {

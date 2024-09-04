@@ -2,14 +2,14 @@
 
 import { Category } from '@/payload/payload-types'
 
+import { Separator } from '@/components/ui/separator'
+
 import {
+  DialogTitle,
+  DialogHeader,
   DialogContent,
   DialogDescription,
-  DialogHeader,
-  DialogTitle,
 } from '@/components/ui/dialog'
-
-import { Separator } from '@/components/ui/separator'
 
 import { UpdateCategoryForm } from './update-category-form'
 

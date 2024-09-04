@@ -1,71 +1,55 @@
 'use client'
 
+import Link from 'next/link'
+import Image from 'next/image'
 import { useState, useTransition } from 'react'
 
-import { Attribute, Budget, Salesperson } from '@/payload/payload-types'
+import { Budget, Salesperson } from '@/payload/payload-types'
+
+import { toast } from 'sonner'
 
 import { ColumnDef } from '@tanstack/react-table'
+import { DataTableFilterField } from '@/components/table/types/table-types'
+import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 
-import { formatRelative } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import { Icons } from '@/components/icons'
+import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { BudgetDocumentDownloader } from '../_components/pdf-downloader'
+
+import { Small } from '@/components/typography/texts'
+
+import {
+  Select,
+  SelectItem,
+  SelectValue,
+  SelectTrigger,
+  SelectContent,
+} from '@/components/ui/select'
 
 import {
   DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
 
 import {
   Dialog,
+  DialogTitle,
   DialogClose,
-  DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  DialogContent,
+  DialogDescription,
 } from '@/components/ui/dialog'
 
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Button, buttonVariants } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Separator } from '@/components/ui/separator'
-import { Card, CardContent } from '@/components/ui/card'
-import { ScrollArea } from '@/components/ui/scroll-area'
-
-import { Heading } from '@/pegasus/heading'
-import { Small } from '@/components/typography/texts'
-
-import {
-  Eye,
-  LinkIcon,
-  MoreHorizontal,
-  Pencil,
-  Printer,
-  UserRound,
-} from 'lucide-react'
-import { DataTableFilterField } from '@/components/table/types/table-types'
-import { toast } from 'sonner'
 import { deleteBudget } from '../_logic/actions'
-import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
-import Image from 'next/image'
-import Link from 'next/link'
-import { cn } from '@/lib/utils'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { updateBudgetStatus } from '../_logic/actions'
-import { BudgetDocumentDownloader } from '../_components/pdf-downloader'
 
 export const filterFields: DataTableFilterField<Budget>[] = [
   {
@@ -77,29 +61,6 @@ export const filterFields: DataTableFilterField<Budget>[] = [
 
 export function getColumns(): ColumnDef<Budget>[] {
   return [
-    // {
-    //   id: 'select',
-    //   header: ({ table }) => (
-    //     <Checkbox
-    //       // @ts-ignore TODO: Solve this TypeScript error
-    //       checked={
-    //         table.getIsAllPageRowsSelected() ||
-    //         (table.getIsSomePageRowsSelected() && 'indeterminate')
-    //       }
-    //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-    //       aria-label='Select all'
-    //     />
-    //   ),
-    //   cell: ({ row }) => (
-    //     <Checkbox
-    //       checked={row.getIsSelected()}
-    //       onCheckedChange={(value) => row.toggleSelected(!!value)}
-    //       aria-label='Select row'
-    //     />
-    //   ),
-    //   enableSorting: false,
-    //   enableHiding: false,
-    // },
     {
       id: 'incrementalId',
       accessorFn: (row) => row.incrementalId,
@@ -129,8 +90,8 @@ export function getColumns(): ColumnDef<Budget>[] {
         if (!value)
           return (
             <div className='flex items-center space-x-2'>
-              <div className='flex h-5 w-5 items-center justify-center rounded-full bg-gray-300  p-1'>
-                <UserRound className='h-3 w-3 text-gray-600' />
+              <div className='flex h-5 w-5 items-center justify-center rounded-full bg-muted  p-1'>
+                <Icons.User className='h-3 w-3 text-muted-foreground' />
               </div>
 
               <p className='font-bold'>Nenhum</p>
@@ -149,8 +110,8 @@ export function getColumns(): ColumnDef<Budget>[] {
                 className='select-none rounded-full'
               />
             ) : (
-              <div className='flex h-5 w-5 items-center justify-center rounded-full bg-gray-300 p-1'>
-                <UserRound className='h-3 w-3 text-gray-600' />
+              <div className='flex h-5 w-5 items-center justify-center rounded-full bg-muted p-1'>
+                <Icons.User className='h-3 w-3 text-muted-foreground' />
               </div>
             )}
 
@@ -449,7 +410,7 @@ export function getColumns(): ColumnDef<Budget>[] {
                     <Link
                       href={`/painel/orcamentos/${budget.incrementalId}/documento`}
                     >
-                      <LinkIcon className='mr-2 h-5 w-5' />
+                      <Icons.Anchor className='mr-2 h-5 w-5' />
                       Ver PDF do orçamento
                     </Link>
                   </Button>
@@ -463,14 +424,14 @@ export function getColumns(): ColumnDef<Budget>[] {
           <div className='flex w-min gap-1'>
             <Button size='icon' variant='ghost' asChild>
               <Link href={`/painel/orcamentos/${budget.incrementalId}`}>
-                <Eye className='h-5 w-5' />
+                <Icons.Look className='h-5 w-5' />
               </Link>
             </Button>
             <Button size='icon' variant='ghost' asChild>
               <Link
                 href={`/painel/orcamentos/${budget.incrementalId}?edit=true`}
               >
-                <Pencil className='h-5 w-5' />
+                <Icons.Edit className='h-5 w-5' />
               </Link>
             </Button>
             {/* <BudgetDocumentDownloader budget={budget} /> */}
@@ -482,14 +443,14 @@ export function getColumns(): ColumnDef<Budget>[] {
               size='icon'
               variant='ghost'
             >
-              <Printer className='h-5 w-5' />
+              <Icons.Print className='h-5 w-5' />
             </Button>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button size='icon' variant='ghost'>
                   <span className='sr-only'>Abrir menu</span>
-                  <MoreHorizontal className='h-4 w-4' />
+                  <Icons.Dots className='h-4 w-4' />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align='end'>

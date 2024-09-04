@@ -1,6 +1,7 @@
-import { Content, ContentHeader } from '@/components/content'
 import { Separator } from '@/components/ui/separator'
+import { Content, ContentHeader } from '@/components/content'
 import { UsersTable } from './_components/(table)/users-table'
+
 import { getUsers } from './_logic/queries'
 
 interface UsersContentProps {

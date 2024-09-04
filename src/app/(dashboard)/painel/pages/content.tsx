@@ -1,6 +1,6 @@
 import { Separator } from '@/components/ui/separator'
-import { Content, ContentHeader } from '@/components/content'
 import { PageCard, PageProps } from '@/components/page-card'
+import { Content, ContentHeader } from '@/components/content'
 
 interface PagesContentProps {
   pages: PageProps[]

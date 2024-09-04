@@ -1,10 +1,10 @@
-import { Field, GlobalConfig } from 'payload/types'
+import { GlobalConfig } from 'payload/types'
 import { admins, anyone } from '../access'
 import { header } from '../fields/header'
 import { footer } from '../fields/footer'
 import { company } from '../fields/company'
 
-export const Settings: GlobalConfig = {
+const Settings: GlobalConfig = {
   slug: 'settings',
   label: 'General',
   admin: {
@@ -43,3 +43,5 @@ export const Settings: GlobalConfig = {
     },
   ],
 }
+
+export { Settings }

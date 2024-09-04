@@ -1,9 +1,8 @@
 import { NestedCategory } from '@/lib/category-hierarchy'
 
-import { Button } from '@/pegasus/button'
+import { Icons } from '@/components/icons'
 import { Label } from '@/components/ui/label'
-
-import { Pencil, Trash } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface CategorySpanProps {
   category: NestedCategory
@@ -27,7 +26,7 @@ export function CategorySpan({
           size='icon'
           className='h-6 w-6'
         >
-          <Pencil className='h-4 w-4' />
+          <Icons.Edit className='h-4 w-4' />
         </Button>
 
         <Button
@@ -36,7 +35,7 @@ export function CategorySpan({
           size='icon'
           className='h-6 w-6'
         >
-          <Trash className='h-4 w-4' />
+          <Icons.Trash className='h-4 w-4' />
         </Button>
         <Label>{category.title}</Label>
       </div>

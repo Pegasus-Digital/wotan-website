@@ -53,4 +53,4 @@ const Salespersons: CollectionConfig = {
   timestamps: true,
 }
 
-export default Salespersons
+export { Salespersons }

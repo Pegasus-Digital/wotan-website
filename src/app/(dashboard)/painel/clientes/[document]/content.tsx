@@ -1,65 +1,74 @@
 'use client'
 
+import Image from 'next/image'
 import { useState } from 'react'
-import { Content, ContentHeader } from '@/components/content'
-import { Separator } from '@/components/ui/separator'
-import { ClientForm } from '../_components/new-client-form'
+import { useRouter } from 'next/navigation'
+
+import { toast } from 'sonner'
+import { cn } from '@/lib/utils'
+
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  useForm,
+  Controller,
+  useFormState,
+  useFieldArray,
+} from 'react-hook-form'
+
 import { Client, Salesperson } from '@/payload/payload-types'
-import { format, formatRelative } from 'date-fns'
+
 import { ptBR } from 'date-fns/locale'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { format, formatRelative } from 'date-fns'
+
+import { Icons } from '@/components/icons'
 import { Heading } from '@/pegasus/heading'
-import { Button } from '@/pegasus/button'
-import { CalendarIcon, PlusCircle, Save, Trash, UserRound } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { Calendar } from '@/components/ui/calendar'
+import { Separator } from '@/components/ui/separator'
+import { Content, ContentHeader } from '@/components/content'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
 } from '@/components/ui/popover'
-import { Calendar } from '@/components/ui/calendar'
-import { cn } from '@/lib/utils'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { toast } from 'sonner'
+
 import {
-  Controller,
-  useFieldArray,
-  useForm,
-  useFormState,
-} from 'react-hook-form'
-import { useRouter } from 'next/navigation'
-import { updateClient } from '../_logic/actions'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { clientSchema } from '../_logic/validations'
-import { z } from 'zod'
-import Image from 'next/image'
+  Form,
+  FormItem,
+  FormLabel,
+  FormField,
+  FormMessage,
+  FormControl,
+} from '@/components/ui/form'
+
 import {
   Dialog,
-  DialogDescription,
+  DialogTitle,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
   DialogContent,
+  DialogDescription,
 } from '@/components/ui/dialog'
+
+import {
+  Select,
+  SelectItem,
+  SelectGroup,
+  SelectLabel,
+  SelectValue,
+  SelectContent,
+  SelectTrigger,
+  SelectSeparator,
+} from '@/components/ui/select'
+
+import { updateClient } from '../_logic/actions'
+import { clientSchema } from '../_logic/validations'
 
 interface SeeClientContentProps {
   edit: boolean
@@ -221,8 +230,9 @@ export function SeeClientContent({
               onClick={handleSubmit(onSubmit)}
               variant='default'
             >
-              <Save className='mr-2 h-4 w-4' /> Salvar
+              <Icons.Save className='mr-2 h-5 w-5' /> Salvar
             </Button>
+
             <ConfirmationModal
               isDialogOpen={isDialogOpen}
               setDialogOpen={setDialogOpen}
@@ -359,8 +369,8 @@ export function SeeClientContent({
                               className='select-none rounded-full'
                             />
                           ) : (
-                            <div className='flex h-5 w-5 items-center justify-center rounded-full bg-gray-300 p-1'>
-                              <UserRound className='h-3 w-3 text-gray-600' />
+                            <div className='flex h-5 w-5 items-center justify-center rounded-full bg-muted p-1'>
+                              <Icons.User className='h-3 w-3 text-muted-foreground' />
                             </div>
                           )}
 
@@ -430,7 +440,7 @@ export function SeeClientContent({
                           ) : (
                             <span>Selecione uma data</span>
                           )}
-                          <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+                          <Icons.Calendar className='ml-auto h-5 w-5 opacity-50' />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
@@ -535,11 +545,11 @@ export function SeeClientContent({
                 append({ name: '', email: '', phone: '', whatsapp: '' })
               }
             >
-              <PlusCircle className=' h-5 w-5' />
+              <Icons.Add className='h-5 w-5' />
             </Button>
           </div>
           {/* Contacts Array */}
-          <div className=' grid grid-cols-1 gap-2 tablet:grid-cols-2'>
+          <div className='grid grid-cols-1 gap-2 tablet:grid-cols-2'>
             {fields.map((item, index) => (
               <Card key={item.id}>
                 <CardHeader
@@ -556,7 +566,7 @@ export function SeeClientContent({
                       onClick={() => remove(index)}
                       className='m-0 mt-0'
                     >
-                      <Trash className='h-4 w-4' />
+                      <Icons.Trash className='h-5 w-5' />
                     </Button>
                   )}
                 </CardHeader>

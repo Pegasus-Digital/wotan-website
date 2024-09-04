@@ -1,31 +1,31 @@
-import { buildConfig } from 'payload/config'
-import { mongooseAdapter } from '@payloadcms/db-mongodb' // database-adapter-import
-import { slateEditor } from '@payloadcms/richtext-slate'
-import nestedDocs from '@payloadcms/plugin-nested-docs'
-// import search from '@payloadcms/plugin-search'
-
-import type { GenerateTitle } from '@payloadcms/plugin-seo/types'
-import seo from '@payloadcms/plugin-seo'
-
-import { webpackBundler } from '@payloadcms/bundler-webpack'
-import { Settings } from './settings'
-import Users from './users'
 import path from 'path'
-import { Media } from './media'
-import { Pages } from './settings/pages'
-import Products from './products'
-import Categories from './products/categories'
-import { Budget } from './budget'
-import { Attributes, AttributeTypes } from './products/atributes'
-import Clients from './clients'
-import Salespersons from './salespersons'
+
 import { seed } from './endpoints/seed'
+import { buildConfig } from 'payload/config'
+
+import seo from '@payloadcms/plugin-seo'
+import nestedDocs from '@payloadcms/plugin-nested-docs'
+import { slateEditor } from '@payloadcms/richtext-slate'
+import { mongooseAdapter } from '@payloadcms/db-mongodb'
+import { webpackBundler } from '@payloadcms/bundler-webpack'
+import type { GenerateTitle } from '@payloadcms/plugin-seo/types'
+
+import { Media } from './media'
+import { Users } from './users'
+import { Order } from './order'
+import { Budget } from './budget'
+import { Clients } from './clients'
+import { Contact } from './contact'
+import { Products } from './products'
+import { Settings } from './settings'
+import { Pages } from './settings/pages'
+import { Salespersons } from './salespersons'
+import { Categories } from './products/categories'
+import { Attributes, AttributeTypes } from './products/atributes'
 
 const generateTitle: GenerateTitle = () => {
   return 'Wotan Brindes'
 }
-import { Contact } from './contact'
-import Order from './order'
 
 export default buildConfig({
   admin: {
@@ -57,7 +57,6 @@ export default buildConfig({
   ],
   globals: [Settings],
   // database-adapter-config-start
-  // Todo: env variable validation
   db: mongooseAdapter({
     url: String(process.env.DATABASE_URI),
   }),

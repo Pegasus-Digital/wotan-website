@@ -19,6 +19,7 @@ import { Attribute, Category, Product } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
 
+import { Icons } from '@/components/icons'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
@@ -28,13 +29,11 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Heading } from '@/pegasus/heading'
 import { Large, Muted } from '@/components/typography/texts'
 
-import { Heart, Minus, Plus, PlusCircle, ShoppingCart } from 'lucide-react'
-
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
+  TooltipProvider,
 } from '@/components/ui/tooltip'
 
 import {
@@ -168,7 +167,7 @@ export function ProductInteraction({
     add({ ...itemState, id: uuidv4() })
 
     toast.success('Produto adicionado ao carrinho.', {
-      icon: <PlusCircle className='h-5 w-5' />,
+      icon: <Icons.Add className='h-5 w-5' />,
     })
   }
 
@@ -329,7 +328,7 @@ export function ProductInteraction({
               onClick={onDecrement}
               className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
             >
-              <Minus className='h-4 w-4' />
+              <Icons.Minus className='h-4 w-4' />
             </Button>
           )}
 
@@ -369,7 +368,7 @@ export function ProductInteraction({
               onClick={onIncrement}
               className='transition-transform hover:bg-wotanRed-400 hover:text-primary-foreground active:scale-110'
             >
-              <Plus className='h-4 w-4' />
+              <Icons.Plus className='h-4 w-4' />
             </Button>
           )}
         </div>
@@ -384,7 +383,7 @@ export function ProductInteraction({
                 size='lg'
                 className='space-x-2 bg-primary hover:brightness-125'
               >
-                <Heart
+                <Icons.Favorite
                   className={cn(
                     `h-6 w-6`,
                     isFavorite ? favoriteIconStyles : null,
@@ -403,7 +402,7 @@ export function ProductInteraction({
                 size='lg'
                 className='space-x-2 bg-primary hover:brightness-125'
               >
-                <ShoppingCart className='h-6 w-6' />
+                <Icons.Cart className='h-6 w-6' />
                 <span className='ml-2 text-base tablet:inline'>Carrinho</span>
               </Button>
             </TooltipTrigger>

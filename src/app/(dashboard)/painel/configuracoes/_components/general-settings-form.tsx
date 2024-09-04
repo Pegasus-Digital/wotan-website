@@ -21,6 +21,7 @@ import { H3 } from '@/components/typography/headings'
 import { Company } from '@/payload/payload-types'
 import { toast } from 'sonner'
 import { updateCompanySettings } from '../_logic/actions'
+import { formatCNPJ } from '@/lib/format'
 
 const generalSettingsFormSchema = z.object({
   name: z.string().min(3),
@@ -39,20 +40,6 @@ export function GeneralSettingsForm({ company }: CompanyProps) {
       cnpj: company.cnpj,
     },
   })
-
-  function formatCNPJ(value: string) {
-    const unformattedCNPJ = value
-
-    const formattedCNPJ = unformattedCNPJ
-      .replace(/\D/g, '')
-      .replace(/(\d{2})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1/$2')
-      .replace(/(\d{4})(\d)/, '$1-$2')
-      .replace(/(-\d{2})\d+?$/, '$1')
-
-    return formattedCNPJ
-  }
 
   async function onSubmit(values: z.infer<typeof generalSettingsFormSchema>) {
     const response = await updateCompanySettings({

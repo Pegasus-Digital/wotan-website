@@ -12,19 +12,16 @@ import { toast } from 'sonner'
 
 import { Category, Product } from '@/payload/payload-types'
 
-import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
-
+import { Icons } from '@/components/icons'
+import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-
-import { ScrollArea } from '@/components/ui/scroll-area'
-
-import { Pencil } from 'lucide-react'
-
-import { bulkUpdateProductCategories } from '../_logic/actions'
-import { bulkUpdateProductSchema } from '../_logic/validations'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Form, FormField, FormItem, FormMessage } from '@/components/ui/form'
+
+import { bulkUpdateProductSchema } from '../_logic/validations'
+import { bulkUpdateProductCategories } from '../_logic/actions'
 
 interface BulkUpdateProductFormProps {
   products: Product[]
@@ -48,7 +45,6 @@ export function BulkUpdateProductForm({
         const response = await fetch(`/api/all-categories`)
         const data = await response.json()
 
-        // console.log(data)
         await setCategories(data)
       } catch (error) {
         toast.error(error)
@@ -59,8 +55,6 @@ export function BulkUpdateProductForm({
 
     fetchCategories()
   }, [])
-
-  // console.log(categories)
 
   const form = useForm<z.infer<typeof bulkUpdateProductSchema>>({
     resolver: zodResolver(bulkUpdateProductSchema),
@@ -82,6 +76,7 @@ export function BulkUpdateProductForm({
       toast.success(response.message)
       setOpen(false)
     }
+
     if (response.status === false) {
       toast.error(response.message)
       setOpen(false)
@@ -133,7 +128,7 @@ export function BulkUpdateProductForm({
             disabled={isSubmitting}
             className='col-span-2 w-full'
           >
-            <Pencil className='mr-2 h-5 w-5' />
+            <Icons.Edit className='mr-2 h-5 w-5' />
             Atualizar produtos
           </Button>
         </section>

@@ -2,15 +2,16 @@
 
 import dynamic from 'next/dynamic'
 
-import { BudgetDocument } from '@/lib/pdf-generator/templates/budget'
-
-import { Content, ContentHeader } from '@/components/content'
-import { LoadingSpinner } from '@/components/spinner'
-import { Budget } from '@/payload/payload-types'
-import { ProductionDocument } from '@/lib/pdf-generator/templates/production'
-import { OrderDocument } from '@/lib/pdf-generator/templates/order'
-import { formatRelative } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+import { formatRelative } from 'date-fns'
+import { OrderDocument } from '@/lib/pdf-generator/templates/order'
+import { BudgetDocument } from '@/lib/pdf-generator/templates/budget'
+import { ProductionDocument } from '@/lib/pdf-generator/templates/production'
+
+import { LoadingSpinner } from '@/components/spinner'
+import { Content, ContentHeader } from '@/components/content'
+
+import { Budget } from '@/payload/payload-types'
 
 const PDFViewer = dynamic(
   () => import('@react-pdf/renderer').then((mod) => mod.PDFViewer),

@@ -1,80 +1,73 @@
 'use client'
 
-import { P, Small } from '@/components/typography/texts'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
-import { Textarea } from '@/components/ui/textarea'
-import {
-  Attribute,
-  Budget,
-  Client,
-  Product,
-  Salesperson,
-} from '@/payload/payload-types'
-import { Heading } from '@/pegasus/heading'
-import { formatRelative } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import Image from 'next/image'
 import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
+
+import { Budget, Client, Product, Salesperson } from '@/payload/payload-types'
+
+import { toast } from 'sonner'
+import { ptBR } from 'date-fns/locale'
+import { formatRelative } from 'date-fns'
+
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useFieldArray, useForm, useFormState } from 'react-hook-form'
 
-import { Content, ContentHeader } from '@/components/content'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Heading } from '@/pegasus/heading'
+import { P } from '@/components/typography/texts'
+
+import { Icons } from '@/components/icons'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { getClients, getProducts, getSalespeople } from '../_logic/queries'
-import Image from 'next/image'
-import {
-  PlusCircle,
-  Save,
-  Search,
-  Shirt,
-  Trash2,
-  UserRound,
-} from 'lucide-react'
+import { Textarea } from '@/components/ui/textarea'
+import { Separator } from '@/components/ui/separator'
+import { Content, ContentHeader } from '@/components/content'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+
 import {
   Form,
-  FormControl,
-  FormField,
   FormItem,
   FormLabel,
+  FormField,
   FormMessage,
+  FormControl,
 } from '@/components/ui/form'
-import { Button } from '@/pegasus/button'
-import { useFieldArray, useForm, useFormState } from 'react-hook-form'
-import { budgetSchema } from '../_logic/validation'
-import { Dialog } from '@radix-ui/react-dialog'
-import {
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+
 import {
   Table,
+  TableRow,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
 } from '@/components/ui/table'
-import update from 'payload/dist/collections/operations/update'
-import { UpdateBudget, createBudget } from '../_logic/actions'
-import { toast } from 'sonner'
+
+import {
+  Select,
+  SelectItem,
+  SelectValue,
+  SelectLabel,
+  SelectGroup,
+  SelectTrigger,
+  SelectContent,
+  SelectSeparator,
+} from '@/components/ui/select'
+
+import {
+  Dialog,
+  DialogTitle,
+  DialogClose,
+  DialogHeader,
+  DialogFooter,
+  DialogContent,
+  DialogDescription,
+} from '@/components/ui/dialog'
+
+import { UpdateBudget } from '../_logic/actions'
+import { budgetSchema } from '../_logic/validation'
 
 type BudgetProps = z.infer<typeof budgetSchema>
 
@@ -202,11 +195,11 @@ export function SeeBudgetContent({
             </Heading>
             <Button
               type='submit'
-              // disabled={isSubmitting}
+              disabled={isSubmitting}
               onClick={handleSubmit(onSubmit)}
               variant='default'
             >
-              <Save className='mr-2 h-4 w-4' /> Salvar
+              <Icons.Save className='mr-2 h-5 w-5' /> Salvar
             </Button>
           </div>
         )}
@@ -400,8 +393,8 @@ export function SeeBudgetContent({
                               className='select-none rounded-full'
                             />
                           ) : (
-                            <div className='flex h-5 w-5 items-center justify-center rounded-full bg-gray-300 p-1'>
-                              <UserRound className='h-3 w-3 text-gray-600' />
+                            <div className='flex h-5 w-5 items-center justify-center rounded-full bg-muted p-1'>
+                              <Icons.User className='h-3 w-3 text-muted-foreground' />
                             </div>
                           )}
 
@@ -504,7 +497,7 @@ export function SeeBudgetContent({
               size='icon'
               onClick={() => setAddProductDialog(true)}
             >
-              <PlusCircle className=' h-5 w-5' />
+              <Icons.Add className='h-5 w-5' />
             </Button>
           </div>
           <Table>
@@ -614,7 +607,7 @@ export function SeeBudgetContent({
                             variant='destructive'
                             disabled={editMode}
                           >
-                            <Trash2 className='h-5 w-5' />
+                            <Icons.Trash className='h-5 w-5' />
                           </Button>
                         </TableCell>
                       )}
@@ -714,7 +707,7 @@ function AddProductDialog({
             className='bg-background text-primary hover:bg-background'
             onClick={handleSearch}
           >
-            <Search className='h-5 w-5' />
+            <Icons.Search className='h-5 w-5' />
           </Button>
         </div>
         <div className='rounded-lg border p-2'>
@@ -734,7 +727,7 @@ function AddProductDialog({
                   />
                 ) : (
                   <div className='flex h-24 w-24 items-center justify-center rounded-md bg-neutral-200'>
-                    <Shirt className='m-4 h-16 w-16 text-neutral-400' />
+                    <Icons.Shirt className='m-4 h-16 w-16 text-neutral-400' />
                   </div>
                 )}
                 <div className='flex flex-col justify-center'>
@@ -749,7 +742,7 @@ function AddProductDialog({
           ) : (
             <div className='flex h-full items-center gap-2 self-center'>
               <div className='flex h-24 w-24 items-center justify-center rounded-md bg-neutral-200'>
-                <Shirt className='m-4 h-16 w-16 text-neutral-400' />
+                <Icons.Shirt className='m-4 h-16 w-16 text-neutral-400' />
               </div>
               <div className='flex flex-col justify-center'>
                 <Heading variant='h6'>Título</Heading>

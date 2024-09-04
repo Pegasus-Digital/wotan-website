@@ -18,6 +18,7 @@ export async function getContactMessages(
   try {
     const { page, per_page, sort } = searchParams
 
+    // Fetch all messages that obey the filters and is NOT archived
     const response = await payload.find({
       collection: 'contact-messages',
       page,
@@ -26,6 +27,7 @@ export async function getContactMessages(
         and: [
           { name: { contains: name ? name : '' } },
           { email: { contains: email ? email : '' } },
+          { archived: { equals: false } },
         ],
       },
       sort,
@@ -35,7 +37,8 @@ export async function getContactMessages(
       data: response.docs,
       pageCount: response.totalPages,
     }
-  } catch (err) {
+  } catch (error) {
+    console.error(error)
     return { data: [], pageCount: 0 }
   }
 }

@@ -5,8 +5,7 @@ import { Company, Header as HeaderType } from '@/payload/payload-types'
 
 import { Media } from './media'
 import { HeaderNavigation } from './header-navigation'
-
-import { PhoneCall } from 'lucide-react'
+import { Icons } from './icons'
 
 type Props = HeaderType & {
   staticImage?: StaticImageData
@@ -37,7 +36,7 @@ export function Header({ logo, navigation, staticImage, id, phone }: Props) {
                 href={`tel: ${phone}`}
                 className='flex items-center gap-2 whitespace-nowrap text-sm leading-tight desktop:text-base'
               >
-                <PhoneCall className='h-6 w-6' />
+                <Icons.Phone className='h-6 w-6' />
                 Precisa de ajuda?
                 <br />
                 {phone}

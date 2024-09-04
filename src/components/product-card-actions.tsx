@@ -10,15 +10,16 @@ import { toast } from 'sonner'
 
 import {
   Tooltip,
-  TooltipProvider,
   TooltipTrigger,
   TooltipContent,
+  TooltipProvider,
 } from './ui/tooltip'
+
 import { Button, buttonVariants } from './ui/button'
 
 import { AddToCartDialog } from './add-to-cart-dialog'
 
-import { Heart, Eye } from 'lucide-react'
+import { Icons } from './icons'
 
 interface ProductCardActions {
   product: Product
@@ -53,7 +54,7 @@ export function ProductCardActions({ product }: ProductCardActions) {
             onClick={onToggleFavorite}
             className='group/favorite m-0 h-10 w-10 rounded-full bg-background p-0 text-foreground shadow-wotan-light hover:bg-primary hover:text-background'
           >
-            <Heart
+            <Icons.Favorite
               className={cn(`h-5 w-5`, isFavorite ? favoriteIconStyles : null)}
             />
           </Button>
@@ -74,7 +75,7 @@ export function ProductCardActions({ product }: ProductCardActions) {
               }),
             )}
           >
-            <Eye className='h-5 w-5' />
+            <Icons.Look className='h-5 w-5' />
           </Link>
         </TooltipTrigger>
         <TooltipContent>Ver detalhes</TooltipContent>

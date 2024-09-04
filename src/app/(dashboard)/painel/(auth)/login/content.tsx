@@ -1,24 +1,28 @@
 'use client'
 
-import { useAdminAuth } from '@/components/admin-auth-provider'
-import WotanLogo from '@/components/logo-wotan'
-import { Button } from '@/components/ui/button'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useRef } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+
+import { toast } from 'sonner'
 
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import WotanLogo from '@/components/logo-wotan'
+import { useAdminAuth } from '@/components/admin-auth-provider'
+
+import {
+  Card,
+  CardTitle,
+  CardHeader,
+  CardContent,
+  CardDescription,
+} from '@/components/ui/card'
+
 import {
   Form,
   FormControl,
@@ -26,9 +30,8 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form'
-import { toast } from 'sonner'
 
-const formLogin = z.object({
+const loginSchema = z.object({
   email: z
     .string({ required_error: 'É necessário fornecer um e-mail.' })
     .email({ message: `E-mail inválido.` }),
@@ -38,13 +41,14 @@ const formLogin = z.object({
 })
 
 export function LoginContent() {
-  const searchParams = useSearchParams()
-  const redirect = useRef(searchParams.get('redirect'))
-  const { user, login } = useAdminAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const { user, login } = useAdminAuth()
 
-  const form = useForm<z.infer<typeof formLogin>>({
-    resolver: zodResolver(formLogin),
+  const redirect = useRef(searchParams.get('redirect'))
+
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
@@ -52,7 +56,7 @@ export function LoginContent() {
   })
 
   const onSubmit = useCallback(
-    async (data: z.infer<typeof formLogin>) => {
+    async (data: z.infer<typeof loginSchema>) => {
       try {
         await login(data)
         // if (redirect?.current)

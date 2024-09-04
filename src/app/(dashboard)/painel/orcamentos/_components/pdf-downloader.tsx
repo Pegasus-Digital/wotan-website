@@ -4,17 +4,10 @@ import dynamic from 'next/dynamic'
 
 import { BudgetDocument } from '@/lib/pdf-generator/templates/budget'
 
-import { LoadingSpinner } from '@/components/spinner'
 import { Budget } from '@/payload/payload-types'
-import { Button } from '@/pegasus/button'
-import { Download, Loader2, Printer } from 'lucide-react'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { Button } from '@/components/ui/button'
+
+import { Icons } from '@/components/icons'
 
 const PDFDownloadLink = dynamic(
   () => import('@react-pdf/renderer').then((mod) => mod.PDFDownloadLink),
@@ -22,7 +15,7 @@ const PDFDownloadLink = dynamic(
     ssr: false,
     loading: () => (
       <Button variant='outline' className='w-full' disabled>
-        <Loader2 className='mr-2 animate-spin' />
+        <Icons.Loader className='mr-2 animate-spin' />
         Baixar PDF
       </Button>
     ),
@@ -45,12 +38,12 @@ export function BudgetDocumentDownloader({
         {({ url, loading }) =>
           loading ? (
             <Button variant='outline' className='w-full' disabled>
-              <Loader2 className='mr-2 animate-spin' />
+              <Icons.Loader className='mr-2 animate-spin' />
               Baixar PDF
             </Button>
           ) : (
             <Button variant='outline' className='w-full'>
-              <Download className='mr-2' />
+              <Icons.Download className='mr-2' />
               Baixar PDF
             </Button>
           )

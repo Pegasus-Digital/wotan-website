@@ -1,60 +1,43 @@
 'use client'
 
+import Link from 'next/link'
+import Image from 'next/image'
 import { useState, useTransition } from 'react'
 
-import { Attribute, Order, Salesperson } from '@/payload/payload-types'
+import { toast } from 'sonner'
+
+import { Order, Salesperson } from '@/payload/payload-types'
 
 import { ColumnDef } from '@tanstack/react-table'
+import { DataTableFilterField } from '@/components/table/types/table-types'
+import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 
-import { formatRelative } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import { Small } from '@/components/typography/texts'
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { Icons } from '@/components/icons'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
+import { OrderDocumentDownloader } from '../_components/pdf-downloader'
 
 import {
   Dialog,
+  DialogTitle,
+  DialogHeader,
   DialogContent,
   DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog'
 
-import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Separator } from '@/components/ui/separator'
-import { Card, CardContent } from '@/components/ui/card'
-import { ScrollArea } from '@/components/ui/scroll-area'
-
-import { Heading } from '@/pegasus/heading'
-import { Small } from '@/components/typography/texts'
-
 import {
-  Eye,
-  LinkIcon,
-  MoreHorizontal,
-  Pencil,
-  Printer,
-  UserRound,
-} from 'lucide-react'
-import { DataTableFilterField } from '@/components/table/types/table-types'
-import { toast } from 'sonner'
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu'
+
 import { deleteOrder } from '../_logic/actions'
-import Link from 'next/link'
-import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
-import Image from 'next/image'
-import { OrderDocumentDownloader } from '../_components/pdf-downloader'
 
 export const filterFields: DataTableFilterField<Order>[] = [
   // {
@@ -136,7 +119,7 @@ export function getColumns(): ColumnDef<Order>[] {
           return (
             <div className='flex items-center space-x-2'>
               <div className='flex h-5 w-5 items-center justify-center rounded-full bg-gray-300  p-1'>
-                <UserRound className='h-3 w-3 text-gray-600' />
+                <Icons.User className='h-3 w-3 text-gray-600' />
               </div>
 
               <p className='font-bold'>Nenhum</p>
@@ -156,7 +139,7 @@ export function getColumns(): ColumnDef<Order>[] {
               />
             ) : (
               <div className='flex h-5 w-5 items-center justify-center rounded-full bg-gray-300 p-1'>
-                <UserRound className='h-3 w-3 text-gray-600' />
+                <Icons.User className='h-3 w-3 text-gray-600' />
               </div>
             )}
 
@@ -263,7 +246,7 @@ export function getColumns(): ColumnDef<Order>[] {
                     <Link
                       href={`/painel/pedidos/${order.incrementalId}/documento`}
                     >
-                      <LinkIcon className='mr-2 h-5 w-5' />
+                      <Icons.Anchor className='mr-2 h-5 w-5' />
                       Ver PDF do pedido
                     </Link>
                   </Button>
@@ -276,12 +259,12 @@ export function getColumns(): ColumnDef<Order>[] {
           <div className='flex w-min gap-1'>
             <Button size='icon' variant='ghost' asChild>
               <Link href={`/painel/pedidos/${order.incrementalId}`}>
-                <Eye className='h-5 w-5' />
+                <Icons.Look className='h-5 w-5' />
               </Link>
             </Button>
             <Button size='icon' variant='ghost' asChild>
               <Link href={`/painel/pedidos/${order.incrementalId}?edit=true`}>
-                <Pencil className='h-5 w-5' />
+                <Icons.Edit className='h-5 w-5' />
               </Link>
             </Button>
             <Button
@@ -291,13 +274,13 @@ export function getColumns(): ColumnDef<Order>[] {
               size='icon'
               variant='ghost'
             >
-              <Printer className='h-5 w-5' />
+              <Icons.Print className='h-5 w-5' />
             </Button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button size='icon' variant='ghost'>
                   <span className='sr-only'>Abrir menu</span>
-                  <MoreHorizontal className='h-4 w-4' />
+                  <Icons.Dots className='h-4 w-4' />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align='end'>

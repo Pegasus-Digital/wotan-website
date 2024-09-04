@@ -150,4 +150,4 @@ const Clients: CollectionConfig = {
   ],
 }
 
-export default Clients
+export { Clients }

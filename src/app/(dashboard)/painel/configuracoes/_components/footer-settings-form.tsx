@@ -1,47 +1,41 @@
 'use client'
 
 import React from 'react'
-import { Controller, useFieldArray, useForm } from 'react-hook-form'
+
+import { Footer } from '@/payload/payload-types'
+
+import { toast } from 'sonner'
+
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Footer } from '@/payload/payload-types'
-import { updateFooterSettings } from '../_logic/actions'
-import { toast } from 'sonner'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
+
+import { H3 } from '@/components/typography/headings'
+
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { RadioGroupItem, RadioGroup } from '@/components/ui/radio-group'
+import { Card, CardTitle, CardHeader, CardContent } from '@/components/ui/card'
+
 import {
   Form,
   FormItem,
+  FormLabel,
   FormField,
   FormControl,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { H3, H4 } from '@/components/typography/headings'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/pegasus/button'
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { RadioGroupItem, RadioGroup } from '@/components/ui/radio-group'
-import { Label } from '@/components/ui/label'
+
 import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
+  AccordionContent,
 } from '@/components/ui/accordion'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { AccordionContent } from '@radix-ui/react-accordion'
+
 import { footerSchema } from '../_logic/schemas'
+import { updateFooterSettings } from '../_logic/actions'
 
 interface FooterProps {
   footer: Footer

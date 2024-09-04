@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+
 import { cn } from '@/lib/utils'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+
+import { Icons } from './icons'
 
 const variants = {
   enter: (direction: number) => {
@@ -131,7 +133,7 @@ export default function ImagesCarousel({
                 x: { type: 'spring', stiffness: 100, damping: 15 },
                 opacity: { duration: 0.5 },
               }}
-              className='image animate-fade-in absolute inset-0 h-full w-full object-cover object-center'
+              className='image absolute inset-0 h-full w-full animate-fade-in object-cover object-center'
               drag='x'
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={1}
@@ -151,13 +153,13 @@ export default function ImagesCarousel({
               className='absolute left-0 z-10 mx-2  my-auto  flex h-7  w-7 items-center justify-center rounded-full bg-background text-wotanRed-500 shadow-wotan-light hover:bg-wotanRed-500 hover:text-background'
               onClick={handlePrevious}
             >
-              <ArrowLeft className='h-6 w-6' />
+              <Icons.ArrowLeft className='h-6 w-6' />
             </div>
             <div
               className='absolute right-0 z-10 mx-2 my-auto  flex h-7  w-7 items-center justify-center rounded-full bg-background text-wotanRed-500 shadow-wotan-light hover:bg-wotanRed-500 hover:text-background'
               onClick={handleNext}
             >
-              <ArrowRight className='h-6 w-6' />
+              <Icons.ArrowRight className='h-6 w-6' />
             </div>
           </div>
         </>

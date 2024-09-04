@@ -5,12 +5,11 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { toast } from 'sonner'
 
+import { Icons } from '@/components/icons'
 import { Card } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-
-import { CheckCircle, PlusCircle } from 'lucide-react'
 
 interface RegisterNewPrice {
   addPrice: ({
@@ -91,7 +90,7 @@ export function RegisterNewPrice({ addPrice }: RegisterNewPrice) {
             onClick={handleDone}
             className='flex gap-1.5'
           >
-            <CheckCircle className='h-5 w-5' />
+            <Icons.Check className='h-5 w-5' />
           </Button>
         </div>
       ) : (
@@ -100,7 +99,7 @@ export function RegisterNewPrice({ addPrice }: RegisterNewPrice) {
           onClick={() => toggleCreateMode(true)}
           className='flex gap-1.5'
         >
-          <PlusCircle />
+          <Icons.Add />
           Adicionar
         </Button>
       )}

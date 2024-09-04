@@ -1,29 +1,35 @@
 import { Header } from '@/payload/payload-types'
-import { headerSchema } from '../_logic/schemas'
-import { Controller, useForm, useFieldArray } from 'react-hook-form'
+
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Controller, useForm } from 'react-hook-form'
+
+import { toast } from 'sonner'
+
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@/components/ui/accordion'
+
 import {
   Form,
   FormItem,
+  FormLabel,
   FormField,
   FormControl,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
+
+import { headerSchema } from '../_logic/schemas'
 import { updateHeaderSettings } from '../_logic/actions'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { toast } from 'sonner'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
 
 interface HeaderSettingsProps {
   header: Header
@@ -72,15 +78,6 @@ export default function HeaderSettingsForm({ header }: HeaderSettingsProps) {
       toast.error(response.message)
     }
   }
-
-  // const {
-  //   fields: columnFields,
-  //   append: appendColumn,
-  //   remove: removeColumn,
-  // } = useFieldArray({
-  //   control: form.control,
-  //   name: 'links',
-  // })
 
   return (
     <Form {...form}>

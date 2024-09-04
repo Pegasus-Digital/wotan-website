@@ -1,6 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+
+import { Attribute, Category, Media, Product } from '@/payload/payload-types'
 
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -10,63 +13,54 @@ import { formatBytes } from '@/lib/format'
 import { nestCategories } from '@/lib/category-hierarchy'
 
 import { toast } from 'sonner'
-import { AnimatePresence, motion } from 'framer-motion'
-
-import {
-  Attribute,
-  Category,
-  Media,
-  PriceQuantityTable,
-  Product,
-} from '@/payload/payload-types'
-
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
 
 import { CategoryList } from './category-list'
 import { AttributeList } from './attribute-list'
 import { ImageUploader } from './image-uploader'
 
-import { Heading, headingStyles } from '@/pegasus/heading'
+import { Heading } from '@/pegasus/heading'
+import { Small } from '@/components/typography/texts'
+
+import { Icons } from '@/components/icons'
+import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Image } from '@/components/media/image'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Separator } from '@/components/ui/separator'
 import { LoadingSpinner } from '@/components/spinner'
-import { Small } from '@/components/typography/texts'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
-import { PlusCircle, Save, Trash2, X } from 'lucide-react'
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@/components/ui/accordion'
+
+import {
+  Table,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+  TableHeader,
+} from '@/components/ui/table'
+
+import {
+  Form,
+  FormItem,
+  FormLabel,
+  FormField,
+  FormMessage,
+  FormControl,
+  FormDescription,
+} from '@/components/ui/form'
 
 import { updateProduct } from '../_logic/actions'
 import { updateProductSchema } from '../_logic/validations'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
-import { cn } from '@/lib/utils'
-import { Separator } from '@/components/ui/separator'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import { Label } from '@/components/ui/label'
 
 interface UpdateProductFormProps {
   currentProduct: Product
@@ -77,6 +71,8 @@ export function UpdateProductForm({
   currentProduct,
   edit = false,
 }: UpdateProductFormProps) {
+  const router = useRouter()
+
   const currentFeaturedImage = currentProduct.featuredImage as Media
 
   const [images, setMedia] = useState<Media[]>(
@@ -149,7 +145,7 @@ export function UpdateProductForm({
     },
   })
 
-  const { fields, append, remove, update } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: 'priceQuantityTable',
   })
@@ -160,13 +156,29 @@ export function UpdateProductForm({
     const {
       sku,
       title,
-      description,
-      minimumQuantity,
-      priceQuantityTable,
       active,
       attributes,
       categories,
+      description,
+      minimumQuantity,
+      priceQuantityTable,
     } = values
+
+    const quantities = priceQuantityTable.map((entry) => entry.quantity)
+    const quantitiesSet = new Set(quantities)
+
+    if (quantitiesSet.size !== quantities.length) {
+      return toast.error(
+        'A tabela preço-quantidades contém entradas duplicadas.',
+      )
+    }
+
+    // Order quantities
+    const sortedQuantityTable = priceQuantityTable.sort((a, b) => {
+      if (a.quantity > b.quantity) return 1
+      if (a.quantity < b.quantity) return -1
+      if (a.quantity === b.quantity) return 0
+    })
 
     if (!featured || featured === '') {
       return toast.error(
@@ -179,7 +191,7 @@ export function UpdateProductForm({
       title,
       description,
       minimumQuantity,
-      priceQuantityTable,
+      priceQuantityTable: sortedQuantityTable,
       active,
 
       featuredImage: featured,
@@ -193,6 +205,11 @@ export function UpdateProductForm({
 
     if (response.status === true) {
       toast.success(response.message)
+
+      // If SKU is updated, then redirect user to the new page
+      if (currentProduct.sku !== sku) {
+        router.push(`/painel/catalogo/produtos/${sku}?edit=true`)
+      }
     }
 
     if (response.status === false) {
@@ -207,6 +224,11 @@ export function UpdateProductForm({
   }
 
   const parseValue = (formattedValue: string) => {
+    // Solves edge case - CTRL + A -> Backspace was resulting in NaN,NaN
+    if (formattedValue.length === 0) {
+      return parseInt('0,00')
+    }
+
     const numericValue = formattedValue.replace(/\D/g, '') // Remove non-numeric characters
     return parseInt(numericValue, 10)
   }
@@ -224,7 +246,7 @@ export function UpdateProductForm({
             onClick={form.handleSubmit(onSubmit)}
             variant='default'
           >
-            <Save className='mr-2 h-4 w-4' /> Salvar
+            <Icons.Save className='mr-2 h-5 w-5' /> Salvar
           </Button>
         </div>
       )}
@@ -316,10 +338,10 @@ export function UpdateProductForm({
               <div className='flex items-center gap-2.5 space-y-0'>
                 <FormControl>
                   <Checkbox
-                    className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground'
+                    disabled={edit}
                     checked={field.value}
                     onCheckedChange={field.onChange}
-                    disabled={edit}
+                    className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground'
                   />
                 </FormControl>
                 <FormLabel className='cursor-pointer hover:underline'>
@@ -342,7 +364,7 @@ export function UpdateProductForm({
         </Heading>
 
         <div className='col-span-2'>
-          <ImageUploader setMedia={setMedia} />
+          <ImageUploader setMedia={setMedia} readonly={edit} />
         </div>
 
         {images.length >= 1 && (
@@ -350,13 +372,13 @@ export function UpdateProductForm({
             <p className='my-2 text-sm font-medium text-muted-foreground'>
               Arquivos salvos
             </p>
-            <div className='space-y-2 pr-3'>
+            <div className='space-y-2 rounded-lg transition-all hover:bg-muted/40'>
               <RadioGroup onValueChange={(value) => setFeatured(value)}>
                 {images.map((file) => {
                   return (
                     <div
                       key={file.id}
-                      className='group flex w-full justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 pr-2 transition-all hover:border-slate-300 hover:pr-0'
+                      className='group flex w-full justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 hover:border-slate-300'
                     >
                       <div className='flex flex-1 items-center p-2'>
                         <div>
@@ -391,10 +413,10 @@ export function UpdateProductForm({
 
                           setMedia(filteredImage)
                         }}
-                        className='items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex'
+                        className='items-center justify-center bg-destructive px-2 text-white transition-all group-hover:flex'
                         disabled={edit}
                       >
-                        <X size={20} />
+                        <Icons.Close className='h-5 w-5' />
                       </button>
                     </div>
                   )
@@ -416,7 +438,7 @@ export function UpdateProductForm({
               size='icon'
               onClick={() => append({ quantity: 0, unitPrice: 0 })}
             >
-              <PlusCircle className=' h-5 w-5' />
+              <Icons.Add className=' h-5 w-5' />
             </Button>
           </div>
           {fields.length > 0 && (
@@ -484,7 +506,7 @@ export function UpdateProductForm({
                         variant='destructive'
                         disabled={edit}
                       >
-                        <Trash2 className='h-5 w-5' />
+                        <Icons.Trash className='h-5 w-5' />
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -497,14 +519,10 @@ export function UpdateProductForm({
 
         <Accordion type='multiple'>
           <AccordionItem value='attributes'>
-            <AccordionTrigger
-              className={cn(
-                headingStyles({
-                  variant: 'h6',
-                }) + ' text-black',
-              )}
-            >
-              Atributos
+            <AccordionTrigger>
+              <Heading variant='h6' className='text-black'>
+                Atributos
+              </Heading>
             </AccordionTrigger>
             <AccordionContent>
               <FormField
@@ -531,6 +549,7 @@ export function UpdateProductForm({
                         attributes={attributes}
                         field={field}
                         set={form.setValue}
+                        readonly={edit}
                       />
                     ) : (
                       <LoadingSpinner />
@@ -541,16 +560,14 @@ export function UpdateProductForm({
               />
             </AccordionContent>
           </AccordionItem>
+
           <AccordionItem value='categories'>
-            <AccordionTrigger
-              className={cn(
-                headingStyles({
-                  variant: 'h6',
-                }) + ' text-black',
-              )}
-            >
-              Categorias
+            <AccordionTrigger>
+              <Heading variant='h6' className='text-black'>
+                Categorias
+              </Heading>
             </AccordionTrigger>
+
             <AccordionContent>
               <FormField
                 name='categories'

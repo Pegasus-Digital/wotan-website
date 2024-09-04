@@ -1,5 +1,7 @@
-import { Heading } from '@/pegasus/heading'
 import { getEstimateByIncrementalId } from '../../_logic/queries'
+
+import { Heading } from '@/pegasus/heading'
+
 import { BudgetDocumentContent } from './content'
 
 export default async function BudgetDocumentPage({ params: { id } }) {

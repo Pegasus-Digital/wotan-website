@@ -1,7 +1,8 @@
-import { Lead } from '@/components/typography/texts'
 import { ThreeColumns as ThreeColumnsProps } from '@/payload/payload-types'
+
+import { Icons } from '@/components/icons'
 import { Heading } from '@/pegasus/heading'
-import { Eye, Gem, Rocket } from 'lucide-react'
+import { Lead } from '@/components/typography/texts'
 
 export default function ThreeColumns({
   title,
@@ -20,17 +21,17 @@ export default function ThreeColumns({
         <div className='mt-12'>
           <ul className='grid gap-x-12 gap-y-6 tablet:grid-cols-3'>
             <CardWithICon
-              icon={<Rocket className='h-14 w-14' />}
+              icon={<Icons.Mission className='h-14 w-14' />}
               title={mission.title}
               description={mission.description}
             />
             <CardWithICon
-              icon={<Eye className='h-14 w-14' />}
+              icon={<Icons.Look className='h-14 w-14' />}
               title={vision.title}
               description={vision.description}
             />
             <CardWithICon
-              icon={<Gem className='h-14 w-14' />}
+              icon={<Icons.Values className='h-14 w-14' />}
               title={values.title}
               description={values.description}
             />

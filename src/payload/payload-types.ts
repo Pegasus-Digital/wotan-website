@@ -12,277 +12,267 @@
  */
 export type PriceQuantityTable =
   | {
-      quantity?: number | null
-      unitPrice?: number | null
-      id?: string | null
+      quantity?: number | null;
+      unitPrice?: number | null;
+      id?: string | null;
     }[]
-  | null
+  | null;
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "NavLinkColumn".
  */
 export type NavLinkColumn =
   | {
-      link: Link
-      description?: string | null
-      id?: string | null
+      link: Link;
+      description?: string | null;
+      id?: string | null;
     }[]
-  | null
+  | null;
 
 export interface Config {
   collections: {
-    products: Product
-    categories: Category
-    attributes: Attribute
-    'attribute-types': AttributeType
-    budget: Budget
-    order: Order
-    users: User
-    media: Media
-    pages: Page
-    clients: Client
-    salespersons: Salesperson
-    'contact-messages': ContactMessage
-    'payload-preferences': PayloadPreference
-    'payload-migrations': PayloadMigration
-  }
+    products: Product;
+    categories: Category;
+    attributes: Attribute;
+    'attribute-types': AttributeType;
+    budget: Budget;
+    order: Order;
+    users: User;
+    media: Media;
+    pages: Page;
+    clients: Client;
+    salespersons: Salesperson;
+    'contact-messages': ContactMessage;
+    'payload-preferences': PayloadPreference;
+    'payload-migrations': PayloadMigration;
+  };
   globals: {
-    settings: Setting
-  }
+    settings: Setting;
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "products".
  */
 export interface Product {
-  id: string
-  title: string
-  publishedOn?: string | null
-  sku: string
-  minimumQuantity: number
-  stockQuantity?: number | null
-  active: boolean
-  attributes?: (string | Attribute)[] | null
-  priceQuantityTable?: PriceQuantityTable
-  description?: string | null
-  tags?: string | null
-  featuredImage: string | Media
+  id: string;
+  title: string;
+  publishedOn?: string | null;
+  sku: string;
+  minimumQuantity: number;
+  stockQuantity?: number | null;
+  active: boolean;
+  attributes?: (string | Attribute)[] | null;
+  priceQuantityTable?: PriceQuantityTable;
+  description?: string | null;
+  tags?: string | null;
+  featuredImage: string | Media;
   images?:
     | {
-        image?: string | Media | null
-        id?: string | null
+        image?: string | Media | null;
+        id?: string | null;
       }[]
-    | null
-  categories?: (string | Category)[] | null
-  relatedProducts?: (string | Product)[] | null
-  slug?: string | null
+    | null;
+  categories?: (string | Category)[] | null;
+  relatedProducts?: (string | Product)[] | null;
+  slug?: string | null;
   meta?: {
-    title?: string | null
-    description?: string | null
-    image?: string | Media | null
-  }
-  updatedAt: string
-  createdAt: string
-  _status?: ('draft' | 'published') | null
+    title?: string | null;
+    description?: string | null;
+    image?: string | Media | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "attributes".
  */
 export interface Attribute {
-  id: string
-  name: string
-  value: string
-  type: string | AttributeType
-  updatedAt: string
-  createdAt: string
+  id: string;
+  name: string;
+  value: string;
+  type: string | AttributeType;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "attribute-types".
  */
 export interface AttributeType {
-  id: string
-  name: string
-  type: 'label' | 'color'
+  id: string;
+  name: string;
+  type: 'label' | 'color';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
-  id: string
-  alt?: string | null
-  updatedAt: string
-  createdAt: string
-  url?: string | null
-  filename?: string | null
-  mimeType?: string | null
-  filesize?: number | null
-  width?: number | null
-  height?: number | null
+  id: string;
+  alt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories".
  */
 export interface Category {
-  id: string
-  title: string
-  active: boolean
-  slug?: string | null
-  parent?: (string | null) | Category
+  id: string;
+  title: string;
+  active: boolean;
+  slug?: string | null;
+  parent?: (string | null) | Category;
   breadcrumbs?:
     | {
-        doc?: (string | null) | Category
-        url?: string | null
-        label?: string | null
-        id?: string | null
+        doc?: (string | null) | Category;
+        url?: string | null;
+        label?: string | null;
+        id?: string | null;
       }[]
-    | null
-  updatedAt: string
-  createdAt: string
+    | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "budget".
  */
 export interface Budget {
-  id: string
-  incrementalId?: number | null
-  salesperson?: (string | null) | Salesperson
-  comissioned?: boolean | null
-  origin?: ('website' | 'interno') | null
-  status?:
-    | ('criado' | 'contato' | 'enviado' | 'pendente' | 'aprovado' | 'cancelado')
-    | null
-  conditions?: string | null
+  id: string;
+  incrementalId?: number | null;
+  salesperson?: (string | null) | Salesperson;
+  comissioned?: boolean | null;
+  origin?: ('website' | 'interno') | null;
+  status?: ('criado' | 'contato' | 'enviado' | 'pendente' | 'aprovado' | 'cancelado') | null;
+  conditions?: string | null;
   items: {
-    product: string | Product
-    attributes?: (string | Attribute)[] | null
-    description?: string | null
-    quantity: number
-    price?: number | null
-    id?: string | null
-  }[]
+    product: string | Product;
+    attributes?: (string | Attribute)[] | null;
+    description?: string | null;
+    quantity: number;
+    price?: number | null;
+    id?: string | null;
+  }[];
   contact: {
-    companyName: string
-    customerName: string
-    email: string
-    phone: string
-    details?: string | null
-  }
-  updatedAt: string
-  createdAt: string
+    companyName: string;
+    customerName: string;
+    email: string;
+    phone: string;
+    details?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "salespersons".
  */
 export interface Salesperson {
-  id: string
-  name: string
-  avatar?: string | Media | null
-  roles: 'internal' | 'representative'
-  updatedAt: string
-  createdAt: string
-  email: string
-  resetPasswordToken?: string | null
-  resetPasswordExpiration?: string | null
-  salt?: string | null
-  hash?: string | null
-  loginAttempts?: number | null
-  lockUntil?: string | null
-  password: string | null
+  id: string;
+  name: string;
+  avatar?: string | Media | null;
+  roles: 'internal' | 'representative';
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  password: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "order".
  */
 export interface Order {
-  id: string
-  incrementalId?: number | null
-  client: string | Client
-  contact: string
+  id: string;
+  incrementalId?: number | null;
+  client: string | Client;
+  contact: string;
   alternativeContact?: {
-    name?: string | null
-    email?: string | null
-    phone?: string | null
-    whatsapp?: string | null
-  }
-  adress?: Address
-  salesperson?: (string | null) | Salesperson
+    name?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    whatsapp?: string | null;
+  };
+  adress?: Address;
+  salesperson?: (string | null) | Salesperson;
   itens?:
     | {
-        product: string | Product
-        quantity?: number | null
-        price: number
-        attributes?: (string | Attribute)[] | null
-        print?: string | null
-        sample?: boolean | null
-        layoutSent?: boolean | null
-        layoutApproved?: boolean | null
-        id?: string | null
+        product: string | Product;
+        quantity?: number | null;
+        price: number;
+        attributes?: (string | Attribute)[] | null;
+        print?: string | null;
+        sample?: boolean | null;
+        layoutSent?: boolean | null;
+        layoutApproved?: boolean | null;
+        id?: string | null;
       }[]
-    | null
-  shippingTime?: string | null
-  shippingCompany?: string | null
-  shippingType?: ('cif' | 'fob') | null
-  paymentConditions?: string | null
-  paymentType?: ('boleto' | 'pix' | 'deposito') | null
-  agency?: string | null
-  commission?: number | null
-  notes?: string | null
-  status?: ('pending' | 'completed' | 'cancelled') | null
-  updatedAt: string
-  createdAt: string
+    | null;
+  shippingTime?: string | null;
+  shippingCompany?: string | null;
+  shippingType?: ('cif' | 'fob') | null;
+  paymentConditions?: string | null;
+  paymentType?: ('boleto' | 'pix' | 'deposito') | null;
+  agency?: string | null;
+  commission?: number | null;
+  notes?: string | null;
+  status?: ('pending' | 'completed' | 'cancelled') | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "clients".
  */
 export interface Client {
-  id: string
-  name?: string | null
-  razaosocial?: string | null
-  type: 'company' | 'individual'
-  document?: string | null
+  id: string;
+  name?: string | null;
+  razaosocial?: string | null;
+  type: 'company' | 'individual';
+  document?: string | null;
   contacts?:
     | {
-        name?: string | null
-        email?: string | null
-        phone?: string | null
-        whatsapp?: string | null
-        id?: string | null
+        name?: string | null;
+        email?: string | null;
+        phone?: string | null;
+        whatsapp?: string | null;
+        id?: string | null;
       }[]
-    | null
-  adress?: Address
-  clientSince?: string | null
-  observations?: string | null
-  ramo?: string | null
-  salesperson: string | Salesperson
-  origin:
-    | 'ads'
-    | 'indication'
-    | 'fiergs-list'
-    | 'telephone-list'
-    | 'direct'
-    | 'prospect'
-    | 'website'
-    | 'other'
-  status?: ('active' | 'inactive' | 'prospect') | null
-  updatedAt: string
-  createdAt: string
+    | null;
+  adress?: Address;
+  clientSince?: string | null;
+  observations?: string | null;
+  ramo?: string | null;
+  salesperson: string | Salesperson;
+  origin: 'ads' | 'indication' | 'fiergs-list' | 'telephone-list' | 'direct' | 'prospect' | 'website' | 'other';
+  status?: ('active' | 'inactive' | 'prospect') | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "Address".
  */
 export interface Address {
-  street?: string | null
-  number?: string | null
-  neighborhood?: string | null
-  city?: string | null
+  street?: string | null;
+  number?: string | null;
+  neighborhood?: string | null;
+  city?: string | null;
   state?:
     | (
         | 'AC'
@@ -313,43 +303,43 @@ export interface Address {
         | 'SE'
         | 'TO'
       )
-    | null
-  cep?: string | null
+    | null;
+  cep?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
-  id: string
-  name?: string | null
-  roles: ('admin' | 'user')[]
-  updatedAt: string
-  createdAt: string
-  email: string
-  resetPasswordToken?: string | null
-  resetPasswordExpiration?: string | null
-  salt?: string | null
-  hash?: string | null
-  loginAttempts?: number | null
-  lockUntil?: string | null
-  password: string | null
+  id: string;
+  name?: string | null;
+  roles: ('admin' | 'user')[];
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  password: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
 export interface Page {
-  id: string
-  title: string
-  description?: string | null
-  publishedOn?: string | null
+  id: string;
+  title: string;
+  description?: string | null;
+  publishedOn?: string | null;
   carousel?:
     | {
-        image: string | Media
-        id?: string | null
+        image: string | Media;
+        id?: string | null;
       }[]
-    | null
+    | null;
   layout: (
     | ProductCarousel
     | FeaturedSection
@@ -360,382 +350,384 @@ export interface Page {
     | FAQ
     | ThreeColumns
     | TimelineSection
-  )[]
-  slug?: string | null
+  )[];
+  slug?: string | null;
   meta?: {
-    title?: string | null
-    description?: string | null
-    image?: string | Media | null
-  }
-  updatedAt: string
-  createdAt: string
-  _status?: ('draft' | 'published') | null
+    title?: string | null;
+    description?: string | null;
+    image?: string | Media | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "ProductCarousel".
  */
 export interface ProductCarousel {
-  invertBackground?: boolean | null
-  title?: string | null
-  description?: string | null
-  populateBy: 'categories' | 'selection'
-  categories?: (string | Category)[] | null
+  invertBackground?: boolean | null;
+  title?: string | null;
+  description?: string | null;
+  populateBy: 'categories' | 'selection';
+  categories?: (string | Category)[] | null;
   selectedDocs?:
     | {
-        relationTo: 'products'
-        value: string | Product
+        relationTo: 'products';
+        value: string | Product;
       }[]
-    | null
+    | null;
   populatedDocs?:
     | {
-        relationTo: 'products'
-        value: string | Product
+        relationTo: 'products';
+        value: string | Product;
       }[]
-    | null
-  seeMore: boolean
-  seeMoreLink: Link
-  id?: string | null
-  blockName?: string | null
-  blockType: 'product-carousel'
+    | null;
+  seeMore: boolean;
+  seeMoreLink: Link;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'product-carousel';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "Link".
  */
 export interface Link {
-  type?: ('reference' | 'custom') | null
-  newTab: boolean
+  type?: ('reference' | 'custom') | null;
+  newTab: boolean;
   reference?:
     | ({
-        relationTo: 'pages'
-        value: string | Page
+        relationTo: 'pages';
+        value: string | Page;
       } | null)
     | ({
-        relationTo: 'products'
-        value: string | Product
+        relationTo: 'products';
+        value: string | Product;
       } | null)
     | ({
-        relationTo: 'categories'
-        value: string | Category
-      } | null)
-  url?: string | null
-  label: string
+        relationTo: 'categories';
+        value: string | Category;
+      } | null);
+  url?: string | null;
+  label: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "FeaturedSection".
  */
 export interface FeaturedSection {
-  invertBackground?: boolean | null
-  title?: string | null
-  description?: string | null
+  invertBackground?: boolean | null;
+  title?: string | null;
+  description?: string | null;
   cards: {
-    title: string
-    description: string
-    image: string | Media
+    title: string;
+    description: string;
+    image: string | Media;
     linkTo:
       | {
-          relationTo: 'categories'
-          value: string | Category
+          relationTo: 'categories';
+          value: string | Category;
         }
       | {
-          relationTo: 'products'
-          value: string | Product
-        }
-    id?: string | null
-  }[]
-  id?: string | null
-  blockName?: string | null
-  blockType: 'featured-section'
+          relationTo: 'products';
+          value: string | Product;
+        };
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'featured-section';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "StatisticSection".
  */
 export interface StatisticSection {
-  invertBackground?: boolean | null
-  title?: string | null
-  description?: string | null
+  invertBackground?: boolean | null;
+  title?: string | null;
+  description?: string | null;
   statistics: {
-    title: string
-    value: string
-    id?: string | null
-  }[]
-  id?: string | null
-  blockName?: string | null
-  blockType: 'statistic-section'
+    title: string;
+    value: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'statistic-section';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "ContentSection".
  */
 export interface ContentSection {
-  invertBackground?: boolean | null
-  title?: string | null
-  description?: string | null
+  invertBackground?: boolean | null;
+  title?: string | null;
+  description?: string | null;
   columns: {
-    size: 'half' | 'full'
+    size: 'half' | 'full';
     text: {
-      [k: string]: unknown
-    }[]
-    id?: string | null
-  }[]
-  id?: string | null
-  blockName?: string | null
-  blockType: 'content-section'
+      [k: string]: unknown;
+    }[];
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'content-section';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "ClientGrid".
  */
 export interface ClientGrid {
-  invertBackground?: boolean | null
-  title?: string | null
-  description?: string | null
+  invertBackground?: boolean | null;
+  title?: string | null;
+  description?: string | null;
   clients: {
-    logo: string | Media
-    id?: string | null
-  }[]
-  id?: string | null
-  blockName?: string | null
-  blockType: 'client-grid'
+    logo: string | Media;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'client-grid';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "ContentMedia".
  */
 export interface ContentMedia {
-  invertBackground?: boolean | null
-  title?: string | null
-  description?: string | null
-  mediaPosition: 'left' | 'right'
+  invertBackground?: boolean | null;
+  title?: string | null;
+  description?: string | null;
+  mediaPosition: 'left' | 'right';
   richText: {
-    [k: string]: unknown
-  }[]
-  media: string | Media
-  id?: string | null
-  blockName?: string | null
-  blockType: 'content-media'
+    [k: string]: unknown;
+  }[];
+  media: string | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'content-media';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "FAQ".
  */
 export interface FAQ {
-  invertBackground?: boolean | null
-  title?: string | null
-  description?: string | null
+  invertBackground?: boolean | null;
+  title?: string | null;
+  description?: string | null;
   questions: {
-    question: string
-    answer: string
-    id?: string | null
-  }[]
-  id?: string | null
-  blockName?: string | null
-  blockType: 'faq-section'
+    question: string;
+    answer: string;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'faq-section';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "ThreeColumns".
  */
 export interface ThreeColumns {
-  invertBackground?: boolean | null
-  title?: string | null
-  description?: string | null
+  invertBackground?: boolean | null;
+  title?: string | null;
+  description?: string | null;
   mission: {
-    title: string
-    description: string
-  }
+    title: string;
+    description: string;
+  };
   vision: {
-    title: string
-    description: string
-  }
+    title: string;
+    description: string;
+  };
   values: {
-    title: string
-    description: string
-  }
-  id?: string | null
-  blockName?: string | null
-  blockType: 'three-columns'
+    title: string;
+    description: string;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'three-columns';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "TimelineSection".
  */
 export interface TimelineSection {
-  invertBackground?: boolean | null
-  title?: string | null
-  description?: string | null
+  invertBackground?: boolean | null;
+  title?: string | null;
+  description?: string | null;
   cards: {
-    title: string
-    description: string
-    date?: string | null
-    id?: string | null
-  }[]
-  id?: string | null
-  blockName?: string | null
-  blockType: 'timeline-section'
+    title: string;
+    description: string;
+    date?: string | null;
+    id?: string | null;
+  }[];
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'timeline-section';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "contact-messages".
  */
 export interface ContactMessage {
-  id: string
-  name: string
-  email: string
-  fone: string
-  cnpj?: string | null
-  message: string
-  acceptEmail?: boolean | null
-  acceptPrivacy: boolean
-  read?: boolean | null
-  contactedBy?: (string | null) | Salesperson
-  updatedAt: string
-  createdAt: string
+  id: string;
+  name: string;
+  email: string;
+  fone: string;
+  cnpj?: string | null;
+  message: string;
+  acceptEmail?: boolean | null;
+  acceptPrivacy: boolean;
+  read?: boolean | null;
+  contactedBy?: (string | null) | Salesperson;
+  archived: boolean;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string
+  id: string;
   user:
     | {
-        relationTo: 'users'
-        value: string | User
+        relationTo: 'users';
+        value: string | User;
       }
     | {
-        relationTo: 'salespersons'
-        value: string | Salesperson
-      }
-  key?: string | null
+        relationTo: 'salespersons';
+        value: string | Salesperson;
+      };
+  key?: string | null;
   value?:
     | {
-        [k: string]: unknown
+        [k: string]: unknown;
       }
     | unknown[]
     | string
     | number
     | boolean
-    | null
-  updatedAt: string
-  createdAt: string
+    | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string
-  name?: string | null
-  batch?: number | null
-  updatedAt: string
-  createdAt: string
+  id: string;
+  name?: string | null;
+  batch?: number | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "settings".
  */
 export interface Setting {
-  id: string
+  id: string;
   general: {
-    allowDarkMode?: boolean | null
-    showWhatsAppButton?: boolean | null
-    biggerQuantity?: boolean | null
-  }
-  header: Header
-  footer: Footer
-  company: Company
-  updatedAt?: string | null
-  createdAt?: string | null
+    allowDarkMode?: boolean | null;
+    showWhatsAppButton?: boolean | null;
+    biggerQuantity?: boolean | null;
+  };
+  header: Header;
+  footer: Footer;
+  company: Company;
+  updatedAt?: string | null;
+  createdAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "Header".
  */
 export interface Header {
-  logo: string | Media
-  navigation: Navigation
+  logo: string | Media;
+  navigation: Navigation;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "Navigation".
  */
 export interface Navigation {
-  style: 'classic' | 'dropdown' | 'megaMenu'
+  style: 'classic' | 'dropdown' | 'megaMenu';
   links: {
-    linkTo: Link
-    onlyLink: boolean
+    linkTo: Link;
+    onlyLink: boolean;
     columns?:
       | {
-          type: 'linkCol' | 'card'
-          content?: CardNav
-          linkColumn?: NavLinkColumn
-          id?: string | null
+          type: 'linkCol' | 'card';
+          content?: CardNav;
+          linkColumn?: NavLinkColumn;
+          id?: string | null;
         }[]
-      | null
+      | null;
     subLinks?:
       | {
-          link: Link
-          id?: string | null
+          link: Link;
+          id?: string | null;
         }[]
-      | null
-    id?: string | null
-  }[]
+      | null;
+    id?: string | null;
+  }[];
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "CardNav".
  */
 export interface CardNav {
-  title?: string | null
-  description?: string | null
+  title?: string | null;
+  description?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "Footer".
  */
 export interface Footer {
-  logo: string | Media
+  logo: string | Media;
   companyInfo: {
-    showAddress: boolean
-    showPhone: boolean
-    showEmail: boolean
-    showSocial: boolean
-  }
+    showAddress: boolean;
+    showPhone: boolean;
+    showEmail: boolean;
+    showSocial: boolean;
+  };
   columns: {
-    title: string
+    title: string;
     links: {
-      link: Link
-      id?: string | null
-    }[]
-    id?: string | null
-  }[]
-  facebookEmbed?: boolean | null
+      link: Link;
+      id?: string | null;
+    }[];
+    id?: string | null;
+  }[];
+  facebookEmbed?: boolean | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "Company".
  */
 export interface Company {
-  name: string
-  founded?: string | null
-  cnpj: string
-  adress?: Address
-  googleMaps: string
+  name: string;
+  founded?: string | null;
+  cnpj: string;
+  adress?: Address;
+  googleMaps: string;
   contact: {
-    email: string
-    phone: string
-    whatsapp: string
-  }
+    email: string;
+    phone: string;
+    whatsapp: string;
+  };
   social: {
-    facebook?: string | null
-    instagram?: string | null
-    linkedin?: string | null
-  }
+    facebook?: string | null;
+    instagram?: string | null;
+    linkedin?: string | null;
+  };
 }
+
 
 declare module 'payload' {
   export interface GeneratedTypes extends Config {}
