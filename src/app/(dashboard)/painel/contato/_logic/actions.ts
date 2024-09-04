@@ -42,7 +42,7 @@ export async function readMessage({
       message: 'Mensagem lida com sucesso.',
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
     return {
       data: null,
       status: false,

@@ -3,20 +3,23 @@
 import payload from 'payload'
 import { revalidatePath } from 'next/cache'
 import { ActionResponse } from '@/lib/actions'
+import { Order } from '@/payload/payload-types'
 
-interface DeleteEstimateProps {
-  estimateId: string
+interface DeleteOrderProps {
+  orderId: string
 }
 
-interface DeleteEstimateResponseData {}
+type SafeOrder = Omit<Order, 'id' | 'createdAt' | 'updatedAt'>
 
-export async function deleteEstimate({
-  estimateId,
-}: DeleteEstimateProps): Promise<ActionResponse<DeleteEstimateResponseData>> {
+interface DeleteOrderResponseData {}
+
+export async function deleteOrder({
+  orderId,
+}: DeleteOrderProps): Promise<ActionResponse<DeleteOrderResponseData>> {
   try {
     const response = await payload.delete({
-      collection: 'budget',
-      where: { id: { equals: estimateId } },
+      collection: 'order',
+      where: { id: { equals: orderId } },
     })
 
     if (!response.docs[0]) {
@@ -35,11 +38,80 @@ export async function deleteEstimate({
       message: 'Orçamento deletado com sucesso.',
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
     return {
       data: null,
       status: false,
       message: '[500] Ocorreu um erro ao deletar o orçamento.',
+    }
+  }
+}
+
+interface UpdateOrderProps {
+  id: Order['id']
+  order: SafeOrder
+}
+
+interface UpdateOrderResponseData {
+  order: Order
+}
+
+export async function updateOrder({
+  id,
+  order,
+}: UpdateOrderProps): Promise<ActionResponse<UpdateOrderResponseData>> {
+  try {
+    // console.log('foi', order)
+    const response = await payload.update({
+      collection: 'order',
+      where: { id: { equals: id } },
+      data: {
+        ...order,
+      },
+    })
+
+    revalidatePath('/painel/pedidos')
+
+    return {
+      data: { order: response.docs[0] },
+      status: true,
+      message: 'Pedido atualizado com sucesso.',
+    }
+  } catch (err) {
+    // console.error(err)
+
+    return {
+      data: null,
+      status: false,
+      message: '[500] Ocorreu um erro ao atualizar o pedido.',
+    }
+  }
+}
+
+export async function createOrder(
+  order: SafeOrder,
+): Promise<ActionResponse<UpdateOrderResponseData>> {
+  try {
+    // console.log('foi', order)
+    const response = await payload.create({
+      collection: 'order',
+      data: {
+        ...order,
+      },
+    })
+
+    revalidatePath('/painel/pedidos')
+    return {
+      data: { order: response },
+      status: true,
+      message: 'Pedido criado com sucesso.',
+    }
+  } catch (err) {
+    // console.error(err)
+    return {
+      data: null,
+      status: false,
+      message: '[500] Ocorreu um erro ao criar o pedido.',
     }
   }
 }

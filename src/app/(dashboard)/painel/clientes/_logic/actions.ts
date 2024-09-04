@@ -50,7 +50,7 @@ export async function createClient(
       message: 'Cliente cadastrado com sucesso.',
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
 
     return {
       data: null,
@@ -93,7 +93,7 @@ export async function updateClient(
       message: 'Cliente atualizado com sucesso.',
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
 
     return {
       data: null,
@@ -134,7 +134,7 @@ export async function deleteClient({
       message: 'Cliente deletado com sucesso.',
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
 
     return {
       data: null,
@@ -182,7 +182,7 @@ export async function updateClientSalesperson({
       message: 'Vendedor atualizado com sucesso.',
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
 
     return {
       data: null,
@@ -224,7 +224,7 @@ export async function updateClientStatus({
       message: 'Vendedor atualizado com sucesso.',
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
 
     return {
       data: null,

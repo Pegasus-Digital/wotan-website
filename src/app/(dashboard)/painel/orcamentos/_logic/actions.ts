@@ -5,23 +5,23 @@ import { revalidatePath } from 'next/cache'
 import { ActionResponse } from '@/lib/actions'
 import { Budget } from '@/payload/payload-types'
 
-interface DeleteEstimateProps {
-  estimateId: string
+interface DeleteBudgetProps {
+  budgetId: string
 }
 
-interface DeleteEstimateResponseData {}
+interface DeleteBudgetResponseData {}
 
 interface UpdateActionResponseData {
   budget: Budget | null
 }
 
-export async function deleteEstimate({
-  estimateId,
-}: DeleteEstimateProps): Promise<ActionResponse<DeleteEstimateResponseData>> {
+export async function deleteBudget({
+  budgetId,
+}: DeleteBudgetProps): Promise<ActionResponse<DeleteBudgetResponseData>> {
   try {
     const response = await payload.delete({
       collection: 'budget',
-      where: { id: { equals: estimateId } },
+      where: { id: { equals: budgetId } },
     })
 
     if (!response.docs[0]) {
@@ -40,7 +40,7 @@ export async function deleteEstimate({
       message: 'Orçamento deletado com sucesso.',
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
     return {
       data: null,
       status: false,
@@ -73,12 +73,46 @@ export async function createBudget(
       message: 'Orçamento criado com sucesso.',
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
 
     return {
       data: null,
       status: false,
       message: '[500] Ocorreu um erro ao criar orçamento.',
+    }
+  }
+}
+
+interface UpdateBudgetProps {
+  budget: SafeBudget
+  id: Budget['id']
+}
+
+export async function UpdateBudget({
+  budget,
+  id,
+}: UpdateBudgetProps): Promise<ActionResponse<UpdateActionResponseData>> {
+  try {
+    const response = await payload.update({
+      collection: 'budget',
+      where: { id: { equals: id } },
+      data: { ...budget },
+    })
+
+    revalidatePath('/painel/orcamentos')
+
+    return {
+      data: { budget: response.docs[0] },
+      status: true,
+      message: 'Orçamento atualizado com sucesso.',
+    }
+  } catch (err) {
+    // console.error(err)
+
+    return {
+      data: null,
+      status: false,
+      message: '[500] Ocorreu um erro ao atualizar o orçamento.',
     }
   }
 }
@@ -115,7 +149,7 @@ export async function updateBudgetStatus({
       message: 'Vendedor atualizado com sucesso.',
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
 
     return {
       data: null,

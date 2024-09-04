@@ -65,7 +65,7 @@ export const Budget: CollectionConfig = {
       name: 'conditions',
       type: 'textarea',
       defaultValue:
-        'Pagamento: 28 dd\nEntrega: 12 dd\nFrete:\nValidade da proposta: 10 dias\nPRODUTOS SUJEITOS Á DISPONIBILIDADE DE ESTOQUE',
+        'Pagamento: 28 dias\nEntrega: 12 dias\nFrete:\nValidade da proposta: 10 dias\nPRODUTOS SUJEITOS Á DISPONIBILIDADE DE ESTOQUE',
     },
     {
       name: 'items',

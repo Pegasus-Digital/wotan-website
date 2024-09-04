@@ -84,6 +84,9 @@ import {
   CommandList,
 } from '@/components/ui/command'
 import { cn } from '@/lib/utils'
+import { createOrder } from '../_logic/actions'
+import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 // Define the validation schema
 
 type OrderProps = z.infer<typeof orderSchema>
@@ -97,10 +100,15 @@ export function SeeOrderContent({
   clients,
   salespeople,
 }: SeeOrderContentProps) {
-  const [selectedClient, setSelectedClient] = useState<string>()
-  const [selectedContact, setSelectedContact] = useState<string>()
+  const [selectedClient, setSelectedClient] = useState<Order['client']>()
+  const [selectedContact, setSelectedContact] = useState<string>(
+    selectedClient && typeof selectedClient === 'object'
+      ? selectedClient.contacts[0].id
+      : '',
+  )
   const [deliveryAddress, setDeliveryAddress] = useState<boolean>(false)
 
+  const router = useRouter()
   const form = useForm<OrderProps>({
     resolver: zodResolver(orderSchema),
   })
@@ -115,10 +123,53 @@ export function SeeOrderContent({
 
   // const
 
+  const formatValue = (value: number) => {
+    const integerPart = Math.floor(value / 100).toString()
+    const decimalPart = (value % 100).toString().padStart(2, '0')
+    return `${integerPart},${decimalPart}`
+  }
+
+  const parseValue = (formattedValue: string) => {
+    const numericValue = formattedValue.replace(/\D/g, '') // Remove non-numeric characters
+    return parseInt(numericValue, 10)
+  }
+
   const { isSubmitting } = useFormState({ control: form.control })
 
   async function onSubmit(values: OrderProps) {
-    console.log('Order submitted:', values)
+    // console.log('Order submitted:', values)
+
+    const response = await createOrder({
+      ...values,
+      itens: values.itens.map((item) => ({
+        ...item,
+        product:
+          typeof item.product === 'string' ? item.product : item.product.id,
+
+        // attributes: item.attributes,
+        quantity: item.quantity,
+        price: item.price,
+        layoutSent: item.layoutSent,
+        layoutApproved: item.layoutApproved,
+        sample: item.sample,
+      })),
+      client:
+        typeof selectedClient === 'string' ? selectedClient : selectedClient.id,
+      contact: selectedContact,
+      salesperson:
+        typeof values.salesperson === 'string' ? values.salesperson : '',
+    })
+
+    // console.log('Order created:', response)
+
+    if (response.status === true) {
+      toast.success('Pedido criado com sucesso')
+      router.push('/painel/pedidos')
+    }
+
+    if (response.status === false) {
+      toast.error(response.message)
+    }
   }
 
   return (
@@ -136,7 +187,7 @@ export function SeeOrderContent({
             </Heading>
             <Button
               type='submit'
-              // disabled={isSubmitting}
+              disabled={isSubmitting}
               onClick={handleSubmit(onSubmit)}
               variant='default'
             >
@@ -163,7 +214,13 @@ export function SeeOrderContent({
                         <Select
                           onValueChange={(value) => {
                             field.onChange(value)
-                            setSelectedClient(value)
+                            setSelectedClient(
+                              clients.filter(
+                                (client) => client.id === value,
+                              )[0],
+                            )
+                            setSelectedContact(undefined)
+                            // console.log(selectedClient)
                           }}
                           value={field.value}
                         >
@@ -211,15 +268,15 @@ export function SeeOrderContent({
                             <SelectValue placeholder='Selecione um Contato' />
                           </SelectTrigger>
                           <SelectContent>
-                            {/* {contacts
-                              .filter(
-                                (contact) => contact.id === selectedClient,
-                              )
-                              .map((contact) => (
+                            <SelectItem value={undefined} key={'undefined'}>
+                              Selecione um Contato
+                            </SelectItem>
+                            {typeof selectedClient === 'object' &&
+                              selectedClient.contacts.map((contact) => (
                                 <SelectItem key={contact.id} value={contact.id}>
                                   {contact.name}
                                 </SelectItem>
-                              ))} */}
+                              ))}
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -255,7 +312,7 @@ export function SeeOrderContent({
                                   .map((person) => (
                                     <SelectItem
                                       key={person.id}
-                                      value={person.name}
+                                      value={person.id}
                                     >
                                       {person.name}
                                     </SelectItem>
@@ -273,7 +330,7 @@ export function SeeOrderContent({
                                   .map((person) => (
                                     <SelectItem
                                       key={person.id}
-                                      value='salesperson'
+                                      value={person.id}
                                     >
                                       {person.name}
                                     </SelectItem>
@@ -654,10 +711,10 @@ export function SeeOrderContent({
 
                                   <Input
                                     {...field}
-                                    // value={formatValue(field.value)}
-                                    // onChange={(e) => {
-                                    //   field.onChange(parseValue(e.target.value))
-                                    // }}
+                                    value={formatValue(field.value)}
+                                    onChange={(e) => {
+                                      field.onChange(parseValue(e.target.value))
+                                    }}
                                     inputMode='numeric'
                                     placeholder='0,00'
                                     className='disabled:opacity-100'

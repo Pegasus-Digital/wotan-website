@@ -40,7 +40,7 @@ export async function createProduct(
       message: 'Produto criado com sucesso.',
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
 
     return {
       data: null,
@@ -85,7 +85,7 @@ export async function updateProduct(
       message: 'Produto atualizado com sucesso.',
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
 
     return {
       data: null,
@@ -122,7 +122,7 @@ export async function deleteProduct(
       message: 'Produto deletado com sucesso.',
     }
   } catch (err) {
-    console.error(err)
+    // console.error(err)
 
     return {
       data: null,

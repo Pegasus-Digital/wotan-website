@@ -7,6 +7,7 @@ import {
   DocumentSeparator,
 } from '../components/document-separator'
 import { DocumentHeader } from '../components/document-header'
+import { Order } from '@/payload/payload-types'
 
 const styles = StyleSheet.create({
   page: {
@@ -31,9 +32,15 @@ const styles = StyleSheet.create({
   },
 })
 
-interface OrderDocumentProps {}
+interface OrderDocumentProps {
+  order: Order
+}
 
-export function OrderDocument({}: OrderDocumentProps) {
+export function OrderDocument({ order }: OrderDocumentProps) {
+  const salesperson =
+    typeof order.salesperson === 'object' ? order.salesperson : null
+
+  const client = typeof order.client === 'object' ? order.client : null
   return (
     <Document>
       <Page size='A4' style={styles.page}>
@@ -51,8 +58,8 @@ export function OrderDocument({}: OrderDocumentProps) {
               marginVertical: 10,
             }}
           >
-            <Text>Pedido nº: 12345</Text>
-            <Text>Data: {getDDMMYYDate(new Date())}</Text>
+            <Text>Pedido nº: {order.incrementalId}</Text>
+            <Text>Data: {getDDMMYYDate(new Date(order.createdAt))}</Text>
           </View>
 
           <View
@@ -66,20 +73,23 @@ export function OrderDocument({}: OrderDocumentProps) {
               style={{ justifyContent: 'space-between', flexDirection: 'row' }}
             >
               <View style={{ flexDirection: 'column', gap: 2, flex: 1 }}>
-                <Text>Razão Social: Blablá Indústria Automotiva LTDA</Text>
-                <Text>CNPJ: 01.234.567/0001-89</Text>
+                <Text>Razão Social: {client.razaosocial}</Text>
+                <Text>CNPJ: {client.document}</Text>
                 <Text>Inscrição Estadual: 012/3456789</Text>
-                <Text>Contato: Daniel</Text>
-                <Text>Telefone: (51) 98765-4321</Text>
+                <Text>Contato: {order.contact}</Text>
+                <Text>Telefone: {order.contact}</Text>
               </View>
 
               <View style={{ flexDirection: 'column', gap: 2, flex: 1 }}>
-                <Text>Vendedor: Daniel</Text>
-                <Text>Email: daniel@wotanbrindes.com.br</Text>
-                <Text>Tipo de pagamento: Boleto</Text>
                 <Text>
-                  Condição de pagamento: 35% pedido + 15 / 30 / 45 dias
+                  Vendedor:{' '}
+                  {salesperson
+                    ? salesperson.name
+                    : 'Não há vendedor associado.'}
                 </Text>
+                <Text>Email: {salesperson ? salesperson.email : '-'}</Text>
+                <Text>Tipo de pagamento: {order.paymentType}</Text>
+                <Text>Condição de pagamento: {order.paymentConditions}</Text>
                 <Text>Comissão Agência: Daniel (interno). 10%</Text>
               </View>
             </View>
@@ -149,12 +159,9 @@ export function OrderDocument({}: OrderDocumentProps) {
             Valor total do pedido: R$ 12.345,67
           </Text>
 
-          <Text>Observações:</Text>
+          {order.notes && <Text>Observações:</Text>}
 
-          <Text>
-            EMPRESA OPTANTE PELO SIMPLES NACIONAL NÃO GERA DIREITO A CREDITO
-            FISCAL DE ICMS, DE ISS E DE IPI.
-          </Text>
+          {order.notes && <Text>{order.notes}</Text>}
         </View>
       </Page>
     </Document>
