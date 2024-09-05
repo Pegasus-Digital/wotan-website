@@ -27,7 +27,7 @@ export function OrderDocumentContent({ order }: OrderDocumentContentProps) {
   return (
     <Content className='flex flex-col'>
       <ContentHeader
-        title={`Orçamento n° ${order.incrementalId}`}
+        title={`Pedido n° ${order.incrementalId}`}
         description={`Gerado em ${formatRelative(order.updatedAt, new Date(), { locale: ptBR })}`}
       />
       <PDFViewer

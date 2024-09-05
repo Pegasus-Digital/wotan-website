@@ -1,3 +1,4 @@
+import payload from 'payload'
 import { BeforeChangeHook } from 'payload/dist/collections/config/types'
 
 // Utility function to generate the next incremental ID across collections
@@ -11,7 +12,7 @@ export async function generateIncrementalId(req: any): Promise<number> {
         sort: '-incrementalId',
       }),
       req.payload.find({
-        collection: 'budget',
+        collection: 'order',
         limit: 1,
         sort: '-incrementalId',
       }),
@@ -44,6 +45,40 @@ export const assignIncrementalId: BeforeChangeHook = async ({
       data.incrementalId = newID // Assign the new ID
       // console.log(`Assigned incremental ID ${newID}`)
     } catch (error) {
+      // console.error('Error in beforeChange hook:', error)
+    }
+  }
+
+  return data
+}
+
+export const createLayouts: BeforeChangeHook = async ({
+  data,
+  operation,
+  req,
+}) => {
+  if (operation === 'create' || operation === 'update') {
+    try {
+      // Prepare to store all promises of Layout creation
+      const layoutPromises = data.itens.map(async (item) => {
+        // Check if item.layout is not assigned
+        if (!item.layout) {
+          // Create a new Layout document with ncm = ''
+          const layoutResponse = await req.payload.create({
+            collection: 'layouts',
+            data: { ncm: '' },
+          })
+
+          // Assign the newly created Layout ID to item.layout
+          item.layout = layoutResponse.id
+        }
+        return item
+      })
+
+      // Wait for all Layout creations to complete
+      await Promise.all(layoutPromises)
+    } catch (error) {
+      // Handle errors here
       // console.error('Error in beforeChange hook:', error)
     }
   }

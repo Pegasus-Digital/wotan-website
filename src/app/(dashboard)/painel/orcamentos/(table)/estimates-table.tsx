@@ -6,9 +6,8 @@ import { Budget } from '@/payload/payload-types'
 
 import { filterFields, getColumns } from './columns'
 import { type ColumnDef } from '@tanstack/react-table'
-import { useDataTable } from '@/components/table/hooks/use-data-table'
-
 import { DataTable } from '@/components/table/data-table'
+import { useDataTable } from '@/components/table/hooks/use-data-table'
 import { DataTableToolbar } from '@/components/table/data-table-toolbar'
 
 import { NewEstimateDialog } from '../_components/new-estimate-dialog'

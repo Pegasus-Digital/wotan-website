@@ -4,8 +4,6 @@ import { getAttributes, getAttributeTypes } from './_logic/queries'
 
 import { AttributesContent } from './content'
 
-// This page is meant to be responsible for SEO, data fetching and/or other asynchronous functions
-
 export const metadata: Metadata = {
   title: 'Atributos',
 }

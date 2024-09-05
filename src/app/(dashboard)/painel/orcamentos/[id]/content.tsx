@@ -1,80 +1,88 @@
 'use client'
 
-import { P, Small } from '@/components/typography/texts'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
-import { Textarea } from '@/components/ui/textarea'
-import {
-  Attribute,
-  Budget,
-  Client,
-  Product,
-  Salesperson,
-} from '@/payload/payload-types'
-import { Heading } from '@/pegasus/heading'
-import { formatRelative } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import Image from 'next/image'
 import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
+
+import { Budget, Client, Product, Salesperson } from '@/payload/payload-types'
+
+import {
+  formatBRL,
+  parseValue,
+  formatPhoneNumber,
+  formatBRLWithoutPrefix,
+} from '@/lib/format'
+
+import { toast } from 'sonner'
+import { ptBR } from 'date-fns/locale'
+import { formatRelative } from 'date-fns'
+
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useFieldArray, useForm, useFormState } from 'react-hook-form'
 
-import { Content, ContentHeader } from '@/components/content'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Heading } from '@/pegasus/heading'
+import { P } from '@/components/typography/texts'
+
+import { Icons } from '@/components/icons'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { getClients, getProducts, getSalespeople } from '../_logic/queries'
-import Image from 'next/image'
+import { Textarea } from '@/components/ui/textarea'
+import { Separator } from '@/components/ui/separator'
+import { Content, ContentHeader } from '@/components/content'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+
 import {
-  PlusCircle,
-  Save,
-  Search,
-  Shirt,
-  Trash2,
-  UserRound,
-} from 'lucide-react'
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import { TooltipArrow } from '@radix-ui/react-tooltip'
+
 import {
   Form,
-  FormControl,
-  FormField,
   FormItem,
   FormLabel,
+  FormField,
   FormMessage,
+  FormControl,
 } from '@/components/ui/form'
-import { Button } from '@/pegasus/button'
-import { useFieldArray, useForm, useFormState } from 'react-hook-form'
-import { budgetSchema } from '../_logic/validation'
-import { Dialog } from '@radix-ui/react-dialog'
-import {
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+
 import {
   Table,
+  TableRow,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
 } from '@/components/ui/table'
-import update from 'payload/dist/collections/operations/update'
-import { UpdateBudget, createBudget } from '../_logic/actions'
-import { toast } from 'sonner'
+
+import {
+  Select,
+  SelectItem,
+  SelectValue,
+  SelectLabel,
+  SelectGroup,
+  SelectTrigger,
+  SelectContent,
+  SelectSeparator,
+} from '@/components/ui/select'
+
+import {
+  Dialog,
+  DialogTitle,
+  DialogClose,
+  DialogHeader,
+  DialogFooter,
+  DialogContent,
+  DialogDescription,
+} from '@/components/ui/dialog'
+
+import { UpdateBudget } from '../_logic/actions'
+import { budgetSchema } from '../_logic/validation'
 
 type BudgetProps = z.infer<typeof budgetSchema>
 
@@ -115,7 +123,9 @@ export function SeeBudgetContent({
         customerName: budget.contact.customerName,
         email: budget.contact.email,
         phone: budget.contact.phone,
+        details: budget.contact.details,
       },
+      comissioned: budget.comissioned,
       items: budget.items.map((item) => ({
         product:
           typeof item.product === 'string'
@@ -127,11 +137,12 @@ export function SeeBudgetContent({
                 minimumQuantity: item.product.minimumQuantity,
                 active: item.product.active,
                 featuredImage: item.product.featuredImage,
+                priceQuantityTable: item.product.priceQuantityTable,
               },
         // attributes: item.attributes,
         description: item.description ? item.description : '',
         quantity: item.quantity,
-        price: item.price ? item.price.toString() : '',
+        price: item.price,
       })),
     },
   })
@@ -142,13 +153,79 @@ export function SeeBudgetContent({
     name: 'items',
   })
 
-  // console.log(fields)
-
   const { isSubmitting } = useFormState({ control: form.control })
 
-  async function onSubmit(values: BudgetProps) {
-    // console.log('foi carai', values)
+  function getSalespersonName(salespersonId: string): string {
+    // If we're not in edit mode, salesperson name needs to come from budget.salesperson.name
+    if (editMode) {
+      const salesperson = budget.salesperson as Salesperson
+      return salesperson.name
+    }
 
+    return (
+      salespeople.find((person) => person.id === salespersonId).name ??
+      'Não encontrado'
+    )
+  }
+
+  function getPriceForQuantity(productId: string, quantity: number) {
+    const product = fields.find(
+      (item) => (item.product as Product).id === productId,
+    ).product as Product
+
+    const table = product.priceQuantityTable
+
+    if (!table) {
+      return { quantity: 0, unitPrice: 0 }
+    }
+
+    table.sort((a, b) => {
+      if (a.quantity > b.quantity) return -1
+      if (a.quantity === b.quantity) return 0
+      if (a.quantity < b.quantity) return 1
+    })
+
+    const firstLowestQuantityIndex = table.findIndex(
+      (entry) => entry.quantity <= quantity,
+    )
+
+    const item = table[firstLowestQuantityIndex]
+
+    return {
+      quantity: item && item.quantity ? item.quantity : product.minimumQuantity,
+      unitPrice: item && item.unitPrice / 100,
+    }
+  }
+
+  form.watch('items')
+
+  interface PriceQuantityTooltipContentProps {
+    productId: string
+    quantity: number
+  }
+
+  function PriceQuantityTooltipContent({
+    productId,
+    quantity,
+  }: PriceQuantityTooltipContentProps) {
+    const { quantity: nearestLowerQuantity, unitPrice } = getPriceForQuantity(
+      productId,
+      quantity,
+    )
+
+    return (
+      <TooltipContent
+        side='top'
+        sideOffset={12}
+        className='text-justify font-medium'
+      >
+        <TooltipArrow />O valor sugerido a partir de <br />
+        {nearestLowerQuantity} unidades é de: {formatBRL(unitPrice)}
+      </TooltipContent>
+    )
+  }
+
+  async function onSubmit(values: BudgetProps) {
     const response = await UpdateBudget({
       budget: {
         ...values,
@@ -163,6 +240,7 @@ export function SeeBudgetContent({
             : null,
           email: values.contact.email ? values.contact.email : null,
           phone: values.contact.phone ? values.contact.phone : null,
+          details: values.contact.details ? values.contact.details : null,
         },
         items: values.items.map((item) => ({
           // ...item,
@@ -196,17 +274,17 @@ export function SeeBudgetContent({
       <Separator className='mb-4' />
       <Form {...form}>
         {!editMode && (
-          <div className='sticky top-0 z-10 flex  items-center justify-between border-b bg-background px-4 pb-6 pt-8 '>
+          <div className='sticky top-0 z-30 flex  items-center justify-between border-b bg-background px-4 pb-6 pt-8 '>
             <Heading variant='h5'>
               {budget.contact.companyName || 'Novo orçamento'}
             </Heading>
             <Button
               type='submit'
-              // disabled={isSubmitting}
+              disabled={isSubmitting}
               onClick={handleSubmit(onSubmit)}
               variant='default'
             >
-              <Save className='mr-2 h-4 w-4' /> Salvar
+              <Icons.Save className='mr-2 h-5 w-5' /> Salvar
             </Button>
           </div>
         )}
@@ -282,6 +360,13 @@ export function SeeBudgetContent({
                         <FormControl>
                           <Input
                             {...field}
+                            minLength={14}
+                            maxLength={15}
+                            onChange={(e) => {
+                              const { value } = e.target
+                              e.target.value = formatPhoneNumber(value)
+                              field.onChange(e)
+                            }}
                             disabled={editMode}
                             className='disabled:opacity-100'
                           />
@@ -300,11 +385,16 @@ export function SeeBudgetContent({
                   <div className='space-y-1'>
                     <Label>Cliente</Label>
 
-                    <Select disabled={editMode}>
+                    <Select
+                      onValueChange={(e) => {
+                        console.log('detectei mudança', e)
+                      }}
+                      disabled={editMode}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder='Selecione um Cliente' />
                       </SelectTrigger>
-                      {!editMode ? (
+                      {!editMode && (
                         <SelectContent side='bottom'>
                           {typeof clients === 'object' &&
                           clients.length === 0 ? (
@@ -312,7 +402,6 @@ export function SeeBudgetContent({
                               Você ainda não possui nenhum cliente.
                             </SelectItem>
                           ) : (
-                            typeof clients === 'object' &&
                             clients.map((client) => (
                               <SelectItem key={client.id} value={client.id}>
                                 {client.name}
@@ -320,8 +409,6 @@ export function SeeBudgetContent({
                             ))
                           )}
                         </SelectContent>
-                      ) : (
-                        <></>
                       )}
                     </Select>
                   </div>
@@ -349,16 +436,15 @@ export function SeeBudgetContent({
                 <div className='col-span-3'>
                   <FormField
                     control={form.control}
-                    name='contact.companyName'
+                    name='contact.details'
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Observações</FormLabel>
                         <FormControl>
                           <Textarea
-                            {...field}
                             disabled={editMode}
-                            value={budget.contact.details}
                             className='min-h-24 disabled:cursor-text disabled:opacity-100'
+                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
@@ -378,14 +464,8 @@ export function SeeBudgetContent({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Vendedor</FormLabel>
-                  <Select
-                    onValueChange={(value) => {
-                      field.onChange(value)
-                      // setSalespersonId(value)
-                    }}
-                    disabled={editMode}
-                    value={field.value}
-                  >
+
+                  <Select onValueChange={field.onChange} disabled={editMode}>
                     <SelectTrigger className='disabled:opacity-100'>
                       {typeof budget.salesperson === 'object' ? (
                         <div className='flex items-center space-x-2'>
@@ -396,54 +476,51 @@ export function SeeBudgetContent({
                               width={20}
                               height={20}
                               src={budget.salesperson.avatar.url}
-                              alt={budget.salesperson.name} // Use name for the alt attribute for better accessibility
+                              alt={budget.salesperson.name}
                               className='select-none rounded-full'
                             />
                           ) : (
-                            <div className='flex h-5 w-5 items-center justify-center rounded-full bg-gray-300 p-1'>
-                              <UserRound className='h-3 w-3 text-gray-600' />
+                            <div className='flex h-5 w-5 items-center justify-center rounded-full bg-muted p-1'>
+                              <Icons.User className='h-3 w-3 text-muted-foreground' />
                             </div>
                           )}
 
                           <p className='font-semibold'>
-                            {budget.salesperson.name}
+                            {getSalespersonName(field.value)}
                           </p>
                         </div>
                       ) : (
                         <SelectValue placeholder='Selecione um Vendedor' />
                       )}
                     </SelectTrigger>
-                    {!editMode ? (
-                      <SelectContent side='bottom'>
-                        <SelectGroup>
-                          <SelectLabel>Vendedor Interno</SelectLabel>
-                          {typeof salespeople === 'object' &&
-                            salespeople
-                              .filter((person) => person.roles === 'internal')
-                              .map((person) => (
-                                <SelectItem key={person.id} value={person.name}>
-                                  {person.name}
-                                </SelectItem>
-                              ))}
-                        </SelectGroup>
-                        <SelectSeparator />
-                        <SelectGroup>
-                          <SelectLabel>Representante Externo</SelectLabel>
-                          {salespeople &&
-                            salespeople
-                              .filter(
-                                (person) => person.roles === 'representative',
-                              )
-                              .map((person) => (
-                                <SelectItem key={person.id} value='salesperson'>
-                                  {person.name}
-                                </SelectItem>
-                              ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    ) : (
-                      <></>
-                    )}
+                    <SelectContent side='bottom'>
+                      <SelectGroup>
+                        <SelectLabel>Vendedor Interno</SelectLabel>
+                        {salespeople &&
+                          typeof salespeople === 'object' &&
+                          salespeople
+                            .filter((person) => person.roles === 'internal')
+                            .map((person) => (
+                              <SelectItem key={person.id} value={person.id}>
+                                {person.name}
+                              </SelectItem>
+                            ))}
+                      </SelectGroup>
+                      <SelectSeparator />
+                      <SelectGroup>
+                        <SelectLabel>Representante Externo</SelectLabel>
+                        {salespeople &&
+                          salespeople
+                            .filter(
+                              (person) => person.roles === 'representative',
+                            )
+                            .map((person) => (
+                              <SelectItem key={person.id} value={person.id}>
+                                {person.name}
+                              </SelectItem>
+                            ))}
+                      </SelectGroup>
+                    </SelectContent>
                   </Select>
                   <FormMessage />
                 </FormItem>
@@ -482,7 +559,6 @@ export function SeeBudgetContent({
                   <Textarea
                     {...field}
                     disabled={editMode}
-                    value={budget.conditions}
                     className='min-h-32 disabled:cursor-text disabled:opacity-100'
                   />
                 </FormControl>
@@ -504,7 +580,7 @@ export function SeeBudgetContent({
               size='icon'
               onClick={() => setAddProductDialog(true)}
             >
-              <PlusCircle className=' h-5 w-5' />
+              <Icons.Add className='h-5 w-5' />
             </Button>
           </div>
           <Table>
@@ -521,24 +597,24 @@ export function SeeBudgetContent({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {fields.map((field, index) => (
-                <TableRow key={field.id}>
-                  {typeof field.product === 'object' && (
+              {fields.map((item, index) => (
+                <TableRow key={item.id}>
+                  {typeof item.product === 'object' && (
                     <>
                       <TableCell>
                         <Image
                           src={
-                            typeof field.product.featuredImage === 'object'
-                              ? field.product.featuredImage.url
+                            typeof item.product.featuredImage === 'object'
+                              ? item.product.featuredImage.url
                               : ''
                           }
-                          alt={field.product.title}
+                          alt={item.product.title}
                           className='h-24 w-24 rounded-md object-cover'
                           width={96}
                           height={96}
                         />
                       </TableCell>
-                      <TableCell>{field.product.sku}</TableCell>
+                      <TableCell>{item.product.sku}</TableCell>
                       <TableCell>
                         <FormField
                           name={`items.${index}.description`}
@@ -568,8 +644,8 @@ export function SeeBudgetContent({
                                 <Input
                                   {...field}
                                   disabled={editMode}
-                                  placeholder='A partir de X produtos'
                                   className='disabled:opacity-100'
+                                  type='number'
                                 />
                               </FormControl>
                               <FormMessage />
@@ -584,21 +660,37 @@ export function SeeBudgetContent({
                           render={({ field }) => (
                             <FormItem>
                               <FormControl>
-                                <div className='flex items-center gap-2 font-medium'>
-                                  <Label>R$</Label>
+                                <TooltipProvider>
+                                  <Tooltip delayDuration={100}>
+                                    <TooltipTrigger type='button'>
+                                      <div className='flex items-center gap-2 font-medium'>
+                                        <Label>R$</Label>
 
-                                  <Input
-                                    {...field}
-                                    disabled={editMode}
-                                    // value={formatValue(field.value)}
-                                    // onChange={(e) => {
-                                    //   field.onChange(parseValue(e.target.value))
-                                    // }}
-                                    inputMode='numeric'
-                                    placeholder='0,00'
-                                    className='disabled:opacity-100'
-                                  />
-                                </div>
+                                        <Input
+                                          {...field}
+                                          disabled={editMode}
+                                          value={formatBRLWithoutPrefix(
+                                            Number(field.value),
+                                          )}
+                                          onChange={(e) => {
+                                            field.onChange(
+                                              parseValue(e.target.value),
+                                            )
+                                          }}
+                                          inputMode='numeric'
+                                          placeholder='0,00'
+                                          className='disabled:opacity-100'
+                                        />
+                                      </div>
+                                    </TooltipTrigger>
+                                    <PriceQuantityTooltipContent
+                                      productId={(item.product as Product).id}
+                                      quantity={
+                                        form.getValues('items')[index].quantity
+                                      }
+                                    />
+                                  </Tooltip>
+                                </TooltipProvider>
                               </FormControl>
                               <FormMessage />
                             </FormItem>
@@ -610,11 +702,18 @@ export function SeeBudgetContent({
                           <Button
                             type='button'
                             size='icon'
-                            onClick={() => remove(index)}
+                            onClick={() => {
+                              if (fields.length === 1) {
+                                return toast.error(
+                                  'Não foi possível remover o produto. Um orçamento deve conter pelo menos um item.',
+                                )
+                              }
+                              remove(index)
+                            }}
                             variant='destructive'
                             disabled={editMode}
                           >
-                            <Trash2 className='h-5 w-5' />
+                            <Icons.Trash className='h-5 w-5' />
                           </Button>
                         </TableCell>
                       )}
@@ -633,7 +732,7 @@ export function SeeBudgetContent({
           append({
             quantity: product.minimumQuantity,
             description: product.description,
-            price: '',
+            price: 0,
             product: {
               featuredImage: product.featuredImage,
               title: product.title,
@@ -673,7 +772,6 @@ function AddProductDialog({
       })
       if (response.ok) {
         const results = await response.json()
-        // console.log('results', results)
         setSearchResults(results.docs)
       } else {
         console.error('Error fetching products:', response.statusText)
@@ -685,7 +783,6 @@ function AddProductDialog({
 
   const handleSearch = () => {
     handleProductSearch(searchTerm) // Call the search function passed as a prop
-    // console.log(searchResults)
   }
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -714,7 +811,7 @@ function AddProductDialog({
             className='bg-background text-primary hover:bg-background'
             onClick={handleSearch}
           >
-            <Search className='h-5 w-5' />
+            <Icons.Search className='h-5 w-5' />
           </Button>
         </div>
         <div className='rounded-lg border p-2'>
@@ -734,7 +831,7 @@ function AddProductDialog({
                   />
                 ) : (
                   <div className='flex h-24 w-24 items-center justify-center rounded-md bg-neutral-200'>
-                    <Shirt className='m-4 h-16 w-16 text-neutral-400' />
+                    <Icons.Shirt className='m-4 h-16 w-16 text-neutral-400' />
                   </div>
                 )}
                 <div className='flex flex-col justify-center'>
@@ -749,7 +846,7 @@ function AddProductDialog({
           ) : (
             <div className='flex h-full items-center gap-2 self-center'>
               <div className='flex h-24 w-24 items-center justify-center rounded-md bg-neutral-200'>
-                <Shirt className='m-4 h-16 w-16 text-neutral-400' />
+                <Icons.Shirt className='m-4 h-16 w-16 text-neutral-400' />
               </div>
               <div className='flex flex-col justify-center'>
                 <Heading variant='h6'>Título</Heading>

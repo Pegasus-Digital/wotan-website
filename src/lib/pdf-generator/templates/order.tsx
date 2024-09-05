@@ -7,7 +7,13 @@ import {
   DocumentSeparator,
 } from '../components/document-separator'
 import { DocumentHeader } from '../components/document-header'
-import { Order } from '@/payload/payload-types'
+import {
+  Attribute,
+  AttributeType,
+  Order,
+  Product,
+} from '@/payload/payload-types'
+import { formatBRL } from '@/lib/format'
 
 const styles = StyleSheet.create({
   page: {
@@ -19,6 +25,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     padding: 10,
   },
+  table_header: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between',
+  },
   footer: {
     display: 'flex',
     flexDirection: 'row',
@@ -29,6 +41,23 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     gap: 2,
+  },
+  products_table: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+  },
+  product: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+  },
+  cell: {
+    display: 'flex',
+    width: '100%',
+
+    flexGrow: 1,
   },
 })
 
@@ -54,11 +83,11 @@ export function OrderDocument({ order }: OrderDocumentProps) {
               justifyContent: 'space-between',
               width: '100%',
               fontWeight: 'medium',
-              fontSize: 16,
+              fontSize: 14,
               marginVertical: 10,
             }}
           >
-            <Text>Pedido nº: {order.incrementalId}</Text>
+            <Text>Pedido #{order.incrementalId}</Text>
             <Text>Data: {getDDMMYYDate(new Date(order.createdAt))}</Text>
           </View>
 
@@ -70,9 +99,13 @@ export function OrderDocument({ order }: OrderDocumentProps) {
             }}
           >
             <View
-              style={{ justifyContent: 'space-between', flexDirection: 'row' }}
+              style={{
+                justifyContent: 'space-between',
+                flexDirection: 'row',
+                marginBottom: 6,
+              }}
             >
-              <View style={{ flexDirection: 'column', gap: 2, flex: 1 }}>
+              <View style={{ flexDirection: 'column', gap: 6, flex: 1 }}>
                 <Text>Razão Social: {client.razaosocial}</Text>
                 <Text>CNPJ: {client.document}</Text>
                 <Text>Inscrição Estadual: 012/3456789</Text>
@@ -80,7 +113,7 @@ export function OrderDocument({ order }: OrderDocumentProps) {
                 <Text>Telefone: {order.contact}</Text>
               </View>
 
-              <View style={{ flexDirection: 'column', gap: 2, flex: 1 }}>
+              <View style={{ flexDirection: 'column', gap: 6, flex: 1 }}>
                 <Text>
                   Vendedor:{' '}
                   {salesperson
@@ -90,65 +123,184 @@ export function OrderDocument({ order }: OrderDocumentProps) {
                 <Text>Email: {salesperson ? salesperson.email : '-'}</Text>
                 <Text>Tipo de pagamento: {order.paymentType}</Text>
                 <Text>Condição de pagamento: {order.paymentConditions}</Text>
-                <Text>Comissão Agência: Daniel (interno). 10%</Text>
+                <Text>
+                  Comissão Agência: {order.agency} {order.commission}%
+                </Text>
               </View>
             </View>
+            <DocumentSeparator />
 
             <View
               style={{ flexDirection: 'row', justifyContent: 'space-between' }}
             >
-              <View style={{ gap: 4, flex: 1 }}>
-                <View style={{ flexDirection: 'column', gap: 2 }}>
-                  <Text style={{ fontSize: 12, fontWeight: 'medium' }}>
+              <View style={{ gap: 8, flex: 1 }}>
+                <View style={{ flexDirection: 'column', gap: 6 }}>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 'medium',
+                      marginBottom: 2,
+                    }}
+                  >
                     Endereço de faturamento:
                   </Text>
                   <View style={{ marginLeft: 10 }}>
-                    <Text>Rua: Rua João Guimarães nº: 301</Text>
-                    <Text>Bairro: Santa Cecília</Text>
-                    <Text>CEP: 98765-432</Text>
-                    <Text>Cidade: Porto Alegre</Text>
+                    <Text>
+                      Rua: {client.adress.street} nº: {client.adress.number}
+                    </Text>
+                    <Text>Bairro:{client.adress.neighborhood}</Text>
+                    <Text>CEP: {client.adress.cep}</Text>
+                    <Text>
+                      Cidade: {client.adress.city} - {client.adress.state}
+                    </Text>
                   </View>
                 </View>
 
-                <View style={{ flexDirection: 'column', gap: 2 }}>
-                  <Text style={{ fontSize: 12, fontWeight: 'medium' }}>
+                <View style={{ flexDirection: 'column', gap: 6 }}>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      fontWeight: 'medium',
+                      marginBottom: 2,
+                    }}
+                  >
                     Endereço de entrega:
                   </Text>
                   <View style={{ marginLeft: 10 }}>
-                    <Text>Rua: Rua João Guimarães nº: 301</Text>
-                    <Text>Bairro: Santa Cecília</Text>
-                    <Text>CEP: 98765-432</Text>
-                    <Text>Cidade: Porto Alegre</Text>
+                    {order.adress ? (
+                      <>
+                        <Text>
+                          Rua: {order.adress.street} nº: {order.adress.number}
+                        </Text>
+                        <Text>Bairro: {order.adress.neighborhood}</Text>
+                        <Text>CEP: {order.adress.cep}</Text>
+                        <Text>
+                          Cidade: {order.adress.city} - {order.adress.state}
+                        </Text>
+                      </>
+                    ) : (
+                      <>
+                        <Text>
+                          Rua: {client.adress.street} nº: {client.adress.number}
+                        </Text>
+                        <Text>Bairro:{client.adress.neighborhood}</Text>
+                        <Text>CEP: {client.adress.cep}</Text>
+                        <Text>
+                          Cidade: {client.adress.city} - {client.adress.state}
+                        </Text>
+                      </>
+                    )}
                   </View>
                 </View>
               </View>
-              <View style={{ flexDirection: 'column', gap: 2, flex: 1 }}>
-                <Text style={{ fontSize: 12, fontWeight: 'medium' }}>
-                  Detalhes da entrega:
+              <View style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontWeight: 'medium',
+                    marginBottom: 2,
+                  }}
+                >
+                  Detalhes do Transporte:
                 </Text>
-                <Text>Frete: Sedex</Text>
-                <Text>Transportadora: Wotan</Text>
-                <Text>Prazo de entrega: 31/08/2024</Text>
+                <Text>
+                  Frete: {order.shippingType === 'cif' ? 'CIF' : 'FOB'}
+                </Text>
+                <Text>Transportadora: {order.shippingCompany}</Text>
+                <Text>Prazo de entrega: {order.shippingTime}</Text>
               </View>
             </View>
+            <DocumentSeparator />
           </View>
         </View>
-        <DocumentSeparator />
-        {/* Product list */}
         <View style={styles.section}>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              gap: 8,
-            }}
-          >
-            <Text style={{ height: 40 }}>Product #1</Text>
-            <Text style={{ height: 40 }}>Product #2</Text>
-            <Text style={{ height: 40 }}>Product #3</Text>
-            <Text style={{ height: 40 }}>Product #4</Text>
-            <Text style={{ height: 40 }}>Product #5</Text>
+          <View style={styles.table_header}>
+            <Text style={{ textAlign: 'left' }}>Código</Text>
+            <Text style={{ textAlign: 'left' }}>Produto</Text>
+            <Text style={{ textAlign: 'right' }}>Quantidade</Text>
+            <Text style={{ textAlign: 'right' }}>Valor unitário</Text>
+            <Text style={{ textAlign: 'right' }}>Valor total</Text>
+          </View>
+          <DocumentSeparator />
+          {/* Product list */}
+          <View style={styles.products_table}>
+            {order.itens.map((item) => {
+              const product = item.product as Product
+              const attributes = item.attributes as Attribute[]
+
+              return (
+                <View
+                  key={item.id}
+                  style={[
+                    styles.product,
+                    {
+                      borderBottom: 1,
+                      borderColor: 'gray',
+                      marginTop: 4,
+                      marginBottom: 8,
+                    },
+                  ]}
+                >
+                  <View style={styles.cell}>
+                    <Text
+                      style={{
+                        fontSize: 10,
+                      }}
+                    >
+                      {product.sku}
+                    </Text>
+                  </View>
+                  <View style={styles.cell}>
+                    <Text
+                      style={{
+                        fontSize: 11,
+                        textAlign: 'justify',
+                        marginBottom: 4,
+                      }}
+                    >
+                      {product.title}
+                    </Text>
+                    {attributes &&
+                      attributes.map((attr) => {
+                        const attributeType = attr.type as AttributeType
+                        return (
+                          <Text
+                            key={attr.id}
+                            style={{ fontSize: 10, textAlign: 'justify' }}
+                          >
+                            {attributeType.name}: {attr.name}
+                          </Text>
+                        )
+                      })}
+                    <Text style={{ fontSize: 10, textAlign: 'justify' }}>
+                      Impressão: {item.print}
+                    </Text>
+                    <Text style={{ fontSize: 10, textAlign: 'justify' }}>
+                      Amostra: ({item.sample ? 'X' : ' '})
+                    </Text>
+                    <Text style={{ fontSize: 10, textAlign: 'justify' }}>
+                      Layout: ({item.layoutSent ? 'X' : ' '}) Enviado (
+                      {item.layoutApproved ? 'X' : ' '}) Aprovado
+                    </Text>
+                  </View>
+                  <View style={styles.cell}>
+                    <Text style={{ fontSize: 11, textAlign: 'right' }}>
+                      {item.quantity}
+                    </Text>
+                  </View>
+                  <View style={styles.cell}>
+                    <Text style={{ fontSize: 11, textAlign: 'right' }}>
+                      {formatBRL(125)}
+                    </Text>
+                  </View>
+                  <View style={styles.cell}>
+                    <Text style={{ fontSize: 11, textAlign: 'right' }}>
+                      {formatBRL(item.quantity * 125)}
+                    </Text>
+                  </View>
+                </View>
+              )
+            })}
           </View>
         </View>
 

@@ -14,7 +14,6 @@ import { ProductCard } from '@/components/product-card'
 import { Heading } from '@/pegasus/heading'
 import { Lead } from '@/components/typography/texts'
 
-// TODO: Acho que da pra simplificar essas tipagens
 export type RelatedProductsSliderProps = Pick<
   Product,
   'categories' | 'relatedProducts'

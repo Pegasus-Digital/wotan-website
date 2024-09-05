@@ -27,4 +27,4 @@ const Categories: CollectionConfig = {
   ],
 }
 
-export default Categories
+export { Categories }

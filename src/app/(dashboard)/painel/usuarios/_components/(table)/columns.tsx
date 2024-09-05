@@ -4,29 +4,26 @@ import { useState, useTransition } from 'react'
 
 import { toast } from 'sonner'
 import { ColumnDef } from '@tanstack/react-table'
+import { DataTableFilterField } from '@/components/table/types/table-types'
 
 import { getRelativeDate } from '@/lib/date'
 
 import { User } from '@/payload/payload-types'
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-
+import { Icons } from '@/components/icons'
 import { Dialog } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 
-import { MoreHorizontal } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+} from '@/components/ui/dropdown-menu'
 
 import { deleteUser } from '../../_logic/actions'
-import { DataTableFilterField } from '@/components/table/types/table-types'
 
 export const filterFields: DataTableFilterField<User>[] = [
   {
@@ -111,7 +108,7 @@ export function getColumns(): ColumnDef<User>[] {
                 <DropdownMenuTrigger asChild>
                   <Button variant='ghost' className='h-8 w-8 p-0'>
                     <span className='sr-only'>Abrir menu</span>
-                    <MoreHorizontal className='h-4 w-4' />
+                    <Icons.Dots className='h-4 w-4' />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align='end'>

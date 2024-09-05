@@ -1,19 +1,10 @@
 import { useState } from 'react'
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from './ui/dialog'
-
+import { Icons } from './icons'
 import { Button } from './ui/button'
-import { Separator } from './ui/separator'
-import { AddToCartContent } from './add-to-cart-content'
+import { Dialog, DialogContent, DialogTrigger } from './ui/dialog'
 
-import { ShoppingCart } from 'lucide-react'
+import { AddToCartContent } from './add-to-cart-content'
 
 interface AddToCartDialogProps {
   productId: string
@@ -30,7 +21,7 @@ export function AddToCartDialog({ productId }: AddToCartDialogProps) {
           variant='outline'
           size='sm'
         >
-          <ShoppingCart className='h-5 w-5 ' />
+          <Icons.Cart className='h-5 w-5 ' />
         </Button>
       </DialogTrigger>
 

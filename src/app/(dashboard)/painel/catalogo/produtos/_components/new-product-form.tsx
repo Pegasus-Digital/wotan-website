@@ -7,66 +7,61 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useFieldArray, useForm, useFormState } from 'react-hook-form'
 
-import {
-  Attribute,
-  Category,
-  Media,
-  PriceQuantityTable,
-} from '@/payload/payload-types'
+import { Attribute, Category, Media } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
 
-import { formatBytes } from '@/lib/format'
+import { cn } from '@/lib/utils'
+import { formatBytes, parseValue } from '@/lib/format'
 import { nestCategories } from '@/lib/category-hierarchy'
 
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
+import { Small } from '@/components/typography/texts'
+import { Heading, headingStyles } from '@/pegasus/heading'
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import { CategoryList } from './category-list'
 import { AttributeList } from './attribute-list'
 import { ImageUploader } from './image-uploader'
 
-import { Heading, headingStyles } from '@/pegasus/heading'
+import { Icons } from '@/components/icons'
+import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Image } from '@/components/media/image'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Separator } from '@/components/ui/separator'
 import { LoadingSpinner } from '@/components/spinner'
-import { Small } from '@/components/typography/texts'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
-import { PlusCircle, Save, Trash2, X } from 'lucide-react'
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from '@/components/ui/accordion'
+
+import {
+  Table,
+  TableRow,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+} from '@/components/ui/table'
+
+import {
+  Form,
+  FormItem,
+  FormLabel,
+  FormField,
+  FormMessage,
+  FormControl,
+  FormDescription,
+} from '@/components/ui/form'
 
 import { createProduct } from '../_logic/actions'
 import { newProductSchema } from '../_logic/validations'
-import { Separator } from '@/components/ui/separator'
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion'
-import { cn } from '@/lib/utils'
-import { RegisterNewPrice } from './register-new-price'
-import { Label } from '@/components/ui/label'
 
 export function NewProductForm() {
   const [images, setMedia] = useState<Media[]>([])
@@ -145,8 +140,6 @@ export function NewProductForm() {
   const { isSubmitting } = useFormState({ control: form.control })
 
   async function onSubmit(values: z.infer<typeof newProductSchema>) {
-    // console.log(values)
-
     const {
       sku,
       title,
@@ -164,12 +157,19 @@ export function NewProductForm() {
       )
     }
 
+    // Order quantities
+    const sortedQuantityTable = priceQuantityTable.sort((a, b) => {
+      if (a.quantity > b.quantity) return 1
+      if (a.quantity < b.quantity) return -1
+      if (a.quantity === b.quantity) return 0
+    })
+
     const response = await createProduct({
       sku,
       title,
       description,
       minimumQuantity,
-      priceQuantityTable,
+      priceQuantityTable: sortedQuantityTable,
       active,
 
       // Placeholder image id
@@ -200,11 +200,6 @@ export function NewProductForm() {
     return `${integerPart},${decimalPart}`
   }
 
-  const parseValue = (formattedValue: string) => {
-    const numericValue = formattedValue.replace(/\D/g, '') // Remove non-numeric characters
-    return parseInt(numericValue, 10)
-  }
-
   const name = form.watch('title')
 
   return (
@@ -217,7 +212,7 @@ export function NewProductForm() {
           onClick={form.handleSubmit(onSubmit)}
           variant='default'
         >
-          <Save className='mr-2 h-4 w-4' /> Salvar
+          <Icons.Save className='mr-2 h-4 w-4' /> Salvar
         </Button>
       </div>
       <form
@@ -325,13 +320,13 @@ export function NewProductForm() {
             <p className='my-2 text-sm font-medium text-muted-foreground'>
               Arquivos salvos
             </p>
-            <div className='space-y-2 pr-3'>
+            <div className='space-y-2 rounded-lg transition-all hover:bg-muted/40'>
               <RadioGroup onValueChange={(value) => setFeatured(value)}>
                 {images.map((file) => {
                   return (
                     <div
                       key={file.id}
-                      className='group flex w-full justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 pr-2 transition-all hover:border-slate-300 hover:pr-0'
+                      className='group flex w-full justify-between gap-2 overflow-hidden rounded-lg border border-slate-100 hover:border-slate-300'
                     >
                       <div className='flex flex-1 items-center p-2'>
                         <div>
@@ -366,9 +361,9 @@ export function NewProductForm() {
 
                           setMedia(filteredImage)
                         }}
-                        className='items-center justify-center bg-red-500 px-2 text-white transition-all group-hover:flex'
+                        className='items-center justify-center bg-destructive px-2 text-white transition-all group-hover:flex'
                       >
-                        <X size={20} />
+                        <Icons.Close className='h-5 w-5' />
                       </button>
                     </div>
                   )
@@ -390,7 +385,7 @@ export function NewProductForm() {
               size='icon'
               onClick={() => append({ quantity: 0, unitPrice: 0 })}
             >
-              <PlusCircle className=' h-5 w-5' />
+              <Icons.Add className='h-5 w-5' />
             </Button>
           </div>
           {fields.length > 0 && (
@@ -455,7 +450,7 @@ export function NewProductForm() {
                         onClick={() => remove(index)}
                         variant='destructive'
                       >
-                        <Trash2 className='h-5 w-5' />
+                        <Icons.Trash className='h-5 w-5' />
                       </Button>
                     </TableCell>
                   </TableRow>

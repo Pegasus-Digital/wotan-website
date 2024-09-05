@@ -1,10 +1,4 @@
-import {
-  AudioWaveform,
-  FileImage,
-  FolderArchive,
-  Video,
-  File,
-} from 'lucide-react'
+import { Icons } from '@/components/icons'
 
 enum FileTypes {
   Image = 'image',
@@ -46,34 +40,34 @@ export const getFileIconAndColor = (file: File) => {
 
   if (file.type.includes(FileTypes.Image)) {
     return {
-      icon: <FileImage size={40} className={ImageColor.fillColor} />,
+      icon: <Icons.FileImage size={40} className={ImageColor.fillColor} />,
       color: ImageColor.bgColor,
     }
   }
 
   if (file.type.includes(FileTypes.Pdf)) {
     return {
-      icon: <File size={40} className={PdfColor.fillColor} />,
+      icon: <Icons.File size={40} className={PdfColor.fillColor} />,
       color: PdfColor.bgColor,
     }
   }
 
   if (file.type.includes(FileTypes.Audio)) {
     return {
-      icon: <AudioWaveform size={40} className={AudioColor.fillColor} />,
+      icon: <Icons.AudioWaveform size={40} className={AudioColor.fillColor} />,
       color: AudioColor.bgColor,
     }
   }
 
   if (file.type.includes(FileTypes.Video)) {
     return {
-      icon: <Video size={40} className={VideoColor.fillColor} />,
+      icon: <Icons.Video size={40} className={VideoColor.fillColor} />,
       color: VideoColor.bgColor,
     }
   }
 
   return {
-    icon: <FolderArchive size={40} className={OtherColor.fillColor} />,
+    icon: <Icons.FolderArchive size={40} className={OtherColor.fillColor} />,
     color: OtherColor.bgColor,
   }
 }

@@ -56,7 +56,12 @@ const Products: CollectionConfig = {
         {
           label: 'Product Details',
           fields: [
-            { name: 'sku', label: 'SKU', type: 'text', required: true },
+            {
+              name: 'sku',
+              label: 'SKU',
+              type: 'text',
+              required: true,
+            },
             {
               name: 'minimumQuantity',
               label: 'Minimum Quantity',
@@ -151,4 +156,4 @@ const Products: CollectionConfig = {
   ],
 }
 
-export default Products
+export { Products }

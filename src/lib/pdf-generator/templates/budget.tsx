@@ -101,9 +101,7 @@ export function BudgetDocument({ budget }: BudgetDocumentProps) {
             }}
           >
             <Text>Orçamento nº: {budget.incrementalId}</Text>
-            <Text>
-              Última atualização: {getDDMMYYDate(new Date(budget.updatedAt))}
-            </Text>
+            <Text>Data: {getDDMMYYDate(new Date(budget.updatedAt))}</Text>
           </View>
 
           <View style={styles.information}>
@@ -188,7 +186,9 @@ export function BudgetDocument({ budget }: BudgetDocumentProps) {
                   </View>
                   <View style={styles.cell}>
                     {/* TODO: Definir como o valor unitário vai ser definido para o orçamento. */}
-                    <Text style={{ textAlign: 'right' }}>{formatBRL(120)}</Text>
+                    <Text style={{ textAlign: 'right' }}>
+                      {formatBRL(item.price / 100)}
+                    </Text>
                   </View>
                 </View>
               )

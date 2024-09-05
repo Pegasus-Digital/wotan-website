@@ -5,20 +5,20 @@ import { Page } from '@/payload/payload-types'
 
 import {
   Carousel,
-  CarouselContent,
   CarouselItem,
-  CarouselPrevious,
   CarouselNext,
+  CarouselContent,
+  CarouselPrevious,
 } from './ui/carousel'
+
 import { Button } from '@/pegasus/button'
 import { ProductCard } from './product-card'
 
 import { Lead } from './typography/texts'
 import { Heading } from '@/pegasus/heading'
 
-import { ArrowRight } from 'lucide-react'
+import { Icons } from './icons'
 
-// TODO: Acho que da pra simplificar essas tipagens
 export type ProductSliderProps = Extract<
   Page['layout'][0],
   { blockType: 'product-carousel' }
@@ -66,12 +66,12 @@ export function ProductSlider({
 
         {seeMore && (
           <Button
-            className='self-center'
+            asChild
             size='lg'
             variant='expandIcon'
-            Icon={ArrowRight}
             iconPlacement='right'
-            asChild
+            className='self-center'
+            Icon={Icons.ArrowRight}
           >
             <Link href={getHref(seeMoreLink)}>{seeMoreLink.label}</Link>
           </Button>

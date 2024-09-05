@@ -1,19 +1,18 @@
 'use client'
 
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
 import { useEffect, useState } from 'react'
 
 import { Product } from '@/payload/payload-types'
 
+import { Button } from '@/pegasus/button'
 import { Heading } from '@/pegasus/heading'
-import { Button, buttonVariants } from '@/pegasus/button'
 
 import { CartCard } from './cart-card'
+import { Separator } from '@/components/ui/separator'
 import { LoadingSpinner } from '@/components/spinner'
 import { useCartStore } from '@/components/cart-store-provider'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
 
 export function CartDisplay() {
   const { cart } = useCartStore((state) => state)

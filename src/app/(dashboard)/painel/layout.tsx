@@ -1,10 +1,13 @@
-import Loading from '@/app/loading'
-import { AdminAuthProvider } from '@/components/admin-auth-provider'
-import ToasterParams from '@/components/render-params'
-import { Sidebar } from '@/components/sidebar'
-import { PegasusStamp } from '@/pegasus/pegasus-stamp'
 import { Suspense } from 'react'
+
 import { Toaster } from 'sonner'
+
+import Loading from '@/app/loading'
+
+import { Sidebar } from '@/components/sidebar'
+import ToasterParams from '@/components/render-params'
+import { PegasusStamp } from '@/pegasus/pegasus-stamp'
+import { AdminAuthProvider } from '@/components/admin-auth-provider'
 
 interface DashboardLayoutProps {
   children: React.ReactNode

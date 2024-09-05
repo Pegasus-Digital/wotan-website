@@ -10,31 +10,31 @@ import { getRelativeDate } from '@/lib/date'
 
 import { toast } from 'sonner'
 
-import { MoreHorizontal } from 'lucide-react'
 import { EnvelopeClosedIcon, EnvelopeOpenIcon } from '@radix-ui/react-icons'
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
-
+import { Icons } from '@/components/icons'
 import { Small } from '@/components/typography/texts'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 
-import { readMessage } from '../_logic/actions'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  TooltipProvider,
+} from '@/components/ui/tooltip'
+
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu'
+
+import { archiveMessage, readMessage } from '../_logic/actions'
 
 export const filterFields: DataTableFilterField<ContactMessage>[] = [
   {
@@ -170,13 +170,27 @@ export function getColumns(): ColumnDef<ContactMessage>[] {
     {
       id: 'actions',
       header: () => <span className='text-right'>Interações</span>,
-      cell: () => {
+      cell: ({ row }) => {
+        const message = row.original
+
+        async function handleArchiveMessage() {
+          const response = await archiveMessage({ message })
+
+          if (response.status === true) {
+            toast.success(response.message)
+          }
+
+          if (response.status === false) {
+            toast.error(response.message)
+          }
+        }
+
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='ghost' className='h-8 w-8 p-0'>
                 <span className='sr-only'>Abrir menu</span>
-                <MoreHorizontal className='h-4 w-4' />
+                <Icons.Dots className='h-4 w-4' />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
@@ -184,7 +198,10 @@ export function getColumns(): ColumnDef<ContactMessage>[] {
 
               <DropdownMenuSeparator />
 
-              <DropdownMenuItem className='cursor-pointer'>
+              <DropdownMenuItem
+                onClick={handleArchiveMessage}
+                className='cursor-pointer'
+              >
                 Arquivar mensagem
               </DropdownMenuItem>
             </DropdownMenuContent>

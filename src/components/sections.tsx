@@ -49,7 +49,6 @@ export function Sections({ sections }: { sections: Page['layout'][0][] }) {
             // }
 
             if (Block) {
-              // TODO: fix ts error
               return (
                 <Background key={index} invert={isInvert}>
                   {/* @ts-ignore */}

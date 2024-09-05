@@ -2,12 +2,15 @@
 
 import Link from 'next/link'
 import Image, { StaticImageData } from 'next/image'
-import { Delete, Edit, Eye, Trash } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { InlineCode, Large, Lead, Small } from '@/components/typography/texts'
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
+
+import { Icons } from './icons'
+import { Button } from '@/components/ui/button'
+import { InlineCode, Lead, Small } from '@/components/typography/texts'
+import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+
 import {
   Tooltip,
   TooltipContent,
@@ -28,7 +31,7 @@ export function PageCard({ title, href, image }: PageProps) {
         <Lead className='font-medium text-foreground'>{title}</Lead>
       </CardHeader>
 
-      <CardContent className='aspect-video bg-red-500 p-0'>
+      <CardContent className='aspect-video bg-destructive p-0'>
         <Link href={href}>
           <Image
             alt=''
@@ -59,7 +62,7 @@ export function PageCard({ title, href, image }: PageProps) {
                   size='icon'
                   variant='outline'
                 >
-                  <Edit className='h-5 w-5' />
+                  <Icons.Edit className='h-5 w-5' />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Editar página</TooltipContent>
@@ -72,7 +75,7 @@ export function PageCard({ title, href, image }: PageProps) {
                   size='icon'
                   variant='outline'
                 >
-                  <Eye className='h-5 w-5' />
+                  <Icons.Look className='h-5 w-5' />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>Alterar visibilidade</TooltipContent>

@@ -2,28 +2,37 @@
 
 import { useState } from 'react'
 
+import { Product } from '@/payload/payload-types'
+
 import { cn } from '@/lib/utils'
 
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
+import { Icons } from '@/components/icons'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
+
+import { Large, Lead } from '@/components/typography/texts'
+
 import {
   Form,
-  FormControl,
-  FormDescription,
-  FormField,
   FormItem,
   FormLabel,
+  FormField,
   FormMessage,
+  FormControl,
+  FormDescription,
 } from '@/components/ui/form'
 
 import {
   Select,
-  SelectContent,
   SelectItem,
-  SelectTrigger,
   SelectValue,
+  SelectTrigger,
+  SelectContent,
 } from '@/components/ui/select'
 
 import {
@@ -34,22 +43,13 @@ import {
 
 import {
   Command,
+  CommandItem,
   CommandEmpty,
   CommandGroup,
   CommandInput,
-  CommandItem,
 } from '@/components/ui/command'
 
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
-
-import { Large, Lead } from '@/components/typography/texts'
-
-import { PlusCircle } from 'lucide-react'
 import { CaretSortIcon, CheckIcon } from '@radix-ui/react-icons'
-
-import { Product } from '@/payload/payload-types'
 
 const productSchema = z.object({
   productId: z.string(),
@@ -245,7 +245,7 @@ export function NewEstimateForm() {
               size='sm'
               type='button'
             >
-              <PlusCircle className='mr-2 h-5 w-5' />
+              <Icons.Add className='mr-2 h-5 w-5' />
               Adicionar produto
             </Button>
           </div>

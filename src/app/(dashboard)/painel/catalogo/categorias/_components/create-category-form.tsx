@@ -8,32 +8,30 @@ import { Category } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
 
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+
 import {
   Form,
-  FormControl,
-  FormDescription,
-  FormField,
   FormItem,
   FormLabel,
+  FormField,
+  FormControl,
   FormMessage,
+  FormDescription,
 } from '@/components/ui/form'
 
 import {
   Select,
-  SelectContent,
   SelectItem,
-  SelectTrigger,
   SelectValue,
+  SelectTrigger,
+  SelectContent,
 } from '@/components/ui/select'
-
-import { Button } from '@/pegasus/button'
-import { Input } from '@/components/ui/input'
 
 import { createCategory } from '../_logic/actions'
 import { createCategorySchema } from '../_logic/validations'
-import { Checkbox } from '@/components/ui/checkbox'
-
-
 
 interface CreateCategoryFormProps {
   categories: Category[]

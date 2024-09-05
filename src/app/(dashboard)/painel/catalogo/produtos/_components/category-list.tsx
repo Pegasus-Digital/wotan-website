@@ -1,14 +1,21 @@
-import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
 import { NestedCategory } from '@/lib/category-hierarchy'
+
+import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
 
 interface CategoryListProps {
   categories: NestedCategory[]
   field: any
   set: (name: string, value: any) => void
+  readonly?: boolean
 }
 
-export function CategoryList({ categories, field, set }: CategoryListProps) {
+export function CategoryList({
+  categories,
+  field,
+  set,
+  readonly = false,
+}: CategoryListProps) {
   return (
     <div className='space-y-2'>
       {categories.map((category) => (
@@ -17,6 +24,7 @@ export function CategoryList({ categories, field, set }: CategoryListProps) {
           category={category}
           field={field}
           set={set}
+          readonly={readonly}
         />
       ))}
     </div>
@@ -27,12 +35,14 @@ interface CategoryCheckboxProps {
   category: NestedCategory
   field: any
   set: (name: string, value: any) => void
+  readonly?: boolean
 }
 
 export function CategoryCheckbox({
   category,
   field,
   set,
+  readonly = false,
 }: CategoryCheckboxProps) {
   function handleCheckedChange(id: string, state: boolean) {
     state
@@ -51,6 +61,7 @@ export function CategoryCheckbox({
           id={category.id}
           name={category.title}
           value={category.id}
+          disabled={readonly}
           defaultChecked={field.value.includes(category.id)}
           onCheckedChange={(state) => handleCheckedChange(category.id, !!state)}
         />

@@ -1,58 +1,59 @@
 'use client'
 
 // External libraries
-import React, { useState, useTransition } from 'react'
-import { toast } from 'sonner'
-import { ColumnDef } from '@tanstack/react-table'
-import Image from 'next/image'
 import Link from 'next/link'
-import { Eye, MoreHorizontal, MoveRight, Pencil, UserRound } from 'lucide-react'
+import Image from 'next/image'
+import { useState } from 'react'
 
-// Utility functions
+import { toast } from 'sonner'
 import { getRelativeDate } from '@/lib/date'
+
+import { ColumnDef } from '@tanstack/react-table'
 
 // Types
 import { Client, Salesperson } from '@/payload/payload-types'
 import { DataTableFilterField } from '@/components/table/types/table-types'
 
 // UI components
+import { Icons } from '@/components/icons'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+
 import {
   DropdownMenu,
-  DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
+
 import {
   Dialog,
+  DialogTitle,
   DialogClose,
-  DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  DialogContent,
+  DialogDescription,
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Badge } from '@/components/ui/badge'
+
 import {
   Select,
-  SelectContent,
-  SelectGroup,
   SelectItem,
   SelectLabel,
-  SelectSeparator,
-  SelectTrigger,
   SelectValue,
+  SelectGroup,
+  SelectTrigger,
+  SelectContent,
+  SelectSeparator,
 } from '@/components/ui/select'
 
 // Actions
 import {
   deleteClient,
-  updateClientSalesperson,
   updateClientStatus,
+  updateClientSalesperson,
 } from '../../_logic/actions'
 
 // Table components
@@ -139,8 +140,8 @@ export function getColumns({
         if (!value)
           return (
             <div className='flex items-center space-x-2'>
-              <div className='flex h-5 w-5 items-center justify-center rounded-full bg-gray-300  p-1'>
-                <UserRound className='h-3 w-3 text-gray-600' />
+              <div className='flex h-5 w-5 items-center justify-center rounded-full bg-muted p-1'>
+                <Icons.User className='h-3 w-3 text-muted-foreground' />
               </div>
 
               <p className='font-bold'>Nenhum</p>
@@ -159,8 +160,8 @@ export function getColumns({
                 className='select-none rounded-full'
               />
             ) : (
-              <div className='flex h-5 w-5 items-center justify-center rounded-full bg-gray-300 p-1'>
-                <UserRound className='h-3 w-3 text-gray-600' />
+              <div className='flex h-5 w-5 items-center justify-center rounded-full bg-muted p-1'>
+                <Icons.User className='h-3 w-3 text-muted-foreground' />
               </div>
             )}
 
@@ -204,7 +205,9 @@ export function getColumns({
       cell: ({ row }) => {
         const value: string = row.getValue('updatedAt')
 
-        if (!value) return 'Nunca foi atualizado'
+        if (!value) {
+          return 'Nunca foi atualizado'
+        }
 
         const date = new Date(value)
         const formattedDate = getRelativeDate(date)
@@ -307,8 +310,8 @@ export function getColumns({
                           className='select-none rounded-full'
                         />
                       ) : (
-                        <div className='flex h-5 w-5 items-center justify-center rounded-full bg-gray-300 p-1'>
-                          <UserRound className='h-3 w-3 text-gray-600' />
+                        <div className='flex h-5 w-5 items-center justify-center rounded-full bg-muted p-1'>
+                          <Icons.User className='h-3 w-3 text-muted-foreground' />
                         </div>
                       )}
 
@@ -317,7 +320,7 @@ export function getColumns({
                       </p>
                     </div>
                   )}
-                  <MoveRight className='h-6 w-6 text-primary' />
+                  <Icons.LongArrowRight className='h-6 w-6 text-primary' />
                   <Select
                     onValueChange={setSelectedSalesperson}
                     value={selectedSalesperson}
@@ -488,29 +491,34 @@ export function getColumns({
           <div className='flex w-min gap-1'>
             <Button asChild size='icon' variant='ghost'>
               <Link href={`/painel/clientes/${client.document}`}>
-                <Eye className='h-5 w-5' />
+                <Icons.Look className='h-5 w-5' />
               </Link>
             </Button>
             <Button asChild size='icon' variant='ghost'>
               <Link href={`/painel/clientes/${client.document}?edit=true`}>
-                <Pencil className='h-5 w-5' />
+                <Icons.Edit className='h-5 w-5' />
               </Link>
             </Button>
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button size='icon' variant='ghost'>
                   <span className='sr-only'>Abrir menu</span>
-                  <MoreHorizontal className='h-4 w-4' />
+                  <Icons.Dots className='h-4 w-4' />
                 </Button>
               </DropdownMenuTrigger>
+
               <DropdownMenuContent align='end'>
                 <DropdownMenuLabel>Interações</DropdownMenuLabel>
+
                 <DropdownMenuSeparator />
+
                 <ChangeClientStatusAction />
                 <TransferClientAction />
                 <DeleteClientAction />
               </DropdownMenuContent>
             </DropdownMenu>
+
             <ChangeClientStatusDialog />
             <TransferClientDialog />
             <DeleteClientDialog />

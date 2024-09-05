@@ -9,7 +9,7 @@ export function CartContent() {
 
         <CartDisplay />
 
-        {/* Mostrar produtos relacionados */}
+        {/* Mostrar produtos relacionados (melhoria) */}
       </div>
     </section>
   )

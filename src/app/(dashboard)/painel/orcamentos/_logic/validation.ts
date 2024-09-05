@@ -3,8 +3,8 @@ import { z } from 'zod'
 export const priceQuantityTableSchema = z
   .array(
     z.object({
-      quantity: z.number().optional().nullable(),
-      unitPrice: z.number().optional().nullable(),
+      quantity: z.coerce.number().optional().nullable(),
+      unitPrice: z.coerce.number().optional().nullable(),
       id: z.string().optional().nullable(),
     }),
   )
@@ -16,9 +16,9 @@ export const mediaSchema = z.object({
   url: z.string().optional().nullable(),
   filename: z.string().optional().nullable(),
   mimeType: z.string().optional().nullable(),
-  filesize: z.number().optional().nullable(),
-  width: z.number().optional().nullable(),
-  height: z.number().optional().nullable(),
+  filesize: z.coerce.number().optional().nullable(),
+  width: z.coerce.number().optional().nullable(),
+  height: z.coerce.number().optional().nullable(),
 })
 
 export const attributeTypeSchema = z.object({
@@ -37,8 +37,8 @@ export const productSchema = z.object({
   title: z.string(),
   publishedOn: z.string().optional().nullable(),
   sku: z.string(),
-  minimumQuantity: z.number(),
-  stockQuantity: z.number().optional().nullable(),
+  minimumQuantity: z.coerce.number(),
+  stockQuantity: z.coerce.number().optional().nullable(),
   active: z.boolean(),
   featuredImage: z.union([z.string(), mediaSchema]),
   images: z
@@ -65,8 +65,10 @@ export const productSchema = z.object({
 
 export const budgetSchema = z.object({
   // id: z.string(),
-  incrementalId: z.number().optional().nullable(),
-  salesperson: z.string(),
+  incrementalId: z.coerce.number().optional().nullable(),
+  salesperson: z.string({
+    required_error: 'Escolha um vendedor para o orçamento.',
+  }),
   comissioned: z.boolean().optional().nullable(),
   origin: z.union([z.literal('website'), z.literal('interno')]).optional(),
   status: z
@@ -86,8 +88,14 @@ export const budgetSchema = z.object({
       attributes: z.array(z.string()).optional(),
 
       description: z.string().optional().nullable(),
-      quantity: z.number(),
-      price: z.string().optional().nullable(),
+      quantity: z.coerce
+        .number({ required_error: 'Digite uma quantidade.' })
+        .positive({ message: 'A quantidade deve ser maior que zero.' })
+        .min(1, { message: 'A quantidade não pode ser zero.' }),
+      price: z.coerce
+        .number({ required_error: 'Digite um preço.' })
+        .positive({ message: 'O preço deve ser maior que zero.' })
+        .min(1, { message: 'A preço não pode ser zero.' }),
       id: z.string().optional().nullable(),
     }),
   ),

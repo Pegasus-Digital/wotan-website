@@ -1,27 +1,28 @@
 'use client'
 
-import Link from 'next/link'
+import { Company } from '@/payload/payload-types'
+
+import { toast } from 'sonner'
+import { formatPhoneNumber } from '@/lib/format'
 
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
-import {
-  Form,
-  FormItem,
-  FormField,
-  FormControl,
-  FormMessage,
-  FormLabel,
-} from '@/components/ui/form'
-
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { H3 } from '@/components/typography/headings'
-import { Company } from '@/payload/payload-types'
+
+import {
+  Form,
+  FormItem,
+  FormLabel,
+  FormField,
+  FormControl,
+  FormMessage,
+} from '@/components/ui/form'
+
 import { updateCompanySettings } from '../_logic/actions'
-import { toast } from 'sonner'
-import { useRouter } from 'next/navigation'
 
 const contactSettingsSchema = z.object({
   email: z.string().email(),
@@ -42,17 +43,6 @@ export function ContactSettingsForm({ company }: CompanyProps) {
       whatsapp: company.contact.whatsapp,
     },
   })
-
-  function formatPhoneNumber(value: string) {
-    const phoneNumber = value // <-- nº de celular não formatado
-
-    const formattedPhoneNumber = phoneNumber
-      .replace(/\D/g, '')
-      .replace(/(\d{2})(\d)/, '($1) $2')
-      .replace(/(\d)(\d{4})$/, '$1-$2')
-
-    return formattedPhoneNumber
-  }
 
   async function onSubmit(values: z.infer<typeof contactSettingsSchema>) {
     const response = await updateCompanySettings({

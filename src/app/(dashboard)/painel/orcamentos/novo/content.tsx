@@ -1,80 +1,76 @@
 'use client'
 
-import { P, Small } from '@/components/typography/texts'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
-import { Textarea } from '@/components/ui/textarea'
-import {
-  Attribute,
-  Budget,
-  Client,
-  Product,
-  Salesperson,
-} from '@/payload/payload-types'
-import { Heading } from '@/pegasus/heading'
-import { formatRelative } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+import Image from 'next/image'
 import { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
+
+import { Client, Product, Salesperson } from '@/payload/payload-types'
+
+import {
+  parseValue,
+  formatPhoneNumber,
+  formatBRLWithoutPrefix,
+} from '@/lib/format'
+import { toast } from 'sonner'
+
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useFieldArray, useForm, useFormState } from 'react-hook-form'
 
-import { Content, ContentHeader } from '@/components/content'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { Heading } from '@/pegasus/heading'
+import { P } from '@/components/typography/texts'
+
+import { Icons } from '@/components/icons'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { getClients, getProducts, getSalespeople } from '../_logic/queries'
-import Image from 'next/image'
-import {
-  PlusCircle,
-  Save,
-  Search,
-  Shirt,
-  Trash2,
-  UserRound,
-} from 'lucide-react'
+import { Textarea } from '@/components/ui/textarea'
+import { Separator } from '@/components/ui/separator'
+import { Content, ContentHeader } from '@/components/content'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+
 import {
   Form,
-  FormControl,
-  FormField,
   FormItem,
   FormLabel,
+  FormField,
   FormMessage,
+  FormControl,
 } from '@/components/ui/form'
-import { Button } from '@/pegasus/button'
-import { useFieldArray, useForm, useFormState } from 'react-hook-form'
-import { budgetSchema } from '../_logic/validation'
-import { Dialog } from '@radix-ui/react-dialog'
-import {
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+
 import {
   Table,
-  TableBody,
+  TableRow,
   TableCell,
+  TableBody,
   TableHead,
   TableHeader,
-  TableRow,
 } from '@/components/ui/table'
 
+import {
+  Select,
+  SelectItem,
+  SelectLabel,
+  SelectValue,
+  SelectGroup,
+  SelectTrigger,
+  SelectContent,
+  SelectSeparator,
+} from '@/components/ui/select'
+
+import {
+  Dialog,
+  DialogTitle,
+  DialogClose,
+  DialogHeader,
+  DialogFooter,
+  DialogContent,
+  DialogDescription,
+} from '@/components/ui/dialog'
+
 import { createBudget } from '../_logic/actions'
-import { toast } from 'sonner'
+import { budgetSchema } from '../_logic/validation'
 
 type BudgetProps = z.infer<typeof budgetSchema>
 
@@ -94,6 +90,15 @@ export function NewBudgetContent({
 
   const form = useForm<BudgetProps>({
     resolver: zodResolver(budgetSchema),
+    defaultValues: {
+      contact: {
+        companyName: '',
+        customerName: '',
+        details: '',
+        email: '',
+        phone: '',
+      },
+    },
   })
 
   const { control, handleSubmit, watch } = form
@@ -139,7 +144,6 @@ export function NewBudgetContent({
       toast.error(response.message)
     }
   }
-  // console.log(budget)
 
   const name = watch('contact.companyName')
 
@@ -160,7 +164,7 @@ export function NewBudgetContent({
               onClick={handleSubmit(onSubmit)}
               variant='default'
             >
-              <Save className='mr-2 h-4 w-4' /> Salvar
+              <Icons.Save className='mr-2 h-5 w-5' /> Salvar
             </Button>
           </div>
         }
@@ -222,7 +226,16 @@ export function NewBudgetContent({
                       <FormItem>
                         <FormLabel>Telefone</FormLabel>
                         <FormControl>
-                          <Input {...field} className='disabled:opacity-100' />
+                          <Input
+                            {...field}
+                            maxLength={15}
+                            onChange={(e) => {
+                              const { value } = e.target
+                              e.target.value = formatPhoneNumber(value)
+                              field.onChange(e)
+                            }}
+                            className='disabled:opacity-100'
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -283,14 +296,13 @@ export function NewBudgetContent({
                 <div className='col-span-3'>
                   <FormField
                     control={form.control}
-                    name='contact.companyName'
+                    name='contact.details'
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Observações</FormLabel>
                         <FormControl>
                           <Textarea
                             {...field}
-                            // value={budget.contact.details}
                             className='min-h-24 disabled:cursor-text disabled:opacity-100'
                           />
                         </FormControl>
@@ -311,12 +323,7 @@ export function NewBudgetContent({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Vendedor</FormLabel>
-                  <Select
-                    onValueChange={(value) => {
-                      field.onChange(value)
-                      // setSalespersonId(value)
-                    }}
-                  >
+                  <Select onValueChange={field.onChange}>
                     <SelectTrigger className='disabled:opacity-100'>
                       <SelectValue placeholder='Selecione um Vendedor' />
                     </SelectTrigger>
@@ -405,7 +412,7 @@ export function NewBudgetContent({
               size='icon'
               onClick={() => setAddProductDialog(true)}
             >
-              <PlusCircle className=' h-5 w-5' />
+              <Icons.Add className=' h-5 w-5' />
             </Button>
           </div>
           <Table>
@@ -488,9 +495,12 @@ export function NewBudgetContent({
                                   <Input
                                     {...field}
                                     // value={formatValue(field.value)}
-                                    // onChange={(e) => {
-                                    //   field.onChange(parseValue(e.target.value))
-                                    // }}
+                                    value={formatBRLWithoutPrefix(
+                                      Number(field.value),
+                                    )}
+                                    onChange={(e) => {
+                                      field.onChange(parseValue(e.target.value))
+                                    }}
                                     inputMode='numeric'
                                     placeholder='0,00'
                                     className='disabled:opacity-100'
@@ -510,7 +520,7 @@ export function NewBudgetContent({
                           onClick={() => remove(index)}
                           variant='destructive'
                         >
-                          <Trash2 className='h-5 w-5' />
+                          <Icons.Trash className='h-5 w-5' />
                         </Button>
                       </TableCell>
                     </>
@@ -528,7 +538,7 @@ export function NewBudgetContent({
           append({
             quantity: product.minimumQuantity,
             description: product.description,
-            price: '',
+            price: 0,
             product: {
               featuredImage: product.featuredImage,
               title: product.title,
@@ -609,7 +619,7 @@ function AddProductDialog({
             className='bg-background text-primary hover:bg-background'
             onClick={handleSearch}
           >
-            <Search className='h-5 w-5' />
+            <Icons.Search className='h-5 w-5' />
           </Button>
         </div>
         <div className='rounded-lg border p-2'>
@@ -629,7 +639,7 @@ function AddProductDialog({
                   />
                 ) : (
                   <div className='flex h-24 w-24 items-center justify-center rounded-md bg-neutral-200'>
-                    <Shirt className='m-4 h-16 w-16 text-neutral-400' />
+                    <Icons.Shirt className='m-4 h-16 w-16 text-neutral-400' />
                   </div>
                 )}
                 <div className='flex flex-col justify-center'>
@@ -644,7 +654,7 @@ function AddProductDialog({
           ) : (
             <div className='flex h-full items-center gap-2 self-center'>
               <div className='flex h-24 w-24 items-center justify-center rounded-md bg-neutral-200'>
-                <Shirt className='m-4 h-16 w-16 text-neutral-400' />
+                <Icons.Shirt className='m-4 h-16 w-16 text-neutral-400' />
               </div>
               <div className='flex flex-col justify-center'>
                 <Heading variant='h6'>Título</Heading>

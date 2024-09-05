@@ -17,6 +17,7 @@ export function ProductContent({ product, edit }: ProductContentProps) {
         title={`${edit ? 'Editar p' : 'P'}roduto #${product.sku}`}
         description={`Criado: ${formatRelative(product.createdAt, new Date(), { locale: ptBR })}`}
       />
+
       <Separator className='mb-4' />
 
       <UpdateProductForm currentProduct={product} edit={!edit} />
