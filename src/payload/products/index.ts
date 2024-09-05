@@ -2,7 +2,7 @@ import type { CollectionConfig } from 'payload/types'
 
 import { productSlugField, slugField } from '../fields/slug'
 import { revalidateProduct } from './hooks/revalidateProduct'
-import { anyone, admins } from '../access'
+import { anyone, isAdmin } from '../access'
 // import { populateArchiveBlock } from '../hooks/populateArchiveBlock'
 // import { beforeProductChange } from './hooks/beforeChange'
 // import { deleteProductFromCarts } from './hooks/deleteProductFromCarts'
@@ -30,9 +30,9 @@ const Products: CollectionConfig = {
   },
   access: {
     read: anyone,
-    create: admins,
-    update: admins,
-    delete: admins,
+    create: isAdmin,
+    update: isAdmin,
+    delete: isAdmin,
   },
   fields: [
     {

@@ -1,5 +1,5 @@
 import { GlobalConfig } from 'payload/types'
-import { admins, anyone } from '../access'
+import { anyone, isAdmin } from '../access'
 import { header } from '../fields/header'
 import { footer } from '../fields/footer'
 import { company } from '../fields/company'
@@ -12,7 +12,7 @@ const Settings: GlobalConfig = {
   },
   access: {
     read: anyone,
-    update: admins,
+    update: isAdmin,
   },
   fields: [
     {

@@ -1,14 +1,15 @@
 import { CollectionConfig } from 'payload/types'
-import { adminsOrLoggedIn, admins, adminsOrSelf } from '../access'
+import { isAdmin, isLoggedIn, isSelf } from '../access'
 import { ensureFirstUserIsAdmin } from './hooks/ensureFirstUserIsAdmin'
+import { admins } from '../access/admins'
 
 const Users: CollectionConfig = {
   slug: 'users',
   access: {
-    read: adminsOrLoggedIn,
-    create: admins,
-    update: adminsOrSelf,
-    delete: admins,
+    // read: isAdmin || isLoggedIn || isSelf,
+    create: isAdmin,
+    update: isAdmin || isSelf,
+    delete: isAdmin,
   },
   admin: {
     group: 'Settings',
@@ -41,7 +42,6 @@ const Users: CollectionConfig = {
         beforeChange: [ensureFirstUserIsAdmin],
       },
       access: {
-        read: admins,
         create: admins,
         update: admins,
       },

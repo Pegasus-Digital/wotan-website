@@ -25,7 +25,7 @@ export async function createProduct(
       data: { ...product, _status: 'published' },
     })
 
-    revalidatePath('/painel/catalogo/produtos')
+    revalidatePath('/sistema/catalogo/produtos')
 
     return {
       data: { product: response },
@@ -66,7 +66,7 @@ export async function updateProduct(
       }
     }
 
-    revalidatePath('/painel/catalogo/produtos')
+    revalidatePath('/sistema/catalogo/produtos')
 
     return {
       data: { product: response.docs[0] },
@@ -103,7 +103,7 @@ export async function deleteProduct(
       }
     }
 
-    revalidatePath('/painel/catalogo/produtos')
+    revalidatePath('/sistema/catalogo/produtos')
 
     return {
       data: null,

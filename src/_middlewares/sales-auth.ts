@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 
-async function isAdminAuthenticated(req) {
+async function isSalesAuthenticated(req) {
   const token = req.cookies['payload-token']
 
   if (!token) {
@@ -9,7 +9,7 @@ async function isAdminAuthenticated(req) {
 
   try {
     const meUserReq = await fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/me`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/salespersons/me`,
       {
         headers: {
           Authorization: `JWT ${token}`,
@@ -35,4 +35,4 @@ async function isAdminAuthenticated(req) {
   }
 }
 
-export default isAdminAuthenticated
+export default isSalesAuthenticated

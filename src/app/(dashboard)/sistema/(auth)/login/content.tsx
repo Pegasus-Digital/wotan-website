@@ -1,6 +1,5 @@
 'use client'
 
-import { useAdminAuth } from '@/components/admin-auth-provider'
 import WotanLogo from '@/components/logo-wotan'
 import { Button } from '@/components/ui/button'
 import {
@@ -27,6 +26,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { toast } from 'sonner'
+import { useSalesAuth } from '@/components/sales-auth-provider'
 
 const formLogin = z.object({
   email: z
@@ -40,7 +40,7 @@ const formLogin = z.object({
 export function LoginContent() {
   const searchParams = useSearchParams()
   const redirect = useRef(searchParams.get('redirect'))
-  const { user, login } = useAdminAuth()
+  const { user, login } = useSalesAuth()
   const router = useRouter()
 
   const form = useForm<z.infer<typeof formLogin>>({
@@ -54,18 +54,20 @@ export function LoginContent() {
   const onSubmit = useCallback(
     async (data: z.infer<typeof formLogin>) => {
       try {
-        await login(data)
+        const response = await login(data)
+        console.log(response)
         // if (redirect?.current)
         //   router.push(
         //     `${redirect.current as string}&success=${encodeURIComponent('Login realizado com sucesso.')}`,
         //   )
         // else
         router.push(
-          `/painel?success=${encodeURIComponent(
+          `/sistema?success=${encodeURIComponent(
             'Login realizado com sucesso.',
           )}`,
         )
-      } catch (_) {
+      } catch (err) {
+        console.error(err)
         toast.error('Credenciais inválidas. Por favor, tente novamente.')
       }
     },
@@ -83,7 +85,7 @@ export function LoginContent() {
                 <CardTitle className='text-2xl'>Login</CardTitle>
               </div>
               <CardDescription>
-                Entre seu e-mail abaixo para fazer login em sua conta.
+                Entre seu e-mail abaixo para fazer login no sistema.
               </CardDescription>
             </CardHeader>
             <CardContent>

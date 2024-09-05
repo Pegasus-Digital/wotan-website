@@ -25,13 +25,13 @@ import {
   SidebarNavigationItem,
 } from '../../../../components/sidebar-navigation'
 import WotanLogo from '../../../../components/logo-wotan'
-import { useAdminAuth } from '../../../../components/admin-auth-provider'
 import { Skeleton } from '../../../../components/ui/skeleton'
 import { LoadingSpinner } from '../../../../components/spinner'
 import { usePathname } from 'next/navigation'
+import { useSalesAuth } from '@/components/sales-auth-provider'
 
 export function Sidebar() {
-  const { status } = useAdminAuth()
+  const { status } = useSalesAuth()
   const path = usePathname()
 
   return (

@@ -1,6 +1,6 @@
 import path from 'path'
 import type { CollectionConfig } from 'payload/types'
-import { admins, anyone } from '../access'
+import { anyone, isAdmin } from '../access'
 
 const Media: CollectionConfig = {
   slug: 'media',
@@ -13,9 +13,9 @@ const Media: CollectionConfig = {
   },
   access: {
     read: anyone,
-    create: admins,
-    update: admins,
-    delete: admins,
+    create: isAdmin,
+    update: isAdmin,
+    delete: isAdmin,
   },
   fields: [
     {

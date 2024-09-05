@@ -1,7 +1,7 @@
 import { CollectionConfig } from 'payload/types'
 
 // Access
-import { admins, adminsOrPublished } from '../../access'
+import { adminsOrPublished, isAdmin, noone } from '../../access'
 
 // Blocks
 import { ClientGrid } from '../../blocks/clientGrid'
@@ -43,9 +43,9 @@ export const Pages: CollectionConfig = {
   },
   access: {
     read: adminsOrPublished,
-    update: admins,
-    create: admins,
-    delete: admins,
+    update: isAdmin,
+    create: isAdmin,
+    delete: noone,
   },
   fields: [
     {
