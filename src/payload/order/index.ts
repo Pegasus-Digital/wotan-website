@@ -1,6 +1,9 @@
 import { CollectionConfig } from 'payload/types'
 import { adress } from '../fields/adress'
-import { assignIncrementalId } from '../utilities/genIncrementalId'
+import {
+  assignIncrementalId,
+  createLayouts,
+} from '../utilities/genIncrementalId'
 
 const Order: CollectionConfig = {
   slug: 'order',
@@ -10,7 +13,7 @@ const Order: CollectionConfig = {
     group: 'Orders',
   },
   hooks: {
-    beforeChange: [assignIncrementalId],
+    beforeChange: [assignIncrementalId, createLayouts],
   },
   fields: [
     {
@@ -64,6 +67,11 @@ const Order: CollectionConfig = {
           type: 'relationship',
           relationTo: 'products',
           required: true,
+        },
+        {
+          name: 'layout',
+          type: 'relationship',
+          relationTo: 'layouts',
         },
         {
           name: 'quantity', // Quantidade field

@@ -22,6 +22,7 @@ import { Pages } from './settings/pages'
 import { Salespersons } from './salespersons'
 import { Categories } from './products/categories'
 import { Attributes, AttributeTypes } from './products/atributes'
+import Layout from './layout'
 
 const generateTitle: GenerateTitle = () => {
   return 'Wotan Brindes'
@@ -48,6 +49,7 @@ export default buildConfig({
     AttributeTypes,
     Budget,
     Order,
+    Layout,
     Users,
     Media,
     Pages,

@@ -37,6 +37,7 @@ export interface Config {
     'attribute-types': AttributeType;
     budget: Budget;
     order: Order;
+    layouts: Layout;
     users: User;
     media: Media;
     pages: Page;
@@ -213,6 +214,7 @@ export interface Order {
   itens?:
     | {
         product: string | Product;
+        layout?: (string | null) | Layout;
         quantity?: number | null;
         price: number;
         attributes?: (string | Attribute)[] | null;
@@ -305,6 +307,102 @@ export interface Address {
       )
     | null;
   cep?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "layouts".
+ */
+export interface Layout {
+  id: string;
+  printing?: {
+    type?: string | null;
+    colors?: string | null;
+    supplyer?: string | null;
+    quantity?: string | null;
+    price?: string | null;
+  };
+  printing2?: {
+    type?: string | null;
+    colors?: string | null;
+    supplyer?: string | null;
+    quantity?: string | null;
+    price?: string | null;
+  };
+  supplyer?:
+    | {
+        material?: string | null;
+        quantidade_material?: string | null;
+        fornecedor_material?: string | null;
+        custo_material?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  additionalCosts?: {
+    obs?: string | null;
+    cost?: string | null;
+  };
+  additionalCosts2?: {
+    obs?: string | null;
+    cost?: string | null;
+  };
+  delivery?: {
+    company?: string | null;
+    cost?: string | null;
+  };
+  delivery2?: {
+    company?: string | null;
+    cost?: string | null;
+  };
+  commisions?: {
+    agency?: {
+      name?: string | null;
+      value?: string | null;
+    };
+    salesperson?: {
+      name?: string | null;
+      value?: string | null;
+    };
+  };
+  layout?: {
+    sent?: boolean | null;
+    approved?: boolean | null;
+    sameAsPrevious?: boolean | null;
+    reSent?: boolean | null;
+    fotolitus?: boolean | null;
+    obs?: string | null;
+  };
+  sample?: {
+    with?: boolean | null;
+    approved?: boolean | null;
+    new?: boolean | null;
+  };
+  prazoentrega?: string | null;
+  transp?: string | null;
+  shipmentType?: ('cif' | 'fob') | null;
+  shipmentCost?: string | null;
+  quote?: string | null;
+  volumeNumber?: string | null;
+  shipmentDate?: string | null;
+  paymentType?: ('boleto' | 'pix' | 'deposito') | null;
+  invoice?: {
+    number?: string | null;
+    due?: string | null;
+    value?: string | null;
+  };
+  invoice2?: {
+    number?: string | null;
+    due?: string | null;
+    value?: string | null;
+  };
+  invoice3?: {
+    number?: string | null;
+    due?: string | null;
+    value?: string | null;
+  };
+  ncm?: string | null;
+  obs_final?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
