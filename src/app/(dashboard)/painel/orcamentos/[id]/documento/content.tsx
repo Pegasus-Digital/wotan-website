@@ -38,16 +38,6 @@ export function BudgetDocumentContent({ budget }: BudgetDocumentContentProps) {
       >
         <BudgetDocument budget={budget} />
       </PDFViewer>
-
-      {/* TODO: Remover depois de mostrar pra Wotan e coletar opinião */}
-
-      {/* <PDFViewer className='h-full w-full animate-fade-in'>
-        <ProductionDocument />
-      </PDFViewer> */}
-
-      {/* <PDFViewer className='h-full w-full animate-fade-in'>
-        <OrderDocument />
-      </PDFViewer> */}
     </Content>
   )
 }

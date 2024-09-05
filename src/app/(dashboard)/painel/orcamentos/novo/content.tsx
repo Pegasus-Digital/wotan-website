@@ -6,6 +6,11 @@ import { useRouter } from 'next/navigation'
 
 import { Client, Product, Salesperson } from '@/payload/payload-types'
 
+import {
+  parseValue,
+  formatPhoneNumber,
+  formatBRLWithoutPrefix,
+} from '@/lib/format'
 import { toast } from 'sonner'
 
 import { z } from 'zod'
@@ -85,6 +90,15 @@ export function NewBudgetContent({
 
   const form = useForm<BudgetProps>({
     resolver: zodResolver(budgetSchema),
+    defaultValues: {
+      contact: {
+        companyName: '',
+        customerName: '',
+        details: '',
+        email: '',
+        phone: '',
+      },
+    },
   })
 
   const { control, handleSubmit, watch } = form
@@ -130,7 +144,6 @@ export function NewBudgetContent({
       toast.error(response.message)
     }
   }
-  // console.log(budget)
 
   const name = watch('contact.companyName')
 
@@ -151,7 +164,7 @@ export function NewBudgetContent({
               onClick={handleSubmit(onSubmit)}
               variant='default'
             >
-              <Icons.Save className='mr-2 h-4 w-4' /> Salvar
+              <Icons.Save className='mr-2 h-5 w-5' /> Salvar
             </Button>
           </div>
         }
@@ -213,7 +226,16 @@ export function NewBudgetContent({
                       <FormItem>
                         <FormLabel>Telefone</FormLabel>
                         <FormControl>
-                          <Input {...field} className='disabled:opacity-100' />
+                          <Input
+                            {...field}
+                            maxLength={15}
+                            onChange={(e) => {
+                              const { value } = e.target
+                              e.target.value = formatPhoneNumber(value)
+                              field.onChange(e)
+                            }}
+                            className='disabled:opacity-100'
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -274,14 +296,13 @@ export function NewBudgetContent({
                 <div className='col-span-3'>
                   <FormField
                     control={form.control}
-                    name='contact.companyName'
+                    name='contact.details'
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Observações</FormLabel>
                         <FormControl>
                           <Textarea
                             {...field}
-                            // value={budget.contact.details}
                             className='min-h-24 disabled:cursor-text disabled:opacity-100'
                           />
                         </FormControl>
@@ -302,12 +323,7 @@ export function NewBudgetContent({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Vendedor</FormLabel>
-                  <Select
-                    onValueChange={(value) => {
-                      field.onChange(value)
-                      // setSalespersonId(value)
-                    }}
-                  >
+                  <Select onValueChange={field.onChange}>
                     <SelectTrigger className='disabled:opacity-100'>
                       <SelectValue placeholder='Selecione um Vendedor' />
                     </SelectTrigger>
@@ -479,9 +495,12 @@ export function NewBudgetContent({
                                   <Input
                                     {...field}
                                     // value={formatValue(field.value)}
-                                    // onChange={(e) => {
-                                    //   field.onChange(parseValue(e.target.value))
-                                    // }}
+                                    value={formatBRLWithoutPrefix(
+                                      Number(field.value),
+                                    )}
+                                    onChange={(e) => {
+                                      field.onChange(parseValue(e.target.value))
+                                    }}
                                     inputMode='numeric'
                                     placeholder='0,00'
                                     className='disabled:opacity-100'
@@ -519,7 +538,7 @@ export function NewBudgetContent({
           append({
             quantity: product.minimumQuantity,
             description: product.description,
-            price: '',
+            price: 0,
             product: {
               featuredImage: product.featuredImage,
               title: product.title,

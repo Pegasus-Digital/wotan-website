@@ -9,7 +9,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useFieldArray, useForm, useFormState } from 'react-hook-form'
 
-import { formatBytes } from '@/lib/format'
+import { formatBytes, parseValue } from '@/lib/format'
 import { nestCategories } from '@/lib/category-hierarchy'
 
 import { toast } from 'sonner'
@@ -221,16 +221,6 @@ export function UpdateProductForm({
     const integerPart = Math.floor(value / 100).toString()
     const decimalPart = (value % 100).toString().padStart(2, '0')
     return `${integerPart},${decimalPart}`
-  }
-
-  const parseValue = (formattedValue: string) => {
-    // Solves edge case - CTRL + A -> Backspace was resulting in NaN,NaN
-    if (formattedValue.length === 0) {
-      return parseInt('0,00')
-    }
-
-    const numericValue = formattedValue.replace(/\D/g, '') // Remove non-numeric characters
-    return parseInt(numericValue, 10)
   }
 
   const name = form.watch('title')

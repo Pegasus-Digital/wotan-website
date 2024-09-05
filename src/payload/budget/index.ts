@@ -56,7 +56,7 @@ const Budget: CollectionConfig = {
         { label: 'Criado', value: 'criado' },
         { label: 'Em contato', value: 'contato' },
         { label: 'Enviado p/ Cliente', value: 'enviado' },
-        { label: 'Aguardando provação ', value: 'pendente' },
+        { label: 'Aguardando aprovação ', value: 'pendente' },
         { label: 'Aprovado', value: 'aprovado' },
         { label: 'Cancelado', value: 'cancelado' },
       ],

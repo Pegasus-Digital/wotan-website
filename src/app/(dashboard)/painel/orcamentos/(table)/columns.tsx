@@ -346,7 +346,7 @@ export function getColumns(): ColumnDef<Budget>[] {
                     <SelectItem value='contato'>Em contato</SelectItem>
                     <SelectItem value='enviado'>Enviado p/ Cliente</SelectItem>
                     <SelectItem value='pendente'>
-                      Aguardando provação
+                      Aguardando aprovação
                     </SelectItem>
                     <SelectItem value='aprovado'>Aprovado</SelectItem>
                     <SelectItem value='cancelado'>Cancelado</SelectItem>
@@ -369,7 +369,7 @@ export function getColumns(): ColumnDef<Budget>[] {
                         {
                           loading: 'Atualizando...',
                           success: 'Status atualizado com sucesso',
-                          error: 'Erro ao atualizado status...',
+                          error: 'Erro ao atualizar o status...',
                         },
                       )
                     }}
