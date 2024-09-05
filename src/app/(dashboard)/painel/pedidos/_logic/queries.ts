@@ -55,6 +55,25 @@ export async function getOrderByIncrementalId(id: string) {
   }
 }
 
+export async function getLayoutById(id: string) {
+  noStore()
+
+  try {
+    const response = await payload.findByID({
+      collection: 'layouts',
+      id: id,
+    })
+
+    // console.log('response', response)
+
+    return {
+      data: response,
+    }
+  } catch (err) {
+    return { data: null }
+  }
+}
+
 export async function getClients() {
   noStore()
 

@@ -142,7 +142,7 @@ export function SeeOrderContent({
         ...item,
         product:
           typeof item.product === 'string' ? item.product : item.product.id,
-
+        layout: null,
         // attributes: item.attributes,
         quantity: item.quantity,
         price: item.price,
@@ -184,7 +184,7 @@ export function SeeOrderContent({
             </Heading>
             <Button
               type='submit'
-              disabled={isSubmitting}
+              // disabled={isSubmitting}
               onClick={handleSubmit(onSubmit)}
               variant='default'
             >
@@ -461,7 +461,7 @@ export function SeeOrderContent({
                           </SelectTrigger>
                           <SelectContent side='bottom'>
                             <SelectItem value='boleto'>Boleto</SelectItem>
-                            <SelectItem value='cheque'>Cheque</SelectItem>
+                            <SelectItem value='pix'>PIX</SelectItem>
                             <SelectItem value='deposito'>Depósito</SelectItem>
                           </SelectContent>
                         </Select>

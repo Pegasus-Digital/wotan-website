@@ -3,13 +3,14 @@
 import payload from 'payload'
 import { revalidatePath } from 'next/cache'
 import { ActionResponse } from '@/lib/actions'
-import { Order } from '@/payload/payload-types'
+import { Layout, Order } from '@/payload/payload-types'
 
 interface DeleteOrderProps {
   orderId: string
 }
 
 type SafeOrder = Omit<Order, 'id' | 'createdAt' | 'updatedAt'>
+type SafeLayout = Omit<Layout, 'id' | 'createdAt' | 'updatedAt'>
 
 interface DeleteOrderResponseData {}
 
@@ -112,6 +113,44 @@ export async function createOrder(
       data: null,
       status: false,
       message: '[500] Ocorreu um erro ao criar o pedido.',
+    }
+  }
+}
+
+interface UpdateLayoutResponseData {
+  layout: Layout
+}
+
+export async function updateLayout({
+  layout,
+  id,
+}: {
+  layout: SafeLayout
+  id: Layout['id']
+}): Promise<ActionResponse<UpdateLayoutResponseData>> {
+  try {
+    const response = await payload.update({
+      collection: 'layouts',
+      where: { id: { equals: id } },
+      data: {
+        ...layout,
+      },
+    })
+
+    revalidatePath('/painel/pedidos')
+
+    return {
+      data: { layout: response.docs[0] },
+      status: true,
+      message: 'Layout atualizado com sucesso.',
+    }
+  } catch (err) {
+    // console.error(err)
+
+    return {
+      data: null,
+      status: false,
+      message: '[500] Ocorreu um erro ao atualizar o layout.',
     }
   }
 }

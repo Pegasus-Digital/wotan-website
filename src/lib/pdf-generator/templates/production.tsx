@@ -7,6 +7,7 @@ import {
   DocumentSeparator,
 } from '../components/document-separator'
 import { DocumentHeader } from '../components/document-header'
+import { Order } from '@/payload/payload-types'
 
 const styles = StyleSheet.create({
   page: {
@@ -31,9 +32,15 @@ const styles = StyleSheet.create({
   },
 })
 
-interface ProductionDocumentProps {}
+interface ProductionDocumentProps {
+  order: Order
+  layoutItem: Order['itens'][number]
+}
 
-export function ProductionDocument({}: ProductionDocumentProps) {
+export function ProductionDocument({
+  layoutItem,
+  order,
+}: ProductionDocumentProps) {
   return (
     <Document>
       <Page size='A4' style={styles.page}>
@@ -55,7 +62,7 @@ export function ProductionDocument({}: ProductionDocumentProps) {
               marginBottom: 16,
             }}
           >
-            <Text>Pedido nº: 9009</Text>
+            <Text>Pedido #{order.incrementalId}</Text>
             <Text>Data: {getDDMMYYDate(new Date())}</Text>
           </View>
           <View
@@ -68,23 +75,34 @@ export function ProductionDocument({}: ProductionDocumentProps) {
           >
             <View style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Text style={{ fontWeight: 'medium', fontSize: 12 }}>
-                Produto: SKU-12345 Caneta
+                Produto:{' '}
+                {typeof layoutItem.product === 'string'
+                  ? layoutItem.product
+                  : layoutItem.product.sku + ' - ' + layoutItem.product.title}
               </Text>
-              <Text>Quantidade: 5000</Text>
+              <Text>Quantidade: {layoutItem.quantity}</Text>
               <Text>Atributos:</Text>
               <View style={{ marginLeft: 10 }}>
-                <Text>Cor: PRETO</Text>
-                <Text>Especificações: METÁLICO</Text>
+                {/* <Text>Cor: PRETO</Text>
+                <Text>Especificações: METÁLICO</Text> */}
               </View>
             </View>
             <View style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Text style={{ fontWeight: 'medium', fontSize: 12 }}>
-                Razão social: Blabla Indústria LTDA
+                Razão social:{' '}
+                {typeof order.client === 'object'
+                  ? order.client.name
+                  : order.client}
               </Text>
-              <Text>CNPJ: 01.234.567/0001-89</Text>
+              <Text>
+                CNPJ:{' '}
+                {typeof order.client === 'object'
+                  ? order.client.document
+                  : order.client}
+              </Text>
               <Text>Contato: Daniel</Text>
-              <Text>Condição de pagamento: 35% pedido + 15 / 30 / 45 dias</Text>
-              <Text>Prazo de entrega: 31/08/2024</Text>
+              <Text>Condição de pagamento: {order.paymentConditions}</Text>
+              <Text>Prazo de entrega: {order.shippingTime}</Text>
             </View>
           </View>
         </View>
@@ -115,7 +133,7 @@ export function ProductionDocument({}: ProductionDocumentProps) {
               <Text>Resultado: R$ 3,35</Text>
             </View>
             <View style={styles.footer_column}>
-              <Text>Frete: CIF</Text>
+              <Text>Frete: {order.shippingType}</Text>
               <Text>Valor do frete: R$ 0,00</Text>
               <Text>Transportadora: Wotan</Text>
               <Text>Prazo de entrega:</Text>

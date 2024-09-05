@@ -197,7 +197,11 @@ export function SeeOrderContent({
           ...item,
           product:
             typeof item.product === 'string' ? item.product : item.product.id,
-
+          layout: item.layout
+            ? typeof item.layout === 'string'
+              ? item.layout
+              : item.layout.id
+            : null,
           // attributes: item.attributes,
           quantity: item.quantity,
           price: item.price,

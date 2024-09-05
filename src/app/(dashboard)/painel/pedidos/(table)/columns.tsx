@@ -38,6 +38,14 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { deleteOrder } from '../_logic/actions'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { Heading } from '@/pegasus/heading'
+import { Label } from '@/components/ui/label'
+import { LayoutDocumentDownloader } from '../_components/planilha-pdf-downloader'
 
 export const filterFields: DataTableFilterField<Order>[] = [
   // {
@@ -98,7 +106,7 @@ export function getColumns(): ColumnDef<Order>[] {
       cell: ({ row }) => {
         const { client } = row.original
         return (
-          <p className='font-bold'>
+          <p className='max-w-48 truncate font-bold'>
             {typeof client === 'object'
               ? client.razaosocial
                 ? client.razaosocial
@@ -152,22 +160,82 @@ export function getColumns(): ColumnDef<Order>[] {
       accessorKey: 'itens',
       header: 'Itens',
       cell: ({ row }) => {
-        const items: any[] = row.getValue('itens')
+        const { itens, incrementalId } = row.original
+
+        function LayoutPopoverContent({
+          layoutId,
+          sku,
+        }: {
+          layoutId: string
+          sku: string
+        }) {
+          return (
+            <div className='flex flex-col justify-center space-y-2'>
+              <div className='mb-2'>
+                <Heading variant='h6' className='text-black '>
+                  Planilha de produção
+                </Heading>
+                <Label className=' text-black'>Produto: {sku}</Label>
+              </div>
+              <Button variant='outline' asChild>
+                <Link
+                  href={`/painel/pedidos/${incrementalId}/planilhas/${layoutId}`}
+                >
+                  <Icons.Look className='mr-2 h-5 w-5' />
+                  Ver planilha
+                </Link>
+              </Button>
+              <Button variant='outline' asChild>
+                <Link
+                  href={`/painel/pedidos/${incrementalId}/planilhas/${layoutId}?edit=true`}
+                >
+                  <Icons.Edit className='mr-2 h-5 w-5' />
+                  Editar planilha
+                </Link>
+              </Button>
+              <LayoutDocumentDownloader
+                order={row.original}
+                layoutId={layoutId}
+              />
+            </div>
+          )
+        }
 
         return (
           <Card className='w-fit border-transparent p-2'>
-            <CardContent className='m-0 space-y-2 p-0'>
-              {items.map((item, index) => {
+            <CardContent className='m-0 flex flex-col space-y-2 p-0'>
+              {itens.map((item, index) => {
                 return (
-                  <div
-                    key={item.id + '-' + index}
-                    className='flex items-center'
-                  >
-                    <Small className='mr-2 font-semibold'>
-                      {item.quantity}x
-                    </Small>
-                    <Badge className='w-fit'>{item.product.title}</Badge>
-                  </div>
+                  <Popover key={item.id + '-' + index}>
+                    <PopoverTrigger asChild>
+                      <div className='flex items-center'>
+                        <Small className='mr-2 font-semibold'>
+                          {item.quantity}x
+                        </Small>
+                        <Badge className='w-fit  cursor-pointer select-none hover:border-wotanRed-500 hover:bg-wotanRed-50/50 hover:text-wotanRed-500'>
+                          {typeof item.product === 'object' &&
+                            item.product.title}
+                        </Badge>
+                      </div>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                      {item.layout ? (
+                        <LayoutPopoverContent
+                          layoutId={
+                            item.layout &&
+                            (typeof item.layout === 'object'
+                              ? item.layout.id
+                              : item.layout)
+                          }
+                          sku={
+                            typeof item.product === 'object' && item.product.sku
+                          }
+                        />
+                      ) : (
+                        <p>Nenhuma planilha encontrada</p>
+                      )}
+                    </PopoverContent>
+                  </Popover>
                 )
               })}
             </CardContent>
@@ -191,6 +259,7 @@ export function getColumns(): ColumnDef<Order>[] {
     {
       id: 'actions',
       header: () => <span className='text-right'>Interações</span>,
+
       cell: ({ row }) => {
         const order = row.original
 
