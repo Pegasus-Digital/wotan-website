@@ -191,7 +191,10 @@ export function SeeBudgetContent({
 
     const item = table[firstLowestQuantityIndex]
 
-    return { quantity: item.quantity, unitPrice: item.unitPrice / 100 }
+    return {
+      quantity: item && item.quantity ? item.quantity : product.minimumQuantity,
+      unitPrice: item && item.unitPrice / 100,
+    }
   }
 
   form.watch('items')

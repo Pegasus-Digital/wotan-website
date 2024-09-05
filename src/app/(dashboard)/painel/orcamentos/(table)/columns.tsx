@@ -262,12 +262,60 @@ export function getColumns(): ColumnDef<Budget>[] {
             <Dialog open={placeOrderDialog} onOpenChange={setPlaceOrderDialog}>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Alterar Status do Orçamento</DialogTitle>
+                  <DialogTitle>Fazer pedido</DialogTitle>
                 </DialogHeader>
                 <DialogDescription className='font-bold'>
-                  Atualize o status do orçamento.
+                  Antes, precisamos confirmar o Cliente e Contato.
                 </DialogDescription>
+                <div className='grid gap-1'>
+                  <div className='space-y-1'>
+                    <Label>Cliente</Label>
 
+                    <Select
+                      onValueChange={(e) => {
+                        console.log('detectei mudança', e)
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder='Selecione um Cliente' />
+                      </SelectTrigger>
+
+                      <SelectContent side='bottom'>
+                        {/* {typeof clients === 'object' &&
+                          clients.length === 0 ? (
+                            <SelectItem value='nenhum' disabled>
+                              Você ainda não possui nenhum cliente.
+                            </SelectItem>
+                          ) : (
+                            clients.map((client) => (
+                              <SelectItem key={client.id} value={client.id}>
+                                {client.name}
+                              </SelectItem>
+                            ))
+                          )} */}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className='space-y-1'>
+                    <Label>Contato</Label>
+
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder='Selecione um Contato' />
+                      </SelectTrigger>
+                      <SelectContent side='bottom'>
+                        {/* {selectedClient === null ? (
+                          <SelectItem value='nenhum' disabled>
+                            Por favor, selecione um cliente primeiro.
+                          </SelectItem>
+                        ) : (
+                          // */}
+                        <SelectItem value='contact1'>Contato 1</SelectItem>
+                        {/* )} */}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
                 <DialogFooter>
                   <DialogClose asChild>
                     <Button variant='default'>Voltar</Button>
@@ -280,7 +328,7 @@ export function getColumns(): ColumnDef<Budget>[] {
                       toast.promise(
                         updateBudgetStatus({
                           id: budget.id,
-                          status: selectedStatus,
+                          status: 'aprovado',
                         }),
                         {
                           loading: 'Atualizando...',
@@ -304,10 +352,7 @@ export function getColumns(): ColumnDef<Budget>[] {
           return (
             <DropdownMenuItem
               onClick={() => {
-                updateBudgetStatus({
-                  id: budget.id,
-                  status: 'aprovado',
-                })
+                setPlaceOrderDialog(true)
               }}
               className='cursor-pointer'
               // disabled={isDeletePending}
