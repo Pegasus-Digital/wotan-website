@@ -625,7 +625,14 @@ export function NewBudgetContent({
                           <Button
                             type='button'
                             size='icon'
-                            onClick={() => remove(index)}
+                            onClick={() => {
+                              if (fields.length === 1) {
+                                return toast.error(
+                                  'Não foi possível remover o produto. Um orçamento deve conter pelo menos um item.',
+                                )
+                              }
+                              remove(index)
+                            }}
                             variant='destructive'
                           >
                             <Icons.Trash className='h-5 w-5' />
