@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { Client, Product, Salesperson } from '@/payload/payload-types'
 
 import {
+  formatBRL,
   parseValue,
   formatPhoneNumber,
   formatBRLWithoutPrefix,
@@ -29,6 +30,14 @@ import { Textarea } from '@/components/ui/textarea'
 import { Separator } from '@/components/ui/separator'
 import { Content, ContentHeader } from '@/components/content'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import { TooltipArrow } from '@radix-ui/react-tooltip'
 
 import {
   Form,
@@ -146,6 +155,74 @@ export function NewBudgetContent({
   }
 
   const name = watch('contact.companyName')
+  form.watch('items')
+
+  function getPriceForQuantity(productId: string, quantity: number) {
+    const product = fields.find(
+      (item) => (item.product as Product).id === productId,
+    ).product as Product
+
+    const table = product.priceQuantityTable
+
+    if (!table) {
+      return { quantity: 0, unitPrice: 0 }
+    }
+
+    table.sort((a, b) => {
+      if (a.quantity > b.quantity) return -1
+      if (a.quantity === b.quantity) return 0
+      if (a.quantity < b.quantity) return 1
+    })
+
+    const firstLowestQuantityIndex = table.findIndex(
+      (entry) => entry.quantity <= quantity,
+    )
+
+    // If product doesn't have a table, flag it.
+    if (firstLowestQuantityIndex === -1) {
+      return { quantity: -1, unitPrice: -1 }
+    }
+
+    const item = table[firstLowestQuantityIndex]
+
+    return {
+      quantity: item && item.quantity ? item.quantity : product.minimumQuantity,
+      unitPrice: item && item.unitPrice / 100,
+    }
+  }
+
+  interface PriceQuantityTooltipContentProps {
+    productId: string
+    quantity: number
+  }
+
+  function PriceQuantityTooltipContent({
+    productId,
+    quantity,
+  }: PriceQuantityTooltipContentProps) {
+    const { quantity: nearestLowerQuantity, unitPrice } = getPriceForQuantity(
+      productId,
+      quantity,
+    )
+
+    return (
+      <TooltipContent side='top' sideOffset={12} className='text-justify'>
+        <TooltipArrow />
+        {nearestLowerQuantity === -1 ? (
+          <span className='font-medium'>
+            Este produto não possui uma
+            <br />
+            tabela de sugestão de preços.
+          </span>
+        ) : (
+          <span className='text-justify font-medium'>
+            O preço sugerido a partir de <br />
+            {nearestLowerQuantity} unidades é de: {formatBRL(unitPrice)}
+          </span>
+        )}
+      </TooltipContent>
+    )
+  }
 
   return (
     <Content>
@@ -428,24 +505,24 @@ export function NewBudgetContent({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {fields.map((field, index) => (
-                <TableRow key={field.id}>
-                  {typeof field.product === 'object' && (
+              {fields.map((item, index) => (
+                <TableRow key={item.id}>
+                  {typeof item.product === 'object' && (
                     <>
                       <TableCell>
                         <Image
                           src={
-                            typeof field.product.featuredImage === 'object'
-                              ? field.product.featuredImage.url
+                            typeof item.product.featuredImage === 'object'
+                              ? item.product.featuredImage.url
                               : ''
                           }
-                          alt={field.product.title}
+                          alt={item.product.title}
                           className='h-24 w-24 rounded-md object-cover'
                           width={96}
                           height={96}
                         />
                       </TableCell>
-                      <TableCell>{field.product.sku}</TableCell>
+                      <TableCell>{item.product.sku}</TableCell>
                       <TableCell>
                         <FormField
                           name={`items.${index}.description`}
@@ -489,23 +566,37 @@ export function NewBudgetContent({
                           render={({ field }) => (
                             <FormItem>
                               <FormControl>
-                                <div className='flex items-center gap-2 font-medium'>
-                                  <Label>R$</Label>
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger type='button'>
+                                      <div className='flex items-center gap-2 font-medium'>
+                                        <Label>R$</Label>
 
-                                  <Input
-                                    {...field}
-                                    // value={formatValue(field.value)}
-                                    value={formatBRLWithoutPrefix(
-                                      Number(field.value),
-                                    )}
-                                    onChange={(e) => {
-                                      field.onChange(parseValue(e.target.value))
-                                    }}
-                                    inputMode='numeric'
-                                    placeholder='0,00'
-                                    className='disabled:opacity-100'
-                                  />
-                                </div>
+                                        <Input
+                                          {...field}
+                                          // value={formatValue(field.value)}
+                                          value={formatBRLWithoutPrefix(
+                                            Number(field.value),
+                                          )}
+                                          onChange={(e) => {
+                                            field.onChange(
+                                              parseValue(e.target.value),
+                                            )
+                                          }}
+                                          inputMode='numeric'
+                                          placeholder='0,00'
+                                          className='disabled:opacity-100'
+                                        />
+                                      </div>
+                                    </TooltipTrigger>
+                                    <PriceQuantityTooltipContent
+                                      productId={(item.product as Product).id}
+                                      quantity={
+                                        form.getValues('items')[index].quantity
+                                      }
+                                    />
+                                  </Tooltip>
+                                </TooltipProvider>
                               </FormControl>
                               <FormMessage />
                             </FormItem>

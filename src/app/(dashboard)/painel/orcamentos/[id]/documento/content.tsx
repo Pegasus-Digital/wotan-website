@@ -4,9 +4,7 @@ import dynamic from 'next/dynamic'
 
 import { ptBR } from 'date-fns/locale'
 import { formatRelative } from 'date-fns'
-import { OrderDocument } from '@/lib/pdf-generator/templates/order'
 import { BudgetDocument } from '@/lib/pdf-generator/templates/budget'
-import { ProductionDocument } from '@/lib/pdf-generator/templates/production'
 
 import { LoadingSpinner } from '@/components/spinner'
 import { Content, ContentHeader } from '@/components/content'
@@ -32,6 +30,7 @@ export function BudgetDocumentContent({ budget }: BudgetDocumentContentProps) {
         title={`Orçamento n° ${budget.incrementalId}`}
         description={`Gerado em ${formatRelative(budget.updatedAt, new Date(), { locale: ptBR })}`}
       />
+
       <PDFViewer
         className='mt-2 w-full flex-1 animate-fade-in'
         showToolbar={false}

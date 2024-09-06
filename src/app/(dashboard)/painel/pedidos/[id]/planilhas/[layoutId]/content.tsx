@@ -138,6 +138,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
     console.log('Order submitted:', values)
 
     const response = await updateLayout({
+      layoutId: layout.id,
       layout: {
         ...values,
         sample: {
@@ -146,7 +147,6 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
           new: values.sample.new,
         },
       },
-      id: layout.id,
     })
 
     if (response.status) {

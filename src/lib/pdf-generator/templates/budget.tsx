@@ -61,12 +61,15 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
+    gap: 4,
   },
   product: {
     display: 'flex',
     flexDirection: 'row',
     width: '100%',
     alignItems: 'center',
+    borderBottom: 1,
+    borderColor: 'dimgray',
   },
   cell: {
     display: 'flex',
@@ -146,13 +149,17 @@ export function BudgetDocument({ budget }: BudgetDocumentProps) {
                   key={item.id}
                   style={[
                     styles.product,
-                    { borderBottom: 1, borderColor: 'gray' },
+                    { paddingVertical: 8, borderColor: 'gray' },
                   ]}
                 >
                   <View style={styles.cell}>
                     <Image
                       src={featuredImageSrc}
-                      style={{ maxWidth: '80%', maxHeight: 100 }}
+                      style={{
+                        maxWidth: '80%',
+                        maxHeight: 100,
+                        objectFit: 'contain',
+                      }}
                     />
                   </View>
                   <View style={styles.cell}>

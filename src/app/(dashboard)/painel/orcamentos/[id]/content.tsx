@@ -189,6 +189,11 @@ export function SeeBudgetContent({
       (entry) => entry.quantity <= quantity,
     )
 
+    // If product doesn't have a table, flag it.
+    if (firstLowestQuantityIndex === -1) {
+      return { quantity: -1, unitPrice: -1 }
+    }
+
     const item = table[firstLowestQuantityIndex]
 
     return {
@@ -214,13 +219,20 @@ export function SeeBudgetContent({
     )
 
     return (
-      <TooltipContent
-        side='top'
-        sideOffset={12}
-        className='text-justify font-medium'
-      >
-        <TooltipArrow />O valor sugerido a partir de <br />
-        {nearestLowerQuantity} unidades é de: {formatBRL(unitPrice)}
+      <TooltipContent side='top' sideOffset={12} className='text-justify'>
+        <TooltipArrow />
+        {nearestLowerQuantity === -1 ? (
+          <span className='font-medium'>
+            Este produto não possui uma
+            <br />
+            tabela de sugestão de preços.
+          </span>
+        ) : (
+          <span className='text-justify font-medium'>
+            O preço sugerido a partir de <br />
+            {nearestLowerQuantity} unidades é de: {formatBRL(unitPrice)}
+          </span>
+        )}
       </TooltipContent>
     )
   }
