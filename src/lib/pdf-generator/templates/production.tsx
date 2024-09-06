@@ -48,9 +48,12 @@ export function ProductionDocument({
     (contact) => contact.id === order.contact,
   )
 
-  const attributes = layoutItem.attributes.map((attr) => {
-    return typeof attr === 'object' ? attr : null
-  })
+  const attributes =
+    typeof layoutItem.attributes === 'object'
+      ? layoutItem.attributes.map((attr) => {
+          return typeof attr === 'object' ? attr : null
+        })
+      : []
 
   const layoutValues =
     typeof layoutItem.layout === 'object' ? layoutItem.layout : null
@@ -429,7 +432,11 @@ export function ProductionDocument({
               <Text>Resultado: {formatBRL(totalValue - productionCost)}</Text>
             </View>
             <View style={styles.footer_column}>
-              <Text>Frete: {layoutValues.shipmentType.toUpperCase()}</Text>
+              <Text>
+                Frete:{' '}
+                {layoutValues.shipmentType &&
+                  layoutValues.shipmentType.toUpperCase()}
+              </Text>
               <Text>
                 Valor do frete:{' '}
                 {formatBRL(
