@@ -91,9 +91,7 @@ import {
 import { createOrder } from '../_logic/actions'
 import { orderSchema } from '../_logic/validation'
 
-import { parseValue } from '@/lib/format'
 import { AttributesCombobox } from '../_components/attributes-selector'
-
 
 type OrderProps = z.infer<typeof orderSchema>
 
@@ -149,11 +147,10 @@ export function NewOrderContent({
   const { isSubmitting } = useFormState({ control: form.control })
 
   async function onSubmit(values: OrderProps) {
-        // Se um pedido for submetido sem nenhum item, é barrado.
+    // Se um pedido for submetido sem nenhum item, é barrado.
     if (values.itens.length === 0) {
       return toast.error('Não é possível criar um pedido sem produtos.')
     }
-
 
     const response = await createOrder({
       order: {
@@ -167,9 +164,8 @@ export function NewOrderContent({
           cep: values.adress.zipCode,
         },
 
-
         itens: values.itens.map((item) => ({
-                  ...item,
+          ...item,
 
           product:
             typeof item.product === 'string' ? item.product : item.product.id,
@@ -180,7 +176,6 @@ export function NewOrderContent({
           sample: item.sample,
           layoutSent: item.layoutSent,
           layoutApproved: item.layoutApproved,
-
         })),
       },
     })
@@ -742,7 +737,6 @@ export function NewOrderContent({
                       <TableCell>
                         {field.product.attributes ? (
                           <AttributesCombobox
-
                             attributeArray={field.product.attributes.filter(
                               isAttribute,
                             )}
@@ -917,7 +911,6 @@ export function NewOrderContent({
     </Content>
   )
 }
-
 
 function isAttribute(item: any): item is Attribute {
   return (

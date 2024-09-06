@@ -13,7 +13,7 @@ import {
   Order,
   Product,
 } from '@/payload/payload-types'
-import { formatBRL } from '@/lib/format'
+import { formatBRL, formatPhoneNumber } from '@/lib/format'
 
 const styles = StyleSheet.create({
   page: {
@@ -55,9 +55,29 @@ const styles = StyleSheet.create({
   },
   cell: {
     display: 'flex',
-    width: '100%',
-
-    flexGrow: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  codeCell: {
+    width: '10%',
+  },
+  productCell: {
+    display: 'flex',
+    width: '40%',
+  },
+  productText: {
+    fontSize: 10,
+    textAlign: 'justify',
+    marginBottom: 2, // Adjust this value to control the space between lines
+  },
+  quantityCell: {
+    width: '20%',
+  },
+  unitPriceCell: {
+    width: '15%',
+  },
+  totalPriceCell: {
+    width: '15%',
   },
 })
 
@@ -65,11 +85,24 @@ interface OrderDocumentProps {
   order: Order
 }
 
+function calculateTotal(order: Order): number {
+  return order.itens.reduce((total, item) => {
+    return total + (item.quantity * item.price) / 100
+  }, 0)
+}
+
 export function OrderDocument({ order }: OrderDocumentProps) {
   const salesperson =
     typeof order.salesperson === 'object' ? order.salesperson : null
 
   const client = typeof order.client === 'object' ? order.client : null
+
+  const contact = client.contacts.filter(
+    (contact) => contact.id === order.contact,
+  )
+
+  const totalValue = calculateTotal(order)
+
   return (
     <Document>
       <Page size='A4' style={styles.page}>
@@ -83,12 +116,14 @@ export function OrderDocument({ order }: OrderDocumentProps) {
               justifyContent: 'space-between',
               width: '100%',
               fontWeight: 'medium',
-              fontSize: 14,
+              fontSize: 12,
               marginVertical: 10,
             }}
           >
-            <Text>Pedido #{order.incrementalId}</Text>
-            <Text>Data: {getDDMMYYDate(new Date(order.createdAt))}</Text>
+            <Text>Pedido n°:{order.incrementalId}</Text>
+            <Text>
+              Porto Alegre, {getDDMMYYDate(new Date(order.createdAt))}
+            </Text>
           </View>
 
           <View
@@ -105,15 +140,29 @@ export function OrderDocument({ order }: OrderDocumentProps) {
                 marginBottom: 6,
               }}
             >
-              <View style={{ flexDirection: 'column', gap: 6, flex: 1 }}>
+              <View
+                style={{
+                  flexDirection: 'column',
+                  gap: 4,
+                  // flex: 1,
+                  width: '60%',
+                }}
+              >
                 <Text>Razão Social: {client.razaosocial}</Text>
                 <Text>CNPJ: {client.document}</Text>
-                <Text>Inscrição Estadual: 012/3456789</Text>
-                <Text>Contato: {order.contact}</Text>
-                <Text>Telefone: {order.contact}</Text>
+                <Text>Inscrição Estadual: {client.document}</Text>
+                <Text>Contato: {contact[0].name}</Text>
+                <Text>Telefone: {formatPhoneNumber(contact[0].phone)}</Text>
               </View>
 
-              <View style={{ flexDirection: 'column', gap: 6, flex: 1 }}>
+              <View
+                style={{
+                  flexDirection: 'column',
+                  gap: 4,
+                  // flex: 1,
+                  width: '40%',
+                }}
+              >
                 <Text>
                   Vendedor:{' '}
                   {salesperson
@@ -121,7 +170,11 @@ export function OrderDocument({ order }: OrderDocumentProps) {
                     : 'Não há vendedor associado.'}
                 </Text>
                 <Text>Email: {salesperson ? salesperson.email : '-'}</Text>
-                <Text>Tipo de pagamento: {order.paymentType}</Text>
+                <Text>
+                  Tipo de pagamento:{' '}
+                  {order.paymentType.charAt(0).toUpperCase() +
+                    order.paymentType.slice(1)}
+                </Text>
                 <Text>Condição de pagamento: {order.paymentConditions}</Text>
                 <Text>
                   Comissão Agência: {order.agency} {order.commission}%
@@ -215,11 +268,21 @@ export function OrderDocument({ order }: OrderDocumentProps) {
         </View>
         <View style={styles.section}>
           <View style={styles.table_header}>
-            <Text style={{ textAlign: 'left' }}>Código</Text>
-            <Text style={{ textAlign: 'left' }}>Produto</Text>
-            <Text style={{ textAlign: 'right' }}>Quantidade</Text>
-            <Text style={{ textAlign: 'right' }}>Valor unitário</Text>
-            <Text style={{ textAlign: 'right' }}>Valor total</Text>
+            <View style={styles.codeCell}>
+              <Text>Código</Text>
+            </View>
+            <View style={styles.productCell}>
+              <Text>Produto</Text>
+            </View>
+            <View style={styles.quantityCell}>
+              <Text style={{ textAlign: 'right' }}>Quantidade</Text>
+            </View>
+            <View style={styles.unitPriceCell}>
+              <Text style={{ textAlign: 'right' }}>Valor unitário</Text>
+            </View>
+            <View style={styles.totalPriceCell}>
+              <Text style={{ textAlign: 'right' }}>Valor total</Text>
+            </View>
           </View>
           <DocumentSeparator />
           {/* Product list */}
@@ -241,7 +304,7 @@ export function OrderDocument({ order }: OrderDocumentProps) {
                     },
                   ]}
                 >
-                  <View style={styles.cell}>
+                  <View style={styles.codeCell}>
                     <Text
                       style={{
                         fontSize: 10,
@@ -250,7 +313,7 @@ export function OrderDocument({ order }: OrderDocumentProps) {
                       {product.sku}
                     </Text>
                   </View>
-                  <View style={styles.cell}>
+                  <View style={styles.productCell}>
                     <Text
                       style={{
                         fontSize: 11,
@@ -264,38 +327,35 @@ export function OrderDocument({ order }: OrderDocumentProps) {
                       attributes.map((attr) => {
                         const attributeType = attr.type as AttributeType
                         return (
-                          <Text
-                            key={attr.id}
-                            style={{ fontSize: 10, textAlign: 'justify' }}
-                          >
+                          <Text key={attr.id} style={styles.productText}>
                             {attributeType.name}: {attr.name}
                           </Text>
                         )
                       })}
-                    <Text style={{ fontSize: 10, textAlign: 'justify' }}>
+                    <Text style={styles.productText}>
                       Impressão: {item.print}
                     </Text>
-                    <Text style={{ fontSize: 10, textAlign: 'justify' }}>
+                    <Text style={styles.productText}>
                       Amostra: ({item.sample ? 'X' : ' '})
                     </Text>
-                    <Text style={{ fontSize: 10, textAlign: 'justify' }}>
+                    <Text style={styles.productText}>
                       Layout: ({item.layoutSent ? 'X' : ' '}) Enviado (
                       {item.layoutApproved ? 'X' : ' '}) Aprovado
                     </Text>
                   </View>
-                  <View style={styles.cell}>
+                  <View style={styles.quantityCell}>
                     <Text style={{ fontSize: 11, textAlign: 'right' }}>
                       {item.quantity}
                     </Text>
                   </View>
-                  <View style={styles.cell}>
+                  <View style={styles.unitPriceCell}>
                     <Text style={{ fontSize: 11, textAlign: 'right' }}>
-                      {formatBRL(125)}
+                      {formatBRL(item.price / 100)}
                     </Text>
                   </View>
-                  <View style={styles.cell}>
+                  <View style={styles.totalPriceCell}>
                     <Text style={{ fontSize: 11, textAlign: 'right' }}>
-                      {formatBRL(item.quantity * 125)}
+                      {formatBRL(item.quantity * (item.price / 100))}
                     </Text>
                   </View>
                 </View>
@@ -308,7 +368,7 @@ export function OrderDocument({ order }: OrderDocumentProps) {
         {/* Footer - total + details */}
         <View style={[styles.section, { gap: 2, fontSize: 10 }]}>
           <Text style={{ alignSelf: 'flex-end' }}>
-            Valor total do pedido: R$ 12.345,67
+            Valor total do pedido: {formatBRL(totalValue)}
           </Text>
 
           {order.notes && <Text>Observações:</Text>}
