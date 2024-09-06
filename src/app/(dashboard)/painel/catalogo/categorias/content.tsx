@@ -19,15 +19,11 @@ export function CategoriesContent({ categories }: PropertiesContentProps) {
 
       <Separator className='mb-4' />
 
-      <div className='grid '>
-        <div className='flex-1 rounded-lg border p-4'>
-          <div className='flex w-full justify-end'>
-            <CreateCategoryDialog categories={categories} />
-          </div>
-
-          <CategoryList categories={categories} />
-        </div>
+      <div className='flex w-full justify-end'>
+        <CreateCategoryDialog categories={categories} />
       </div>
+
+      <CategoryList categories={categories} />
     </Content>
   )
 }

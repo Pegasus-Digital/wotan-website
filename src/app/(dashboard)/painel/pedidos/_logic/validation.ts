@@ -8,8 +8,8 @@ export const layoutSchema = z.object({
       type: z.string().optional().nullable(),
       colors: z.string().optional().nullable(),
       supplyer: z.string().optional().nullable(),
-      quantity: z.string().optional().nullable(),
-      price: z.string().optional().nullable(),
+      quantity: z.coerce.number().optional().nullable(),
+      price: z.coerce.number().optional().nullable(),
     })
     .optional(),
   printing2: z
@@ -17,17 +17,17 @@ export const layoutSchema = z.object({
       type: z.string().optional().nullable(),
       colors: z.string().optional().nullable(),
       supplyer: z.string().optional().nullable(),
-      quantity: z.string().optional().nullable(),
-      price: z.string().optional().nullable(),
+      quantity: z.coerce.number().optional().nullable(),
+      price: z.coerce.number().optional().nullable(),
     })
     .optional(),
   supplyer: z
     .array(
       z.object({
         material: z.string().optional().nullable(),
-        quantidade_material: z.string().optional().nullable(),
+        quantidade_material: z.coerce.number().optional().nullable(),
         fornecedor_material: z.string().optional().nullable(),
-        custo_material: z.string().optional().nullable(),
+        custo_material: z.coerce.number().optional().nullable(),
         id: z.string().optional().nullable(),
       }),
     )
@@ -36,25 +36,25 @@ export const layoutSchema = z.object({
   additionalCosts: z
     .object({
       obs: z.string().optional().nullable(),
-      cost: z.string().optional().nullable(),
+      cost: z.coerce.number().optional().nullable(),
     })
     .optional(),
   additionalCosts2: z
     .object({
       obs: z.string().optional().nullable(),
-      cost: z.string().optional().nullable(),
+      cost: z.coerce.number().optional().nullable(),
     })
     .optional(),
   delivery: z
     .object({
       company: z.string().optional().nullable(),
-      cost: z.string().optional().nullable(),
+      cost: z.coerce.number().optional().nullable(),
     })
     .optional(),
   delivery2: z
     .object({
       company: z.string().optional().nullable(),
-      cost: z.string().optional().nullable(),
+      cost: z.coerce.number().optional().nullable(),
     })
     .optional(),
   commisions: z
@@ -62,13 +62,21 @@ export const layoutSchema = z.object({
       agency: z
         .object({
           name: z.string().optional().nullable(),
-          value: z.string().optional().nullable(),
+          value: z.coerce
+            .number()
+            .max(100, 'Porcentagem inválida.')
+            .optional()
+            .nullable(),
         })
         .optional(),
       salesperson: z
         .object({
           name: z.string().optional().nullable(),
-          value: z.string().optional().nullable(),
+          value: z.coerce
+            .number()
+            .max(100, 'Porcentagem inválida.')
+            .optional()
+            .nullable(),
         })
         .optional(),
     })
@@ -104,21 +112,21 @@ export const layoutSchema = z.object({
     .object({
       number: z.string().optional().nullable(),
       due: z.string().optional().nullable(),
-      value: z.string().optional().nullable(),
+      value: z.coerce.number().optional().nullable(),
     })
     .optional(),
   invoice2: z
     .object({
       number: z.string().optional().nullable(),
       due: z.string().optional().nullable(),
-      value: z.string().optional().nullable(),
+      value: z.coerce.number().optional().nullable(),
     })
     .optional(),
   invoice3: z
     .object({
       number: z.string().optional().nullable(),
       due: z.string().optional().nullable(),
-      value: z.string().optional().nullable(),
+      value: z.coerce.number().optional().nullable(),
     })
     .optional(),
   ncm: z.string().optional().nullable(),
@@ -136,8 +144,9 @@ export const orderSchema = z.object({
     .string({ required_error: 'Vendedor é obrigatório' })
     .min(1, 'Vendedor é obrigatório'),
   commission: z.coerce
-    .number({ description: 'asd', required_error: 'Insira um número válido.' })
-    .nonnegative({ message: 'Comissão não pode ser negativa.' }),
+    .number({ required_error: 'Insira um número válido.' })
+    .nonnegative({ message: 'Comissão não pode ser negativa.' })
+    .max(100, 'A comissão máxima é de 100%'),
 
   shippingTime: z.string().optional(),
   shippingCompany: z.string().optional(),

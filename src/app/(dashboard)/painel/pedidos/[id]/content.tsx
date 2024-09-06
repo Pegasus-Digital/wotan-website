@@ -13,7 +13,7 @@ import {
 } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
+import { BRAZIL_STATES } from '@/lib/brazil-states'
 
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -31,13 +31,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { Separator } from '@/components/ui/separator'
 import { Content, ContentHeader } from '@/components/content'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { AttributesCombobox } from '../_components/attributes-selector'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
 
 import {
   Form,
@@ -56,15 +51,6 @@ import {
   TableHead,
   TableHeader,
 } from '@/components/ui/table'
-
-import {
-  Command,
-  CommandItem,
-  CommandList,
-  CommandInput,
-  CommandGroup,
-  CommandEmpty,
-} from '@/components/ui/command'
 
 import {
   Dialog,
@@ -89,9 +75,6 @@ import {
 
 import { updateOrder } from '../_logic/actions'
 import { orderSchema } from '../_logic/validation'
-import { AttributesCombobox } from '../_components/attributes-selector'
-
-// Define the validation schema
 
 type OrderProps = z.infer<typeof orderSchema>
 
@@ -108,15 +91,14 @@ export function SeeOrderContent({
   clients,
   salespeople,
 }: SeeOrderContentProps) {
-  const [selectedClient, setSelectedClient] = useState<string>(
-    typeof order.client === 'string' ? order.client : order.client.id,
-  )
-  const [selectedContact, setSelectedContact] = useState<string>(order.contact)
-  const [editMode, toggleEditMode] = useState<boolean>(!edit)
-  const [deliveryAddress, setDeliveryAddress] = useState<boolean>(
-    order.adress ? true : false,
-  )
   const router = useRouter()
+
+  const [addProductDialog, setAddProductDialog] = useState<boolean>(false)
+  const [editMode, toggleEditMode] = useState<boolean>(!edit)
+
+  const [selectedClient, setSelectedClient] = useState<Client | null>(
+    (order.client as Client) ?? null,
+  )
 
   const form = useForm<OrderProps>({
     resolver: zodResolver(orderSchema),
@@ -124,7 +106,10 @@ export function SeeOrderContent({
       client: typeof order.client === 'string' ? order.client : order.client.id,
       contact: order.contact,
       alternativeContact: order.alternativeContact,
-      adress: order.adress,
+      adress: {
+        ...order.adress,
+        zipCode: order.adress.cep,
+      },
       salesperson:
         typeof order.salesperson === 'string'
           ? order.salesperson
@@ -151,9 +136,10 @@ export function SeeOrderContent({
                 featuredImage: item.product.featuredImage,
                 attributes: item.product.attributes,
               },
-        attributes: item.attributes.map((attribute) =>
-          typeof attribute === 'string' ? attribute : attribute.id,
-        ),
+        attributes:
+          item?.attributes?.map((attribute) =>
+            typeof attribute === 'string' ? attribute : attribute.id,
+          ) ?? [],
         quantity: item.quantity,
         price: item.price,
         sample: item.sample,
@@ -164,17 +150,12 @@ export function SeeOrderContent({
     },
   })
 
-  // console.log('Order default:', order)
-
   const { control, handleSubmit } = form
+
   const { fields, append, remove, update } = useFieldArray({
     control,
     name: 'itens',
   })
-
-  const [addProductDialog, setAddProductDialog] = useState<boolean>(false)
-
-  // console.log(fields)
 
   const { isSubmitting } = useFormState({ control: form.control })
 
@@ -190,36 +171,44 @@ export function SeeOrderContent({
   }
 
   async function onSubmit(values: OrderProps) {
-    // console.log('Order submitted:', values)
+    // Se um pedido for atualizado sem nenhum item, é barrado.
+    if (values.itens.length === 0) {
+      return toast.error('Não é possível deixar um pedido sem produtos.')
+    }
 
     const response = await updateOrder({
       orderId: order.id,
       order: {
         ...values,
+        client: values.client ?? '',
+        contact: values.contact ?? '',
+        adress: {
+          ...values.adress,
+          cep: values.adress.zipCode,
+        },
+
         itens: values.itens.map((item) => ({
           ...item,
+
           product:
             typeof item.product === 'string' ? item.product : item.product.id,
+          quantity: item.quantity,
+          price: item.price,
+          sample: item.sample,
           layout: item.layout
             ? typeof item.layout === 'string'
               ? item.layout
               : item.layout.id
             : null,
-          quantity: item.quantity,
-          price: item.price,
+          print: item.print,
           layoutSent: item.layoutSent,
           layoutApproved: item.layoutApproved,
-          sample: item.sample,
         })),
-        client: selectedClient,
-        contact: selectedContact,
       },
     })
 
-    // console.log('Response:', response)
-
     if (response.status === true) {
-      toast.success('Pedido atualizado com sucesso')
+      toast.success(response.message)
       router.push('/painel/pedidos')
     }
 
@@ -228,10 +217,46 @@ export function SeeOrderContent({
     }
   }
 
+  const [state, setState] = useState<string>(order.adress.state)
+  const [addressRadio, setAddressRadio] = useState<
+    'same' | 'alternate' | undefined
+  >('same')
+
+  function handleSameAddress() {
+    const { cep, city, neighborhood, number, state, street } =
+      selectedClient.adress
+
+    form.setValue('adress', {
+      street: street ?? '',
+      number: number ?? '',
+      neighborhood: neighborhood ?? '',
+      city: city ?? '',
+      zipCode: cep ?? '',
+    })
+
+    setState(state)
+  }
+
+  function resetContactForm() {
+    form.setValue('contact', undefined)
+  }
+
+  function resetAddressForm() {
+    form.setValue('adress', {
+      city: '',
+      neighborhood: '',
+      number: '',
+      state: undefined,
+      street: '',
+      zipCode: '',
+    })
+    setState('')
+  }
+
   return (
     <Content>
       <ContentHeader
-        title={`${edit ? 'Editar o' : 'O'} Pedido`}
+        title={`${!editMode ? 'Editar o p' : 'P'}edido #${order.incrementalId}`}
         description={`Visualize ou edite o pedido conforme necessário.`}
       />
       <Separator className='mb-4' />
@@ -243,18 +268,19 @@ export function SeeOrderContent({
             </Heading>
             <Button
               type='submit'
-              // disabled={isSubmitting}
+              disabled={isSubmitting}
               onClick={handleSubmit(onSubmit)}
               variant='default'
             >
-              <Icons.Save className='mr-2 h-4 w-4' /> Salvar
+              <Icons.Save className='mr-2 h-5 w-5' />
+              Salvar
             </Button>
           </div>
         )}
         <form onSubmit={handleSubmit(onSubmit)} className='space-y-4 px-2 pt-4'>
           <Card>
             <CardHeader>
-              <Heading variant='h6' className='text-black'>
+              <Heading variant='h6' className='text-foreground'>
                 Cliente e Contato
               </Heading>
             </CardHeader>
@@ -268,35 +294,52 @@ export function SeeOrderContent({
                       <FormLabel>Cliente</FormLabel>
                       <FormControl>
                         <Select
+                          value={
+                            !editMode
+                              ? selectedClient.id
+                              : (order.client as Client).id
+                          }
                           onValueChange={(value) => {
                             field.onChange(value)
-                            setSelectedClient(value)
+                            const client = clients.find(
+                              (client) => client.id === value,
+                            )
+                            setSelectedClient(client)
+                            resetAddressForm()
+                            resetContactForm()
+                            setAddressRadio(null)
                           }}
-                          disabled={editMode}
-                          value={field.value}
                         >
-                          <SelectTrigger>
+                          <SelectTrigger disabled={editMode}>
                             <SelectValue placeholder='Selecione um Cliente' />
                           </SelectTrigger>
-                          {!editMode ? (
-                            <SelectContent side='bottom'>
-                              {typeof clients === 'object' &&
-                              clients.length === 0 ? (
-                                <SelectItem value='nenhum' disabled>
-                                  Você ainda não possui nenhum cliente.
+                          <SelectContent side='bottom'>
+                            {!editMode && clients.length === 0 && (
+                              <SelectItem
+                                value={null}
+                                disabled
+                                className='flex items-center justify-center'
+                              >
+                                Você ainda não possui nenhum cliente.
+                              </SelectItem>
+                            )}
+
+                            {!editMode &&
+                              clients.map((client) => (
+                                <SelectItem key={client.id} value={client.id}>
+                                  {client.name}
                                 </SelectItem>
-                              ) : (
-                                typeof clients === 'object' &&
-                                clients.map((client) => (
-                                  <SelectItem key={client.id} value={client.id}>
-                                    {client.name}
-                                  </SelectItem>
-                                ))
-                              )}
-                            </SelectContent>
-                          ) : (
-                            <></>
-                          )}
+                              ))}
+
+                            {editMode && (
+                              <SelectItem
+                                key={(order.client as Client).id}
+                                value={(order.client as Client).id}
+                              >
+                                {(order.client as Client).name}
+                              </SelectItem>
+                            )}
+                          </SelectContent>
                         </Select>
                       </FormControl>
                       <FormMessage />
@@ -311,26 +354,36 @@ export function SeeOrderContent({
                       <FormLabel>Contato</FormLabel>
                       <FormControl>
                         <Select
-                          onValueChange={(value) => {
-                            field.onChange(value)
-                            setSelectedContact(value)
-                          }}
+                          defaultValue={order.contact}
+                          onValueChange={field.onChange}
                           disabled={editMode || !selectedClient}
-                          value={field.value}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder='Selecione um Contato' />
                           </SelectTrigger>
                           <SelectContent>
-                            {/* {contacts
-                              .filter(
-                                (contact) => contact.id === selectedClient,
-                              )
-                              .map((contact) => (
+                            {!selectedClient && (
+                              <SelectItem
+                                value={null}
+                                disabled
+                                className='flex items-center justify-center'
+                              >
+                                Selecione um cliente para ver seus contatos
+                              </SelectItem>
+                            )}
+                            {selectedClient?.contacts?.length === 0 && (
+                              <SelectItem value={null} disabled>
+                                Não encontramos nenhum contato para este
+                                cliente.
+                              </SelectItem>
+                            )}
+                            {selectedClient &&
+                              selectedClient?.contacts.length > 0 &&
+                              selectedClient.contacts.map((contact) => (
                                 <SelectItem key={contact.id} value={contact.id}>
                                   {contact.name}
                                 </SelectItem>
-                              ))} */}
+                              ))}
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -345,80 +398,59 @@ export function SeeOrderContent({
                     <FormItem>
                       <FormLabel>Vendedor</FormLabel>
                       <Select
-                        onValueChange={(value) => {
-                          field.onChange(value)
-                          // setSalespersonId(value)
-                        }}
+                        onValueChange={field.onChange}
                         disabled={editMode}
-                        value={field.value}
+                        defaultValue={(order.salesperson as Salesperson).id}
                       >
-                        <SelectTrigger className='disabled:opacity-100'>
-                          {typeof order.salesperson === 'object' ? (
-                            <div className='flex items-center space-x-2'>
-                              {order.salesperson.avatar &&
-                              typeof order.salesperson.avatar === 'object' &&
-                              order.salesperson.avatar.url ? (
-                                <Image
-                                  width={20}
-                                  height={20}
-                                  src={order.salesperson.avatar.url}
-                                  alt={order.salesperson.name} // Use name for the alt attribute for better accessibility
-                                  className='select-none rounded-full'
-                                />
-                              ) : (
-                                <div className='flex h-5 w-5 items-center justify-center rounded-full bg-gray-300 p-1'>
-                                  <Icons.User className='h-3 w-3 text-gray-600' />
-                                </div>
-                              )}
-
-                              <p className='font-semibold'>
-                                {order.salesperson.name}
-                              </p>
-                            </div>
-                          ) : (
-                            <SelectValue placeholder='Selecione um Vendedor' />
-                          )}
+                        <SelectTrigger>
+                          <SelectValue placeholder='Selecione um Vendedor' />
                         </SelectTrigger>
-                        {!editMode ? (
-                          <SelectContent side='bottom'>
-                            <SelectGroup>
-                              <SelectLabel>Vendedor Interno</SelectLabel>
-                              {typeof salespeople === 'object' &&
-                                salespeople
-                                  .filter(
-                                    (person) => person.roles === 'internal',
-                                  )
-                                  .map((person) => (
+                        <SelectContent side='bottom'>
+                          <SelectGroup>
+                            <SelectLabel>Vendedor Interno</SelectLabel>
+                            {!editMode &&
+                              salespeople &&
+                              salespeople.map((person) => {
+                                if (person.roles === 'internal') {
+                                  return (
                                     <SelectItem
                                       key={person.id}
-                                      value={person.name}
+                                      value={person.id}
                                     >
                                       {person.name}
                                     </SelectItem>
-                                  ))}
-                            </SelectGroup>
-                            <SelectSeparator />
-                            <SelectGroup>
-                              <SelectLabel>Representante Externo</SelectLabel>
-                              {salespeople &&
-                                salespeople
-                                  .filter(
-                                    (person) =>
-                                      person.roles === 'representative',
                                   )
-                                  .map((person) => (
+                                }
+                              })}
+                            {editMode && (
+                              <SelectItem
+                                key={(order.salesperson as Salesperson).id}
+                                value={(order.salesperson as Salesperson).id}
+                              >
+                                {(order.salesperson as Salesperson).name}
+                              </SelectItem>
+                            )}
+                          </SelectGroup>
+
+                          <SelectSeparator />
+
+                          <SelectGroup>
+                            <SelectLabel>Representante Externo</SelectLabel>
+                            {salespeople &&
+                              salespeople.map((person) => {
+                                if (person.roles === 'representative') {
+                                  return (
                                     <SelectItem
                                       key={person.id}
-                                      value='salesperson'
+                                      value={person.id}
                                     >
                                       {person.name}
                                     </SelectItem>
-                                  ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        ) : (
-                          <></>
-                        )}
+                                  )
+                                }
+                              })}
+                          </SelectGroup>
+                        </SelectContent>
                       </Select>
                       <FormMessage />
                     </FormItem>
@@ -432,12 +464,7 @@ export function SeeOrderContent({
                       <FormLabel>Comissão</FormLabel>
                       <FormControl>
                         <div className='flex items-center gap-2 font-medium'>
-                          <Input
-                            {...field}
-                            disabled={editMode}
-                            className='disabled:opacity-100'
-                            type='number'
-                          />
+                          <Input {...field} disabled={editMode} type='number' />
                           <Label>%</Label>
                         </div>
                       </FormControl>
@@ -452,11 +479,7 @@ export function SeeOrderContent({
                     <FormItem>
                       <FormLabel>Condições de Pagamento</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          disabled={editMode}
-                          className='disabled:opacity-100'
-                        />
+                        <Input {...field} disabled={editMode} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -469,11 +492,7 @@ export function SeeOrderContent({
                     <FormItem>
                       <FormLabel>Transportadora</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          disabled={editMode}
-                          className='disabled:opacity-100'
-                        />
+                        <Input {...field} disabled={editMode} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -486,11 +505,7 @@ export function SeeOrderContent({
                     <FormItem>
                       <FormLabel>Prazo de Entrega</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          disabled={editMode}
-                          className='disabled:opacity-100'
-                        />
+                        <Input {...field} disabled={editMode} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -504,11 +519,11 @@ export function SeeOrderContent({
                       <FormLabel>Tipo de Frete</FormLabel>
                       <FormControl>
                         <Select
-                          {...field}
+                          defaultValue={order.shippingType}
                           disabled={editMode}
                           onValueChange={field.onChange}
                         >
-                          <SelectTrigger className='disabled:opacity-100'>
+                          <SelectTrigger>
                             <SelectValue placeholder='Selecione um tipo de frete' />
                           </SelectTrigger>
                           <SelectContent side='bottom'>
@@ -529,12 +544,12 @@ export function SeeOrderContent({
                       <FormLabel>Tipo de Pagamento</FormLabel>
                       <FormControl>
                         <Select
-                          {...field}
+                          defaultValue={order.paymentType}
                           disabled={editMode}
                           onValueChange={field.onChange}
                         >
-                          <SelectTrigger className='disabled:opacity-100'>
-                            <SelectValue placeholder='Selecione um tipo de frete' />
+                          <SelectTrigger>
+                            <SelectValue placeholder='Selecione um tipo de pagamento' />
                           </SelectTrigger>
                           <SelectContent side='bottom'>
                             <SelectItem value='boleto'>Boleto</SelectItem>
@@ -553,22 +568,41 @@ export function SeeOrderContent({
           <Separator className='my-4' />
           <Card>
             <CardHeader className='flex flex-row justify-between'>
-              <Heading variant='h6' className='text-black'>
+              <Heading variant='h6' className='text-foreground'>
                 Endereço de entrega
               </Heading>
               <RadioGroup
-                defaultValue={deliveryAddress ? 'same' : 'alternate'}
                 className='mr-6 flex flex-row gap-2'
+                value={addressRadio}
+                disabled={!selectedClient || editMode}
                 onValueChange={(value) => {
-                  setDeliveryAddress(value === 'same')
+                  if (value === 'same') {
+                    setAddressRadio('same')
+                    handleSameAddress()
+                    return
+                  }
+
+                  if (value === 'alternate') {
+                    setAddressRadio('alternate')
+                    resetAddressForm()
+                    return
+                  }
                 }}
               >
                 <div className='flex items-center space-x-2'>
-                  <RadioGroupItem value='same' id='r1' />
+                  <RadioGroupItem
+                    value='same'
+                    checked={addressRadio === 'same'}
+                    id='r1'
+                  />
                   <Label htmlFor='r1'>Mesmo endereço</Label>
                 </div>
                 <div className='flex items-center space-x-2'>
-                  <RadioGroupItem value='alternate' id='r2' />
+                  <RadioGroupItem
+                    value='alternate'
+                    checked={addressRadio === 'alternate'}
+                    id='r2'
+                  />
                   <Label htmlFor='r2'>Outro endereço</Label>
                 </div>
               </RadioGroup>
@@ -581,10 +615,7 @@ export function SeeOrderContent({
                   <FormItem>
                     <FormLabel>Logradouro</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        disabled={editMode || deliveryAddress}
-                      />
+                      <Input {...field} disabled={editMode} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -598,10 +629,7 @@ export function SeeOrderContent({
                   <FormItem>
                     <FormLabel>Número</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        disabled={editMode || deliveryAddress}
-                      />
+                      <Input {...field} disabled={editMode} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -615,10 +643,7 @@ export function SeeOrderContent({
                   <FormItem>
                     <FormLabel>Bairro</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        disabled={editMode || deliveryAddress}
-                      />
+                      <Input {...field} disabled={editMode} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -633,10 +658,7 @@ export function SeeOrderContent({
                     <FormItem>
                       <FormLabel>Cidade</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          disabled={editMode || deliveryAddress}
-                        />
+                        <Input {...field} disabled={editMode} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -651,43 +673,18 @@ export function SeeOrderContent({
                       <FormLabel>Estado</FormLabel>
                       <FormControl>
                         <Select
-                          onValueChange={field.onChange}
-                          value={field.value ?? ''}
-                          disabled={editMode || deliveryAddress}
+                          value={state}
+                          onValueChange={(newState) => {
+                            setState(newState)
+                            field.onChange(newState)
+                          }}
+                          disabled={editMode}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder='Selecione o estado' />
                           </SelectTrigger>
                           <SelectContent>
-                            {[
-                              'AC',
-                              'AL',
-                              'AP',
-                              'AM',
-                              'BA',
-                              'CE',
-                              'DF',
-                              'ES',
-                              'GO',
-                              'MA',
-                              'MS',
-                              'MT',
-                              'MG',
-                              'PA',
-                              'PB',
-                              'PR',
-                              'PE',
-                              'PI',
-                              'RJ',
-                              'RN',
-                              'RS',
-                              'RO',
-                              'RR',
-                              'SC',
-                              'SP',
-                              'SE',
-                              'TO',
-                            ].map((state) => (
+                            {BRAZIL_STATES.map((state) => (
                               <SelectItem key={state} value={state}>
                                 {state}
                               </SelectItem>
@@ -708,10 +705,7 @@ export function SeeOrderContent({
                   <FormItem>
                     <FormLabel>CEP</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        disabled={editMode || deliveryAddress}
-                      />
+                      <Input {...field} disabled={editMode} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -721,7 +715,7 @@ export function SeeOrderContent({
           </Card>
           <Separator className='my-4' />
           <div className='flex items-center justify-between gap-2'>
-            <Heading variant='h6' className='text-black'>
+            <Heading variant='h6' className='text-foreground'>
               Produtos
             </Heading>
             <Button
@@ -772,7 +766,7 @@ export function SeeOrderContent({
                                   {...field}
                                   disabled={editMode}
                                   placeholder='A partir de X produtos'
-                                  className='disabled:opacity-100'
+                                  type='number'
                                 />
                               </FormControl>
                               <FormMessage />
@@ -799,7 +793,6 @@ export function SeeOrderContent({
                                     }}
                                     inputMode='numeric'
                                     placeholder='0,00'
-                                    className='disabled:opacity-100'
                                   />
                                 </div>
                               </FormControl>
@@ -852,7 +845,6 @@ export function SeeOrderContent({
                               <Select
                                 onValueChange={field.onChange}
                                 disabled={editMode}
-                                value={field.value}
                               >
                                 <SelectTrigger>
                                   <SelectValue placeholder='Selecione' />
@@ -892,9 +884,6 @@ export function SeeOrderContent({
                                     disabled={editMode}
                                   />
                                 </FormControl>
-                                {/* <FormLabel className='cursor-pointer hover:underline'>
-                                  
-                                </FormLabel> */}
                               </div>
                             </FormItem>
                           )}
@@ -949,7 +938,10 @@ export function SeeOrderContent({
                           <Button
                             type='button'
                             size='icon'
-                            onClick={() => remove(index)}
+                            onClick={() => {
+                              remove(index)
+                              toast.warning('Produto foi removido do pedido.')
+                            }}
                             variant='destructive'
                             disabled={editMode}
                           >
@@ -991,14 +983,14 @@ export function SeeOrderContent({
             quantity: product.minimumQuantity,
             price: 0,
             product: {
-              featuredImage: product.featuredImage,
-              title: product.title,
               id: product.id,
-              priceQuantityTable: product.priceQuantityTable,
               sku: product.sku,
-              attributes: product.attributes,
-              minimumQuantity: product.minimumQuantity,
+              title: product.title,
               active: product.active,
+              minimumQuantity: product.minimumQuantity,
+              priceQuantityTable: product.priceQuantityTable,
+              featuredImage: product.featuredImage,
+              attributes: product.attributes,
             },
           })
         }}
@@ -1044,7 +1036,6 @@ function AddProductDialog({
       })
       if (response.ok) {
         const results = await response.json()
-        // console.log('results', results)
         setSearchResults(results.docs)
       } else {
         console.error('Error fetching products:', response.statusText)
@@ -1055,8 +1046,7 @@ function AddProductDialog({
   }
 
   const handleSearch = () => {
-    handleProductSearch(searchTerm) // Call the search function passed as a prop
-    // console.log(searchResults)
+    handleProductSearch(searchTerm)
   }
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -1141,9 +1131,14 @@ function AddProductDialog({
             variant='default'
             size='default'
             onClick={() => {
+              if (searchResults.length === 0) {
+                return toast.error(
+                  'Não é possível adicionar. Produto não foi reconhecido.',
+                )
+              }
+              toast.success('Produto adicionado ao pedido.')
               addProduct(searchResults[0])
               setSearchResults([])
-
               onClose()
             }}
           >

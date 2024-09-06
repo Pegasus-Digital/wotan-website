@@ -61,12 +61,12 @@ export function LayoutDocumentDownloader({
           loading ? (
             <Button variant='outline' className='w-full' disabled>
               <Loader2 className='mr-2 animate-spin' />
-              Baixar PDF
+              Baixar PDF de producão
             </Button>
           ) : (
             <Button variant='outline' className='w-full'>
               <Download className='mr-2' />
-              Baixar PDF
+              Baixar PDF de producão
             </Button>
           )
         }

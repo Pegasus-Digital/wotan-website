@@ -1,4 +1,3 @@
-import { Metadata } from 'next'
 import { OrdersContent } from './content'
 
 import { ISearchParams, searchParamsSchema } from '@/lib/validations'
@@ -7,8 +6,8 @@ import { getOrders } from './_logic/queries'
 
 // This page is meant to be responsible for SEO, data fetching and/or other asynchronous functions
 
-export const metadata: Metadata = {
-  title: 'Pedidos',
+export const metadata = {
+  title: 'Novo pedido',
 }
 
 interface OrdersPageProps {

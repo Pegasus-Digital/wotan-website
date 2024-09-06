@@ -18,8 +18,12 @@ export function CategorySpan({
   handleRemoveCategory,
 }: CategorySpanProps) {
   return (
-    <div className='w-full space-y-0.5 pl-4'>
-      <div className='flex items-center space-x-2 '>
+    <div
+      className={`w-full space-y-0.5 pl-4  ${category.children.length > 0 ? '' : ''}`}
+    >
+      <div
+        className={` mb-1 flex items-center space-x-2  ${category.children.length > 0 ? 'mt-2' : ''}`}
+      >
         <Button
           onClick={() => setSelected(category)}
           variant='outline'
@@ -34,10 +38,11 @@ export function CategorySpan({
           variant='outline'
           size='icon'
           className='h-6 w-6'
+          disabled={category.children.length > 0}
         >
           <Icons.Trash className='h-4 w-4' />
         </Button>
-        <Label>{category.title}</Label>
+        <Label className='pl-1'>{category.title}</Label>
       </div>
 
       {category.children.map((item) => (

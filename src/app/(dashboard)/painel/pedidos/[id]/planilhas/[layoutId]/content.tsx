@@ -90,6 +90,7 @@ import {
 import { layoutSchema } from '../../../_logic/validation'
 import update from 'payload/dist/collections/operations/update'
 import { updateLayout } from '../../../_logic/actions'
+import { formatBRL, formatBRLWithoutPrefix, parseValue } from '@/lib/format'
 
 // Define the validation schema
 
@@ -126,7 +127,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
   // console.log(item)
   // console.log('Order default:', order)
 
-  const { control, handleSubmit, formState } = form
+  const { control, handleSubmit, formState, watch } = form
 
   // const { errors, isValid } = useFormState({ control })
 
@@ -134,8 +135,28 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
     control,
     name: 'supplyer',
   })
+  const layoutItem = order.itens.find((item) => {
+    if (
+      (typeof item.layout === 'object' ? item.layout.id : item.layout) ===
+      layout.id
+    ) {
+      return {
+        ...item,
+      }
+    }
+    return null
+  })
+
+  const agencyComissionPercent = watch('commisions.agency.value')
+  const salespersonComissionPercent = watch('commisions.salesperson.value')
+
+  const totalValue = (layoutItem.quantity * layoutItem.price) / 100
+
+  const agencyComission = (totalValue * agencyComissionPercent) / 100
+  const salespersonComission = (totalValue * salespersonComissionPercent) / 100
+
   async function onSubmit(values: LayoutProps) {
-    // console.log('Order submitted:', values)
+    console.log('Layout submitted:', values)
 
     const response = await updateLayout({
       layoutId: layout.id,
@@ -175,7 +196,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                 ? item.product.title
                 : ''}
             </Heading>
-            <Label> Quantidade: {item && item.quantity}</Label>
+            <Label>Quantidade: {item && item.quantity}</Label>
             <Label>Material: | Cor:</Label>
           </div>
           <div className='flex flex-col justify-start gap-2'>
@@ -233,7 +254,11 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                     <FormItem>
                       <FormLabel>Tipo de Impressão</FormLabel>
                       <FormControl>
-                        <Select>
+                        <Select
+                          {...field}
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
                           <SelectTrigger>
                             <SelectValue placeholder='Selecione...' />
                           </SelectTrigger>
@@ -313,11 +338,11 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                             <Label>R$</Label>
 
                             <Input
-                              // {...field}
-                              // value={formatValue(field.value)}
-                              // onChange={(e) => {
-                              //   field.onChange(parseValue(e.target.value))
-                              // }}
+                              {...field}
+                              value={formatBRLWithoutPrefix(field.value)}
+                              onChange={(e) => {
+                                field.onChange(parseValue(e.target.value))
+                              }}
                               inputMode='numeric'
                               placeholder='0,00'
                               className='disabled:opacity-100'
@@ -346,7 +371,11 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                     <FormItem>
                       <FormLabel>Tipo de Impressão</FormLabel>
                       <FormControl>
-                        <Select>
+                        <Select
+                          {...field}
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
                           <SelectTrigger>
                             <SelectValue placeholder='Selecione...' />
                           </SelectTrigger>
@@ -426,11 +455,11 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                             <Label>R$</Label>
 
                             <Input
-                              // {...field}
-                              // value={formatValue(field.value)}
-                              // onChange={(e) => {
-                              //   field.onChange(parseValue(e.target.value))
-                              // }}
+                              {...field}
+                              value={formatBRLWithoutPrefix(field.value)}
+                              onChange={(e) => {
+                                field.onChange(parseValue(e.target.value))
+                              }}
                               inputMode='numeric'
                               placeholder='0,00'
                               className='disabled:opacity-100'
@@ -450,7 +479,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
             <CardHeader>
               <div className='flex items-center justify-between gap-2'>
                 <Heading variant={'h6'} className='text-black'>
-                  Fornecedores
+                  Materiais/Fornecedores
                 </Heading>
                 {!editMode && (
                   <Button
@@ -461,9 +490,9 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                     onClick={() =>
                       append({
                         material: '',
-                        quantidade_material: '',
+                        quantidade_material: 0,
                         fornecedor_material: '',
-                        custo_material: '',
+                        custo_material: 0,
                       })
                     }
                   >
@@ -472,62 +501,87 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                 )}
               </div>
             </CardHeader>
-            <CardContent className='space-y-2'>
+            <CardContent className='grid grid-cols-1 gap-4 space-y-2 tablet:grid-cols-2'>
               {fields.map((supplier, index) => (
-                <div key={index} className='flex flex-col space-y-2'>
-                  <FormField
-                    control={form.control}
-                    name={`supplyer.${index}.material`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Material</FormLabel>
-                        <FormControl>
-                          <Input {...field} className='disabled:opacity-100' />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`supplyer.${index}.quantidade_material`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Quantidade</FormLabel>
-                        <FormControl>
-                          <Input {...field} className='disabled:opacity-100' />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`supplyer.${index}.fornecedor_material`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Fornecedor</FormLabel>
-                        <FormControl>
-                          <Input {...field} className='disabled:opacity-100' />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name={`supplyer.${index}.custo_material`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Custo</FormLabel>
-                        <FormControl>
-                          <Input {...field} className='disabled:opacity-100' />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                <Card key={index} className='border-y-0 shadow-none'>
+                  <CardContent className='flex flex-col space-y-2'>
+                    <FormField
+                      control={form.control}
+                      name={`supplyer.${index}.material`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Material</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className='disabled:opacity-100'
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name={`supplyer.${index}.fornecedor_material`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Fornecedor</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className='disabled:opacity-100'
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`supplyer.${index}.quantidade_material`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Quantidade</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              className='disabled:opacity-100'
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`supplyer.${index}.custo_material`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Custo</FormLabel>
+                          <FormControl>
+                            <div className='flex items-center gap-2 font-medium'>
+                              <Label>R$</Label>
+
+                              <Input
+                                {...field}
+                                value={formatBRLWithoutPrefix(field.value)}
+                                onChange={(e) => {
+                                  field.onChange(parseValue(e.target.value))
+                                }}
+                                inputMode='numeric'
+                                placeholder='0,00'
+                                className='disabled:opacity-100'
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </CardContent>
+                </Card>
               ))}
             </CardContent>
           </Card>
@@ -563,7 +617,20 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                     <FormItem>
                       <FormLabel>Custo</FormLabel>
                       <FormControl>
-                        <Input {...field} className='disabled:opacity-100' />
+                        <div className='flex items-center gap-2 font-medium'>
+                          <Label>R$</Label>
+
+                          <Input
+                            {...field}
+                            value={formatBRLWithoutPrefix(field.value)}
+                            onChange={(e) => {
+                              field.onChange(parseValue(e.target.value))
+                            }}
+                            inputMode='numeric'
+                            placeholder='0,00'
+                            className='disabled:opacity-100'
+                          />
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -602,7 +669,20 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                     <FormItem>
                       <FormLabel>Custo</FormLabel>
                       <FormControl>
-                        <Input {...field} className='disabled:opacity-100' />
+                        <div className='flex items-center gap-2 font-medium'>
+                          <Label>R$</Label>
+
+                          <Input
+                            {...field}
+                            value={formatBRLWithoutPrefix(field.value)}
+                            onChange={(e) => {
+                              field.onChange(parseValue(e.target.value))
+                            }}
+                            inputMode='numeric'
+                            placeholder='0,00'
+                            className='disabled:opacity-100'
+                          />
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -640,7 +720,20 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                     <FormItem>
                       <FormLabel>Custo</FormLabel>
                       <FormControl>
-                        <Input {...field} className='disabled:opacity-100' />
+                        <div className='flex items-center gap-2 font-medium'>
+                          <Label>R$</Label>
+
+                          <Input
+                            {...field}
+                            value={formatBRLWithoutPrefix(field.value)}
+                            onChange={(e) => {
+                              field.onChange(parseValue(e.target.value))
+                            }}
+                            inputMode='numeric'
+                            placeholder='0,00'
+                            className='disabled:opacity-100'
+                          />
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -675,7 +768,20 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                     <FormItem>
                       <FormLabel>Custo</FormLabel>
                       <FormControl>
-                        <Input {...field} className='disabled:opacity-100' />
+                        <div className='flex items-center gap-2 font-medium'>
+                          <Label>R$</Label>
+
+                          <Input
+                            {...field}
+                            value={formatBRLWithoutPrefix(field.value)}
+                            onChange={(e) => {
+                              field.onChange(parseValue(e.target.value))
+                            }}
+                            inputMode='numeric'
+                            placeholder='0,00'
+                            className='disabled:opacity-100'
+                          />
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -692,7 +798,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
               </Heading>
             </CardHeader>
             <CardContent className='space-y-2'>
-              <div className='grid grid-cols-1 gap-4 tablet:grid-cols-2'>
+              <div className='grid grid-cols-1  gap-4 tablet:grid-cols-3'>
                 <FormField
                   control={form.control}
                   name={'commisions.agency.name'}
@@ -727,6 +833,11 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                     </FormItem>
                   )}
                 />
+                <div className='mt-auto flex h-9 items-center justify-center'>
+                  <Label className='text-black'>
+                    {formatBRL(agencyComission)}
+                  </Label>
+                </div>
                 <FormField
                   control={form.control}
                   name={'commisions.salesperson.name'}
@@ -761,6 +872,11 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                     </FormItem>
                   )}
                 />
+                <div className='mt-auto flex h-9 items-center justify-center'>
+                  <Label className=' text-black'>
+                    {formatBRL(salespersonComission)}
+                  </Label>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -992,7 +1108,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
           </div>
 
           <Card>
-            <CardContent className='space-y-2'>
+            <CardContent className='space-y-2 pt-4'>
               <FormField
                 name={'prazoentrega'}
                 control={form.control}
@@ -1034,11 +1150,14 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                   <FormItem>
                     <FormLabel>Frete</FormLabel>
                     <FormControl>
-                      <Select>
+                      <Select
+                        {...field}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger
                           disabled={editMode}
                           className='disabled:opacity-100'
-                          onChange={field.onChange}
                         >
                           <SelectValue placeholder='Selecione...' />
                         </SelectTrigger>
@@ -1107,7 +1226,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
           </Card>
 
           <Card>
-            <CardContent className='space-y-2'>
+            <CardContent className='space-y-2 pt-4'>
               <FormField
                 name={'shipmentDate'}
                 control={form.control}
@@ -1132,11 +1251,14 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                   <FormItem>
                     <FormLabel>Tipo Pagamento</FormLabel>
                     <FormControl>
-                      <Select>
+                      <Select
+                        {...field}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger
                           disabled={editMode}
                           className='disabled:opacity-100'
-                          onChange={field.onChange}
                         >
                           <SelectValue placeholder='Selecione...' />
                         </SelectTrigger>
@@ -1198,11 +1320,20 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                         <FormItem>
                           <FormLabel>Valor</FormLabel>
                           <FormControl>
-                            <Input
-                              {...field}
-                              disabled={editMode}
-                              className='disabled:opacity-100'
-                            />
+                            <div className='flex items-center gap-2 font-medium'>
+                              <Label>R$</Label>
+
+                              <Input
+                                {...field}
+                                value={formatBRLWithoutPrefix(field.value)}
+                                onChange={(e) => {
+                                  field.onChange(parseValue(e.target.value))
+                                }}
+                                inputMode='numeric'
+                                placeholder='0,00'
+                                className='disabled:opacity-100'
+                              />
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -1256,11 +1387,20 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                         <FormItem>
                           <FormLabel>Valor</FormLabel>
                           <FormControl>
-                            <Input
-                              {...field}
-                              disabled={editMode}
-                              className='disabled:opacity-100'
-                            />
+                            <div className='flex items-center gap-2 font-medium'>
+                              <Label>R$</Label>
+
+                              <Input
+                                {...field}
+                                value={formatBRLWithoutPrefix(field.value)}
+                                onChange={(e) => {
+                                  field.onChange(parseValue(e.target.value))
+                                }}
+                                inputMode='numeric'
+                                placeholder='0,00'
+                                className='disabled:opacity-100'
+                              />
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -1314,11 +1454,20 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                         <FormItem>
                           <FormLabel>Valor</FormLabel>
                           <FormControl>
-                            <Input
-                              {...field}
-                              disabled={editMode}
-                              className='disabled:opacity-100'
-                            />
+                            <div className='flex items-center gap-2 font-medium'>
+                              <Label>R$</Label>
+
+                              <Input
+                                {...field}
+                                value={formatBRLWithoutPrefix(field.value)}
+                                onChange={(e) => {
+                                  field.onChange(parseValue(e.target.value))
+                                }}
+                                inputMode='numeric'
+                                placeholder='0,00'
+                                className='disabled:opacity-100'
+                              />
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>

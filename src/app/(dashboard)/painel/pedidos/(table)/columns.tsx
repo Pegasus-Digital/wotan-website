@@ -193,6 +193,14 @@ export function getColumns(): ColumnDef<Order>[] {
                   Editar planilha
                 </Link>
               </Button>
+              <Button variant='outline' asChild>
+                <Link
+                  href={`/painel/pedidos/${incrementalId}/planilhas/${layoutId}/documento`}
+                >
+                  <Icons.Look className='mr-2 h-5 w-5' />
+                  Ver PDF de produção
+                </Link>
+              </Button>
               <LayoutDocumentDownloader
                 order={row.original}
                 layoutId={layoutId}
@@ -249,11 +257,21 @@ export function getColumns(): ColumnDef<Order>[] {
         <DataTableColumnHeader column={column} title='Status' />
       ),
       cell: ({ row }) => {
-        const value: string = row.getValue('status')
+        const data = row.original
 
-        if (!value) return <p className='font-bold'>Nenhum</p>
-
-        return <p className='font-bold'>{value}</p>
+        return (
+          <>
+            {data.status === 'pending' && (
+              <Badge variant='outline'>Pendente</Badge>
+            )}
+            {data.status === 'completed' && (
+              <Badge variant='affirmative'>Completo</Badge>
+            )}
+            {data.status === 'cancelled' && (
+              <Badge variant='destructive'>Cancelado</Badge>
+            )}
+          </>
+        )
       },
     },
     {
@@ -291,6 +309,7 @@ export function getColumns(): ColumnDef<Order>[] {
           return (
             <DropdownMenuItem
               className='cursor-pointer'
+              disabled
               // disabled={isChangeStatusPending}
               // onClick={() => setDialogStatusState(true)}
             >

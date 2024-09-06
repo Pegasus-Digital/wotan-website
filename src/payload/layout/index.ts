@@ -18,8 +18,8 @@ const Layout: CollectionConfig = {
         { name: 'type', type: 'text', required: false },
         { name: 'colors', type: 'text', required: false },
         { name: 'supplyer', type: 'text', required: false },
-        { name: 'quantity', type: 'text', required: false },
-        { name: 'price', type: 'text', required: false },
+        { name: 'quantity', type: 'number', required: false },
+        { name: 'price', type: 'number', required: false },
       ],
     },
     {
@@ -29,8 +29,8 @@ const Layout: CollectionConfig = {
         { name: 'type', type: 'text' },
         { name: 'colors', type: 'text', required: false },
         { name: 'supplyer', type: 'text', required: false },
-        { name: 'quantity', type: 'text', required: false },
-        { name: 'price', type: 'text', required: false },
+        { name: 'quantity', type: 'number', required: false },
+        { name: 'price', type: 'number', required: false },
       ],
     },
     {
@@ -38,9 +38,9 @@ const Layout: CollectionConfig = {
       type: 'array',
       fields: [
         { name: 'material', type: 'text', required: false },
-        { name: 'quantidade_material', type: 'text', required: false },
         { name: 'fornecedor_material', type: 'text', required: false },
-        { name: 'custo_material', type: 'text', required: false },
+        { name: 'quantidade_material', type: 'number', required: false },
+        { name: 'custo_material', type: 'number', required: false },
       ],
     },
     {
@@ -48,7 +48,7 @@ const Layout: CollectionConfig = {
       type: 'group',
       fields: [
         { name: 'obs', type: 'text', required: false },
-        { name: 'cost', type: 'text', required: false },
+        { name: 'cost', type: 'number', required: false },
       ],
     },
     {
@@ -56,7 +56,7 @@ const Layout: CollectionConfig = {
       type: 'group',
       fields: [
         { name: 'obs', type: 'text', required: false },
-        { name: 'cost', type: 'text', required: false },
+        { name: 'cost', type: 'number', required: false },
       ],
     },
     {
@@ -64,7 +64,7 @@ const Layout: CollectionConfig = {
       type: 'group',
       fields: [
         { name: 'company', type: 'text', required: false },
-        { name: 'cost', type: 'text', required: false },
+        { name: 'cost', type: 'number', required: false },
       ],
     },
     {
@@ -72,7 +72,7 @@ const Layout: CollectionConfig = {
       type: 'group',
       fields: [
         { name: 'company', type: 'text', required: false },
-        { name: 'cost', type: 'text', required: false },
+        { name: 'cost', type: 'number', required: false },
       ],
     },
     {
@@ -84,7 +84,7 @@ const Layout: CollectionConfig = {
           type: 'group',
           fields: [
             { name: 'name', type: 'text', required: false },
-            { name: 'value', type: 'text', required: false },
+            { name: 'value', type: 'number', required: false },
           ],
         },
         {
@@ -92,7 +92,7 @@ const Layout: CollectionConfig = {
           type: 'group',
           fields: [
             { name: 'name', type: 'text', required: false },
-            { name: 'value', type: 'text', required: false },
+            { name: 'value', type: 'number', required: false },
           ],
         },
       ],
@@ -173,7 +173,7 @@ const Layout: CollectionConfig = {
       fields: [
         { name: 'number', type: 'text', required: false },
         { name: 'due', type: 'text', required: false },
-        { name: 'value', type: 'text', required: false },
+        { name: 'value', type: 'number', required: false },
       ],
     },
     {
@@ -182,7 +182,7 @@ const Layout: CollectionConfig = {
       fields: [
         { name: 'number', type: 'text', required: false },
         { name: 'due', type: 'text', required: false },
-        { name: 'value', type: 'text', required: false },
+        { name: 'value', type: 'number', required: false },
       ],
     },
     {
@@ -191,7 +191,7 @@ const Layout: CollectionConfig = {
       fields: [
         { name: 'number', type: 'text', required: false },
         { name: 'due', type: 'text', required: false },
-        { name: 'value', type: 'text', required: false },
+        { name: 'value', type: 'number', required: false },
       ],
     },
     {

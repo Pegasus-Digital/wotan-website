@@ -55,12 +55,24 @@ export function ProductionDocument({
   const layoutValues =
     typeof layoutItem.layout === 'object' ? layoutItem.layout : null
 
-  const totalValue = layoutItem.quantity * layoutItem.price
+  const totalValue = (layoutItem.quantity * layoutItem.price) / 100
 
   const agencyComission =
     (totalValue * Number(layoutValues.commisions.agency.value)) / 100
   const salespersonComission =
     (totalValue * Number(layoutValues.commisions.salesperson.value)) / 100
+
+  const productUnitCost =
+    layoutValues.printing.price +
+    layoutValues.printing2.price +
+    layoutValues.supplyer.reduce((acc, curr) => acc + curr.custo_material, 0)
+
+  const productionCost =
+    (productUnitCost * layoutItem.quantity) / 100 +
+    (layoutValues.additionalCosts.cost + layoutValues.additionalCosts2.cost) /
+      100 +
+    agencyComission +
+    salespersonComission
 
   return (
     <Document>
@@ -169,7 +181,9 @@ export function ProductionDocument({
             </View>
 
             <View style={{ display: 'flex', width: '15%' }}>
-              Custo: {formatBRL(Number(layoutValues.printing.price) / 100)}un
+              <Text>
+                Custo: {formatBRL(layoutValues.printing.price / 100)} un
+              </Text>
             </View>
           </View>
           {layoutValues.printing2 && (
@@ -201,8 +215,7 @@ export function ProductionDocument({
 
               <View style={{ display: 'flex', width: '15%' }}>
                 <Text>
-                  Custo: {formatBRL(Number(layoutValues.printing2.price) / 100)}
-                  un
+                  Custo: {formatBRL(layoutValues.printing2.price / 100)} un
                 </Text>
               </View>
             </View>
@@ -232,7 +245,9 @@ export function ProductionDocument({
                 </View>
 
                 <View style={{ display: 'flex', width: '15%' }}>
-                  Custo: {formatBRL(Number(supplyer.custo_material) / 100)} un
+                  <Text>
+                    Custo: {formatBRL(supplyer.custo_material / 100)} un
+                  </Text>
                 </View>
               </View>
             )
@@ -252,31 +267,32 @@ export function ProductionDocument({
             </View>
             <View style={{ display: 'flex', width: '15%' }}>
               <Text>
-                Custo:{' '}
-                {formatBRL(Number(layoutValues.additionalCosts.cost) / 100)}
+                Custo: {formatBRL(layoutValues.additionalCosts.cost / 100)}
               </Text>
             </View>
           </View>
 
-          {layoutValues.additionalCosts2 && (
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                marginBottom: 16,
-              }}
-            >
-              <View style={{ display: 'flex', width: '85%' }}>
-                <Text>Observações 2: {layoutValues.additionalCosts2.obs}</Text>
+          {layoutValues.additionalCosts2 &&
+            layoutValues.additionalCosts2.cost > 0 && (
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  marginBottom: 16,
+                }}
+              >
+                <View style={{ display: 'flex', width: '85%' }}>
+                  <Text>
+                    Observações 2: {layoutValues.additionalCosts2.obs}
+                  </Text>
+                </View>
+                <View style={{ display: 'flex', width: '15%' }}>
+                  <Text>
+                    Custo: {formatBRL(layoutValues.additionalCosts2.cost / 100)}
+                  </Text>
+                </View>
               </View>
-              <View style={{ display: 'flex', width: '15%' }}>
-                <Text>
-                  Custo:{' '}
-                  {formatBRL(Number(layoutValues.additionalCosts2.cost) / 100)}
-                </Text>
-              </View>
-            </View>
-          )}
+            )}
 
           {/* Fretes */}
           <View
@@ -291,12 +307,10 @@ export function ProductionDocument({
               <Text>Frete: {layoutValues.delivery.company}</Text>
             </View>
             <View style={{ display: 'flex', width: '15%' }}>
-              <Text>
-                Custo: {formatBRL(Number(layoutValues.delivery.cost) / 100)}
-              </Text>
+              <Text>Custo: {formatBRL(layoutValues.delivery.cost / 100)}</Text>
             </View>
           </View>
-          {layoutValues.delivery2 && (
+          {layoutValues.delivery2 && layoutValues.delivery2.cost > 0 && (
             <View
               style={{
                 display: 'flex',
@@ -309,7 +323,7 @@ export function ProductionDocument({
               </View>
               <View style={{ display: 'flex', width: '15%' }}>
                 <Text>
-                  Custo: {formatBRL(Number(layoutValues.delivery2.cost) / 100)}
+                  Custo: {formatBRL(layoutValues.delivery2.cost / 100)}
                 </Text>
               </View>
             </View>
@@ -332,7 +346,7 @@ export function ProductionDocument({
               <Text>Porcentagem: {layoutValues.commisions.agency.value}%</Text>
             </View>
             <View style={{ display: 'flex', width: '15%' }}>
-              <Text>Valor: {formatBRL(agencyComission / 100)}</Text>
+              <Text>Valor: {formatBRL(agencyComission)}</Text>
             </View>
           </View>
           <View
@@ -353,7 +367,7 @@ export function ProductionDocument({
               </Text>
             </View>
             <View style={{ display: 'flex', width: '15%' }}>
-              <Text>Valor: {formatBRL(salespersonComission / 100)}</Text>
+              <Text>Valor: {formatBRL(salespersonComission)}</Text>
             </View>
           </View>
 
@@ -379,15 +393,15 @@ export function ProductionDocument({
                 {!layoutValues.sample.with ? 'X' : ' '})
               </Text>
             </View>
-            <View style={{ marginLeft: 16 }}>
+            <View style={{ marginLeft: 24 }}>
               <Text style={{ marginBottom: 4 }}>Aprovação:</Text>
               <Text style={{}}>
                 Sim ({layoutValues.sample.approved ? 'X' : ' '}){'  '}Não (
                 {!layoutValues.sample.approved ? 'X' : ' '})
               </Text>
             </View>
-            <View style={{ marginLeft: 16 }}>
-              <Text style={{ marginBottom: 4 }}> Nova Amostra:</Text>
+            <View style={{ marginLeft: 24 }}>
+              <Text style={{ marginBottom: 4 }}>Nova Amostra:</Text>
               <Text style={{}}>
                 Sim ({layoutValues.sample.new ? 'X' : ' '}){'  '}Não (
                 {!layoutValues.sample.new ? 'X' : ' '})
@@ -402,14 +416,27 @@ export function ProductionDocument({
           <View style={styles.footer}>
             <View style={styles.footer_column}>
               <Text>Valor unitário: {formatBRL(layoutItem.price / 100)}</Text>
-              <Text>Custo adicional: R$ 3,35</Text>
-              <Text>Valor da venda: {formatBRL(totalValue / 100)}</Text>
-              <Text>Custo de produção: R$ 3,35</Text>
-              <Text>Resultado: R$ 3,35</Text>
+              <Text>
+                Custo adicional:{' '}
+                {formatBRL(
+                  (layoutValues.additionalCosts.cost +
+                    layoutValues.additionalCosts2.cost) /
+                    100,
+                )}
+              </Text>
+              <Text>Valor da venda: {formatBRL(totalValue)}</Text>
+              <Text>Custo de produção: {formatBRL(productionCost)}</Text>
+              <Text>Resultado: {formatBRL(totalValue - productionCost)}</Text>
             </View>
             <View style={styles.footer_column}>
-              <Text>Frete: {layoutValues.shipmentType}</Text>
-              <Text>Valor do frete: R$ 0,00</Text>
+              <Text>Frete: {layoutValues.shipmentType.toUpperCase()}</Text>
+              <Text>
+                Valor do frete:{' '}
+                {formatBRL(
+                  (layoutValues.delivery.cost + layoutValues.delivery2.cost) /
+                    100,
+                )}
+              </Text>
               <Text>Transportadora: {layoutValues.transp}</Text>
               <Text>Prazo de entrega: {layoutValues.prazoentrega}</Text>
               <Text>Cotação: {layoutValues.quote}</Text>
@@ -418,12 +445,18 @@ export function ProductionDocument({
             <View style={styles.footer_column}>
               <Text>Data remessa: {layoutValues.shipmentDate}</Text>
               <Text>Tipo de pagamento: {layoutValues.paymentType}</Text>
-              <Text>Nota fiscal nº: {}</Text>
-              <Text>Vencimento: </Text>
-              <Text>Valor: R$ 0,00</Text>
+              <Text>Nota fiscal nº: {layoutValues.invoice.number}</Text>
+              <Text>Vencimento: {layoutValues.invoice.due}</Text>
+              <Text>Valor: {layoutValues.invoice.value}</Text>
               <Text>NCM:{layoutValues.ncm}</Text>
             </View>
           </View>
+        </View>
+        <View style={[styles.section, { gap: 2, fontSize: 10 }]}>
+          {layoutValues.obs_final && <DocumentSeparator />}
+          {layoutValues.obs_final && <Text>Observações:</Text>}
+
+          {layoutValues.obs_final && <Text>{layoutValues.obs_final}</Text>}
         </View>
       </Page>
     </Document>
