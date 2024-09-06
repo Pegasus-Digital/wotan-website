@@ -67,7 +67,6 @@ export function ProductionDocument({
     layoutValues.printing2.price +
     layoutValues.supplyer.reduce((acc, curr) => acc + curr.custo_material, 0)
 
-  console.log(productUnitCost)
   const productionCost =
     (productUnitCost * layoutItem.quantity) / 100 +
     (layoutValues.additionalCosts.cost + layoutValues.additionalCosts2.cost) /

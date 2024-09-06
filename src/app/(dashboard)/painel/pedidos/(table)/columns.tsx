@@ -193,6 +193,14 @@ export function getColumns(): ColumnDef<Order>[] {
                   Editar planilha
                 </Link>
               </Button>
+              <Button variant='outline' asChild>
+                <Link
+                  href={`/painel/pedidos/${incrementalId}/planilhas/${layoutId}/documento`}
+                >
+                  <Icons.Look className='mr-2 h-5 w-5' />
+                  Ver PDF de produção
+                </Link>
+              </Button>
               <LayoutDocumentDownloader
                 order={row.original}
                 layoutId={layoutId}
@@ -291,6 +299,7 @@ export function getColumns(): ColumnDef<Order>[] {
           return (
             <DropdownMenuItem
               className='cursor-pointer'
+              disabled
               // disabled={isChangeStatusPending}
               // onClick={() => setDialogStatusState(true)}
             >
