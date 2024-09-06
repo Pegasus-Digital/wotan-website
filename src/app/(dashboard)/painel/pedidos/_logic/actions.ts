@@ -110,6 +110,7 @@ export async function createOrder(
       collection: 'order',
       data: {
         ...data.order,
+        status: 'pending',
       },
     })
 

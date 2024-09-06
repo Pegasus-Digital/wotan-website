@@ -144,8 +144,9 @@ export const orderSchema = z.object({
     .string({ required_error: 'Vendedor é obrigatório' })
     .min(1, 'Vendedor é obrigatório'),
   commission: z.coerce
-    .number({ description: 'asd', required_error: 'Insira um número válido.' })
-    .nonnegative({ message: 'Comissão não pode ser negativa.' }),
+    .number({ required_error: 'Insira um número válido.' })
+    .nonnegative({ message: 'Comissão não pode ser negativa.' })
+    .max(100, 'A comissão máxima é de 100%'),
 
   shippingTime: z.string().optional(),
   shippingCompany: z.string().optional(),
