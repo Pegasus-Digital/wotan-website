@@ -102,7 +102,7 @@ export function NewBudgetContent({
   })
 
   const { control, handleSubmit, watch } = form
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, insert } = useFieldArray({
     control,
     name: 'items',
   })
@@ -514,14 +514,28 @@ export function NewBudgetContent({
                       </TableCell>
 
                       <TableCell className='text-right'>
-                        <Button
-                          type='button'
-                          size='icon'
-                          onClick={() => remove(index)}
-                          variant='destructive'
-                        >
-                          <Icons.Trash className='h-5 w-5' />
-                        </Button>
+                        <div className='flex items-center justify-end gap-2'>
+                          <Button
+                            type='button'
+                            size='icon'
+                            onClick={() =>
+                              insert(index + 1, {
+                                ...field,
+                              })
+                            }
+                            variant='outline'
+                          >
+                            <Icons.Copy className='h-5 w-5' />
+                          </Button>
+                          <Button
+                            type='button'
+                            size='icon'
+                            onClick={() => remove(index)}
+                            variant='destructive'
+                          >
+                            <Icons.Trash className='h-5 w-5' />
+                          </Button>
+                        </div>
                       </TableCell>
                     </>
                   )}

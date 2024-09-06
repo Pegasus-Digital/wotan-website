@@ -42,6 +42,7 @@ import {
   ChevronsUpDown,
   Loader2,
   Download,
+  Copy,
 } from 'lucide-react'
 
 export const Icons = {
@@ -87,4 +88,5 @@ export const Icons = {
   ChevronsUpDown: ChevronsUpDown,
   Loader: Loader2,
   Download: Download,
+  Copy: Copy,
 }
