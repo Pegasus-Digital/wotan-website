@@ -43,6 +43,7 @@ export async function getOrderByIncrementalId(id: string) {
         },
       },
       limit: 1,
+      depth: 10,
     })
 
     // console.log('response', response)

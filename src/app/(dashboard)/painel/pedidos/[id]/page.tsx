@@ -36,7 +36,6 @@ export default async function SeeBudget({
   }
 
   const order = data
-
   if (!order) {
     return <Heading>Pedido não encontrado</Heading>
   }

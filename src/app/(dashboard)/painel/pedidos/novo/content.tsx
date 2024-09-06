@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
 import {
@@ -90,6 +90,7 @@ import {
 import { createOrder } from '../_logic/actions'
 import { orderSchema } from '../_logic/validation'
 import { parseValue } from '@/lib/format'
+import { AttributesCombobox } from '../_components/attributes-selector'
 
 type OrderProps = z.infer<typeof orderSchema>
 
@@ -116,7 +117,7 @@ export function SeeOrderContent({
   })
 
   const { control, handleSubmit } = form
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     control,
     name: 'itens',
   })
@@ -132,6 +133,7 @@ export function SeeOrderContent({
   const { isSubmitting } = useFormState({ control: form.control })
 
   async function onSubmit(values: OrderProps) {
+    // console.log('Submitting form:', values)
     const response = await createOrder({
       ...values,
       itens: values.itens.map((item) => ({
@@ -139,7 +141,6 @@ export function SeeOrderContent({
         product:
           typeof item.product === 'string' ? item.product : item.product.id,
         layout: null,
-        // attributes: item.attributes,
         quantity: item.quantity,
         price: item.price,
         layoutSent: item.layoutSent,
@@ -720,12 +721,27 @@ export function SeeOrderContent({
                         />
                       </TableCell>
                       <TableCell>
-                        {field.product.attributes && (
+                        {field.product.attributes ? (
                           <AttributesCombobox
                             attributeArray={field.product.attributes.filter(
                               isAttribute,
                             )}
+                            selectedAttributes={
+                              field.attributes ? field.attributes : []
+                            }
+                            onUpdate={(attributes) => {
+                              // console.log('foi', attributes)
+                              if (!attributes || attributes.length === 0) return
+                              update(index, {
+                                ...field,
+                                attributes: attributes.map(
+                                  (attribute) => attribute.id,
+                                ),
+                              })
+                            }}
                           />
+                        ) : (
+                          <Label>Nenhum</Label>
                         )}
                       </TableCell>
                       <TableCell>
@@ -885,9 +901,6 @@ export function SeeOrderContent({
     </Content>
   )
 }
-interface AttributesComboboxProps {
-  attributeArray: Attribute[]
-}
 
 function isAttribute(item: any): item is Attribute {
   return (
@@ -901,111 +914,6 @@ function isAttribute(item: any): item is Attribute {
       (typeof item.type === 'object' &&
         'name' in item.type &&
         'type' in item.type))
-  )
-}
-
-export function AttributesCombobox({
-  attributeArray,
-}: AttributesComboboxProps) {
-  const [open, setOpen] = useState<boolean>(false)
-  const [value, setValue] = useState<Attribute[]>([])
-
-  const toggleAttributeSelection = (attribute: Attribute) => {
-    setValue((prev) => {
-      // Check if the attribute is already selected
-      if (prev.some((attr) => attr.value === attribute.value)) {
-        // Remove it if it's already selected
-        return prev.filter((attr) => attr.value !== attribute.value)
-      } else {
-        // Add it if it's not selected
-        return [...prev, attribute]
-      }
-    })
-  }
-
-  const groupedAttributes = value.reduce<Record<string, Attribute[]>>(
-    (acc, attribute) => {
-      const label =
-        typeof attribute.type === 'string'
-          ? attribute.type
-          : attribute.type?.name || 'default'
-      if (!acc[label]) {
-        acc[label] = []
-      }
-      acc[label].push(attribute)
-      return acc
-    },
-    {},
-  )
-
-  return (
-    <>
-      {value.length > 0 && (
-        <div className=''>
-          {Object.entries(groupedAttributes).map(([label, attributes]) => (
-            <div key={label} className='mb-2 flex flex-row'>
-              <Label className='mr-1 mt-1'>{label}:</Label>
-              <div className='mt-1 flex flex-wrap gap-1'>
-                {attributes.map((attribute, index) => (
-                  <Label key={attribute.value}>
-                    {attribute.name}
-                    {index !== attributes.length - 1 && attributes.length > 1
-                      ? ','
-                      : ''}
-                  </Label>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {attributeArray.length > 0 && (
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant='outline'
-              role='combobox'
-              aria-expanded={open}
-              className='w-[200px] justify-between'
-            >
-              {'Selecione atributo...'}
-              <Icons.ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className='w-[200px] p-0'>
-            <Command>
-              <CommandInput placeholder='Pesquise atributo...' />
-              <CommandList>
-                <CommandEmpty>Attributo não encontrado.</CommandEmpty>
-                <CommandGroup>
-                  {attributeArray.map((attribute) => (
-                    <CommandItem
-                      key={`${attribute.name}-${attribute.value}`}
-                      value={attribute.value}
-                      onSelect={() => {
-                        toggleAttributeSelection(attribute)
-                        setOpen(false)
-                      }}
-                    >
-                      <Icons.Check
-                        className={cn(
-                          'mr-2 h-4 w-4',
-                          value.some((attr) => attr.value === attribute.value)
-                            ? 'opacity-100'
-                            : 'opacity-0',
-                        )}
-                      />
-                      {attribute.name}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </PopoverContent>
-        </Popover>
-      )}
-    </>
   )
 }
 
@@ -1130,7 +1038,6 @@ function AddProductDialog({
             onClick={() => {
               addProduct(searchResults[0])
               setSearchResults([])
-
               onClose()
             }}
           >
