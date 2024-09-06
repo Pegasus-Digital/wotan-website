@@ -451,6 +451,7 @@ export function getColumns(): ColumnDef<Budget>[] {
                 </DialogDescription>
                 <div className='mt-2 grid grid-cols-2 gap-2'>
                   <BudgetDocumentDownloader budget={budget} />
+
                   <Button variant='outline' asChild>
                     <Link
                       href={`/painel/orcamentos/${budget.incrementalId}/documento`}

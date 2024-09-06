@@ -5,51 +5,51 @@ import { revalidatePath } from 'next/cache'
 import { ActionResponse } from '@/lib/actions'
 import { Layout, Order } from '@/payload/payload-types'
 
+type SafeOrder = Omit<Order, 'id' | 'createdAt' | 'updatedAt'>
+type SafeLayout = Omit<Layout, 'id' | 'createdAt' | 'updatedAt'>
+
 interface DeleteOrderProps {
   orderId: string
 }
 
-type SafeOrder = Omit<Order, 'id' | 'createdAt' | 'updatedAt'>
-type SafeLayout = Omit<Layout, 'id' | 'createdAt' | 'updatedAt'>
-
 interface DeleteOrderResponseData {}
 
-export async function deleteOrder({
-  orderId,
-}: DeleteOrderProps): Promise<ActionResponse<DeleteOrderResponseData>> {
+export async function deleteOrder(
+  data: DeleteOrderProps,
+): Promise<ActionResponse<DeleteOrderResponseData>> {
   try {
     const response = await payload.delete({
+      id: data.orderId,
       collection: 'order',
-      where: { id: { equals: orderId } },
     })
 
-    if (!response.docs[0]) {
+    if (!response) {
       return {
         data: null,
         status: false,
-        message: '[400] Ocorreu um erro ao deletar o orçamento.',
+        message: '[400] Ocorreu um erro ao deletar o pedido.',
       }
     }
 
-    revalidatePath('/painel/contato')
+    revalidatePath('/painel/pedidos')
 
     return {
       data: null,
       status: true,
-      message: 'Orçamento deletado com sucesso.',
+      message: 'Pedido deletado com sucesso.',
     }
   } catch (err) {
-    // console.error(err)
+    console.error(err)
     return {
       data: null,
       status: false,
-      message: '[500] Ocorreu um erro ao deletar o orçamento.',
+      message: `[500] Ocorreu um erro ao deletar o pedido.`,
     }
   }
 }
 
 interface UpdateOrderProps {
-  id: Order['id']
+  orderId: string
   order: SafeOrder
 }
 
@@ -57,30 +57,35 @@ interface UpdateOrderResponseData {
   order: Order
 }
 
-export async function updateOrder({
-  id,
-  order,
-}: UpdateOrderProps): Promise<ActionResponse<UpdateOrderResponseData>> {
+export async function updateOrder(
+  data: UpdateOrderProps,
+): Promise<ActionResponse<UpdateOrderResponseData>> {
   try {
     // console.log('foi', order)
     const response = await payload.update({
+      id: data.orderId,
       collection: 'order',
-      where: { id: { equals: id } },
       data: {
-        ...order,
+        ...data.order,
       },
     })
+
+    if (!response) {
+      return {
+        data: null,
+        status: false,
+        message: 'Ocorreu um erro ao atualizar o pedido.',
+      }
+    }
 
     revalidatePath('/painel/pedidos')
 
     return {
-      data: { order: response.docs[0] },
+      data: { order: response },
       status: true,
       message: 'Pedido atualizado com sucesso.',
     }
   } catch (err) {
-    // console.error(err)
-
     return {
       data: null,
       status: false,
@@ -89,32 +94,45 @@ export async function updateOrder({
   }
 }
 
+interface CreateOrderProps {
+  order: SafeOrder
+}
+
+interface CreateOrderResponseData {
+  order: Order
+}
+
 export async function createOrder(
-  order: SafeOrder,
-): Promise<ActionResponse<UpdateOrderResponseData>> {
+  data: CreateOrderProps,
+): Promise<ActionResponse<CreateOrderResponseData>> {
   try {
-    // console.log('foi', order)
     const response = await payload.create({
       collection: 'order',
       data: {
-        ...order,
+        ...data.order,
       },
     })
 
     revalidatePath('/painel/pedidos')
+
     return {
       data: { order: response },
       status: true,
       message: 'Pedido criado com sucesso.',
     }
   } catch (err) {
-    // console.error(err)
+    console.error(err)
     return {
       data: null,
       status: false,
-      message: '[500] Ocorreu um erro ao criar o pedido.',
+      message: '[500] Ocorreu um erro ao criar o pedido. ',
     }
   }
+}
+
+interface UpdateLayoutProps {
+  layoutId: string
+  layout: SafeLayout
 }
 
 interface UpdateLayoutResponseData {
@@ -123,15 +141,12 @@ interface UpdateLayoutResponseData {
 
 export async function updateLayout({
   layout,
-  id,
-}: {
-  layout: SafeLayout
-  id: Layout['id']
-}): Promise<ActionResponse<UpdateLayoutResponseData>> {
+  layoutId,
+}: UpdateLayoutProps): Promise<ActionResponse<UpdateLayoutResponseData>> {
   try {
     const response = await payload.update({
+      id: layoutId,
       collection: 'layouts',
-      where: { id: { equals: id } },
       data: {
         ...layout,
       },
@@ -140,7 +155,7 @@ export async function updateLayout({
     revalidatePath('/painel/pedidos')
 
     return {
-      data: { layout: response.docs[0] },
+      data: { layout: response },
       status: true,
       message: 'Layout atualizado com sucesso.',
     }

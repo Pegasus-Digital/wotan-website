@@ -15,3 +15,18 @@ export default async function ProductPage({
 
   return <ProductContent product={product} edit={edit} />
 }
+
+export async function generateMetadata({
+  params: { sku },
+  searchParams: { edit },
+}) {
+  if (edit) {
+    return {
+      title: `Editar produto: ${sku}`,
+    }
+  }
+
+  return {
+    title: `Produto: ${sku}`,
+  }
+}

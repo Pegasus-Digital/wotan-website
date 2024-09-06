@@ -193,7 +193,7 @@ export function SeeOrderContent({
     // console.log('Order submitted:', values)
 
     const response = await updateOrder({
-      id: order.id,
+      orderId: order.id,
       order: {
         ...values,
         itens: values.itens.map((item) => ({

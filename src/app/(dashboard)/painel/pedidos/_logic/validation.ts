@@ -126,8 +126,25 @@ export const layoutSchema = z.object({
 })
 
 export const orderSchema = z.object({
-  client: z.string().nonempty({ message: 'Cliente é obrigatório' }),
-  contact: z.string().nonempty({ message: 'Contato é obrigatório' }),
+  client: z
+    .string({ required_error: 'Cliente é obrigatório' })
+    .min(1, 'Cliente é obrigatório'),
+  contact: z
+    .string({ required_error: 'Contato é obrigatório' })
+    .min(1, 'Contato é obrigatório'),
+  salesperson: z
+    .string({ required_error: 'Vendedor é obrigatório' })
+    .min(1, 'Vendedor é obrigatório'),
+  commission: z.coerce
+    .number({ description: 'asd', required_error: 'Insira um número válido.' })
+    .nonnegative({ message: 'Comissão não pode ser negativa.' }),
+
+  shippingTime: z.string().optional(),
+  shippingCompany: z.string().optional(),
+  shippingType: z.enum(['cif', 'fob']).optional(),
+  paymentConditions: z.string().optional(),
+  paymentType: z.enum(['boleto', 'pix', 'deposito']).optional(),
+
   alternativeContact: z
     .object({
       name: z.string().optional(),
@@ -136,6 +153,7 @@ export const orderSchema = z.object({
       whatsapp: z.string().optional(),
     })
     .optional(),
+
   adress: z
     .object({
       street: z.string().optional(),
@@ -177,7 +195,6 @@ export const orderSchema = z.object({
         .optional(),
     })
     .optional(),
-  salesperson: z.string(),
   itens: z
     .array(
       z.object({
@@ -195,13 +212,7 @@ export const orderSchema = z.object({
       }),
     )
     .optional(),
-  shippingTime: z.string().optional(),
-  shippingCompany: z.string().optional(),
-  shippingType: z.enum(['cif', 'fob']).optional(),
-  paymentConditions: z.string().optional(),
-  paymentType: z.enum(['boleto', 'pix', 'deposito']).optional(),
   agency: z.string().optional(),
-  commission: z.coerce.number().optional(),
   notes: z.string().optional(),
   status: z.enum(['pending', 'completed', 'cancelled']).optional(),
 })

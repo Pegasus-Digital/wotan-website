@@ -13,3 +13,9 @@ export default async function BudgetDocumentPage({ params: { id } }) {
 
   return <BudgetDocumentContent budget={data} />
 }
+
+export async function generateMetadata({ params: { id } }) {
+  return {
+    title: `Visualizar documento nº: ${id}`,
+  }
+}

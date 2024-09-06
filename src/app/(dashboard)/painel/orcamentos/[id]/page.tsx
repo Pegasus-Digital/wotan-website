@@ -7,34 +7,23 @@ import {
 } from '../_logic/queries'
 
 import { SeeBudgetContent } from './content'
-// import { useSearchParams } from 'next/navigation'
 
 export default async function SeeBudget({
   params: { id },
   searchParams: { edit },
 }) {
   const { data } = await getEstimateByIncrementalId(id)
-
-  // const salespeople = await getSalespeople()
-  // const clients = await getClients()
-
-  // const edit = params.has('edit')
-
   let salespeople = null
   let clients = null
+
   if (edit) {
     // Fetch salespeople data
-    // console.log('Fetching salespeople data...')
-
     const { data: salespeopleData } = await getSalespeople()
-    salespeople = salespeopleData // Assign data to the outer variable
+    salespeople = salespeopleData
 
     // Fetch clients data
     const { data: clientsData } = await getClients()
-    clients = clientsData // Assign data to the outer variable
-
-    // console.log('salespeople', salespeople)
-    // console.log('clients', clients)
+    clients = clientsData
   }
 
   const budget = data
@@ -53,4 +42,19 @@ export default async function SeeBudget({
       />
     </div>
   )
+}
+
+export async function generateMetadata({
+  params: { id },
+  searchParams: { edit },
+}) {
+  if (edit) {
+    return {
+      title: `Editar orçamento nº: ${id}`,
+    }
+  }
+
+  return {
+    title: `Orçamento nº: ${id}`,
+  }
 }
