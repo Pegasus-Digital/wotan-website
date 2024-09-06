@@ -123,6 +123,10 @@ export function NewBudgetContent({
   async function onSubmit(values: BudgetProps) {
     const { contact, items, salesperson } = values
 
+    if (items.length === 0) {
+      return toast.error('Não é possível criar um orçamento sem produtos.')
+    }
+
     const response = await createBudget({
       ...values,
       salesperson: salesperson,
