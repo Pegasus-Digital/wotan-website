@@ -318,49 +318,49 @@ export interface Layout {
     type?: string | null;
     colors?: string | null;
     supplyer?: string | null;
-    quantity?: string | null;
-    price?: string | null;
+    quantity?: number | null;
+    price?: number | null;
   };
   printing2?: {
     type?: string | null;
     colors?: string | null;
     supplyer?: string | null;
-    quantity?: string | null;
-    price?: string | null;
+    quantity?: number | null;
+    price?: number | null;
   };
   supplyer?:
     | {
         material?: string | null;
-        quantidade_material?: string | null;
         fornecedor_material?: string | null;
-        custo_material?: string | null;
+        quantidade_material?: number | null;
+        custo_material?: number | null;
         id?: string | null;
       }[]
     | null;
   additionalCosts?: {
     obs?: string | null;
-    cost?: string | null;
+    cost?: number | null;
   };
   additionalCosts2?: {
     obs?: string | null;
-    cost?: string | null;
+    cost?: number | null;
   };
   delivery?: {
     company?: string | null;
-    cost?: string | null;
+    cost?: number | null;
   };
   delivery2?: {
     company?: string | null;
-    cost?: string | null;
+    cost?: number | null;
   };
   commisions?: {
     agency?: {
       name?: string | null;
-      value?: string | null;
+      value?: number | null;
     };
     salesperson?: {
       name?: string | null;
-      value?: string | null;
+      value?: number | null;
     };
   };
   layout?: {
@@ -387,17 +387,17 @@ export interface Layout {
   invoice?: {
     number?: string | null;
     due?: string | null;
-    value?: string | null;
+    value?: number | null;
   };
   invoice2?: {
     number?: string | null;
     due?: string | null;
-    value?: string | null;
+    value?: number | null;
   };
   invoice3?: {
     number?: string | null;
     due?: string | null;
-    value?: string | null;
+    value?: number | null;
   };
   ncm?: string | null;
   obs_final?: string | null;
