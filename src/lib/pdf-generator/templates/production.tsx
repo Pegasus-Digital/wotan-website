@@ -7,7 +7,8 @@ import {
   DocumentSeparator,
 } from '../components/document-separator'
 import { DocumentHeader } from '../components/document-header'
-import { Order } from '@/payload/payload-types'
+import { AttributeType, Order } from '@/payload/payload-types'
+import { formatBRL } from '@/lib/format'
 
 const styles = StyleSheet.create({
   page: {
@@ -41,6 +42,26 @@ export function ProductionDocument({
   layoutItem,
   order,
 }: ProductionDocumentProps) {
+  const client = typeof order.client === 'object' ? order.client : null
+
+  const contact = client.contacts.filter(
+    (contact) => contact.id === order.contact,
+  )
+
+  const attributes = layoutItem.attributes.map((attr) => {
+    return typeof attr === 'object' ? attr : null
+  })
+
+  const layoutValues =
+    typeof layoutItem.layout === 'object' ? layoutItem.layout : null
+
+  const totalValue = layoutItem.quantity * layoutItem.price
+
+  const agencyComission =
+    (totalValue * Number(layoutValues.commisions.agency.value)) / 100
+  const salespersonComission =
+    (totalValue * Number(layoutValues.commisions.salesperson.value)) / 100
+
   return (
     <Document>
       <Page size='A4' style={styles.page}>
@@ -62,8 +83,8 @@ export function ProductionDocument({
               marginBottom: 16,
             }}
           >
-            <Text>Pedido #{order.incrementalId}</Text>
-            <Text>Data: {getDDMMYYDate(new Date())}</Text>
+            <Text>Pedido n°:{order.incrementalId}</Text>
+            <Text>Data: {getDDMMYYDate(new Date(order.updatedAt))}</Text>
           </View>
           <View
             style={{
@@ -80,29 +101,30 @@ export function ProductionDocument({
                   ? layoutItem.product
                   : layoutItem.product.sku + ' - ' + layoutItem.product.title}
               </Text>
-              <Text>Quantidade: {layoutItem.quantity}</Text>
-              <Text>Atributos:</Text>
-              <View style={{ marginLeft: 10 }}>
-                {/* <Text>Cor: PRETO</Text>
-                <Text>Especificações: METÁLICO</Text> */}
+              <View style={{ marginLeft: 10, fontSize: 11 }}>
+                <Text>Quantidade: {layoutItem.quantity}</Text>
+                {attributes &&
+                  attributes.map((attr) => {
+                    const attributeType = attr.type as AttributeType
+                    return (
+                      <Text key={attr.id}>
+                        {attributeType.name}: {attr.name}
+                      </Text>
+                    )
+                  })}
               </View>
             </View>
-            <View style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Text style={{ fontWeight: 'medium', fontSize: 12 }}>
+            <View style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <Text style={{ fontWeight: 'medium', fontSize: 11 }}>
                 Razão social:{' '}
-                {typeof order.client === 'object'
-                  ? order.client.name
-                  : order.client}
+                {typeof client === 'object' ? client.name : client}
               </Text>
               <Text>
-                CNPJ:{' '}
-                {typeof order.client === 'object'
-                  ? order.client.document
-                  : order.client}
+                CNPJ: {typeof client === 'object' ? client.document : client}
               </Text>
-              <Text>Contato: Daniel</Text>
+              <Text>Contato: {contact[0].name}</Text>
               <Text>Condição de pagamento: {order.paymentConditions}</Text>
-              <Text>Prazo de entrega: {order.shippingTime}</Text>
+              <Text>Prazo de entrega: {layoutValues.prazoentrega}</Text>
             </View>
           </View>
         </View>
@@ -110,43 +132,296 @@ export function ProductionDocument({
         <DocumentSeparator />
 
         {/* Detalhes do produto */}
-        <View>
-          {/* Custos */}
-          <View></View>
-          {/* Frete */}
-          <View></View>
+        <View
+          style={{
+            fontSize: 10,
+            flexDirection: 'column',
+            display: 'flex',
+            paddingHorizontal: 16,
+          }}
+        >
+          {/* Impressoes */}
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              marginBottom: 16,
+              marginTop: 10,
+            }}
+          >
+            <View style={{ display: 'flex', width: '33%' }}>
+              <Text>Tipo de Impressão: {layoutValues.printing.type}</Text>
+            </View>
+            <View style={{ display: 'flex', width: '12%' }}>
+              <Text>
+                Cores:{' '}
+                {layoutValues.printing.colors
+                  ? layoutValues.printing.colors
+                  : 'N.A.'}
+              </Text>
+            </View>
+            <View style={{ display: 'flex', width: '20%' }}>
+              <Text>Fornecedor: {layoutValues.printing.supplyer}</Text>
+            </View>
 
-          {/* True/False */}
-          <View></View>
+            <View style={{ display: 'flex', width: '20%' }}>
+              <Text>Quantidade: {layoutValues.printing.quantity}</Text>
+            </View>
+
+            <View style={{ display: 'flex', width: '15%' }}>
+              Custo: {formatBRL(Number(layoutValues.printing.price) / 100)}un
+            </View>
+          </View>
+          {layoutValues.printing2 && (
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                marginBottom: 16,
+              }}
+            >
+              <View style={{ display: 'flex', width: '33%' }}>
+                <Text>Tipo de Impressão: {layoutValues.printing2.type}</Text>
+              </View>
+              <View style={{ display: 'flex', width: '12%' }}>
+                <Text>
+                  Cores:{' '}
+                  {layoutValues.printing2.colors
+                    ? layoutValues.printing2.colors
+                    : 'N.A.'}
+                </Text>
+              </View>
+              <View style={{ display: 'flex', width: '20%' }}>
+                <Text>Fornecedor: {layoutValues.printing2.supplyer}</Text>
+              </View>
+
+              <View style={{ display: 'flex', width: '20%' }}>
+                <Text>Quantidade: {layoutValues.printing2.quantity}</Text>
+              </View>
+
+              <View style={{ display: 'flex', width: '15%' }}>
+                <Text>
+                  Custo: {formatBRL(Number(layoutValues.printing2.price) / 100)}
+                  un
+                </Text>
+              </View>
+            </View>
+          )}
+
+          {/* Fornecedores/Materiais*/}
+          {layoutValues.supplyer.map((supplyer) => {
+            return (
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  marginBottom: 16,
+                  marginTop: 10,
+                }}
+              >
+                <View style={{ display: 'flex', width: '45%' }}>
+                  <Text>Material: {supplyer.material}</Text>
+                </View>
+
+                <View style={{ display: 'flex', width: '20%' }}>
+                  <Text>Fornecedor: {supplyer.fornecedor_material}</Text>
+                </View>
+
+                <View style={{ display: 'flex', width: '20%' }}>
+                  <Text>Quantidade: {supplyer.quantidade_material}</Text>
+                </View>
+
+                <View style={{ display: 'flex', width: '15%' }}>
+                  Custo: {formatBRL(Number(supplyer.custo_material) / 100)} un
+                </View>
+              </View>
+            )
+          })}
+
+          {/* Observações */}
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              marginBottom: 16,
+              marginTop: 16,
+            }}
+          >
+            <View style={{ display: 'flex', width: '85%' }}>
+              <Text>Observações: {layoutValues.additionalCosts.obs}</Text>
+            </View>
+            <View style={{ display: 'flex', width: '15%' }}>
+              <Text>
+                Custo:{' '}
+                {formatBRL(Number(layoutValues.additionalCosts.cost) / 100)}
+              </Text>
+            </View>
+          </View>
+
+          {layoutValues.additionalCosts2 && (
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                marginBottom: 16,
+              }}
+            >
+              <View style={{ display: 'flex', width: '85%' }}>
+                <Text>Observações 2: {layoutValues.additionalCosts2.obs}</Text>
+              </View>
+              <View style={{ display: 'flex', width: '15%' }}>
+                <Text>
+                  Custo:{' '}
+                  {formatBRL(Number(layoutValues.additionalCosts2.cost) / 100)}
+                </Text>
+              </View>
+            </View>
+          )}
+
+          {/* Fretes */}
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              marginBottom: 16,
+              marginTop: 16,
+            }}
+          >
+            <View style={{ display: 'flex', width: '85%' }}>
+              <Text>Frete: {layoutValues.delivery.company}</Text>
+            </View>
+            <View style={{ display: 'flex', width: '15%' }}>
+              <Text>
+                Custo: {formatBRL(Number(layoutValues.delivery.cost) / 100)}
+              </Text>
+            </View>
+          </View>
+          {layoutValues.delivery2 && (
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                marginBottom: 16,
+              }}
+            >
+              <View style={{ display: 'flex', width: '85%' }}>
+                <Text>Frete 2: {layoutValues.delivery2.company}</Text>
+              </View>
+              <View style={{ display: 'flex', width: '15%' }}>
+                <Text>
+                  Custo: {formatBRL(Number(layoutValues.delivery2.cost) / 100)}
+                </Text>
+              </View>
+            </View>
+          )}
+          {/* Comissões  */}
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              marginBottom: 16,
+              marginTop: 16,
+            }}
+          >
+            <View style={{ display: 'flex', width: '65%' }}>
+              <Text>
+                Comissão Agência: {layoutValues.commisions.agency.name}
+              </Text>
+            </View>
+            <View style={{ display: 'flex', width: '20%' }}>
+              <Text>Porcentagem: {layoutValues.commisions.agency.value}%</Text>
+            </View>
+            <View style={{ display: 'flex', width: '15%' }}>
+              <Text>Valor: {formatBRL(agencyComission / 100)}</Text>
+            </View>
+          </View>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              marginBottom: 16,
+            }}
+          >
+            <View style={{ display: 'flex', width: '65%' }}>
+              <Text>
+                Comissão Vendedor: {layoutValues.commisions.salesperson.name}
+              </Text>
+            </View>
+            <View style={{ display: 'flex', width: '20%' }}>
+              <Text>
+                Porcentagem: {layoutValues.commisions.salesperson.value}%
+              </Text>
+            </View>
+            <View style={{ display: 'flex', width: '15%' }}>
+              <Text>Valor: {formatBRL(salespersonComission / 100)}</Text>
+            </View>
+          </View>
+
+          {/* Layout/Amostra */}
+          <View>
+            <Text style={{ marginBottom: 4 }}>Layout:</Text>
+          </View>
+
+          <View style={{ marginBottom: 8 }}>
+            <Text>
+              Enviado ({layoutValues.layout.sent ? 'X' : ' '}){'   '}Aprovado (
+              {layoutValues.layout.approved ? 'X' : ' '}){'   '}Idem ao anterior
+              ({layoutValues.layout.sameAsPrevious ? 'X' : ' '}){'   '}Reenviado
+              ({layoutValues.layout.reSent ? 'X' : ' '}){'   '}Fotolito (
+              {layoutValues.layout.fotolitus ? 'X' : ' '})
+            </Text>
+          </View>
+          <View style={{ display: 'flex', flexDirection: 'row' }}>
+            <View>
+              <Text style={{ marginBottom: 4 }}>Amostra: </Text>
+              <Text style={{}}>
+                Com ({layoutValues.sample.with ? 'X' : ' '}){'  '}Sem (
+                {!layoutValues.sample.with ? 'X' : ' '})
+              </Text>
+            </View>
+            <View style={{ marginLeft: 16 }}>
+              <Text style={{ marginBottom: 4 }}>Aprovação:</Text>
+              <Text style={{}}>
+                Sim ({layoutValues.sample.approved ? 'X' : ' '}){'  '}Não (
+                {!layoutValues.sample.approved ? 'X' : ' '})
+              </Text>
+            </View>
+            <View style={{ marginLeft: 16 }}>
+              <Text style={{ marginBottom: 4 }}> Nova Amostra:</Text>
+              <Text style={{}}>
+                Sim ({layoutValues.sample.new ? 'X' : ' '}){'  '}Não (
+                {!layoutValues.sample.new ? 'X' : ' '})
+              </Text>
+            </View>
+          </View>
         </View>
-
         <DocumentFiller />
         <DocumentSeparator />
 
         <View style={styles.section}>
           <View style={styles.footer}>
             <View style={styles.footer_column}>
-              <Text>Valor unitário: R$ 3,35</Text>
+              <Text>Valor unitário: {formatBRL(layoutItem.price / 100)}</Text>
               <Text>Custo adicional: R$ 3,35</Text>
-              <Text>Valor da venda: R$ 3,35</Text>
+              <Text>Valor da venda: {formatBRL(totalValue / 100)}</Text>
               <Text>Custo de produção: R$ 3,35</Text>
               <Text>Resultado: R$ 3,35</Text>
             </View>
             <View style={styles.footer_column}>
-              <Text>Frete: {order.shippingType}</Text>
+              <Text>Frete: {layoutValues.shipmentType}</Text>
               <Text>Valor do frete: R$ 0,00</Text>
-              <Text>Transportadora: Wotan</Text>
-              <Text>Prazo de entrega:</Text>
-              <Text>Cotação:</Text>
-              <Text>Volumes:</Text>
+              <Text>Transportadora: {layoutValues.transp}</Text>
+              <Text>Prazo de entrega: {layoutValues.prazoentrega}</Text>
+              <Text>Cotação: {layoutValues.quote}</Text>
+              <Text>Volumes: {layoutValues.volumeNumber}</Text>
             </View>
             <View style={styles.footer_column}>
-              <Text>Data remessa:</Text>
-              <Text>Tipo de pagamento: Boleto</Text>
-              <Text>Nota fiscal nº:</Text>
-              <Text>Vencimento:</Text>
+              <Text>Data remessa: {layoutValues.shipmentDate}</Text>
+              <Text>Tipo de pagamento: {layoutValues.paymentType}</Text>
+              <Text>Nota fiscal nº: {}</Text>
+              <Text>Vencimento: </Text>
               <Text>Valor: R$ 0,00</Text>
-              <Text>NCM:</Text>
+              <Text>NCM:{layoutValues.ncm}</Text>
             </View>
           </View>
         </View>
