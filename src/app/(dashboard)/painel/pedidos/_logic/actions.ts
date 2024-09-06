@@ -39,10 +39,11 @@ export async function deleteOrder(
       message: 'Pedido deletado com sucesso.',
     }
   } catch (err) {
+    console.error(err)
     return {
       data: null,
       status: false,
-      message: '[500] Ocorreu um erro ao deletar o pedido.',
+      message: `[500] Ocorreu um erro ao deletar o pedido.`,
     }
   }
 }
@@ -120,11 +121,11 @@ export async function createOrder(
       message: 'Pedido criado com sucesso.',
     }
   } catch (err) {
-    // console.error(err)
+    console.error(err)
     return {
       data: null,
       status: false,
-      message: '[500] Ocorreu um erro ao criar o pedido.',
+      message: '[500] Ocorreu um erro ao criar o pedido. ',
     }
   }
 }

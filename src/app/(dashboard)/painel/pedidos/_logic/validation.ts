@@ -126,9 +126,15 @@ export const layoutSchema = z.object({
 })
 
 export const orderSchema = z.object({
-  client: z.string({ required_error: 'Cliente é obrigatório' }),
-  contact: z.string({ required_error: 'Contato é obrigatório' }),
-  salesperson: z.string({ required_error: 'Vendedor é obrigatório' }),
+  client: z
+    .string({ required_error: 'Cliente é obrigatório' })
+    .min(1, 'Cliente é obrigatório'),
+  contact: z
+    .string({ required_error: 'Contato é obrigatório' })
+    .min(1, 'Contato é obrigatório'),
+  salesperson: z
+    .string({ required_error: 'Vendedor é obrigatório' })
+    .min(1, 'Vendedor é obrigatório'),
   commission: z.coerce
     .number({ description: 'asd', required_error: 'Insira um número válido.' })
     .nonnegative({ message: 'Comissão não pode ser negativa.' }),

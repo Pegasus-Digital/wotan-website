@@ -113,6 +113,7 @@ export function NewOrderContent({
     defaultValues: {
       client: '',
       contact: '',
+      salesperson: '',
       commission: 0,
 
       paymentConditions: '',
@@ -144,6 +145,11 @@ export function NewOrderContent({
   const { isSubmitting } = useFormState({ control: form.control })
 
   async function onSubmit(values: OrderProps) {
+    // Se um pedido for submetido sem nenhum item, é barrado.
+    if (values.itens.length === 0) {
+      return toast.error('Não é possível criar um pedido sem produtos.')
+    }
+
     const response = await createOrder({
       order: {
         ...values,
@@ -200,6 +206,10 @@ export function NewOrderContent({
     })
   }
 
+  function resetContactForm() {
+    form.setValue('contact', '')
+  }
+
   function resetAddressForm() {
     form.resetField('adress')
   }
@@ -250,6 +260,7 @@ export function NewOrderContent({
                           )
                           setSelectedClient(client)
                           resetAddressForm()
+                          resetContactForm()
                           setAddressRadio(null)
                         }}
                       >
@@ -289,7 +300,12 @@ export function NewOrderContent({
                   <FormItem>
                     <FormLabel>Contato</FormLabel>
                     <FormControl>
-                      <Select onValueChange={field.onChange}>
+                      <Select
+                        onValueChange={(v) => {
+                          console.log('contato:', v)
+                          field.onChange(v)
+                        }}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder='Selecione um Contato' />
                         </SelectTrigger>
@@ -518,6 +534,7 @@ export function NewOrderContent({
                 </div>
               </RadioGroup>
             </CardHeader>
+
             <CardContent className='space-y-4'>
               <FormField
                 control={form.control}
@@ -820,7 +837,12 @@ export function NewOrderContent({
                           <Button
                             type='button'
                             size='icon'
-                            onClick={() => remove(index)}
+                            onClick={() => {
+                              remove(index)
+                              toast.warning(
+                                'Produto foi removido do pedido com sucesso.',
+                              )
+                            }}
                             variant='destructive'
                           >
                             <Icons.Trash className='h-5 w-5' />
@@ -1100,6 +1122,12 @@ function AddProductDialog({
             variant='default'
             size='default'
             onClick={() => {
+              if (searchResults.length === 0) {
+                return toast.error(
+                  'Não é possível adicionar. Produto não foi reconhecido.',
+                )
+              }
+              toast.success('Produto adicionado ao pedido.')
               addProduct(searchResults[0])
               setSearchResults([])
 
