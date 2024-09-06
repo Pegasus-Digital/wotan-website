@@ -249,11 +249,21 @@ export function getColumns(): ColumnDef<Order>[] {
         <DataTableColumnHeader column={column} title='Status' />
       ),
       cell: ({ row }) => {
-        const value: string = row.getValue('status')
+        const data = row.original
 
-        if (!value) return <p className='font-bold'>Nenhum</p>
-
-        return <p className='font-bold'>{value}</p>
+        return (
+          <>
+            {data.status === 'pending' && (
+              <Badge variant='outline'>Pendente</Badge>
+            )}
+            {data.status === 'completed' && (
+              <Badge variant='affirmative'>Completo</Badge>
+            )}
+            {data.status === 'cancelled' && (
+              <Badge variant='destructive'>Cancelado</Badge>
+            )}
+          </>
+        )
       },
     },
     {

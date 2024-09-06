@@ -12,7 +12,6 @@ import {
 } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
 import { parseValue } from '@/lib/format'
 import { BRAZIL_STATES } from '@/lib/brazil-states'
 
@@ -35,12 +34,6 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-
-import {
   Form,
   FormItem,
   FormLabel,
@@ -57,15 +50,6 @@ import {
   TableHead,
   TableHeader,
 } from '@/components/ui/table'
-
-import {
-  Command,
-  CommandItem,
-  CommandList,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-} from '@/components/ui/command'
 
 import {
   Select,
@@ -91,9 +75,7 @@ import {
 import { createOrder } from '../_logic/actions'
 import { orderSchema } from '../_logic/validation'
 
-import { parseValue } from '@/lib/format'
 import { AttributesCombobox } from '../_components/attributes-selector'
-
 
 type OrderProps = z.infer<typeof orderSchema>
 
@@ -129,6 +111,7 @@ export function NewOrderContent({
         neighborhood: '',
         number: '',
         street: '',
+        state: undefined,
       },
     },
   })
@@ -149,11 +132,10 @@ export function NewOrderContent({
   const { isSubmitting } = useFormState({ control: form.control })
 
   async function onSubmit(values: OrderProps) {
-        // Se um pedido for submetido sem nenhum item, é barrado.
+    // Se um pedido for submetido sem nenhum item, é barrado.
     if (values.itens.length === 0) {
       return toast.error('Não é possível criar um pedido sem produtos.')
     }
-
 
     const response = await createOrder({
       order: {
@@ -167,9 +149,8 @@ export function NewOrderContent({
           cep: values.adress.zipCode,
         },
 
-
         itens: values.itens.map((item) => ({
-                  ...item,
+          ...item,
 
           product:
             typeof item.product === 'string' ? item.product : item.product.id,
@@ -180,7 +161,6 @@ export function NewOrderContent({
           sample: item.sample,
           layoutSent: item.layoutSent,
           layoutApproved: item.layoutApproved,
-
         })),
       },
     })
@@ -195,6 +175,7 @@ export function NewOrderContent({
     }
   }
 
+  const [state, setState] = useState<string>('')
   const [addressRadio, setAddressRadio] = useState<
     'same' | 'alternate' | undefined
   >(undefined)
@@ -208,9 +189,10 @@ export function NewOrderContent({
       number: number ?? '',
       neighborhood: neighborhood ?? '',
       city: city ?? '',
-      state: state ?? undefined,
       zipCode: cep ?? '',
     })
+
+    setState(state)
   }
 
   function resetContactForm() {
@@ -219,13 +201,14 @@ export function NewOrderContent({
 
   function resetAddressForm() {
     form.resetField('adress')
+    setState('')
   }
 
   return (
     <Content>
       <ContentHeader
-        title={` Pedido`}
-        description={`Visualize ou edite o pedido conforme necessário.`}
+        title={`Novo pedido`}
+        description={`Crie um novo pedido preenchendo as informações abaixo.`}
       />
       <Separator className='mb-4' />
       <Form {...form}>
@@ -276,15 +259,16 @@ export function NewOrderContent({
                         </SelectTrigger>
                         {
                           <SelectContent side='bottom'>
-                            {clients.length === 0 && (
-                              <SelectItem
-                                value={null}
-                                disabled
-                                className='flex items-center justify-center'
-                              >
-                                Você ainda não possui nenhum cliente.
-                              </SelectItem>
-                            )}
+                            {!clients ||
+                              (clients.length === 0 && (
+                                <SelectItem
+                                  value={null}
+                                  disabled
+                                  className='flex items-center justify-center'
+                                >
+                                  Você ainda não possui nenhum cliente.
+                                </SelectItem>
+                              ))}
 
                             {clients.map((client) => (
                               <SelectItem key={client.id} value={client.id}>
@@ -307,12 +291,7 @@ export function NewOrderContent({
                   <FormItem>
                     <FormLabel>Contato</FormLabel>
                     <FormControl>
-                      <Select
-                        onValueChange={(v) => {
-                          console.log('contato:', v)
-                          field.onChange(v)
-                        }}
-                      >
+                      <Select onValueChange={field.onChange}>
                         <SelectTrigger>
                           <SelectValue placeholder='Selecione um Contato' />
                         </SelectTrigger>
@@ -356,34 +335,37 @@ export function NewOrderContent({
                       <SelectTrigger className='disabled:opacity-100'>
                         <SelectValue placeholder='Selecione um Vendedor' />
                       </SelectTrigger>
-                      {
-                        <SelectContent side='bottom'>
-                          <SelectGroup>
-                            <SelectLabel>Vendedor Interno</SelectLabel>
-                            {salespeople
-                              .filter((person) => person.roles === 'internal')
+
+                      <SelectContent side='bottom'>
+                        <SelectGroup>
+                          <SelectLabel>Vendedor Interno</SelectLabel>
+                          {salespeople.map((person) => {
+                            if (person.roles === 'internal') {
+                              return (
+                                <SelectItem key={person.id} value={person.id}>
+                                  {person.name}
+                                </SelectItem>
+                              )
+                            }
+                          })}
+                        </SelectGroup>
+
+                        <SelectSeparator />
+
+                        <SelectGroup>
+                          <SelectLabel>Representante Externo</SelectLabel>
+                          {salespeople &&
+                            salespeople
+                              .filter(
+                                (person) => person.roles === 'representative',
+                              )
                               .map((person) => (
                                 <SelectItem key={person.id} value={person.id}>
                                   {person.name}
                                 </SelectItem>
                               ))}
-                          </SelectGroup>
-                          <SelectSeparator />
-                          <SelectGroup>
-                            <SelectLabel>Representante Externo</SelectLabel>
-                            {salespeople &&
-                              salespeople
-                                .filter(
-                                  (person) => person.roles === 'representative',
-                                )
-                                .map((person) => (
-                                  <SelectItem key={person.id} value={person.id}>
-                                    {person.name}
-                                  </SelectItem>
-                                ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      }
+                        </SelectGroup>
+                      </SelectContent>
                     </Select>
                     <FormMessage />
                   </FormItem>
@@ -607,7 +589,13 @@ export function NewOrderContent({
                     <FormItem>
                       <FormLabel>Estado</FormLabel>
                       <FormControl>
-                        <Select onValueChange={field.onChange}>
+                        <Select
+                          value={state}
+                          onValueChange={(newState) => {
+                            setState(newState)
+                            field.onChange(newState)
+                          }}
+                        >
                           <SelectTrigger>
                             <SelectValue placeholder='Selecione o estado' />
                           </SelectTrigger>
@@ -678,19 +666,6 @@ export function NewOrderContent({
                 <TableRow key={field.id}>
                   {typeof field.product === 'object' && (
                     <>
-                      {/* <TableCell>
-                        <Image
-                          src={
-                            typeof field.product.featuredImage === 'object'
-                              ? field.product.featuredImage.url
-                              : ''
-                          }
-                          alt={field.product.title}
-                          className='h-24 w-24 rounded-md object-cover'
-                          width={96}
-                          height={96}
-                        />
-                      </TableCell> */}
                       <TableCell>{field.product.sku}</TableCell>
                       <TableCell>{field.product.title}</TableCell>
                       <TableCell className='font-medium'>
@@ -742,7 +717,6 @@ export function NewOrderContent({
                       <TableCell>
                         {field.product.attributes ? (
                           <AttributesCombobox
-
                             attributeArray={field.product.attributes.filter(
                               isAttribute,
                             )}
@@ -750,7 +724,6 @@ export function NewOrderContent({
                               field.attributes ? field.attributes : []
                             }
                             onUpdate={(attributes) => {
-                              // console.log('foi', attributes)
                               if (!attributes || attributes.length === 0) return
                               update(index, {
                                 ...field,
@@ -918,7 +891,6 @@ export function NewOrderContent({
   )
 }
 
-
 function isAttribute(item: any): item is Attribute {
   return (
     typeof item === 'object' &&
@@ -956,7 +928,6 @@ function AddProductDialog({
       })
       if (response.ok) {
         const results = await response.json()
-        // console.log('results', results)
         setSearchResults(results.docs)
       } else {
         console.error('Error fetching products:', response.statusText)
@@ -967,8 +938,7 @@ function AddProductDialog({
   }
 
   const handleSearch = () => {
-    handleProductSearch(searchTerm) // Call the search function passed as a prop
-    // console.log(searchResults)
+    handleProductSearch(searchTerm)
   }
   return (
     <Dialog open={open} onOpenChange={onClose}>

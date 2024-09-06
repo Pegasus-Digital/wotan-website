@@ -7,32 +7,19 @@ import {
 import { SeeOrderContent } from './content'
 // import { useSearchParams } from 'next/navigation'
 
-export default async function SeeBudget({
+export default async function SeeOrderPage({
   params: { id },
   searchParams: { edit },
 }) {
   const { data } = await getOrderByIncrementalId(id)
-
-  // const salespeople = await getSalespeople()
-  // const clients = await getClients()
-
-  // const edit = params.has('edit')
-
   let salespeople = null
   let clients = null
+
   if (edit) {
-    // Fetch salespeople data
-    // console.log('Fetching salespeople data...')
-
     const { data: salespeopleData } = await getSalespeople()
-    salespeople = salespeopleData // Assign data to the outer variable
-
-    // Fetch clients data
+    salespeople = salespeopleData
     const { data: clientsData } = await getClients()
-    clients = clientsData // Assign data to the outer variable
-
-    // console.log('salespeople', salespeople)
-    // console.log('clients', clients)
+    clients = clientsData
   }
 
   const order = data
@@ -50,4 +37,19 @@ export default async function SeeBudget({
       />
     </div>
   )
+}
+
+export async function generateMetadata({
+  params: { id },
+  searchParams: { edit },
+}) {
+  if (edit) {
+    return {
+      title: `Editar pedido nº: ${id}`,
+    }
+  }
+
+  return {
+    title: `Pedido nº: ${id}`,
+  }
 }

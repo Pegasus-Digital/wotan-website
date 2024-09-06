@@ -611,7 +611,7 @@ export function NewBudgetContent({
                             size='icon'
                             onClick={() =>
                               insert(index + 1, {
-                                ...field,
+                                ...item,
                               })
                             }
                             variant='outline'
