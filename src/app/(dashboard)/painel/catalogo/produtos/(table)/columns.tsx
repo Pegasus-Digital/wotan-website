@@ -128,17 +128,6 @@ export function getColumns(): ColumnDef<Product>[] {
               </Link>
 
               <Button
-                onClick={(e) => {
-                  e.preventDefault()
-                  window.print()
-                }}
-                type='button'
-                size='icon'
-                variant='ghost'
-              >
-                <Icons.Print className='h-5 w-5' />
-              </Button>
-              <Button
                 type='button'
                 size='icon'
                 variant='ghost'

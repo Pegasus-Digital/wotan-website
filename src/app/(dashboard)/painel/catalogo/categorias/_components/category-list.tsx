@@ -19,7 +19,7 @@ interface CategoryListProps {
 }
 
 export function CategoryList({ categories }: CategoryListProps) {
-  const nestedCategories = nestCategories(categories)
+  const nestedCategories = nestCategories(categories).reverse()
 
   async function handleRemoveCategory(category: NestedCategory) {
     if (category.children.length > 0) {
@@ -50,6 +50,7 @@ export function CategoryList({ categories }: CategoryListProps) {
   return (
     <div className='space-y-1'>
       <Dialog open={open} onOpenChange={setOpen}>
+        {/* <div className='grid  grid-cols-1 divide-y-2 divide-solid tablet:/grid-cols-2 desktop:grid-cols-3  '> */}
         {nestedCategories.map((category) => (
           <div key={category.id}>
             <CategorySpan
@@ -60,6 +61,7 @@ export function CategoryList({ categories }: CategoryListProps) {
             />
           </div>
         ))}
+        {/* </div> */}
 
         {selected && (
           <UpdateCategoryDialog
