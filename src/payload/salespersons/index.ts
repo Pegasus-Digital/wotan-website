@@ -1,14 +1,15 @@
 import { CollectionConfig } from 'payload/types'
-import { adminsOrLoggedIn, admins, adminsOrSelf } from '../access'
+import { anyone, isAdmin, isLoggedIn, isSelf } from '../access'
+import { admins } from '../access/admins'
 // import { ensureFirstUserIsAdmin } from './hooks/ensureFirstUserIsAdmin'
 
 const Salespersons: CollectionConfig = {
   slug: 'salespersons',
   access: {
-    read: adminsOrLoggedIn,
-    create: admins,
-    update: adminsOrSelf,
-    delete: admins,
+    // read: isAdmin || isLoggedIn || isSelf,
+    create: isAdmin,
+    update: isAdmin || isSelf,
+    delete: isAdmin,
   },
   admin: {
     group: 'Vendors',
@@ -31,6 +32,7 @@ const Salespersons: CollectionConfig = {
       name: 'roles',
       type: 'select',
       required: true,
+      // hasMany: true,
       defaultValue: ['representative'],
       options: [
         { label: 'Vendedor Interno', value: 'internal' },
@@ -40,7 +42,6 @@ const Salespersons: CollectionConfig = {
       //   beforeChange: [ensureFirstUserIsAdmin],
       // },
       access: {
-        read: admins,
         create: admins,
         update: admins,
       },

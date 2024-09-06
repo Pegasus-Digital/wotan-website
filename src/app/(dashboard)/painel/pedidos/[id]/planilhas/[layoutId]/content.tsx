@@ -123,7 +123,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
     return null
   })
 
-  console.log(item)
+  // console.log(item)
   // console.log('Order default:', order)
 
   const { control, handleSubmit, formState } = form
@@ -135,7 +135,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
     name: 'supplyer',
   })
   async function onSubmit(values: LayoutProps) {
-    console.log('Order submitted:', values)
+    // console.log('Order submitted:', values)
 
     const response = await updateLayout({
       layoutId: layout.id,

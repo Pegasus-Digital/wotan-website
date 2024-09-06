@@ -148,7 +148,7 @@ export function SeeBudgetContent({
   })
 
   const { control, handleSubmit, watch } = form
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, insert } = useFieldArray({
     control,
     name: 'items',
   })
@@ -711,22 +711,36 @@ export function SeeBudgetContent({
                       </TableCell>
                       {!editMode && (
                         <TableCell className='text-right'>
-                          <Button
-                            type='button'
-                            size='icon'
-                            onClick={() => {
-                              if (fields.length === 1) {
-                                return toast.error(
-                                  'Não foi possível remover o produto. Um orçamento deve conter pelo menos um item.',
-                                )
+                          <div className='flex items-center justify-end gap-2'>
+                            <Button
+                              type='button'
+                              size='icon'
+                              onClick={() =>
+                                insert(index + 1, {
+                                  ...item,
+                                })
                               }
-                              remove(index)
-                            }}
-                            variant='destructive'
-                            disabled={editMode}
-                          >
-                            <Icons.Trash className='h-5 w-5' />
-                          </Button>
+                              variant='outline'
+                            >
+                              <Icons.Copy className='h-5 w-5' />
+                            </Button>
+                            <Button
+                              type='button'
+                              size='icon'
+                              onClick={() => {
+                                if (fields.length === 1) {
+                                  return toast.error(
+                                    'Não foi possível remover o produto. Um orçamento deve conter pelo menos um item.',
+                                  )
+                                }
+                                remove(index)
+                              }}
+                              variant='destructive'
+                              disabled={editMode}
+                            >
+                              <Icons.Trash className='h-5 w-5' />
+                            </Button>
+                          </div>
                         </TableCell>
                       )}
                     </>

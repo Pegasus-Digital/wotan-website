@@ -89,6 +89,7 @@ import {
 
 import { updateOrder } from '../_logic/actions'
 import { orderSchema } from '../_logic/validation'
+import { AttributesCombobox } from '../_components/attributes-selector'
 
 // Define the validation schema
 
@@ -115,7 +116,6 @@ export function SeeOrderContent({
   const [deliveryAddress, setDeliveryAddress] = useState<boolean>(
     order.adress ? true : false,
   )
-
   const router = useRouter()
 
   const form = useForm<OrderProps>({
@@ -149,8 +149,11 @@ export function SeeOrderContent({
                 minimumQuantity: item.product.minimumQuantity,
                 active: item.product.active,
                 featuredImage: item.product.featuredImage,
+                attributes: item.product.attributes,
               },
-        // attributes: item.attributes,
+        attributes: item.attributes.map((attribute) =>
+          typeof attribute === 'string' ? attribute : attribute.id,
+        ),
         quantity: item.quantity,
         price: item.price,
         sample: item.sample,
@@ -164,14 +167,14 @@ export function SeeOrderContent({
   // console.log('Order default:', order)
 
   const { control, handleSubmit } = form
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     control,
     name: 'itens',
   })
 
   const [addProductDialog, setAddProductDialog] = useState<boolean>(false)
 
-  // const
+  // console.log(fields)
 
   const { isSubmitting } = useFormState({ control: form.control })
 
@@ -202,7 +205,6 @@ export function SeeOrderContent({
               ? item.layout
               : item.layout.id
             : null,
-          // attributes: item.attributes,
           quantity: item.quantity,
           price: item.price,
           layoutSent: item.layoutSent,
@@ -807,12 +809,38 @@ export function SeeOrderContent({
                         />
                       </TableCell>
                       <TableCell>
-                        {field.product.attributes && (
+                        {!editMode ? (
                           <AttributesCombobox
                             attributeArray={field.product.attributes.filter(
                               isAttribute,
                             )}
+                            selectedAttributes={
+                              field.attributes ? field.attributes : []
+                            }
+                            onUpdate={(attributes) => {
+                              if (!attributes || attributes.length === 0) return
+                              update(index, {
+                                ...field,
+                                attributes: attributes.map(
+                                  (attribute) => attribute.id,
+                                ),
+                              })
+                            }}
                           />
+                        ) : (
+                          <div className='flex flex-col gap-1'>
+                            {typeof field.product === 'object' &&
+                              field.product.attributes.filter(isAttribute).map(
+                                (attribute) =>
+                                  field.attributes.includes(attribute.id) && (
+                                    <Label key={attribute.id}>
+                                      {typeof attribute.type === 'object' &&
+                                        attribute.type.name + ': '}
+                                      {attribute.name}
+                                    </Label>
+                                  ),
+                              )}
+                          </div>
                         )}
                       </TableCell>
                       <TableCell>
@@ -978,9 +1006,6 @@ export function SeeOrderContent({
     </Content>
   )
 }
-interface AttributesComboboxProps {
-  attributeArray: Attribute[]
-}
 
 function isAttribute(item: any): item is Attribute {
   return (
@@ -994,111 +1019,6 @@ function isAttribute(item: any): item is Attribute {
       (typeof item.type === 'object' &&
         'name' in item.type &&
         'type' in item.type))
-  )
-}
-
-export function AttributesCombobox({
-  attributeArray,
-}: AttributesComboboxProps) {
-  const [open, setOpen] = useState<boolean>(false)
-  const [value, setValue] = useState<Attribute[]>([])
-
-  const toggleAttributeSelection = (attribute: Attribute) => {
-    setValue((prev) => {
-      // Check if the attribute is already selected
-      if (prev.some((attr) => attr.value === attribute.value)) {
-        // Remove it if it's already selected
-        return prev.filter((attr) => attr.value !== attribute.value)
-      } else {
-        // Add it if it's not selected
-        return [...prev, attribute]
-      }
-    })
-  }
-
-  const groupedAttributes = value.reduce<Record<string, Attribute[]>>(
-    (acc, attribute) => {
-      const label =
-        typeof attribute.type === 'string'
-          ? attribute.type
-          : attribute.type?.name || 'default'
-      if (!acc[label]) {
-        acc[label] = []
-      }
-      acc[label].push(attribute)
-      return acc
-    },
-    {},
-  )
-
-  return (
-    <>
-      {value.length > 0 && (
-        <div className=''>
-          {Object.entries(groupedAttributes).map(([label, attributes]) => (
-            <div key={label} className='mb-2 flex flex-row'>
-              <Label className='mr-1 mt-1'>{label}:</Label>
-              <div className='mt-1 flex flex-wrap gap-1'>
-                {attributes.map((attribute, index) => (
-                  <Label key={attribute.value}>
-                    {attribute.name}
-                    {index !== attributes.length - 1 && attributes.length > 1
-                      ? ','
-                      : ''}
-                  </Label>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {attributeArray.length > 0 && (
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant='outline'
-              role='combobox'
-              aria-expanded={open}
-              className='w-[200px] justify-between'
-            >
-              {'Selecione atributo...'}
-              <Icons.ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className='w-[200px] p-0'>
-            <Command>
-              <CommandInput placeholder='Pesquise atributo...' />
-              <CommandList>
-                <CommandEmpty>Attributo não encontrado.</CommandEmpty>
-                <CommandGroup>
-                  {attributeArray.map((attribute) => (
-                    <CommandItem
-                      key={`${attribute.name}-${attribute.value}`}
-                      value={attribute.value}
-                      onSelect={() => {
-                        toggleAttributeSelection(attribute)
-                        setOpen(false)
-                      }}
-                    >
-                      <Icons.Check
-                        className={cn(
-                          'mr-2 h-4 w-4',
-                          value.some((attr) => attr.value === attribute.value)
-                            ? 'opacity-100'
-                            : 'opacity-0',
-                        )}
-                      />
-                      {attribute.name}
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </PopoverContent>
-        </Popover>
-      )}
-    </>
   )
 }
 

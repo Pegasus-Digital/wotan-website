@@ -10,7 +10,8 @@ dotenv.config({
 
 import express from 'express'
 import payload from 'payload'
-import isAuthenticated from './_middlewares/admin-auth'
+import isSalesAuthenticated from './_middlewares/sales-auth'
+import isAdminAuthenticated from './_middlewares/admin-auth'
 
 const app = express()
 const PORT = process.env.PORT || 3000
@@ -28,9 +29,9 @@ const start = async (): Promise<void> => {
 
   const dashboardMiddleware = (req, res, next) => {
     // Check if the requested URL path starts with /painel
-
+    console.log('Activating /painel auth middleware.')
     if (req.path !== '/login' && !req.headers['next-action']) {
-      isAuthenticated(req).then((loggedIn) => {
+      isAdminAuthenticated(req).then((loggedIn) => {
         if (!loggedIn) {
           res.clearCookie('payload-token')
 
@@ -47,9 +48,31 @@ const start = async (): Promise<void> => {
     next()
   }
 
+  const salesMiddleware = (req, res, next) => {
+    // Check if the requested URL path starts with /painel
+    console.log('Activating /sistema auth middleware.')
+
+    if (req.path !== '/login' && !req.headers['next-action']) {
+      isSalesAuthenticated(req).then((loggedIn) => {
+        if (!loggedIn) {
+          res.clearCookie('payload-token')
+
+          const redirectUrl = `/sistema/login?error=${encodeURIComponent(
+            'Você deve estar logado para acessar o Sistema',
+          )}&redirect=${encodeURIComponent(req.originalUrl)}`
+          res.redirect(redirectUrl)
+        } else {
+          next()
+        }
+      })
+    }
+    // Move to the next middleware or route handler
+    next()
+  }
+
   if (process.env.NODE_ENV === 'production') {
-    console.log('Activating Express authentication middleware.')
     app.use('/painel', dashboardMiddleware)
+    app.use('/sistema', salesMiddleware)
   }
 
   if (process.env.NEXT_BUILD) {

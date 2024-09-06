@@ -27,7 +27,7 @@ export async function deleteEstimate({
       }
     }
 
-    revalidatePath('/painel/contato')
+    revalidatePath('/sistema/contato')
 
     return {
       data: null,

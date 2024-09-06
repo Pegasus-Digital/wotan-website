@@ -6,7 +6,7 @@ import { getAdminUser } from '@/app/_utilities/get-admin-user'
 
 export default async function Login() {
   await getAdminUser({
-    validUserRedirect: `/painel?warning=${encodeURIComponent('Você já está logado.')}`,
+    validUserRedirect: `/sistema?warning=${encodeURIComponent('Você já está logado.')}`,
   })
 
   return (
@@ -17,6 +17,6 @@ export default async function Login() {
 }
 
 export const metadata: Metadata = {
-  title: 'Login Administrador',
-  description: 'Faça login no painel de administrador.',
+  title: 'Login Sistema',
+  description: 'Faça login no sistema.',
 }

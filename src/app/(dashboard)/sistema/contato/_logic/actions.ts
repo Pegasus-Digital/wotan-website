@@ -34,7 +34,7 @@ export async function readMessage({
       }
     }
 
-    revalidatePath('/painel/contato')
+    revalidatePath('/sistema/contato')
 
     return {
       data: null,

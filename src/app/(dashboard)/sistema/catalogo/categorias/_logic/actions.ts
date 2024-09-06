@@ -22,7 +22,7 @@ export async function createCategory(
       data: { ...category },
     })
 
-    revalidatePath('/painel/catalogo/categorias')
+    revalidatePath('/sistema/catalogo/categorias')
 
     return {
       data: { category: response },
@@ -66,7 +66,7 @@ export async function updateCategory(
       }
     }
 
-    revalidatePath('/painel/catalogo/categorias')
+    revalidatePath('/sistema/catalogo/categorias')
 
     return {
       data: { category: response.docs[0] },
@@ -121,7 +121,7 @@ export async function deleteCategory(
       }
     }
 
-    revalidatePath('/painel/catalogo/categorias')
+    revalidatePath('/sistema/catalogo/categorias')
 
     return {
       data: null,
