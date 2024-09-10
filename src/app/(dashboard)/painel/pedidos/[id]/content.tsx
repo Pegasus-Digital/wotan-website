@@ -823,6 +823,7 @@ export function SeeOrderContent({
                         ) : (
                           <div className='flex flex-col gap-1'>
                             {typeof field.product === 'object' &&
+                              typeof field.product.attributes === 'object' &&
                               field.product.attributes.filter(isAttribute).map(
                                 (attribute) =>
                                   field.attributes.includes(attribute.id) && (

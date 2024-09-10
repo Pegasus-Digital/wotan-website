@@ -176,9 +176,9 @@ export function OrderDocument({ order }: OrderDocumentProps) {
                     order.paymentType.slice(1)}
                 </Text>
                 <Text>Condição de pagamento: {order.paymentConditions}</Text>
-                <Text>
+                {/* <Text>
                   Comissão Agência: {order.agency} {order.commission}%
-                </Text>
+                </Text> */}
               </View>
             </View>
             <DocumentSeparator />
