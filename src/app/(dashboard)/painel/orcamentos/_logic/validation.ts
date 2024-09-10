@@ -100,8 +100,8 @@ export const budgetSchema = z.object({
     }),
   ),
   contact: z.object({
-    companyName: z.string().optional().nullable(),
-    customerName: z.string().optional().nullable(),
+    companyName: z.string({ required_error: 'Digite o nome da empresa.' }),
+    customerName: z.string({ required_error: 'Digite o nome do cliente.' }),
     email: z.string().optional().nullable(),
     phone: z.string().optional().nullable(),
     details: z.string().optional().nullable(),
