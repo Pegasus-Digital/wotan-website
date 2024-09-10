@@ -106,8 +106,8 @@ const Budget: CollectionConfig = {
       fields: [
         { name: 'companyName', type: 'text', required: true },
         { name: 'customerName', type: 'text', required: true },
-        { name: 'email', type: 'email', required: true },
-        { name: 'phone', type: 'text', required: true },
+        { name: 'email', type: 'email' },
+        { name: 'phone', type: 'text' },
         { name: 'details', type: 'textarea' },
       ],
     },
