@@ -802,7 +802,8 @@ export function SeeOrderContent({
                         />
                       </TableCell>
                       <TableCell>
-                        {!editMode ? (
+                        {!editMode &&
+                        typeof field.product.attributes === 'object' ? (
                           <AttributesCombobox
                             attributeArray={field.product.attributes.filter(
                               isAttribute,
