@@ -100,6 +100,8 @@ export function NewBudgetContent({
   const form = useForm<BudgetProps>({
     resolver: zodResolver(budgetSchema),
     defaultValues: {
+      conditions:
+        'Pagamento: 28 dias\nEntrega: 12 dias\nFrete:\nValidade da proposta: 10 dias\nPRODUTOS SUJEITOS Á DISPONIBILIDADE DE ESTOQUE',
       contact: {
         companyName: '',
         customerName: '',
