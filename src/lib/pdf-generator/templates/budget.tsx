@@ -173,7 +173,7 @@ export function BudgetDocument({ budget }: BudgetDocumentProps) {
                         marginBottom: 4,
                       }}
                     >
-                      {product.title}
+                      {item.description ? item.description : product.title}
                     </Text>
                     {attributes &&
                       attributes.map((attr) => {
