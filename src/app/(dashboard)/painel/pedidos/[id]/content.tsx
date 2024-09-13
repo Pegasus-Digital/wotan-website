@@ -8,8 +8,8 @@ import {
   Order,
   Client,
   Product,
-  Attribute,
   Salesperson,
+  Attribute,
 } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
@@ -136,16 +136,16 @@ export function SeeOrderContent({
                 featuredImage: item.product.featuredImage,
                 attributes: item.product.attributes,
               },
-        attributes:
-          item?.attributes?.map((attribute) =>
-            typeof attribute === 'string' ? attribute : attribute.id,
-          ) ?? [],
         quantity: item.quantity,
         price: item.price,
         sample: item.sample,
         print: item.print,
         layoutSent: item.layoutSent,
         layoutApproved: item.layoutApproved,
+        attributes:
+          item.attributes?.length > 0
+            ? item.attributes.map((attribute) => (attribute as Attribute).id)
+            : [],
       })),
     },
   })
@@ -801,6 +801,7 @@ export function SeeOrderContent({
                           )}
                         />
                       </TableCell>
+
                       <TableCell>
                         {!editMode &&
                         typeof field.product.attributes === 'object' ? (
@@ -808,11 +809,15 @@ export function SeeOrderContent({
                             attributeArray={field.product.attributes.filter(
                               isAttribute,
                             )}
-                            selectedAttributes={
-                              field.attributes ? field.attributes : []
-                            }
+                            selectedAttributes={field.attributes ?? []}
                             onUpdate={(attributes) => {
-                              if (!attributes || attributes.length === 0) return
+                              // MODIFICADO 13/09/2024
+                              // ESSA CONDIÇÃO EVITA QUE UM PRODUTO FIQUE SEM ATRIBUTOS
+                              // PORÉM O COMBOBOX VISUALMENTE DESELECIONA O ATRIBUTO, MAS NÃO REMOVE ELE DO SELECTEDATTRIBUTES
+                              // if (!attributes || attributes.length === 0) {
+                              //   return
+                              // }
+
                               update(index, {
                                 ...field,
                                 attributes: attributes.map(
@@ -845,6 +850,7 @@ export function SeeOrderContent({
                           render={({ field }) => (
                             <FormControl>
                               <Select
+                                defaultValue={field.value}
                                 onValueChange={field.onChange}
                                 disabled={editMode}
                               >
@@ -865,12 +871,15 @@ export function SeeOrderContent({
                                   <SelectItem value='Gravação	em Madeira'>
                                     Gravação em Madeira
                                   </SelectItem>
+                                  <SelectItem value='UV'>UV</SelectItem>
+                                  <SelectItem value='DTF'>DTF</SelectItem>
                                 </SelectContent>
                               </Select>
                             </FormControl>
                           )}
                         />
                       </TableCell>
+
                       <TableCell>
                         <FormField
                           name={`itens.${index}.sample`}

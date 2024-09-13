@@ -85,6 +85,11 @@ const Budget: CollectionConfig = {
           hasMany: true,
         },
         {
+          name: 'print', // Impressao field
+          label: 'Print Details',
+          type: 'text',
+        },
+        {
           name: 'description',
           type: 'textarea',
         },

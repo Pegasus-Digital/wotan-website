@@ -29,11 +29,14 @@ export function AttributesCombobox({
   selectedAttributes,
   onUpdate,
 }: AttributesComboboxProps) {
+  // console.log('attributeArray:', attributeArray)
+  // console.log('selectedAttributes:', selectedAttributes)
   const [open, setOpen] = useState<boolean>(false)
+
   const [value, setValue] = useState<Attribute[]>(
     selectedAttributes && selectedAttributes.length > 0
-      ? selectedAttributes.map(
-          (id) => attributeArray.find((attr) => attr.id === id) as Attribute,
+      ? selectedAttributes.map((id) =>
+          attributeArray.find((attr) => attr.id === id),
         )
       : [],
   )
@@ -81,8 +84,6 @@ export function AttributesCombobox({
     },
     {},
   )
-
-  // console.log(groupedAttributes)
 
   return (
     <>

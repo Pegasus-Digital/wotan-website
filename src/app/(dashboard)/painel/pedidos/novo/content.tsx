@@ -714,6 +714,7 @@ export function NewOrderContent({
                           )}
                         />
                       </TableCell>
+
                       <TableCell>
                         {field.product.attributes ? (
                           <AttributesCombobox
@@ -724,7 +725,7 @@ export function NewOrderContent({
                               field.attributes ? field.attributes : []
                             }
                             onUpdate={(attributes) => {
-                              if (!attributes || attributes.length === 0) return
+                              // if (!attributes || attributes.length === 0) return
                               update(index, {
                                 ...field,
                                 attributes: attributes.map(
@@ -737,6 +738,7 @@ export function NewOrderContent({
                           <Label>Nenhum</Label>
                         )}
                       </TableCell>
+
                       <TableCell>
                         <FormField
                           name={`itens.${index}.print`}
@@ -761,12 +763,15 @@ export function NewOrderContent({
                                   <SelectItem value='Gravação	em Madeira'>
                                     Gravação em Madeira
                                   </SelectItem>
+                                  <SelectItem value='UV'>UV</SelectItem>
+                                  <SelectItem value='DTF'>DTF</SelectItem>
                                 </SelectContent>
                               </Select>
                             </FormControl>
                           )}
                         />
                       </TableCell>
+
                       <TableCell>
                         <FormField
                           name={`itens.${index}.sample`}

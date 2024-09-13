@@ -73,7 +73,7 @@ export async function deleteAttribute(
     // @ts-ignore
     if (response.errors.length > 0) {
       // @ts-ignore
-      console.log(JSON.stringify(response.errors.map((error) => error.message)))
+      // console.log(JSON.stringify(response.errors.map((error) => error.message)))
       return {
         data: null,
         status: false,
