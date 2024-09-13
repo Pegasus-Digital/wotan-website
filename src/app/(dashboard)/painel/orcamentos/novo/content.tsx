@@ -4,7 +4,12 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-import { Client, Product, Salesperson } from '@/payload/payload-types'
+import {
+  Attribute,
+  Client,
+  Product,
+  Salesperson,
+} from '@/payload/payload-types'
 
 import {
   formatBRL,
@@ -80,6 +85,7 @@ import {
 
 import { createBudget } from '../_logic/actions'
 import { budgetSchema } from '../_logic/validation'
+import { AttributesCombobox } from '../../pedidos/_components/attributes-selector'
 
 type BudgetProps = z.infer<typeof budgetSchema>
 
@@ -113,7 +119,7 @@ export function NewBudgetContent({
   })
 
   const { control, handleSubmit, watch } = form
-  const { fields, append, remove, insert } = useFieldArray({
+  const { fields, append, remove, insert, update } = useFieldArray({
     control,
     name: 'items',
   })
@@ -140,11 +146,14 @@ export function NewBudgetContent({
         details: contact.details,
       },
       items: items.map((item) => ({
+        ...item,
+
         product:
           typeof item.product === 'string' ? item.product : item.product.id,
-        description: item.description,
         quantity: item.quantity,
         price: Number(item.price),
+        description: item.description,
+        print: item.print,
       })),
       origin: 'interno',
     })
@@ -195,6 +204,21 @@ export function NewBudgetContent({
       quantity: item && item.quantity ? item.quantity : product.minimumQuantity,
       unitPrice: item && item.unitPrice / 100,
     }
+  }
+
+  function isAttribute(item: any): item is Attribute {
+    return (
+      typeof item === 'object' &&
+      'name' in item &&
+      typeof item.name === 'string' &&
+      'value' in item &&
+      typeof item.value === 'string' &&
+      (typeof item.type === 'undefined' ||
+        typeof item.type === 'string' ||
+        (typeof item.type === 'object' &&
+          'name' in item.type &&
+          'type' in item.type))
+    )
   }
 
   interface PriceQuantityTooltipContentProps {
@@ -506,6 +530,8 @@ export function NewBudgetContent({
                 <TableHead>Descrição</TableHead>
                 <TableHead className='w-48'>Quantidade</TableHead>
                 <TableHead className='w-48'>Valor Unitário</TableHead>
+                <TableHead className=''>Atributos</TableHead>
+                <TableHead className=''>Impressão</TableHead>
 
                 <TableHead className='text-end'>Interações</TableHead>
               </TableRow>
@@ -606,6 +632,63 @@ export function NewBudgetContent({
                               </FormControl>
                               <FormMessage />
                             </FormItem>
+                          )}
+                        />
+                      </TableCell>
+
+                      <TableCell>
+                        {item.product.attributes ? (
+                          <AttributesCombobox
+                            attributeArray={item.product.attributes.filter(
+                              isAttribute,
+                            )}
+                            selectedAttributes={
+                              item.attributes ? item.attributes : []
+                            }
+                            onUpdate={(attributes) => {
+                              // if (!attributes || attributes.length === 0) return
+                              update(index, {
+                                ...item,
+                                attributes: attributes.map(
+                                  (attribute) => attribute.id,
+                                ),
+                              })
+                            }}
+                          />
+                        ) : (
+                          <Label>Nenhum</Label>
+                        )}
+                      </TableCell>
+
+                      <TableCell>
+                        <FormField
+                          name={`items.${index}.print`}
+                          control={form.control}
+                          render={({ field }) => (
+                            <FormControl>
+                              <Select onValueChange={field.onChange}>
+                                <SelectTrigger>
+                                  <SelectValue placeholder='Selecione' />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value='Serigrafia'>
+                                    Serigrafia
+                                  </SelectItem>
+                                  <SelectItem value='Laser'>Laser</SelectItem>
+                                  <SelectItem value='Bordado'>
+                                    Bordado
+                                  </SelectItem>
+                                  <SelectItem value='Adesivo'>
+                                    Adesivo
+                                  </SelectItem>
+                                  <SelectItem value='Gravação	em Madeira'>
+                                    Gravação em Madeira
+                                  </SelectItem>
+                                  <SelectItem value='UV'>UV</SelectItem>
+                                  <SelectItem value='DTF'>DTF</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
                           )}
                         />
                       </TableCell>

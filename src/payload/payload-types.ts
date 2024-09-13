@@ -159,6 +159,7 @@ export interface Budget {
   items: {
     product: string | Product;
     attributes?: (string | Attribute)[] | null;
+    print?: string | null;
     description?: string | null;
     quantity: number;
     price?: number | null;
@@ -167,8 +168,8 @@ export interface Budget {
   contact: {
     companyName: string;
     customerName: string;
-    email: string;
-    phone: string;
+    email?: string | null;
+    phone?: string | null;
     details?: string | null;
   };
   updatedAt: string;

@@ -60,9 +60,8 @@ export async function getEstimateByIncrementalId(id: string) {
         },
       },
       limit: 1,
+      depth: 10,
     })
-
-    // console.log('response', response)
 
     return {
       data: response.docs[0],

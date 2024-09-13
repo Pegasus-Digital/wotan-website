@@ -84,8 +84,10 @@ export const budgetSchema = z.object({
   conditions: z.string().optional().nullable(),
   items: z.array(
     z.object({
+      id: z.string().optional().nullable(),
       product: z.union([z.string(), productSchema]),
       attributes: z.array(z.string()).optional(),
+      print: z.string().optional(),
 
       description: z.string().optional().nullable(),
       quantity: z.coerce
@@ -96,7 +98,6 @@ export const budgetSchema = z.object({
         .number({ required_error: 'Digite um preço.' })
         .positive({ message: 'O preço deve ser maior que zero.' })
         .min(1, { message: 'A preço não pode ser zero.' }),
-      id: z.string().optional().nullable(),
     }),
   ),
   contact: z.object({

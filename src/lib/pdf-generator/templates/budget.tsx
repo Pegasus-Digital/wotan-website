@@ -73,8 +73,24 @@ const styles = StyleSheet.create({
   },
   cell: {
     display: 'flex',
-    width: '100%',
-    flexGrow: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  imageCell: {
+    width: '15%',
+  },
+  codeCell: {
+    width: '10%',
+  },
+  descriptionCell: {
+    display: 'flex',
+    width: '40%',
+  },
+  quantityCell: {
+    width: '20%',
+  },
+  unitPriceCell: {
+    width: '15%',
   },
 })
 
@@ -129,11 +145,11 @@ export function BudgetDocument({ budget }: BudgetDocumentProps) {
         {/* Tabela de produtos no orçamento */}
         <View style={styles.section}>
           <View style={styles.table_header}>
-            <Text>Imagem</Text>
-            <Text>Código</Text>
-            <Text>Descrição</Text>
-            <Text>Quantidade</Text>
-            <Text>Valor unitário</Text>
+            <Text style={styles.imageCell}>Imagem</Text>
+            <Text style={styles.codeCell}>Código</Text>
+            <Text style={styles.descriptionCell}>Descrição</Text>
+            <Text style={styles.quantityCell}>Quantidade</Text>
+            <Text style={styles.unitPriceCell}>Valor unitário</Text>
           </View>
 
           <DocumentSeparator />
@@ -152,7 +168,7 @@ export function BudgetDocument({ budget }: BudgetDocumentProps) {
                     { paddingVertical: 8, borderColor: 'gray' },
                   ]}
                 >
-                  <View style={styles.cell}>
+                  <View style={styles.imageCell}>
                     <Image
                       src={featuredImageSrc}
                       style={{
@@ -162,15 +178,16 @@ export function BudgetDocument({ budget }: BudgetDocumentProps) {
                       }}
                     />
                   </View>
-                  <View style={styles.cell}>
+                  <View style={styles.codeCell}>
                     <Text>{product.sku}</Text>
                   </View>
-                  <View style={styles.cell}>
+                  <View style={styles.descriptionCell}>
                     <Text
                       style={{
                         fontSize: 10,
                         textAlign: 'justify',
                         marginBottom: 4,
+                        flexGrow: 2,
                       }}
                     >
                       {item.description ? item.description : product.title}
@@ -188,10 +205,10 @@ export function BudgetDocument({ budget }: BudgetDocumentProps) {
                         )
                       })}
                   </View>
-                  <View style={styles.cell}>
+                  <View style={styles.quantityCell}>
                     <Text style={{ textAlign: 'center' }}>{item.quantity}</Text>
                   </View>
-                  <View style={styles.cell}>
+                  <View style={styles.unitPriceCell}>
                     {/* TODO: Definir como o valor unitário vai ser definido para o orçamento. */}
                     <Text style={{ textAlign: 'right' }}>
                       {formatBRL(item.price / 100)}

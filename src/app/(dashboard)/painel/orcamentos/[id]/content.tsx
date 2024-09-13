@@ -4,7 +4,13 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-import { Budget, Client, Product, Salesperson } from '@/payload/payload-types'
+import {
+  Attribute,
+  Budget,
+  Client,
+  Product,
+  Salesperson,
+} from '@/payload/payload-types'
 
 import {
   formatBRL,
@@ -83,6 +89,7 @@ import {
 
 import { UpdateBudget } from '../_logic/actions'
 import { budgetSchema } from '../_logic/validation'
+import { AttributesCombobox } from '../../pedidos/_components/attributes-selector'
 
 type BudgetProps = z.infer<typeof budgetSchema>
 
@@ -138,22 +145,43 @@ export function SeeBudgetContent({
                 active: item.product.active,
                 featuredImage: item.product.featuredImage,
                 priceQuantityTable: item.product.priceQuantityTable,
+                attributes: item.product.attributes,
               },
-        // attributes: item.attributes,
+        attributes:
+          item?.attributes?.map((attribute) =>
+            typeof attribute === 'string' ? attribute : attribute.id,
+          ) ?? [],
+
         description: item.description ? item.description : '',
         quantity: item.quantity,
         price: item.price,
+        print: item.print,
       })),
     },
   })
 
   const { control, handleSubmit, watch } = form
-  const { fields, append, remove, insert } = useFieldArray({
+  const { fields, append, remove, insert, update } = useFieldArray({
     control,
     name: 'items',
   })
 
   const { isSubmitting } = useFormState({ control: form.control })
+
+  function isAttribute(item: any): item is Attribute {
+    return (
+      typeof item === 'object' &&
+      'name' in item &&
+      typeof item.name === 'string' &&
+      'value' in item &&
+      typeof item.value === 'string' &&
+      (typeof item.type === 'undefined' ||
+        typeof item.type === 'string' ||
+        (typeof item.type === 'object' &&
+          'name' in item.type &&
+          'type' in item.type))
+    )
+  }
 
   function getSalespersonName(salespersonId: string): string {
     // If we're not in edit mode, salesperson name needs to come from budget.salesperson.name
@@ -262,6 +290,8 @@ export function SeeBudgetContent({
           description: item.description ? item.description : '',
           quantity: item.quantity,
           price: item.price ? Number(item.price) : null,
+          print: item.print,
+          attributes: item.attributes,
         })),
       },
       id: budget.id,
@@ -603,6 +633,8 @@ export function SeeBudgetContent({
                 <TableHead>Descrição</TableHead>
                 <TableHead className='w-48'>Quantidade</TableHead>
                 <TableHead className='w-48'>Valor Unitário</TableHead>
+                <TableHead className=''>Atributos</TableHead>
+                <TableHead className=''>Impressão</TableHead>
                 {!editMode && (
                   <TableHead className='text-end'>Interações</TableHead>
                 )}
@@ -709,6 +741,83 @@ export function SeeBudgetContent({
                           )}
                         />
                       </TableCell>
+
+                      <TableCell>
+                        {!editMode &&
+                        typeof item.product.attributes === 'object' ? (
+                          <AttributesCombobox
+                            attributeArray={item.product.attributes.filter(
+                              isAttribute,
+                            )}
+                            selectedAttributes={
+                              item.attributes ? item.attributes : []
+                            }
+                            onUpdate={(attributes) => {
+                              // if (!attributes || attributes.length === 0) {
+                              //   return
+                              // }
+                              update(index, {
+                                ...item,
+                                attributes: attributes.map(
+                                  (attribute) => attribute.id,
+                                ),
+                              })
+                            }}
+                          />
+                        ) : (
+                          <div className='flex flex-col gap-1'>
+                            {typeof item.product === 'object' &&
+                              typeof item.product.attributes === 'object' &&
+                              item.product.attributes.filter(isAttribute).map(
+                                (attribute) =>
+                                  item.attributes.includes(attribute.id) && (
+                                    <Label key={attribute.id}>
+                                      {typeof attribute.type === 'object' &&
+                                        attribute.type.name + ': '}
+                                      {attribute.name}
+                                    </Label>
+                                  ),
+                              )}
+                          </div>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <FormField
+                          name={`items.${index}.print`}
+                          control={form.control}
+                          render={({ field }) => (
+                            <FormControl>
+                              <Select
+                                defaultValue={field.value}
+                                onValueChange={field.onChange}
+                                disabled={editMode}
+                              >
+                                <SelectTrigger>
+                                  <SelectValue placeholder='Selecione' />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value='Serigrafia'>
+                                    Serigrafia
+                                  </SelectItem>
+                                  <SelectItem value='Laser'>Laser</SelectItem>
+                                  <SelectItem value='Bordado'>
+                                    Bordado
+                                  </SelectItem>
+                                  <SelectItem value='Adesivo'>
+                                    Adesivo
+                                  </SelectItem>
+                                  <SelectItem value='Gravação	em Madeira'>
+                                    Gravação em Madeira
+                                  </SelectItem>
+                                  <SelectItem value='UV'>UV</SelectItem>
+                                  <SelectItem value='DTF'>DTF</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                          )}
+                        />
+                      </TableCell>
+
                       {!editMode && (
                         <TableCell className='text-right'>
                           <div className='flex items-center justify-end gap-2'>
