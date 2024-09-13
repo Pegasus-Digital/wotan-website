@@ -192,6 +192,7 @@ export function BudgetDocument({ budget }: BudgetDocumentProps) {
                     >
                       {item.description ? item.description : product.title}
                     </Text>
+                    {/* <Text> */}
                     {attributes &&
                       attributes.map((attr) => {
                         const attributeType = attr.type as AttributeType
@@ -204,6 +205,19 @@ export function BudgetDocument({ budget }: BudgetDocumentProps) {
                           </Text>
                         )
                       })}
+                    {/* </Text> */}
+                    {item.print && (
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          textAlign: 'justify',
+                          marginBottom: 4,
+                          flexGrow: 2,
+                        }}
+                      >
+                        Impressão: {item.print}
+                      </Text>
+                    )}
                   </View>
                   <View style={styles.quantityCell}>
                     <Text style={{ textAlign: 'center' }}>{item.quantity}</Text>
