@@ -98,12 +98,13 @@ export function ClientForm({ salespeople }: ClientFormProps) {
       origin,
       status,
     } = values
+    const safeDoc = document.replace(/\D/g, '')
 
     const response = await createClient({
       name,
       razaosocial,
       type,
-      document,
+      document: safeDoc,
       contacts,
       adress,
       observations,

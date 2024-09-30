@@ -1,14 +1,17 @@
 import { Heading } from '@/pegasus/heading'
 import { SeeClientContent } from './content'
 import { getSalespeople } from '../../orcamentos/_logic/queries'
-import { getClientByDocument } from '../_logic/queries'
+import { getClientByDocument, getClientById } from '../_logic/queries'
 // import { useSearchParams } from 'next/navigation'
 
 export default async function SeeBudget({
-  params: { document },
+  params: { id },
   searchParams: { edit },
 }) {
-  const { data } = await getClientByDocument(document)
+  // const { data } = await getClientByDocument(document)
+
+  const { data } = await getClientById(id)
+
   // console.log('data', data)
   // const salespeople = await getSalespeople()
   // const clients = await getClients()
@@ -24,9 +27,7 @@ export default async function SeeBudget({
     salespeople = salespeopleData // Assign data to the outer variable
   }
 
-  const budget = data
-
-  if (!budget) {
+  if (!data) {
     return <Heading>Cliente não encontrado</Heading>
   }
 

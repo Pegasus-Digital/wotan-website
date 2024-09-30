@@ -157,13 +157,14 @@ export function SeeClientContent({
       )
       return
     }
+    const safeDoc = document.replace(/\D/g, '')
 
     const response = await updateClient(
       {
         name,
         razaosocial,
         type,
-        document,
+        document: safeDoc,
         contacts,
         adress,
         observations,

@@ -149,6 +149,9 @@ export function NewProductForm() {
       active,
       attributes,
       categories,
+      sizeDepth,
+      sizeHeight,
+      sizeWidth,
     } = values
 
     if (!featured || featured === '') {
@@ -171,7 +174,9 @@ export function NewProductForm() {
       minimumQuantity,
       priceQuantityTable: sortedQuantityTable,
       active,
-
+      sizeDepth,
+      sizeHeight,
+      sizeWidth,
       // Placeholder image id
       featuredImage: featured,
       images: images.map((image) => {
@@ -304,6 +309,53 @@ export function NewProductForm() {
             </FormItem>
           )}
         />
+        <Separator />
+
+        <Heading variant='h6' className='text-black'>
+          Tamanho
+        </Heading>
+
+        <div className='col col-span-2 grid grid-cols-3 gap-4'>
+          <FormField
+            name='sizeWidth'
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Largura</FormLabel>
+                <FormControl>
+                  <Input type='text' placeholder='0 cm' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name='sizeHeight'
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Altura</FormLabel>
+                <FormControl>
+                  <Input type='text' placeholder='0 cm' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name='sizeDepth'
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Profundidade</FormLabel>
+                <FormControl>
+                  <Input type='text' placeholder='0 cm' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <Separator />
 

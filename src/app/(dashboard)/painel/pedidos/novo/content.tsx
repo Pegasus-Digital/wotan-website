@@ -118,7 +118,7 @@ export function NewOrderContent({
 
   const { control, handleSubmit } = form
 
-  const { fields, append, remove, update } = useFieldArray({
+  const { fields, append, remove, update, insert } = useFieldArray({
     control,
     name: 'itens',
   })
@@ -876,7 +876,7 @@ export function NewOrderContent({
         open={addProductDialog}
         onClose={() => setAddProductDialog(false)}
         addProduct={(product) => {
-          append({
+          insert(0, {
             quantity: product.minimumQuantity,
             price: 0,
             product: {

@@ -864,7 +864,7 @@ export function SeeBudgetContent({
         open={addProductDialog}
         onClose={() => setAddProductDialog(false)}
         addProduct={(product) => {
-          append({
+          insert(0, {
             quantity: product.minimumQuantity,
             description: product.description,
             price: 0,

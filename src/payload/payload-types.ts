@@ -67,6 +67,9 @@ export interface Product {
   priceQuantityTable?: PriceQuantityTable;
   description?: string | null;
   tags?: string | null;
+  sizeWidth?: string | null;
+  sizeHeight?: string | null;
+  sizeDepth?: string | null;
   featuredImage: string | Media;
   images?:
     | {
