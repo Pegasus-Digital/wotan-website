@@ -49,3 +49,17 @@ export async function getClientByDocument(document: string) {
     return { data: null }
   }
 }
+export async function getClientById(document: string) {
+  noStore()
+
+  try {
+    const response = await payload.findByID({
+      collection: 'clients',
+      id: document,
+    })
+    // console.log(response)
+    return { data: response }
+  } catch (err) {
+    return { data: null }
+  }
+}

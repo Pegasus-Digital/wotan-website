@@ -490,12 +490,12 @@ export function getColumns({
         return (
           <div className='flex w-min gap-1'>
             <Button asChild size='icon' variant='ghost'>
-              <Link href={`/painel/clientes/${client.document}`}>
+              <Link href={`/painel/clientes/${client.id}`}>
                 <Icons.Look className='h-5 w-5' />
               </Link>
             </Button>
             <Button asChild size='icon' variant='ghost'>
-              <Link href={`/painel/clientes/${client.document}?edit=true`}>
+              <Link href={`/painel/clientes/${client.id}?edit=true`}>
                 <Icons.Edit className='h-5 w-5' />
               </Link>
             </Button>
