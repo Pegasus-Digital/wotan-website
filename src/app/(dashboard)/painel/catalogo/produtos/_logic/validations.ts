@@ -26,6 +26,9 @@ export const newProductSchema = z.object({
     .string()
     .max(300, 'Uma descrição pode ter no máximo 300 caracteres.')
     .optional(),
+  sizeWidth: z.string().optional(),
+  sizeHeight: z.string().optional(),
+  sizeDepth: z.string().optional(),
 
   /* Relationship fields */
   attributes: z.array(z.string()).optional(),
@@ -72,6 +75,9 @@ export const updateProductSchema = z.object({
     .string()
     .max(300, 'Uma descrição pode ter no máximo 300 caracteres.')
     .optional(),
+  sizeWidth: z.string().optional(),
+  sizeHeight: z.string().optional(),
+  sizeDepth: z.string().optional(),
 
   priceQuantityTable: z
     .array(

@@ -97,6 +97,9 @@ const Products: CollectionConfig = {
             },
             { name: 'description', type: 'textarea' },
             { name: 'tags', type: 'textarea' },
+            { name: 'sizeWidth', type: 'text' },
+            { name: 'sizeHeight', type: 'text' },
+            { name: 'sizeDepth', type: 'text' },
           ],
         },
         {

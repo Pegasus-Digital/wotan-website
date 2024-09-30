@@ -129,7 +129,9 @@ export function UpdateProductForm({
       description: currentProduct.description,
       minimumQuantity: currentProduct.minimumQuantity,
       active: currentProduct.active,
-
+      sizeDepth: currentProduct.sizeDepth,
+      sizeHeight: currentProduct.sizeHeight,
+      sizeWidth: currentProduct.sizeWidth,
       priceQuantityTable: currentProduct.priceQuantityTable,
 
       categories:
@@ -162,6 +164,9 @@ export function UpdateProductForm({
       description,
       minimumQuantity,
       priceQuantityTable,
+      sizeDepth,
+      sizeHeight,
+      sizeWidth,
     } = values
 
     const quantities = priceQuantityTable.map((entry) => entry.quantity)
@@ -193,7 +198,9 @@ export function UpdateProductForm({
       minimumQuantity,
       priceQuantityTable: sortedQuantityTable,
       active,
-
+      sizeDepth,
+      sizeHeight,
+      sizeWidth,
       featuredImage: featured,
       images: images.map((image) => {
         return { image: image.id }
@@ -346,6 +353,53 @@ export function UpdateProductForm({
             </FormItem>
           )}
         />
+        <Separator />
+
+        <Heading variant='h6' className='text-black'>
+          Tamanho
+        </Heading>
+
+        <div className='col col-span-2 grid grid-cols-3 gap-4'>
+          <FormField
+            name='sizeWidth'
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Largura</FormLabel>
+                <FormControl>
+                  <Input type='text' placeholder='0 cm' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name='sizeHeight'
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Altura</FormLabel>
+                <FormControl>
+                  <Input type='text' placeholder='0 cm' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name='sizeDepth'
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Profundidade</FormLabel>
+                <FormControl>
+                  <Input type='text' placeholder='0 cm' {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <Separator />
 
