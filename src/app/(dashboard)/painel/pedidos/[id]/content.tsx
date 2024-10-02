@@ -176,7 +176,15 @@ export function SeeOrderContent({
       return toast.error('Não é possível deixar um pedido sem produtos.')
     }
 
+    if(!values.client || values.client === '' || !values.contact || values.contact === '') {
+      return toast.error('É necessário selecionar um cliente eum contato.')
+    }
+
+
     const response = await updateOrder({
+      
+
+
       orderId: order.id,
       order: {
         ...values,

@@ -136,6 +136,14 @@ export function NewOrderContent({
     if (values.itens.length === 0) {
       return toast.error('Não é possível criar um pedido sem produtos.')
     }
+    if (
+      !values.client ||
+      values.client === '' ||
+      !values.contact ||
+      values.contact === ''
+    ) {
+      return toast.error('É necessário selecionar um cliente eum contato.')
+    }
 
     const response = await createOrder({
       order: {
