@@ -66,7 +66,52 @@ export const createLayouts: BeforeChangeHook = async ({
           // Create a new Layout document with ncm = ''
           const layoutResponse = await req.payload.create({
             collection: 'layouts',
-            data: { ncm: '' },
+            data: {
+              ncm: '',
+              printing: {
+                quantity: 0,
+                price: 0,
+              },
+              printing2: {
+                quantity: 0,
+                price: 0,
+              },
+              supplyer: [
+                {
+                  quantidade_material: 0,
+                  custo_material: 0,
+                },
+              ],
+              additionalCosts: {
+                cost: 0,
+              },
+              additionalCosts2: {
+                cost: 0,
+              },
+              delivery: {
+                cost: 0,
+              },
+              delivery2: {
+                cost: 0,
+              },
+              commisions: {
+                agency: {
+                  value: 0,
+                },
+                salesperson: {
+                  value: 0,
+                },
+              },
+              invoice: {
+                value: 0,
+              },
+              invoice2: {
+                value: 0,
+              },
+              invoice3: {
+                value: 0,
+              },
+            },
           })
 
           // Assign the newly created Layout ID to item.layout
