@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { toast } from 'sonner'
@@ -30,6 +30,10 @@ import {
   FormItem,
   FormMessage,
 } from '@/components/ui/form'
+
+import { useStore } from '@/hooks/use-store'
+import { useSidebar } from '@/hooks/use-sidebar'
+import { LoadingSpinner } from '@/components/spinner'
 
 const loginSchema = z.object({
   email: z
@@ -78,7 +82,7 @@ export function LoginContent() {
 
   return (
     <>
-      {!user && (
+      {!user ? (
         <div className='col-span-2 flex h-full w-full items-center justify-center'>
           <Card className='w-full max-w-sm'>
             <CardHeader>
@@ -144,6 +148,8 @@ export function LoginContent() {
             </CardContent>
           </Card>
         </div>
+      ) : (
+        <LoadingSpinner />
       )}
     </>
   )

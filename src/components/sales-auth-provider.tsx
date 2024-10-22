@@ -106,6 +106,30 @@ export const SalesAuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [])
 
   useEffect(() => {
+    const logoutUser = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/logout`,
+          {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        )
+
+        if (res.ok) {
+          setUser(null)
+          setStatus('loggedOut')
+        } else {
+          throw new Error('Ocorreu um erro ao tentar realizar logout.')
+        }
+      } catch (e) {
+        throw new Error('Ocorreu um erro ao tentar realizar logout.')
+      }
+    }
+
     const fetchMe = async () => {
       try {
         const res = await fetch(
@@ -132,7 +156,37 @@ export const SalesAuthProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     }
 
-    fetchMe()
+    const checkKind = async () => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/user-salesperson`,
+          {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          },
+        )
+
+        if (res.ok) {
+          const { type } = await res.json()
+          if (type === 'salesperson') {
+            fetchMe()
+          } else {
+            logoutUser()
+          }
+        } else {
+          setUser(null)
+          setStatus('loggedOut')
+        }
+      } catch (e) {
+        setUser(null)
+        setStatus('loggedOut')
+      }
+    }
+
+    checkKind()
   }, [])
 
   const forgotPassword = useCallback<ForgotPassword>(async (args) => {

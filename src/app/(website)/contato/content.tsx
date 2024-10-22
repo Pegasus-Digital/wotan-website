@@ -32,7 +32,7 @@ import {
   FormControl,
 } from '@/components/ui/form'
 
-import { createMessage } from '@/app/(dashboard)/painel/contato/_logic/actions'
+import { createMessage } from '@/app/(dashboard)/painel/(painel)/contato/_logic/actions'
 
 const formSchema = z.object({
   name: z
