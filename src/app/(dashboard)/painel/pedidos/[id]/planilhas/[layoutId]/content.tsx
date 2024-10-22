@@ -91,6 +91,7 @@ import { layoutSchema } from '../../../_logic/validation'
 import update from 'payload/dist/collections/operations/update'
 import { updateLayout } from '../../../_logic/actions'
 import { formatBRL, formatBRLWithoutPrefix, parseValue } from '@/lib/format'
+import { getDDMMYYDate } from '@/lib/date'
 
 // Define the validation schema
 
@@ -123,6 +124,12 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
     }
     return null
   })
+
+  const client = typeof order.client === 'object' ? order.client : null
+
+  const contact = client.contacts.filter(
+    (contact) => contact.id === order.contact,
+  )
 
   // console.log(item)
   // console.log('Order default:', order)
@@ -201,7 +208,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
           </div>
           <div className='flex flex-col justify-start gap-2'>
             <Label>Pedido: #{order.incrementalId}</Label>
-            <Label> Data: {order.createdAt}</Label>
+            <Label> Data: {getDDMMYYDate(new Date(order.createdAt))}</Label>
 
             {order.shippingTime && (
               <Label>Prazo de Entrega: {order.shippingTime}</Label>
@@ -214,7 +221,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                 ? order.client.name
                 : order.client}
             </Label>
-            <Label>Contato: {order.contact}</Label>
+            <Label>Contato: {contact[0].name}</Label>
             {order.paymentConditions && (
               <Label>Condição de Pagamento: {order.paymentConditions}</Label>
             )}
