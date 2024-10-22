@@ -4,7 +4,7 @@ import { SearchPageContent } from './content'
 
 import { getSingular } from './../../../lib/singular'
 
-export default async function CategoryPage({ params, searchParams }) {
+export default async function PesquisaPage({ params, searchParams }) {
   const page: number = searchParams ? Number(searchParams.page) : 1
   const query: string = searchParams ? String(searchParams.query) : ''
 
