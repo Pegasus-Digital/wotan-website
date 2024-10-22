@@ -33,14 +33,12 @@ export default async function SeeBudget({
   }
 
   return (
-    <div>
-      <SeeBudgetContent
-        budget={budget}
-        edit={edit}
-        salespeople={salespeople}
-        clients={clients}
-      />
-    </div>
+    <SeeBudgetContent
+      budget={budget}
+      edit={edit}
+      salespeople={salespeople}
+      clients={clients}
+    />
   )
 }
 

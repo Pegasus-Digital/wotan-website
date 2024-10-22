@@ -130,7 +130,7 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const fetchMe = async () => {
       try {
         const res = await fetch(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/salespersons/me`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/me`,
           {
             method: 'GET',
             credentials: 'include',
@@ -165,10 +165,11 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({
             },
           },
         )
-
+        // console.log('res', res)
+        // console.log('result', await res.json())
         if (res.ok) {
           const { type } = await res.json()
-          if (type === 'users') {
+          if (type === 'user') {
             fetchMe()
           } else {
             logoutSales()

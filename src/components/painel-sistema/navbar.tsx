@@ -3,9 +3,10 @@ import { SheetMenu } from './sheet-menu'
 
 interface NavbarProps {
   title: string
+  children?: React.ReactNode
 }
 
-export function Navbar({ title }: NavbarProps) {
+export function Navbar({ title, children }: NavbarProps) {
   return (
     <header className='sticky top-0 z-10 w-full bg-background/95 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60 '>
       <div className='mx-4 flex h-14 items-center sm:mx-8'>
@@ -13,7 +14,10 @@ export function Navbar({ title }: NavbarProps) {
           <SheetMenu />
           <h1 className='text-xl font-bold text-wotanRed-500'>{title}</h1>
         </div>
-        <div className='flex flex-1 items-center justify-end'>
+        <div className='flex flex-1 items-center justify-end px-4'>
+          {children}
+        </div>
+        <div className='flex items-center '>
           <UserNav />
         </div>
       </div>

@@ -116,6 +116,19 @@ const Budget: CollectionConfig = {
         { name: 'details', type: 'textarea' },
       ],
     },
+    {
+      name: 'client',
+      label: 'Client',
+      type: 'relationship',
+      relationTo: 'clients',
+      // required: true,
+    },
+    {
+      name: 'selectedContact',
+      label: 'Contact',
+      type: 'text',
+      // required: true,
+    },
   ],
 }
 

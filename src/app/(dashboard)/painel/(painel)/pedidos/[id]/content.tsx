@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 
 import {
@@ -76,6 +76,7 @@ import {
 import { updateOrder } from '../_logic/actions'
 import { orderSchema } from '../_logic/validation'
 import { ContentLayout } from '@/components/painel-sistema/content-layout'
+import { LoadingSpinner } from '@/components/spinner'
 
 type OrderProps = z.infer<typeof orderSchema>
 
@@ -1049,12 +1050,15 @@ function AddProductDialog({
 }) {
   const [searchResults, setSearchResults] = useState<Product[]>([])
   const [searchTerm, setSearchTerm] = useState<string>('')
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [isPending, startTransition] = useTransition()
+  const [delayedPending, setDelayedPending] = useState(false)
 
-  const handleProductSearch = async (sku: string) => {
+  const handleProductSearch = async (query: string) => {
     try {
       const response = await fetch(`/api/search`, {
         body: JSON.stringify({
-          sku,
+          query,
         }),
         method: 'POST',
       })
@@ -1070,8 +1074,19 @@ function AddProductDialog({
   }
 
   const handleSearch = () => {
-    handleProductSearch(searchTerm)
+    setSelectedProduct(null)
+    setDelayedPending(true) // Start the visual loading effect
+
+    startTransition(() => {
+      handleProductSearch(searchTerm).finally(() => {
+        // Simulate delay to ensure a smoother transition
+        setTimeout(() => {
+          setDelayedPending(false)
+        }, 300) // Adjust the delay duration as needed
+      })
+    })
   }
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
@@ -1086,7 +1101,7 @@ function AddProductDialog({
           <Input
             id='search'
             name='search'
-            placeholder='Pesquise por SKU...'
+            placeholder='Pesquise'
             maxLength={64}
             type='text'
             className='w-auto grow focus-visible:ring-0'
@@ -1102,37 +1117,59 @@ function AddProductDialog({
             <Icons.Search className='h-5 w-5' />
           </Button>
         </div>
-        <div className='rounded-lg border p-2'>
+        <div className='flex flex-col gap-1'>
           {searchResults.length > 0 ? (
-            searchResults.map((result, index) => (
-              <div
-                key={index}
-                className='flex h-full items-center gap-2 self-center'
-              >
-                {typeof result.featuredImage === 'object' ? (
-                  <Image
-                    src={result.featuredImage.url}
-                    alt={result.title}
-                    className='h-24 w-24 rounded-md border'
-                    width={96}
-                    height={96}
-                  />
-                ) : (
-                  <div className='flex h-24 w-24 items-center justify-center rounded-md bg-neutral-200'>
-                    <Icons.Shirt className='m-4 h-16 w-16 text-neutral-400' />
+            searchResults.map((result, index) => {
+              return index < 3 ? (
+                <div
+                  key={index}
+                  className='flex h-28 w-full items-center gap-2 self-center rounded-lg border p-2'
+                >
+                  {typeof result.featuredImage === 'object' ? (
+                    <Image
+                      src={result.featuredImage.url}
+                      alt={result.title}
+                      className='h-24 w-24 rounded-md border'
+                      width={96}
+                      height={96}
+                    />
+                  ) : (
+                    <div className='flex h-24 w-24 items-center justify-center rounded-md bg-neutral-200'>
+                      <Icons.Shirt className='m-4 h-16 w-16 text-neutral-400' />
+                    </div>
+                  )}
+                  <div className='flex w-full flex-col justify-center'>
+                    <div className='flex items-center justify-between gap-2'>
+                      <div className='flex flex-col justify-center'>
+                        <Heading variant='h6'> {result.title}</Heading>
+                        <Label>{result.sku}</Label>
+                      </div>
+                      <div>
+                        <Checkbox
+                          checked={selectedProduct?.id === result.id}
+                          onCheckedChange={() => {
+                            setSelectedProduct(result)
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <P className='h-12 overflow-hidden text-sm [&:not(:first-child)]:mt-2'>
+                      {result.description}
+                    </P>
                   </div>
-                )}
-                <div className='flex flex-col justify-center'>
-                  <Heading variant='h6'> {result.title}</Heading>
-                  <Label>{result.sku}</Label>
-                  <P className='text-sm [&:not(:first-child)]:mt-2'>
-                    {result.description}
-                  </P>
                 </div>
-              </div>
-            ))
+              ) : (
+                index === 3 && (
+                  <Button variant='outline' className='w-full' disabled>
+                    outros {searchResults.length - 3}+ itens encontrados
+                  </Button>
+                )
+              )
+            })
           ) : (
-            <div className='flex h-full items-center gap-2 self-center'>
+            <div
+              className={` relative flex h-full w-full items-center gap-2 self-center  rounded-lg border p-2 ${delayedPending && 'opacity-50'}`}
+            >
               <div className='flex h-24 w-24 items-center justify-center rounded-md bg-neutral-200'>
                 <Icons.Shirt className='m-4 h-16 w-16 text-neutral-400' />
               </div>
@@ -1143,27 +1180,36 @@ function AddProductDialog({
                   Descricão do item. Lorem ipsum dolor sit amet.
                 </P>
               </div>
+              {delayedPending && (
+                <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'>
+                  <LoadingSpinner />
+                </div>
+              )}
             </div>
           )}
         </div>
 
         <DialogFooter>
-          <Button variant='outline' size='default' asChild>
+          <Button
+            variant='outline'
+            size='default'
+            asChild
+            onClick={() => {
+              setSearchResults([])
+              onClose()
+            }}
+          >
             <DialogClose>Fechar</DialogClose>
           </Button>
           <Button
+            disabled={!selectedProduct}
             variant='default'
             size='default'
             onClick={() => {
-              if (searchResults.length === 0) {
-                return toast.error(
-                  'Não é possível adicionar. Produto não foi reconhecido.',
-                )
-              }
-              toast.success('Produto adicionado ao pedido.')
-              addProduct(searchResults[0])
               setSearchResults([])
               onClose()
+
+              addProduct(selectedProduct)
             }}
           >
             Adicionar

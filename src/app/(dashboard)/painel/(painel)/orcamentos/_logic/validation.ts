@@ -107,4 +107,6 @@ export const budgetSchema = z.object({
     phone: z.string().optional().nullable(),
     details: z.string().optional().nullable(),
   }),
+  client: z.string().optional().nullable(),
+  selectedContact: z.string().optional().nullable(),
 })

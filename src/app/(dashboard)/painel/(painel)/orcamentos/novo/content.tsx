@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 
 import {
@@ -87,6 +87,7 @@ import { createBudget } from '../_logic/actions'
 import { budgetSchema } from '../_logic/validation'
 import { AttributesCombobox } from '../../pedidos/_components/attributes-selector'
 import { ContentLayout } from '@/components/painel-sistema/content-layout'
+import { LoadingSpinner } from '@/components/spinner'
 
 type BudgetProps = z.infer<typeof budgetSchema>
 
@@ -146,6 +147,8 @@ export function NewBudgetContent({
         phone: contact.phone,
         details: contact.details,
       },
+      client: values.client ? values.client : null,
+      selectedContact: values.selectedContact,
       items: items.map((item) => ({
         ...item,
 
@@ -262,9 +265,22 @@ export function NewBudgetContent({
     //     description={`O número do orçamento será gerado automaticamente.`}
     //   />
     //   <Separator className='mb-4' />
-    <ContentLayout title='Novo orçamento'>
+    <ContentLayout
+      title='Novo orçamento'
+      navbarButtons={
+        <Button
+          type='submit'
+          disabled={isSubmitting}
+          onClick={handleSubmit(onSubmit)}
+          variant='default'
+          size='sm'
+        >
+          <Icons.Save className='mr-2 h-5 w-5' /> Salvar
+        </Button>
+      }
+    >
       <Form {...form}>
-        {
+        {/* {
           <div className='sticky top-0 z-50 flex  items-center justify-between border-b bg-background px-4 pb-6 pt-8 '>
             <Heading variant='h5'>{name || 'Novo orçamento'}</Heading>
             <Button
@@ -276,153 +292,211 @@ export function NewBudgetContent({
               <Icons.Save className='mr-2 h-5 w-5' /> Salvar
             </Button>
           </div>
-        }
-        <form onSubmit={handleSubmit(onSubmit)} className='space-y-4 px-2 pt-4'>
-          <Card className=''>
-            <CardHeader className=''>
-              <Heading variant='h6' className='text-black'>
-                Cliente
-              </Heading>
-            </CardHeader>
-            <CardContent className=''>
-              <div className='grid grid-cols-[1fr_auto_1fr]  items-center gap-x-6 gap-y-2 px-3'>
-                <div className='grid gap-1'>
-                  <FormField
-                    control={form.control}
-                    name='contact.companyName'
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Empresa</FormLabel>
-                        <FormControl>
-                          <Input {...field} className='disabled:opacity-100' />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name='contact.customerName'
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Responsável</FormLabel>
-                        <FormControl>
-                          <Input {...field} className='disabled:opacity-100' />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+        } */}
+        <form onSubmit={handleSubmit(onSubmit)} className='space-y-4'>
+          {/* <Card className=''>
+            <CardHeader className=''> */}
+          <Heading variant='h6' className='text-black'>
+            Cliente
+          </Heading>
+          {/* </CardHeader>
+            <CardContent className=''> */}
+          <div className='grid grid-cols-[1fr_auto_1fr]  items-center gap-x-6 gap-y-2 px-3'>
+            <div className='grid gap-1'>
+              <FormField
+                control={form.control}
+                name='contact.companyName'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Empresa</FormLabel>
+                    <FormControl>
+                      <Input {...field} className='disabled:opacity-100' />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name='contact.customerName'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Responsável</FormLabel>
+                    <FormControl>
+                      <Input {...field} className='disabled:opacity-100' />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                  <FormField
-                    control={form.control}
-                    name='contact.email'
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>E-mail</FormLabel>
-                        <FormControl>
-                          <Input {...field} className='disabled:opacity-100' />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+              <FormField
+                control={form.control}
+                name='contact.email'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>E-mail</FormLabel>
+                    <FormControl>
+                      <Input {...field} className='disabled:opacity-100' />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                  <FormField
-                    control={form.control}
-                    name='contact.phone'
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Telefone</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            maxLength={15}
-                            onChange={(e) => {
-                              const { value } = e.target
-                              e.target.value = formatPhoneNumber(value)
-                              field.onChange(e)
-                            }}
-                            className='disabled:opacity-100'
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className='relative flex h-full flex-col items-center justify-center gap-2'>
-                  <div className='absolute left-1/2 z-10 h-full w-[1px] -translate-x-1/2 transform bg-primary/50 line-through' />
-                  <Label className='z-20 bg-background p-2'>ou</Label>
-                </div>
+              <FormField
+                control={form.control}
+                name='contact.phone'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Telefone</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        maxLength={15}
+                        onChange={(e) => {
+                          const { value } = e.target
+                          e.target.value = formatPhoneNumber(value)
+                          field.onChange(e)
+                        }}
+                        className='disabled:opacity-100'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className='relative flex h-full flex-col items-center justify-center gap-2'>
+              <div className='absolute left-1/2 z-10 h-full w-[1px] -translate-x-1/2 transform bg-primary/50 line-through' />
+              <Label className='z-20 rounded-full bg-primary-foreground p-2'>
+                ou
+              </Label>
+            </div>
+            <div className='grid gap-1'>
+              <FormField
+                control={form.control}
+                name='client'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Cliente</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={(value) => {
+                          field.onChange(value)
+                          const client = clients.find(
+                            (client) => client.id === value,
+                          )
+                          setSelectedClient(client)
+                          form.setValue('contact.companyName', client?.name)
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder='Selecione um Cliente' />
+                        </SelectTrigger>
+                        {
+                          <SelectContent side='bottom'>
+                            {!clients ||
+                              (clients.length === 0 && (
+                                <SelectItem
+                                  value={null}
+                                  disabled
+                                  className='flex items-center justify-center'
+                                >
+                                  Você ainda não possui nenhum cliente.
+                                </SelectItem>
+                              ))}
 
-                <div className='grid gap-1'>
-                  <div className='space-y-1'>
-                    <Label>Cliente</Label>
+                            {clients.map((client) => (
+                              <SelectItem key={client.id} value={client.id}>
+                                {client.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        }
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder='Selecione um Cliente' />
-                      </SelectTrigger>
-
-                      <SelectContent side='bottom'>
-                        {typeof clients === 'object' && clients.length === 0 ? (
-                          <SelectItem value='nenhum' disabled>
-                            Você ainda não possui nenhum cliente.
-                          </SelectItem>
-                        ) : (
-                          typeof clients === 'object' &&
-                          clients.map((client) => (
-                            <SelectItem key={client.id} value={client.id}>
-                              {client.name}
+              <FormField
+                control={form.control}
+                name='selectedContact'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Contato</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={(value) => {
+                          field.onChange(value)
+                          const selectedContact = selectedClient?.contacts.find(
+                            (contact) => contact.id === value,
+                          )
+                          form.setValue(
+                            'contact.customerName',
+                            selectedContact?.name,
+                          )
+                          form.setValue('contact.email', selectedContact?.email)
+                          form.setValue('contact.phone', selectedContact?.phone)
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder='Selecione um Contato' />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {!selectedClient && (
+                            <SelectItem
+                              value={null}
+                              disabled
+                              className='flex items-center justify-center'
+                            >
+                              Selecione um cliente para ver seus contatos
                             </SelectItem>
-                          ))
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className='space-y-1'>
-                    <Label>Contato</Label>
+                          )}
+                          {selectedClient?.contacts?.length === 0 && (
+                            <SelectItem value={null} disabled>
+                              Não encontramos nenhum contato para este cliente.
+                            </SelectItem>
+                          )}
+                          {selectedClient &&
+                            selectedClient?.contacts.length > 0 &&
+                            selectedClient.contacts.map((contact) => (
+                              <SelectItem key={contact.id} value={contact.id}>
+                                {contact.name}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-                    <Select>
-                      <SelectTrigger>
-                        <SelectValue placeholder='Selecione um Contato' />
-                      </SelectTrigger>
-                      <SelectContent side='bottom'>
-                        {selectedClient === null ? (
-                          <SelectItem value='nenhum' disabled>
-                            Por favor, selecione um cliente primeiro.
-                          </SelectItem>
-                        ) : (
-                          //
-                          <SelectItem value='contact1'>Contato 1</SelectItem>
-                        )}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className='col-span-3'>
-                  <FormField
-                    control={form.control}
-                    name='contact.details'
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Observações</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            {...field}
-                            className='min-h-24 disabled:cursor-text disabled:opacity-100'
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            <div className='col-span-3'>
+              <FormField
+                control={form.control}
+                name='contact.details'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Observações</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        className='min-h-24 disabled:cursor-text disabled:opacity-100'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+          {/* </CardContent>
+          </Card> */}
           <Separator className='my-2' />
 
           <div className='grid grid-cols-2 items-center gap-2 py-2'>
@@ -770,18 +844,20 @@ function AddProductDialog({
 }) {
   const [searchResults, setSearchResults] = useState<Product[]>([])
   const [searchTerm, setSearchTerm] = useState<string>('')
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [isPending, startTransition] = useTransition()
+  const [delayedPending, setDelayedPending] = useState(false)
 
-  const handleProductSearch = async (sku: string) => {
+  const handleProductSearch = async (query: string) => {
     try {
       const response = await fetch(`/api/search`, {
         body: JSON.stringify({
-          sku,
+          query,
         }),
         method: 'POST',
       })
       if (response.ok) {
         const results = await response.json()
-        // console.log('results', results)
         setSearchResults(results.docs)
       } else {
         console.error('Error fetching products:', response.statusText)
@@ -792,9 +868,19 @@ function AddProductDialog({
   }
 
   const handleSearch = () => {
-    handleProductSearch(searchTerm) // Call the search function passed as a prop
-    // console.log(searchResults)
+    setSelectedProduct(null)
+    setDelayedPending(true) // Start the visual loading effect
+
+    startTransition(() => {
+      handleProductSearch(searchTerm).finally(() => {
+        // Simulate delay to ensure a smoother transition
+        setTimeout(() => {
+          setDelayedPending(false)
+        }, 300) // Adjust the delay duration as needed
+      })
+    })
   }
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
@@ -809,7 +895,7 @@ function AddProductDialog({
           <Input
             id='search'
             name='search'
-            placeholder='Pesquise por SKU...'
+            placeholder='Pesquise'
             maxLength={64}
             type='text'
             className='w-auto grow focus-visible:ring-0'
@@ -825,37 +911,59 @@ function AddProductDialog({
             <Icons.Search className='h-5 w-5' />
           </Button>
         </div>
-        <div className='rounded-lg border p-2'>
+        <div className='flex flex-col gap-1'>
           {searchResults.length > 0 ? (
-            searchResults.map((result, index) => (
-              <div
-                key={index}
-                className='flex h-full items-center gap-2 self-center'
-              >
-                {typeof result.featuredImage === 'object' ? (
-                  <Image
-                    src={result.featuredImage.url}
-                    alt={result.title}
-                    className='h-24 w-24 rounded-md border'
-                    width={96}
-                    height={96}
-                  />
-                ) : (
-                  <div className='flex h-24 w-24 items-center justify-center rounded-md bg-neutral-200'>
-                    <Icons.Shirt className='m-4 h-16 w-16 text-neutral-400' />
+            searchResults.map((result, index) => {
+              return index < 3 ? (
+                <div
+                  key={index}
+                  className='flex h-28 w-full items-center gap-2 self-center rounded-lg border p-2'
+                >
+                  {typeof result.featuredImage === 'object' ? (
+                    <Image
+                      src={result.featuredImage.url}
+                      alt={result.title}
+                      className='h-24 w-24 rounded-md border'
+                      width={96}
+                      height={96}
+                    />
+                  ) : (
+                    <div className='flex h-24 w-24 items-center justify-center rounded-md bg-neutral-200'>
+                      <Icons.Shirt className='m-4 h-16 w-16 text-neutral-400' />
+                    </div>
+                  )}
+                  <div className='flex w-full flex-col justify-center'>
+                    <div className='flex items-center justify-between gap-2'>
+                      <div className='flex flex-col justify-center'>
+                        <Heading variant='h6'> {result.title}</Heading>
+                        <Label>{result.sku}</Label>
+                      </div>
+                      <div>
+                        <Checkbox
+                          checked={selectedProduct?.id === result.id}
+                          onCheckedChange={() => {
+                            setSelectedProduct(result)
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <P className='h-12 overflow-hidden text-sm [&:not(:first-child)]:mt-2'>
+                      {result.description}
+                    </P>
                   </div>
-                )}
-                <div className='flex flex-col justify-center'>
-                  <Heading variant='h6'> {result.title}</Heading>
-                  <Label>{result.sku}</Label>
-                  <P className='text-sm [&:not(:first-child)]:mt-2'>
-                    {result.description}
-                  </P>
                 </div>
-              </div>
-            ))
+              ) : (
+                index === 3 && (
+                  <Button variant='outline' className='w-full' disabled>
+                    outros {searchResults.length - 3}+ itens encontrados
+                  </Button>
+                )
+              )
+            })
           ) : (
-            <div className='flex h-full items-center gap-2 self-center'>
+            <div
+              className={` relative flex h-full w-full items-center gap-2 self-center  rounded-lg border p-2 ${delayedPending && 'opacity-50'}`}
+            >
               <div className='flex h-24 w-24 items-center justify-center rounded-md bg-neutral-200'>
                 <Icons.Shirt className='m-4 h-16 w-16 text-neutral-400' />
               </div>
@@ -866,21 +974,36 @@ function AddProductDialog({
                   Descricão do item. Lorem ipsum dolor sit amet.
                 </P>
               </div>
+              {delayedPending && (
+                <div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2'>
+                  <LoadingSpinner />
+                </div>
+              )}
             </div>
           )}
         </div>
 
         <DialogFooter>
-          <Button variant='outline' size='default' asChild>
+          <Button
+            variant='outline'
+            size='default'
+            asChild
+            onClick={() => {
+              setSearchResults([])
+              onClose()
+            }}
+          >
             <DialogClose>Fechar</DialogClose>
           </Button>
           <Button
+            disabled={!selectedProduct}
             variant='default'
             size='default'
             onClick={() => {
               setSearchResults([])
               onClose()
-              addProduct(searchResults[0])
+
+              addProduct(selectedProduct)
             }}
           >
             Adicionar

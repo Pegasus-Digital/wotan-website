@@ -175,6 +175,8 @@ export interface Budget {
     phone?: string | null;
     details?: string | null;
   };
+  client?: (string | null) | Client;
+  selectedContact?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -197,49 +199,6 @@ export interface Salesperson {
   loginAttempts?: number | null;
   lockUntil?: string | null;
   password: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "order".
- */
-export interface Order {
-  id: string;
-  incrementalId?: number | null;
-  client: string | Client;
-  contact: string;
-  alternativeContact?: {
-    name?: string | null;
-    email?: string | null;
-    phone?: string | null;
-    whatsapp?: string | null;
-  };
-  adress?: Address;
-  salesperson?: (string | null) | Salesperson;
-  itens?:
-    | {
-        product: string | Product;
-        layout?: (string | null) | Layout;
-        quantity?: number | null;
-        price: number;
-        attributes?: (string | Attribute)[] | null;
-        print?: string | null;
-        sample?: boolean | null;
-        layoutSent?: boolean | null;
-        layoutApproved?: boolean | null;
-        id?: string | null;
-      }[]
-    | null;
-  shippingTime?: string | null;
-  shippingCompany?: string | null;
-  shippingType?: ('cif' | 'fob') | null;
-  paymentConditions?: string | null;
-  paymentType?: ('boleto' | 'pix' | 'deposito') | null;
-  agency?: string | null;
-  commission?: number | null;
-  notes?: string | null;
-  status?: ('pending' | 'completed' | 'cancelled') | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -311,6 +270,49 @@ export interface Address {
       )
     | null;
   cep?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "order".
+ */
+export interface Order {
+  id: string;
+  incrementalId?: number | null;
+  client: string | Client;
+  contact: string;
+  alternativeContact?: {
+    name?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    whatsapp?: string | null;
+  };
+  adress?: Address;
+  salesperson?: (string | null) | Salesperson;
+  itens?:
+    | {
+        product: string | Product;
+        layout?: (string | null) | Layout;
+        quantity?: number | null;
+        price: number;
+        attributes?: (string | Attribute)[] | null;
+        print?: string | null;
+        sample?: boolean | null;
+        layoutSent?: boolean | null;
+        layoutApproved?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  shippingTime?: string | null;
+  shippingCompany?: string | null;
+  shippingType?: ('cif' | 'fob') | null;
+  paymentConditions?: string | null;
+  paymentType?: ('boleto' | 'pix' | 'deposito') | null;
+  agency?: string | null;
+  commission?: number | null;
+  notes?: string | null;
+  status?: ('pending' | 'completed' | 'cancelled') | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
