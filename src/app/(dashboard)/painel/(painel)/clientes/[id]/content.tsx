@@ -221,9 +221,21 @@ export function SeeClientContent({
     //     description={`Criado em ${formatRelative(client.createdAt, new Date(), { locale: ptBR })}`}
     //   />
     //   <Separator className='mb-4' />
-    <ContentLayout title={`${edit ? 'Editar c' : 'C'}liente`}>
+    <ContentLayout
+      title={`${edit ? 'Editar c' : 'C'}liente`}
+      navbarButtons={
+        <Button
+          type='submit'
+          disabled={isSubmitting}
+          onClick={handleSubmit(onSubmit)}
+          variant='default'
+        >
+          <Icons.Save className='mr-2 h-5 w-5' /> Salvar
+        </Button>
+      }
+    >
       <Form {...form}>
-        {!editMode && (
+        {/* {!editMode && (
           <div className='sticky top-0 z-10 flex  items-center justify-between border-b bg-background px-4 pb-6 pt-8 '>
             <Heading variant='h5'>{name || 'Novo cliente'}</Heading>
             <Button
@@ -241,7 +253,7 @@ export function SeeClientContent({
               onConfirm={handleSubmit(onSubmit)}
             />
           </div>
-        )}
+        )} */}
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className='space-y-4 px-2 pt-4'

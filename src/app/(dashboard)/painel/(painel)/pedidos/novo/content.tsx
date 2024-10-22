@@ -221,23 +221,20 @@ export function NewOrderContent({
     //     description={`Crie um novo pedido preenchendo as informações abaixo.`}
     //   />
     //   <Separator className='mb-4' />
-    <ContentLayout title='Novo pedido'>
+    <ContentLayout
+      title='Novo pedido'
+      navbarButtons={
+        <Button
+          type='submit'
+          disabled={isSubmitting}
+          onClick={handleSubmit(onSubmit)}
+          variant='default'
+        >
+          <Icons.Save className='mr-2 h-5 w-5' /> Salvar
+        </Button>
+      }
+    >
       <Form {...form}>
-        {
-          <div className='sticky top-0 z-10 flex  items-center justify-between border-b bg-background px-4 pb-6 pt-8 '>
-            <Heading variant='h5'>
-              {/* {order.contact.companyName || 'Novo orçamento'} */}
-            </Heading>
-            <Button
-              type='submit'
-              disabled={isSubmitting}
-              onClick={handleSubmit(onSubmit)}
-              variant='default'
-            >
-              <Icons.Save className='mr-2 h-5 w-5' /> Salvar
-            </Button>
-          </div>
-        }
         <form onSubmit={handleSubmit(onSubmit)} className='space-y-4 px-2 pt-4'>
           <Card>
             <CardHeader>

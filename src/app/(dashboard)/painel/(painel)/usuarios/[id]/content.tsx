@@ -85,21 +85,20 @@ export function UserContent({ user, edit }: SeeUserContentProps) {
   }
 
   return (
-    <ContentLayout title={`${edit ? 'Editar u' : 'U'}suário`}>
+    <ContentLayout
+      title={`${edit ? 'Editar u' : 'U'}suário`}
+      navbarButtons={
+        <Button
+          type='submit'
+          disabled={isSubmitting}
+          onClick={handleSubmit(onSubmit)}
+          variant='default'
+        >
+          <Icons.Save className='mr-2 h-5 w-5' /> Salvar
+        </Button>
+      }
+    >
       <Form {...form}>
-        {!editMode && (
-          <div className='sticky top-0 z-10 flex  items-center justify-between border-b bg-background px-4 pb-6 pt-8 '>
-            <Heading variant='h5'>{user.name || 'Novo usuário'}</Heading>
-            <Button
-              type='submit'
-              disabled={isSubmitting}
-              onClick={handleSubmit(onSubmit)}
-              variant='default'
-            >
-              <Icons.Save className='mr-2 h-5 w-5' /> Salvar
-            </Button>
-          </div>
-        )}
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className='space-y-4 px-2 pt-4'
