@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dialog'
 
 import { CreateCategoryForm } from './create-category-form'
+import { Icons } from '@/components/icons'
 
 interface CreateCategoryDialogProps {
   categories: Category[]
@@ -31,6 +32,7 @@ export function CreateCategoryDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant='outline' size='sm'>
+          <Icons.Plus className='mr-2 h-4 w-4' />
           Adicionar categoria
         </Button>
       </DialogTrigger>

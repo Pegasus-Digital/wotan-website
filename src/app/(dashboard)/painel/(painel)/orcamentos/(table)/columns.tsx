@@ -55,7 +55,7 @@ export const filterFields: DataTableFilterField<Budget>[] = [
   {
     label: 'Número',
     value: 'incrementalId',
-    placeholder: 'Filtrar por o número...',
+    placeholder: 'Filtrar por id...',
   },
 ]
 

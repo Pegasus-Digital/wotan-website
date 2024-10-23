@@ -36,7 +36,11 @@ export function OrdersTable({ ordersPromise }: OrdersTableProps) {
 
   return (
     <div className='space-y-1.5'>
-      <DataTableToolbar table={table} actions={[NewOrderButton]} />
+      <DataTableToolbar
+        table={table}
+        filterFields={filterFields}
+        actions={[NewOrderButton]}
+      />
 
       <DataTable table={table} columns={columns} />
     </div>

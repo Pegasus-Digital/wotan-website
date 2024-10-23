@@ -1133,8 +1133,14 @@ function AddProductDialog({
                 </div>
               ) : (
                 index === 3 && (
-                  <Button variant='outline' className='w-full' disabled>
-                    outros {searchResults.length - 3}+ itens encontrados
+                  <Button variant='outline' className='w-full' asChild>
+                    <Link
+                      href={`/painel/catalogo/busca-avancada?query=${encodeURIComponent(searchTerm)}`}
+                      rel='noopener noreferrer'
+                      target='_blank'
+                    >
+                      Ver outros {searchResults.length - 3}+ itens encontrados
+                    </Link>
                   </Button>
                 )
               )

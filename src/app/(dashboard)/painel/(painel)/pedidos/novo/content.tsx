@@ -78,6 +78,7 @@ import { orderSchema } from '../_logic/validation'
 import { AttributesCombobox } from '../_components/attributes-selector'
 import { ContentLayout } from '@/components/painel-sistema/content-layout'
 import { LoadingSpinner } from '@/components/spinner'
+import Link from 'next/link'
 
 type OrderProps = z.infer<typeof orderSchema>
 
@@ -1041,7 +1042,13 @@ function AddProductDialog({
               ) : (
                 index === 3 && (
                   <Button variant='outline' className='w-full' disabled>
-                    outros {searchResults.length - 3}+ itens encontrados
+                    <Link
+                      href={`/painel/catalogo/busca-avancada?query=${encodeURIComponent(searchTerm)}`}
+                      rel='noopener noreferrer'
+                      target='_blank'
+                    >
+                      Ver outros {searchResults.length - 3}+ itens encontrados
+                    </Link>
                   </Button>
                 )
               )
