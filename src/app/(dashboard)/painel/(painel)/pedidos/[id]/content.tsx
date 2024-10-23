@@ -294,7 +294,7 @@ export function SeeOrderContent({
             </Badge>
             <Button variant='default' size='sm' asChild>
               <Link
-                href={`/painel/pedidos/${order.id}/itens`}
+                href={`/painel/orcamentos/${typeof order.ogBudget === 'object' ? order.ogBudget.incrementalId : ''}`}
                 className='flex flex-row items-center justify-center gap-2'
               >
                 <PackageOpen className='mr-1 h-5 w-5' /> Orçamento #
