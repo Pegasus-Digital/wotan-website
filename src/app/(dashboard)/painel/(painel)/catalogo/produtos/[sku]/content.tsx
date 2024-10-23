@@ -20,8 +20,8 @@ export function ProductContent({ product, edit }: ProductContentProps) {
     //   />
 
     //   <Separator className='mb-4' />
-    <ContentLayout title={`${edit ? 'Editar p' : 'P'}roduto #${product.sku}`}>
-      <UpdateProductForm currentProduct={product} edit={!edit} />
-    </ContentLayout>
+    // <ContentLayout title={`${edit ? 'Editar p' : 'P'}roduto #${product.sku}`}>
+    <UpdateProductForm currentProduct={product} edit={!edit} />
+    // </ContentLayout>
   )
 }
