@@ -15,7 +15,7 @@ import {
 import { toast } from 'sonner'
 import { BRAZIL_STATES } from '@/lib/brazil-states'
 
-import { z } from 'zod'
+import { object, z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, useFormState, useFieldArray } from 'react-hook-form'
 
@@ -78,6 +78,8 @@ import { orderSchema } from '../_logic/validation'
 import { ContentLayout } from '@/components/painel-sistema/content-layout'
 import { LoadingSpinner } from '@/components/spinner'
 import Link from 'next/link'
+import { Badge } from '@/components/ui/badge'
+import { PackageOpen } from 'lucide-react'
 
 type OrderProps = z.infer<typeof orderSchema>
 
@@ -275,14 +277,45 @@ export function SeeOrderContent({
     <ContentLayout
       title={`${!editMode ? 'Editar o p' : 'P'}edido #${order.incrementalId}`}
       navbarButtons={
-        <Button
-          type='submit'
-          disabled={isSubmitting}
-          onClick={handleSubmit(onSubmit)}
-          variant='default'
-        >
-          <Icons.Save className='mr-2 h-5 w-5' /> Salvar
-        </Button>
+        <>
+          <div className='flex flex-row items-center justify-center gap-2 text-sm font-bold'>
+            Status:
+            <Badge
+              variant={
+                order.status === 'completed'
+                  ? 'affirmative'
+                  : order.status === 'cancelled'
+                    ? 'destructive'
+                    : 'outline'
+              }
+              className='capitalize'
+            >
+              {order.status ?? 'Nenhum'}
+            </Badge>
+            <Button variant='default' size='sm' asChild>
+              <Link
+                href={`/painel/pedidos/${order.id}/itens`}
+                className='flex flex-row items-center justify-center gap-2'
+              >
+                <PackageOpen className='mr-1 h-5 w-5' /> Orçamento #
+                {typeof order.ogBudget === 'object'
+                  ? order.ogBudget.incrementalId
+                  : order.ogBudget}
+              </Link>
+            </Button>
+            {!editMode && (
+              <Button
+                type='submit'
+                disabled={isSubmitting}
+                onClick={handleSubmit(onSubmit)}
+                variant='default'
+                size='sm'
+              >
+                <Icons.Save className='mr-2 h-5 w-5' /> Salvar
+              </Button>
+            )}
+          </div>
+        </>
       }
     >
       <Form {...form}>
