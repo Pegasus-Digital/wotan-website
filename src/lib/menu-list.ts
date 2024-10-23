@@ -78,6 +78,10 @@ const menusConfig: Record<string, Group[]> = {
             { href: '/painel/catalogo/produtos', label: 'Produtos' },
             { href: '/painel/catalogo/categorias', label: 'Categorias' },
             { href: '/painel/catalogo/atributos', label: 'Atributos' },
+            {
+              href: '/painel/catalogo/busca-avancada',
+              label: 'Busca avançada',
+            },
           ],
         },
         { href: '/painel/orcamentos', label: 'Orçamentos', icon: PackageOpen },

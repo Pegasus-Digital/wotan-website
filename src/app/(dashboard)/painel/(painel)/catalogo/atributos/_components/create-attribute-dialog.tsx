@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dialog'
 
 import { CreateAttributeForm } from './create-attribute-form'
+import { Icons } from '@/components/icons'
 
 interface CreateAttributeDialogProps {
   types: AttributeType[]
@@ -29,6 +30,7 @@ export function CreateAttributeDialog({ types }: CreateAttributeDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant='outline' size='sm'>
+          <Icons.Plus className='mr-2 h-4 w-4' />
           Adicionar atributo
         </Button>
       </DialogTrigger>

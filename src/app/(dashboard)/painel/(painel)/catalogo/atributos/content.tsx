@@ -23,12 +23,15 @@ export function AttributesContent({
     //   />
 
     //   <Separator className='mb-4' />
-    <ContentLayout title='Atributos'>
+    <ContentLayout
+      title='Atributos'
+      navbarButtons={<CreateAttributeDialog types={types} />}
+    >
       {/* <div className='grid'> */}
       {/* <div className='flex-1 rounded-lg border p-4'> */}
-      <div className='flex w-full justify-end'>
+      {/* <div className='flex w-full justify-end'>
         <CreateAttributeDialog types={types} />
-      </div>
+      </div> */}
 
       <AttributeList types={types} attributes={attributes} />
       {/* </div> */}

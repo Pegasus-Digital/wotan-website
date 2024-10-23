@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useTransition } from 'react'
+import { useCallback, useEffect, useState, useTransition } from 'react'
 
 import { Budget, Salesperson } from '@/payload/payload-types'
 
@@ -48,14 +48,16 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog'
 
-import { deleteBudget } from '../_logic/actions'
+import { UpdateBudget, deleteBudget } from '../_logic/actions'
 import { updateBudgetStatus } from '../_logic/actions'
+import { createOrder } from '../../pedidos/_logic/actions'
+import { getClients } from '../_logic/get-clients'
 
 export const filterFields: DataTableFilterField<Budget>[] = [
   {
     label: 'Número',
     value: 'incrementalId',
-    placeholder: 'Filtrar por o número...',
+    placeholder: 'Filtrar por id...',
   },
 ]
 
@@ -226,6 +228,7 @@ export function getColumns(): ColumnDef<Budget>[] {
 
       cell: ({ row }) => {
         const budget = row.original
+        const [clients, setClients] = useState<Budget['client'][]>([])
 
         const [statusDialog, setStatusDialog] = useState(false)
         const [placeOrderDialog, setPlaceOrderDialog] = useState(false)
@@ -254,9 +257,12 @@ export function getColumns(): ColumnDef<Budget>[] {
         }
 
         function PlaceOrderDialog() {
-          const [selectedStatus, setSelectedStatus] = useState<
-            Budget['status']
-          >(budget.status)
+          const [selectedClient, setSelectedClient] = useState<
+            Budget['client'] | null
+          >(null)
+          const [selectedContact, setSelectedContact] = useState<
+            Budget['selectedContact'] | null
+          >(null)
 
           return (
             <Dialog open={placeOrderDialog} onOpenChange={setPlaceOrderDialog}>
@@ -272,8 +278,14 @@ export function getColumns(): ColumnDef<Budget>[] {
                     <Label>Cliente</Label>
 
                     <Select
-                      onValueChange={(e) => {
-                        console.log('detectei mudança', e)
+                      onValueChange={(value) => {
+                        const client = clients.find(
+                          (client) =>
+                            (typeof client === 'object'
+                              ? client.id
+                              : client) === value,
+                        )
+                        setSelectedClient(client)
                       }}
                     >
                       <SelectTrigger>
@@ -281,37 +293,67 @@ export function getColumns(): ColumnDef<Budget>[] {
                       </SelectTrigger>
 
                       <SelectContent side='bottom'>
-                        {/* {typeof clients === 'object' &&
-                          clients.length === 0 ? (
-                            <SelectItem value='nenhum' disabled>
-                              Você ainda não possui nenhum cliente.
-                            </SelectItem>
-                          ) : (
-                            clients.map((client) => (
+                        {clients.length === 0 && (
+                          <SelectItem
+                            value={null}
+                            disabled
+                            className='flex items-center justify-center'
+                          >
+                            Você ainda não possui nenhum cliente.
+                          </SelectItem>
+                        )}
+                        {clients.map((client) => {
+                          return (
+                            typeof client === 'object' && (
                               <SelectItem key={client.id} value={client.id}>
                                 {client.name}
                               </SelectItem>
-                            ))
-                          )} */}
+                            )
+                          )
+                        })}
                       </SelectContent>
                     </Select>
                   </div>
                   <div className='space-y-1'>
                     <Label>Contato</Label>
 
-                    <Select>
+                    <Select
+                      onValueChange={(value) => {
+                        const selectedContact =
+                          typeof selectedClient === 'object' &&
+                          selectedClient?.contacts.find(
+                            (contact) => contact.id === value,
+                          )
+
+                        setSelectedContact(selectedContact.id)
+                      }}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder='Selecione um Contato' />
                       </SelectTrigger>
                       <SelectContent side='bottom'>
-                        {/* {selectedClient === null ? (
-                          <SelectItem value='nenhum' disabled>
-                            Por favor, selecione um cliente primeiro.
+                        {!selectedClient && (
+                          <SelectItem
+                            value={null}
+                            disabled
+                            className='flex items-center justify-center'
+                          >
+                            Selecione um cliente para ver seus contatos
                           </SelectItem>
-                        ) : (
-                          // */}
-                        <SelectItem value='contact1'>Contato 1</SelectItem>
-                        {/* )} */}
+                        )}
+                        {typeof selectedClient === 'object' &&
+                          selectedClient?.contacts?.length === 0 && (
+                            <SelectItem value={null} disabled>
+                              Não encontramos nenhum contato para este cliente.
+                            </SelectItem>
+                          )}
+                        {typeof selectedClient === 'object' &&
+                          selectedClient?.contacts.length > 0 &&
+                          selectedClient.contacts.map((contact) => (
+                            <SelectItem key={contact.id} value={contact.id}>
+                              {contact.name}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -322,20 +364,65 @@ export function getColumns(): ColumnDef<Budget>[] {
                   </DialogClose>
                   <Button
                     variant='outline'
-                    onClick={() => {
-                      setStatusDialog(false)
-
-                      toast.promise(
-                        updateBudgetStatus({
+                    disabled={
+                      selectedClient === null || selectedContact === null
+                    }
+                    onClick={async () => {
+                      if (selectedClient && selectedContact) {
+                        const response = await UpdateBudget({
+                          budget: {
+                            ...budget,
+                            items: budget.items.map((item) => ({
+                              ...item,
+                              product:
+                                typeof item.product === 'object'
+                                  ? item.product.id
+                                  : item.product,
+                              attributes: [],
+                            })),
+                            salesperson:
+                              typeof budget.salesperson === 'object'
+                                ? budget.salesperson.id
+                                : budget.salesperson,
+                            status: 'aprovado',
+                            client:
+                              typeof selectedClient === 'object'
+                                ? selectedClient.id
+                                : selectedClient,
+                            selectedContact: selectedContact,
+                          },
                           id: budget.id,
-                          status: 'aprovado',
-                        }),
-                        {
-                          loading: 'Atualizando...',
-                          success: 'Status atualizado com sucesso',
-                          error: 'Erro ao atualizado status...',
-                        },
-                      )
+                        })
+                        if (response.status === true && response.data.budget) {
+                          toast.promise(
+                            createOrder({
+                              order: {
+                                client: budget.client,
+                                contact: budget.selectedContact,
+                                itens: budget.items.map((item) => ({
+                                  // ...item,
+                                  product:
+                                    typeof item.product === 'object'
+                                      ? item.product.id
+                                      : item.product,
+                                  attributes: item.attributes,
+                                  quantity: item.quantity,
+                                  price: item.price,
+                                  print: item.print,
+                                })),
+                                salesperson: budget.salesperson,
+                                ogBudget: budget.id,
+                              },
+                            }),
+                            {
+                              loading: 'Criando pedido...',
+                              success: 'Pedido criado com sucesso',
+                              error: 'Erro ao criar o pedido...',
+                            },
+                          )
+                        }
+                      }
+                      setStatusDialog(false)
                     }}
                   >
                     Confirmar
@@ -347,15 +434,62 @@ export function getColumns(): ColumnDef<Budget>[] {
         }
 
         function PlaceOrderAction() {
-          // const [isDeletePending, startDeleteTransition] = useTransition()
-
           return (
             <DropdownMenuItem
-              onClick={() => {
-                setPlaceOrderDialog(true)
+              onClick={async () => {
+                if (budget.client && budget.selectedContact) {
+                  if (budget.status !== 'aprovado') {
+                    toast.promise(
+                      updateBudgetStatus({
+                        id: budget.id,
+                        status: 'aprovado',
+                      }),
+                      {
+                        loading: 'Atualizando...',
+                        success: 'Orçamento aprovado com sucesso',
+                        error: 'Erro ao atualizar o status...',
+                      },
+                    )
+                  }
+                  toast.promise(
+                    createOrder({
+                      order: {
+                        client:
+                          typeof budget.client === 'object'
+                            ? budget.client.id
+                            : budget.client,
+                        contact: budget.selectedContact,
+                        itens: budget.items.map((item) => ({
+                          // ...item,
+                          product:
+                            typeof item.product === 'object'
+                              ? item.product.id
+                              : item.product,
+                          attributes: item.attributes,
+                          quantity: item.quantity,
+                          price: item.price,
+                          print: item.print,
+                        })),
+                        salesperson:
+                          typeof budget.salesperson === 'object'
+                            ? budget.salesperson.id
+                            : budget.salesperson,
+                        ogBudget: budget.id,
+                      },
+                    }),
+                    {
+                      loading: 'Criando pedido...',
+                      success: 'Pedido criado com sucesso',
+                      error: 'Erro ao criar o pedido...',
+                    },
+                  )
+                } else {
+                  const { data } = await getClients()
+                  setClients(data)
+                  setPlaceOrderDialog(true)
+                }
               }}
               className='cursor-pointer'
-              // disabled={isDeletePending}
             >
               Fazer pedido
             </DropdownMenuItem>
@@ -504,6 +638,7 @@ export function getColumns(): ColumnDef<Budget>[] {
                 <DropdownMenuSeparator />
                 <ChangeBudgetStatusAction />
                 <PlaceOrderAction />
+
                 <DeleteEstimateAction />
               </DropdownMenuContent>
             </DropdownMenu>

@@ -280,6 +280,7 @@ export interface Order {
   incrementalId?: number | null;
   client: string | Client;
   contact: string;
+  ogBudget?: (string | null) | Budget;
   alternativeContact?: {
     name?: string | null;
     email?: string | null;

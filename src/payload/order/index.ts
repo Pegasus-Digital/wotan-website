@@ -37,6 +37,12 @@ const Order: CollectionConfig = {
       type: 'text',
       required: true,
     },
+    {
+      name: 'ogBudget',
+      type: 'relationship',
+      relationTo: 'budget',
+      // required: true,
+    },
 
     {
       type: 'group',

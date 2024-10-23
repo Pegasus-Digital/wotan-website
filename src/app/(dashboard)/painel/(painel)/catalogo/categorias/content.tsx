@@ -19,10 +19,13 @@ export function CategoriesContent({ categories }: PropertiesContentProps) {
     //   />
 
     //   <Separator className='mb-4' />
-    <ContentLayout title='Categorias'>
-      <div className='flex w-full justify-end'>
+    <ContentLayout
+      title='Categorias'
+      navbarButtons={<CreateCategoryDialog categories={categories} />}
+    >
+      {/* <div className='flex w-full justify-end'>
         <CreateCategoryDialog categories={categories} />
-      </div>
+      </div> */}
 
       <CategoryList categories={categories} />
     </ContentLayout>

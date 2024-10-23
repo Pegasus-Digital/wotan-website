@@ -11,8 +11,8 @@ export function NewProductContent() {
     //     description='Insira as informações e escolha as etiquetas do novo produto.'
     //   />
     //   <Separator className='mb-4' />
-    <ContentLayout title='Criando novo produto'>
-      <NewProductForm />
-    </ContentLayout>
+    // <ContentLayout title='Criando novo produto'>
+    <NewProductForm />
+    // </ContentLayout>
   )
 }

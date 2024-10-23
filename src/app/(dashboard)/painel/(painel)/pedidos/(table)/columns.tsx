@@ -58,6 +58,11 @@ export const filterFields: DataTableFilterField<Order>[] = [
   //   value: 'companyName',
   //   placeholder: 'Filtrar nome da empresa...',
   // },
+  {
+    label: 'Número',
+    value: 'incrementalId',
+    placeholder: 'Filtrar por id...',
+  },
 ]
 
 export function getColumns(): ColumnDef<Order>[] {

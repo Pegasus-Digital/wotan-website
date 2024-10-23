@@ -93,6 +93,7 @@ import { AttributesCombobox } from '../../pedidos/_components/attributes-selecto
 import { ContentLayout } from '@/components/painel-sistema/content-layout'
 import Link from 'next/link'
 import { LoadingSpinner } from '@/components/spinner'
+import { Badge } from '@/components/ui/badge'
 
 type BudgetProps = z.infer<typeof budgetSchema>
 
@@ -330,31 +331,38 @@ export function SeeBudgetContent({
     <ContentLayout
       title={`${edit ? 'Editar o' : 'O'}rçamento #${budget.incrementalId}`}
       navbarButtons={
-        !editMode ? (
-          <Button
-            type='submit'
-            disabled={isSubmitting}
-            onClick={handleSubmit(onSubmit)}
-            variant='default'
-            size='sm'
-          >
-            <Icons.Save className='mr-2 h-5 w-5' /> Salvar
-          </Button>
-        ) : (
-          <></>
-          // <Button
-          //   variant='ghost'
-          //   size='sm'
-          //   onClick={() => {
-          //     setEditMode(true)
-          //     router.push(
-          //       `/painel/orcamentos/${budget.incrementalId}?edit=true`,
-          //     )
-          //   }}
-          // >
-          //   <Icons.Edit className='mr-2 h-5 w-5' /> Editar
-          // </Button>
-        )
+        <>
+          <div className='flex flex-row items-center justify-center gap-2 text-sm font-bold'>
+            Origem:
+            <Badge variant={'outline'} className='capitalize'>
+              {budget.origin === 'interno' ? 'Interno' : 'Website'}
+            </Badge>
+            Status:
+            <Badge
+              variant={
+                budget.status === 'aprovado'
+                  ? 'affirmative'
+                  : budget.status === 'cancelado'
+                    ? 'destructive'
+                    : 'outline'
+              }
+              className='capitalize'
+            >
+              {budget.status ?? 'Nenhum'}
+            </Badge>
+            {!editMode && (
+              <Button
+                type='submit'
+                disabled={isSubmitting}
+                onClick={handleSubmit(onSubmit)}
+                variant='default'
+                size='sm'
+              >
+                <Icons.Save className='mr-2 h-5 w-5' /> Salvar
+              </Button>
+            )}
+          </div>
+        </>
       }
     >
       <Form {...form}>
@@ -1133,8 +1141,14 @@ function AddProductDialog({
                 </div>
               ) : (
                 index === 3 && (
-                  <Button variant='outline' className='w-full' disabled>
-                    outros {searchResults.length - 3}+ itens encontrados
+                  <Button variant='outline' className='w-full' asChild>
+                    <Link
+                      href={`/painel/catalogo/busca-avancada?query=${encodeURIComponent(searchTerm)}`}
+                      rel='noopener noreferrer'
+                      target='_blank'
+                    >
+                      Ver outros {searchResults.length - 3}+ itens encontrados
+                    </Link>
                   </Button>
                 )
               )
