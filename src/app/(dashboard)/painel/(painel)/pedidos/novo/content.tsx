@@ -931,6 +931,7 @@ function AddProductDialog({
 }) {
   const [searchResults, setSearchResults] = useState<Product[]>([])
   const [searchTerm, setSearchTerm] = useState<string>('')
+  const [notFound, setNotFound] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [isPending, startTransition] = useTransition()
   const [delayedPending, setDelayedPending] = useState(false)
@@ -945,6 +946,7 @@ function AddProductDialog({
       })
       if (response.ok) {
         const results = await response.json()
+        setNotFound(results.docs.length === 0)
         setSearchResults(results.docs)
       } else {
         console.error('Error fetching products:', response.statusText)
@@ -957,6 +959,7 @@ function AddProductDialog({
   const handleSearch = () => {
     setSelectedProduct(null)
     setDelayedPending(true) // Start the visual loading effect
+    setNotFound(false)
 
     startTransition(() => {
       handleProductSearch(searchTerm).finally(() => {
@@ -1041,7 +1044,7 @@ function AddProductDialog({
                 </div>
               ) : (
                 index === 3 && (
-                  <Button variant='outline' className='w-full' disabled>
+                  <Button variant='outline' className='w-full' key={index}>
                     <Link
                       href={`/painel/catalogo/busca-avancada?query=${encodeURIComponent(searchTerm)}`}
                       rel='noopener noreferrer'
@@ -1061,10 +1064,14 @@ function AddProductDialog({
                 <Icons.Shirt className='m-4 h-16 w-16 text-neutral-400' />
               </div>
               <div className='flex flex-col justify-center'>
-                <Heading variant='h6'>Título</Heading>
-                <Label>código</Label>
+                <Heading variant='h6'>
+                  {notFound ? 'Nenhum item encontrado' : 'Título'}
+                </Heading>
+                <Label>{notFound && 'código'}</Label>
                 <P className='text-sm [&:not(:first-child)]:mt-2'>
-                  Descricão do item. Lorem ipsum dolor sit amet.
+                  {notFound
+                    ? 'Nenhum item encontrado. Tente outro termo ou query.'
+                    : 'Descricão do item. Lorem ipsum dolor sit amet.'}
                 </P>
               </div>
               {delayedPending && (
