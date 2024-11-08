@@ -84,6 +84,14 @@ interface UseDataTableProps<TData, TValue> {
   enableAdvancedFilter?: boolean
 }
 
+import { FilterFn } from '@tanstack/react-table'
+
+export const numericFilter: FilterFn<any> = (row, columnId, filterValue) => {
+  const cellValue = row.getValue(columnId)
+  return cellValue !== undefined && cellValue !== null
+    ? cellValue.toString().includes(filterValue.toString())
+    : false
+}
 const schema = z.object({
   page: z.coerce.number().default(1),
   per_page: z.coerce.number().default(10),
@@ -318,7 +326,7 @@ export function useDataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
     manualPagination: true,
     manualSorting: true,
-    manualFiltering: true,
+    manualFiltering: false,
   })
 
   return { table }

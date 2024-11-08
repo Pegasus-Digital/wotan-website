@@ -46,6 +46,7 @@ import {
 import { Heading } from '@/pegasus/heading'
 import { Label } from '@/components/ui/label'
 import { LayoutDocumentDownloader } from '../_components/planilha-pdf-downloader'
+import { numericFilter } from '@/components/table/hooks/use-data-table'
 
 export const filterFields: DataTableFilterField<Order>[] = [
   // {
@@ -93,6 +94,7 @@ export function getColumns(): ColumnDef<Order>[] {
     {
       id: 'incrementalId',
       accessorFn: (row) => row.incrementalId,
+      filterFn: numericFilter,
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title='Número' />
       ),

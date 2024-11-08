@@ -18,12 +18,18 @@ import { DataTableFilterField } from '@/components/table/types/table-types'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 
 import { deleteProduct } from '../_logic/actions'
+import { numericFilter } from '@/components/table/hooks/use-data-table'
 
 export const filterFields: DataTableFilterField<Product>[] = [
   {
     label: 'Title',
     value: 'title',
     placeholder: 'Filtrar por nome...',
+  },
+  {
+    label: 'SKU',
+    value: 'sku',
+    placeholder: 'Filtrar por SKU...',
   },
 ]
 
@@ -68,6 +74,7 @@ export function getColumns(): ColumnDef<Product>[] {
     {
       accessorKey: 'sku',
       header: 'SKU',
+      filterFn: numericFilter,
     },
     {
       accessorKey: 'minimumQuantity',

@@ -13,9 +13,7 @@ import { BulkUpdateProductDialog } from '../_components/bulk-update-dialog-conte
 
 import { getProducts } from '../_logic/queries'
 import { DataTableToolbar } from '@/components/table/data-table-toolbar'
-import { ProductInfo } from '../_logic/actions'
 import Link from 'next/link'
-import { cn } from '@/lib/utils'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { usePathname } from 'next/navigation'
 
@@ -52,6 +50,7 @@ export function ProductsTable({ productsPromise }: ProductsTableProps) {
         filterFields={filterFields}
         actions={[
           () => <NewProductButton />,
+          () => <ImportProductsButton />,
           () => <BulkUpdateProductDialog products={selectedProducts} />,
         ]}
       />
@@ -67,6 +66,14 @@ function NewProductButton() {
   return (
     <Button variant='outline' size='sm' asChild>
       <Link href={`${path}/novo`}>Novo produto</Link>
+    </Button>
+  )
+}
+
+function ImportProductsButton() {
+  return (
+    <Button variant='outline' size='sm' disabled>
+      Importar produtos
     </Button>
   )
 }

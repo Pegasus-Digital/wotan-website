@@ -65,15 +65,16 @@ export function DataTableToolbar<TData>({
                   />
                 ),
             )}
+
           {isFiltered && (
             <Button
               aria-label='Reset filters'
-              variant='ghost'
+              variant='destructive'
               className='h-8 px-2 lg:px-3'
               onClick={() => table.resetColumnFilters()}
             >
-              Resetar filtro(s)
-              <Cross2Icon className='ml-2 size-4' aria-hidden='true' />
+              <Cross2Icon className='mr-2 size-4' aria-hidden='true' />
+              Limpar filtro(s)
             </Button>
           )}
         </div>
