@@ -52,6 +52,7 @@ import { UpdateBudget, deleteBudget } from '../_logic/actions'
 import { updateBudgetStatus } from '../_logic/actions'
 import { createOrder } from '../../pedidos/_logic/actions'
 import { getClients } from '../_logic/get-clients'
+import { numericFilter } from '@/components/table/hooks/use-data-table'
 
 export const filterFields: DataTableFilterField<Budget>[] = [
   {
@@ -66,6 +67,8 @@ export function getColumns(): ColumnDef<Budget>[] {
     {
       id: 'incrementalId',
       accessorFn: (row) => row.incrementalId,
+      filterFn: numericFilter,
+
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title='Número' />
       ),
