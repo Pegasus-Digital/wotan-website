@@ -9,23 +9,30 @@ services:
       - .:/home/node/app
       - node_modules:/home/node/app/node_modules
     working_dir: /home/node/app/
-    command: sh -c "yarn install && yarn add copyfiles -g && yarn build && yarn serve"
+    command: sh -c "yarn install && yarn build && yarn serve"
     depends_on:
       - mongo
     env_file:
       - .env
+    networks:
+      - app_network
 
   mongo:
     image: mongo:latest
-    ports:
-      - '27017:27017'
     command:
       - --storageEngine=wiredTiger
+      - --bind_ip_all
     volumes:
       - data:/data/db
     logging:
       driver: none
+    networks:
+      - app_network
 
 volumes:
   data:
   node_modules:
+
+networks:
+  app_network:
+    driver: bridge

@@ -15,6 +15,7 @@
 
 # payload
 /media
+/dump
 
 # production
 /build
