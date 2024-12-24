@@ -2,19 +2,42 @@
 
 import { revalidatePath } from 'next/cache'
 
+import { ActionResponse } from '@/lib/actions'
+
 import payload from 'payload'
 import { Budget } from '@/payload/payload-types'
-import { ActionResponse } from '@/lib/actions'
+
+interface EmailBudgetToCustomerProps {
+  budget: Budget
+  email: string
+}
+
+interface EmailBudgetToCustomerResponseData {}
+
+export async function emailBudgetToCustomer({
+  budget,
+  email,
+}: EmailBudgetToCustomerProps): Promise<
+  ActionResponse<EmailBudgetToCustomerResponseData>
+> {
+  try {
+    console.log('Sent email to customer')
+    console.log('Data:', budget)
+    console.log('Email:', email)
+  } catch (err) {
+    return {
+      data: null,
+      status: false,
+      message: '[500] Ocorreu um erro ao enviar o email.',
+    }
+  }
+}
 
 interface DeleteBudgetProps {
   budgetId: string
 }
 
 interface DeleteBudgetResponseData {}
-
-interface UpdateActionResponseData {
-  budget: Budget | null
-}
 
 export async function deleteBudget({
   budgetId,
@@ -87,6 +110,10 @@ export async function createBudget(
 interface UpdateBudgetProps {
   budget: SafeBudget
   id: Budget['id']
+}
+
+interface UpdateActionResponseData {
+  budget: Budget | null
 }
 
 export async function UpdateBudget({

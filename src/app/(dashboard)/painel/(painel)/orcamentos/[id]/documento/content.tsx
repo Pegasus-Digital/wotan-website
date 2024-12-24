@@ -2,14 +2,10 @@
 
 import dynamic from 'next/dynamic'
 
-import { ptBR } from 'date-fns/locale'
-import { formatRelative } from 'date-fns'
-import { BudgetDocument } from '@/lib/pdf-generator/templates/budget'
+import { Budget } from '@/payload/payload-types'
 
 import { LoadingSpinner } from '@/components/spinner'
-import { Content, ContentHeader } from '@/components/content'
-
-import { Budget } from '@/payload/payload-types'
+import { BudgetDocument } from '@/lib/pdf-generator/templates/budget'
 import { ContentLayout } from '@/components/painel-sistema/content-layout'
 
 const PDFViewer = dynamic(
@@ -26,14 +22,9 @@ interface BudgetDocumentContentProps {
 
 export function BudgetDocumentContent({ budget }: BudgetDocumentContentProps) {
   return (
-    // <Content className='flex flex-col'>
-    //   <ContentHeader
-    //     title={`Orçamento n° ${budget.incrementalId}`}
-    //     description={`Gerado em ${formatRelative(budget.updatedAt, new Date(), { locale: ptBR })}`}
-    //   />
     <ContentLayout title={`Orçamento n° ${budget.incrementalId}`}>
       <PDFViewer
-        className='mt-2 w-full flex-1 animate-fade-in'
+        className='min-h-[90vh] w-full flex-1 animate-fade-in'
         showToolbar={false}
       >
         <BudgetDocument budget={budget} />

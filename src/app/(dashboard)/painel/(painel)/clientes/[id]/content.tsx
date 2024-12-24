@@ -145,9 +145,8 @@ export function SeeClientContent({
       status,
     } = values
 
-    const numericDocument = document.replace(/\D/g, '') // Strip non-numeric characters
-
-    console.log(numericDocument)
+    // Document without special characters
+    const numericDocument = document.replace(/\D/g, '')
 
     if (
       (type === 'company' && numericDocument.length !== 14) ||

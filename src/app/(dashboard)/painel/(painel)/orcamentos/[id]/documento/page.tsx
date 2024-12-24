@@ -16,6 +16,6 @@ export default async function BudgetDocumentPage({ params: { id } }) {
 
 export async function generateMetadata({ params: { id } }) {
   return {
-    title: `Visualizar documento nº: ${id}`,
+    title: `Visualizar orçamento nº: ${id}`,
   }
 }
