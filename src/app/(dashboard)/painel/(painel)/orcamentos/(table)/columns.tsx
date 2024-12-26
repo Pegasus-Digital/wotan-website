@@ -7,6 +7,7 @@ import { useState, useTransition } from 'react'
 import { Budget, Client, Salesperson } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
+import { CheckCircle, Info } from 'lucide-react'
 
 import { ColumnDef } from '@tanstack/react-table'
 import { DataTableFilterField } from '@/components/table/types/table-types'
@@ -247,8 +248,8 @@ export function getColumns(): ColumnDef<Budget>[] {
 
         function SendEmailDialog() {
           const [isEmailPending, startEmailTransition] = useTransition()
-          const [selectedEmail, setSelectedEmail] = useState<string | null>(
-            null,
+          const [selectedEmail, setSelectedEmail] = useState<string>(
+            budget.contact.email,
           )
 
           function handleSendEmail() {
@@ -258,7 +259,7 @@ export function getColumns(): ColumnDef<Budget>[] {
 
             startEmailTransition(() => {
               toast.promise(
-                emailBudgetToCustomer({ email: selectedEmail, budget }),
+                emailBudgetToCustomer({ emailAddress: selectedEmail, budget }),
                 {
                   loading: 'Enviando...',
                   success: 'Orçamento enviado com sucesso',
@@ -277,60 +278,83 @@ export function getColumns(): ColumnDef<Budget>[] {
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Enviar orçamento por e-mail</DialogTitle>
-                  {!client && (
-                    <DialogDescription>
-                      Não há cliente associado.
-                    </DialogDescription>
-                  )}
-                  {client && (
-                    <>
-                      <DialogDescription className='font-medium'>
-                        Cliente: {client.name}
-                      </DialogDescription>
-                    </>
-                  )}
+                  <DialogDescription>
+                    Nome do contato: {budget.contact.customerName}
+                  </DialogDescription>
                 </DialogHeader>
 
-                {client && (
-                  <>
-                    <Link
-                      href={`/painel/orcamentos/${budget.incrementalId}/documento`}
-                      target='_blank'
-                      className={buttonVariants({
-                        variant: 'outline',
-                        className: 'items-start justify-start',
-                      })}
-                    >
-                      Clique aqui para conferir o orçamento antes de enviá-lo.
-                    </Link>
-                    <Select onValueChange={setSelectedEmail}>
-                      <SelectTrigger>
-                        <SelectValue placeholder='Selecione o e-mail de envio do orçamento' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {client.contacts.map((contact) => (
-                          <SelectItem key={contact.id} value={contact.email}>
-                            {contact.email}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <DialogFooter>
-                      <DialogClose asChild>
-                        <Button variant='outline'>Voltar</Button>
-                      </DialogClose>
-                      <Button
-                        onClick={handleSendEmail}
-                        variant='default'
-                        disabled={isEmailPending}
-                      >
-                        Enviar
-                      </Button>
-                    </DialogFooter>
-                  </>
-                )}
+                <>
+                  <Label>Selecione o email de destino</Label>
+                  <Select
+                    onValueChange={setSelectedEmail}
+                    defaultValue={budget.contact.email}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder='Selecione o e-mail de envio do orçamento' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {/* the budget has a default contact */}
+                      <SelectItem value={budget.contact.email}>
+                        {budget.contact.email}
+                      </SelectItem>
+                      {/* If it is a registered client, it may have more contacts, so make them available */}
+                      {client &&
+                        client.contacts.map((contact) => {
+                          if (contact.email !== budget.contact.email) {
+                            return (
+                              <SelectItem
+                                key={contact.email}
+                                value={contact.email}
+                              >
+                                {contact.email}
+                              </SelectItem>
+                            )
+                          }
+                        })}
+                    </SelectContent>
+                  </Select>
 
-                {!client && (
+                  <Link
+                    href={`/cliente/orcamento/${budget.id}`}
+                    target='_blank'
+                    className={buttonVariants({
+                      variant: 'outline',
+                      className: 'items-start justify-start',
+                    })}
+                  >
+                    Clique aqui para conferir o orçamento antes de enviá-lo.
+                  </Link>
+
+                  {client ? (
+                    <div className='flex items-center gap-2 text-green-500'>
+                      <CheckCircle size={24} />
+                      <Small className='flex gap-2'>
+                        Este cliente está registrado.
+                      </Small>
+                    </div>
+                  ) : (
+                    <div className='flex items-center gap-2 text-muted-foreground'>
+                      <Info size={24} />
+                      <Small className='flex gap-2 text-sm'>
+                        Este cliente não está registrado.
+                      </Small>
+                    </div>
+                  )}
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant='outline'>Voltar</Button>
+                    </DialogClose>
+                    <Button
+                      onClick={handleSendEmail}
+                      variant='default'
+                      disabled={isEmailPending}
+                    >
+                      Enviar
+                    </Button>
+                  </DialogFooter>
+                </>
+
+                {!budget.contact && (
                   <>
                     <Link
                       href={`/painel/orcamentos/${budget.incrementalId}?edit=true`}

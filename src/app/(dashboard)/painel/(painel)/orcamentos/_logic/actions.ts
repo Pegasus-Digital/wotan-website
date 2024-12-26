@@ -9,21 +9,37 @@ import { Budget } from '@/payload/payload-types'
 
 interface EmailBudgetToCustomerProps {
   budget: Budget
-  email: string
+  emailAddress: string
 }
 
 interface EmailBudgetToCustomerResponseData {}
 
 export async function emailBudgetToCustomer({
   budget,
-  email,
+  emailAddress,
 }: EmailBudgetToCustomerProps): Promise<
   ActionResponse<EmailBudgetToCustomerResponseData>
 > {
   try {
-    console.log('Sent email to customer')
-    console.log('Data:', budget)
-    console.log('Email:', email)
+    // Send budget to customer via email
+    await payload.sendEmail({
+      from: process.env.PLATFORM_EMAIL,
+      to: emailAddress,
+      subject: 'Orçamento - Wotan Brindes',
+      html: `
+      <h1>Olá cliente.</h1>
+      <p>Temos atualizações sobre seu orçamento, clique <a href='${process.env.NEXT_PUBLIC_SERVER_URL}/cliente/orcamento/${budget.id}' target='_blank'>aqui</a> para visualizar.</p>`,
+    })
+
+    await payload.update({
+      collection: 'budget',
+      id: budget.id,
+      data: {
+        status: 'enviado',
+      },
+    })
+
+    revalidatePath('/painel/orcamentos')
   } catch (err) {
     return {
       data: null,
