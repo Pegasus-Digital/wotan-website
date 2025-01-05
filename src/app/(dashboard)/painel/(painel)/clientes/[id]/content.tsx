@@ -70,6 +70,7 @@ import {
 
 import { updateClient } from '../_logic/actions'
 import { clientSchema } from '../_logic/validations'
+import { cities, states } from 'estados-cidades'
 
 interface SeeClientContentProps {
   edit: boolean
@@ -86,6 +87,7 @@ export function SeeClientContent({
 }: SeeClientContentProps) {
   const [editMode, toggleEditMode] = useState<boolean>(!edit)
   const [isDialogOpen, setDialogOpen] = useState(false)
+  const [selectedState, setSelectedState] = useState<string | null>(null)
 
   const router = useRouter()
 
@@ -681,7 +683,28 @@ export function SeeClientContent({
                     <FormItem>
                       <FormLabel>Cidade</FormLabel>
                       <FormControl>
-                        <Input {...field} disabled={editMode} />
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value ?? ''}
+                          disabled={editMode}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder='Selecione a cidade' />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {selectedState ? (
+                              cities(selectedState).map((city) => (
+                                <SelectItem key={city} value={city}>
+                                  {city}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <SelectItem value={'unselected'}>
+                                Selecione o estado primeiro
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -696,7 +719,10 @@ export function SeeClientContent({
                       <FormLabel>Estado</FormLabel>
                       <FormControl>
                         <Select
-                          onValueChange={field.onChange}
+                          onValueChange={(value) => {
+                            field.onChange(value)
+                            setSelectedState(value)
+                          }}
                           value={field.value ?? ''}
                           disabled={editMode}
                         >
@@ -704,35 +730,7 @@ export function SeeClientContent({
                             <SelectValue placeholder='Selecione o estado' />
                           </SelectTrigger>
                           <SelectContent>
-                            {[
-                              'AC',
-                              'AL',
-                              'AP',
-                              'AM',
-                              'BA',
-                              'CE',
-                              'DF',
-                              'ES',
-                              'GO',
-                              'MA',
-                              'MS',
-                              'MT',
-                              'MG',
-                              'PA',
-                              'PB',
-                              'PR',
-                              'PE',
-                              'PI',
-                              'RJ',
-                              'RN',
-                              'RS',
-                              'RO',
-                              'RR',
-                              'SC',
-                              'SP',
-                              'SE',
-                              'TO',
-                            ].map((state) => (
+                            {states().map((state) => (
                               <SelectItem key={state} value={state}>
                                 {state}
                               </SelectItem>
