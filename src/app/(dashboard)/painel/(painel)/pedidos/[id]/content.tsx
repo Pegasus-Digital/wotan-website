@@ -105,8 +105,6 @@ export function SeeOrderContent({
     (order.client as Client) ?? null,
   )
 
-  const [selectedState, setSelectedState] = useState<string | null>(null)
-
   const form = useForm<OrderProps>({
     resolver: zodResolver(orderSchema),
     defaultValues: {
@@ -234,6 +232,7 @@ export function SeeOrderContent({
   }
 
   const [state, setState] = useState<string>(order.adress.state)
+
   const [addressRadio, setAddressRadio] = useState<
     'same' | 'alternate' | undefined
   >('same')
@@ -711,8 +710,8 @@ export function SeeOrderContent({
                             <SelectValue placeholder='Selecione a cidade' />
                           </SelectTrigger>
                           <SelectContent>
-                            {selectedState ? (
-                              cities(selectedState).map((city) => (
+                            {state ? (
+                              cities(state).map((city) => (
                                 <SelectItem key={city} value={city}>
                                   {city}
                                 </SelectItem>
@@ -742,7 +741,6 @@ export function SeeOrderContent({
                           onValueChange={(value) => {
                             setState(value)
                             field.onChange(value)
-                            setSelectedState(value)
                           }}
                           disabled={editMode}
                         >

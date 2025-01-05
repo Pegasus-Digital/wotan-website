@@ -87,7 +87,9 @@ export function SeeClientContent({
 }: SeeClientContentProps) {
   const [editMode, toggleEditMode] = useState<boolean>(!edit)
   const [isDialogOpen, setDialogOpen] = useState(false)
-  const [selectedState, setSelectedState] = useState<string | null>(null)
+  const [selectedState, setSelectedState] = useState<string | null>(
+    client.adress?.state,
+  )
 
   const router = useRouter()
 
