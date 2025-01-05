@@ -2,19 +2,58 @@
 
 import { revalidatePath } from 'next/cache'
 
+import { ActionResponse } from '@/lib/actions'
+
 import payload from 'payload'
 import { Budget } from '@/payload/payload-types'
-import { ActionResponse } from '@/lib/actions'
+
+interface EmailBudgetToCustomerProps {
+  budget: Budget
+  emailAddress: string
+}
+
+interface EmailBudgetToCustomerResponseData {}
+
+export async function emailBudgetToCustomer({
+  budget,
+  emailAddress,
+}: EmailBudgetToCustomerProps): Promise<
+  ActionResponse<EmailBudgetToCustomerResponseData>
+> {
+  try {
+    // Send budget to customer via email
+    await payload.sendEmail({
+      from: process.env.PLATFORM_EMAIL,
+      to: emailAddress,
+      subject: 'Orçamento - Wotan Brindes',
+      html: `
+      <h1>Olá cliente.</h1>
+      <p>Temos atualizações sobre seu orçamento, clique <a href='${process.env.NEXT_PUBLIC_SERVER_URL}/cliente/orcamento/${budget.id}' target='_blank'>aqui</a> para visualizar.</p>`,
+    })
+
+    await payload.update({
+      collection: 'budget',
+      id: budget.id,
+      data: {
+        status: 'enviado',
+      },
+    })
+
+    revalidatePath('/painel/orcamentos')
+  } catch (err) {
+    return {
+      data: null,
+      status: false,
+      message: '[500] Ocorreu um erro ao enviar o email.',
+    }
+  }
+}
 
 interface DeleteBudgetProps {
   budgetId: string
 }
 
 interface DeleteBudgetResponseData {}
-
-interface UpdateActionResponseData {
-  budget: Budget | null
-}
 
 export async function deleteBudget({
   budgetId,
@@ -87,6 +126,10 @@ export async function createBudget(
 interface UpdateBudgetProps {
   budget: SafeBudget
   id: Budget['id']
+}
+
+interface UpdateActionResponseData {
+  budget: Budget | null
 }
 
 export async function UpdateBudget({

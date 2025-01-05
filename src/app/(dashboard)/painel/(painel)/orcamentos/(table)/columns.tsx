@@ -2,21 +2,23 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useCallback, useEffect, useState, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 
-import { Budget, Salesperson } from '@/payload/payload-types'
+import { Budget, Client, Salesperson } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
+import { CheckCircle, Info } from 'lucide-react'
 
 import { ColumnDef } from '@tanstack/react-table'
 import { DataTableFilterField } from '@/components/table/types/table-types'
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
+import { numericFilter } from '@/components/table/hooks/use-data-table'
 
 import { Icons } from '@/components/icons'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { BudgetDocumentDownloader } from '../_components/pdf-downloader'
 
 import { Small } from '@/components/typography/texts'
@@ -48,11 +50,15 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog'
 
-import { UpdateBudget, deleteBudget } from '../_logic/actions'
+import {
+  UpdateBudget,
+  deleteBudget,
+  emailBudgetToCustomer,
+} from '../_logic/actions'
+
+import { getClients } from '../_logic/get-clients'
 import { updateBudgetStatus } from '../_logic/actions'
 import { createOrder } from '../../pedidos/_logic/actions'
-import { getClients } from '../_logic/get-clients'
-import { numericFilter } from '@/components/table/hooks/use-data-table'
 
 export const filterFields: DataTableFilterField<Budget>[] = [
   {
@@ -231,28 +237,213 @@ export function getColumns(): ColumnDef<Budget>[] {
 
       cell: ({ row }) => {
         const budget = row.original
+
         const [clients, setClients] = useState<Budget['client'][]>([])
 
         const [statusDialog, setStatusDialog] = useState(false)
         const [placeOrderDialog, setPlaceOrderDialog] = useState(false)
         const [downloaderDialog, setDownloaderDialog] = useState(false)
+        const [deleteEstimateDialog, setDeleteEstimateDialog] = useState(false)
+        const [sendEmailDialog, setSendEmailDialog] = useState(false)
 
-        function DeleteEstimateAction() {
-          const [isDeletePending, startDeleteTransition] = useTransition()
+        function SendEmailDialog() {
+          const [isEmailPending, startEmailTransition] = useTransition()
+          const [selectedEmail, setSelectedEmail] = useState<string>(
+            budget.contact.email,
+          )
+
+          function handleSendEmail() {
+            if (!selectedEmail) {
+              return toast.error('Selecione um e-mail para enviar o orçamento.')
+            }
+
+            startEmailTransition(() => {
+              toast.promise(
+                emailBudgetToCustomer({ emailAddress: selectedEmail, budget }),
+                {
+                  loading: 'Enviando...',
+                  success: 'Orçamento enviado com sucesso',
+                  error: 'Erro ao enviar orçamento...',
+                },
+              )
+            })
+
+            setSendEmailDialog(false)
+          }
+
+          const client = budget?.client as Client
 
           return (
+            <Dialog open={sendEmailDialog} onOpenChange={setSendEmailDialog}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Enviar orçamento por e-mail</DialogTitle>
+                  <DialogDescription>
+                    Nome do contato: {budget.contact.customerName}
+                  </DialogDescription>
+                </DialogHeader>
+
+                <>
+                  <Label>Selecione o email de destino</Label>
+                  <Select
+                    onValueChange={setSelectedEmail}
+                    defaultValue={budget.contact.email}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder='Selecione o e-mail de envio do orçamento' />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {/* the budget has a default contact */}
+                      <SelectItem value={budget.contact.email}>
+                        {budget.contact.email}
+                      </SelectItem>
+                      {/* If it is a registered client, it may have more contacts, so make them available */}
+                      {client &&
+                        client.contacts.map((contact) => {
+                          if (contact.email !== budget.contact.email) {
+                            return (
+                              <SelectItem
+                                key={contact.email}
+                                value={contact.email}
+                              >
+                                {contact.email}
+                              </SelectItem>
+                            )
+                          }
+                        })}
+                    </SelectContent>
+                  </Select>
+
+                  <Link
+                    href={`/cliente/orcamento/${budget.id}`}
+                    target='_blank'
+                    className={buttonVariants({
+                      variant: 'outline',
+                      className: 'items-start justify-start',
+                    })}
+                  >
+                    Clique aqui para conferir o orçamento antes de enviá-lo.
+                  </Link>
+
+                  {client ? (
+                    <div className='flex items-center gap-2 text-green-500'>
+                      <CheckCircle size={24} />
+                      <Small className='flex gap-2'>
+                        Este cliente está registrado.
+                      </Small>
+                    </div>
+                  ) : (
+                    <div className='flex items-center gap-2 text-muted-foreground'>
+                      <Info size={24} />
+                      <Small className='flex gap-2 text-sm'>
+                        Este cliente não está registrado.
+                      </Small>
+                    </div>
+                  )}
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant='outline'>Voltar</Button>
+                    </DialogClose>
+                    <Button
+                      onClick={handleSendEmail}
+                      variant='default'
+                      disabled={isEmailPending}
+                    >
+                      Enviar
+                    </Button>
+                  </DialogFooter>
+                </>
+
+                {!budget.contact && (
+                  <>
+                    <Link
+                      href={`/painel/orcamentos/${budget.incrementalId}?edit=true`}
+                      target='_blank'
+                      className={buttonVariants({
+                        variant: 'link',
+                        className: 'items-start justify-start',
+                      })}
+                    >
+                      Clique aqui para ir para a página de edição do orçamento.
+                    </Link>
+                    <DialogFooter>
+                      <DialogClose asChild>
+                        <Button variant='outline'>Voltar</Button>
+                      </DialogClose>
+                      <Button variant='default' disabled>
+                        Enviar
+                      </Button>
+                    </DialogFooter>
+                  </>
+                )}
+              </DialogContent>
+            </Dialog>
+          )
+        }
+
+        function SendEmailAction() {
+          return (
             <DropdownMenuItem
-              onClick={() => {
-                startDeleteTransition(() => {
-                  toast.promise(deleteBudget({ budgetId: budget.id }), {
-                    loading: 'Deletando...',
-                    success: 'Orçamento deletado com sucesso',
-                    error: 'Erro ao deletar orçamento...',
-                  })
-                })
-              }}
               className='cursor-pointer'
-              disabled={isDeletePending}
+              onClick={() => setSendEmailDialog(true)}
+            >
+              Enviar ao cliente
+            </DropdownMenuItem>
+          )
+        }
+
+        function DeleteEstimateDialog() {
+          const [isDeletePending, startDeleteTransition] = useTransition()
+
+          function handleDeleteEstimate() {
+            startDeleteTransition(() => {
+              toast.promise(deleteBudget({ budgetId: budget.id }), {
+                loading: 'Deletando...',
+                success: 'Orçamento deletado com sucesso',
+                error: 'Erro ao deletar orçamento...',
+              })
+            })
+
+            setDeleteEstimateDialog(false)
+          }
+
+          return (
+            <Dialog
+              open={deleteEstimateDialog}
+              onOpenChange={setDeleteEstimateDialog}
+            >
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Deletar orçamento</DialogTitle>
+                  <DialogDescription>
+                    Esta ação não é reversível.
+                  </DialogDescription>
+                </DialogHeader>
+                Você tem certeza que quer deletar este orçamento?
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button disabled={isDeletePending} variant='default'>
+                      Voltar
+                    </Button>
+                  </DialogClose>
+                  <Button
+                    onClick={handleDeleteEstimate}
+                    disabled={isDeletePending}
+                    variant='outline'
+                  >
+                    Deletar
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )
+        }
+
+        function DeleteEstimateAction() {
+          return (
+            <DropdownMenuItem
+              className='cursor-pointer'
+              onClick={() => setDeleteEstimateDialog(true)}
             >
               Deletar orçamento
             </DropdownMenuItem>
@@ -273,7 +464,7 @@ export function getColumns(): ColumnDef<Budget>[] {
                 <DialogHeader>
                   <DialogTitle>Fazer pedido</DialogTitle>
                 </DialogHeader>
-                <DialogDescription className='font-bold'>
+                <DialogDescription className='font-medium'>
                   Antes, precisamos confirmar o Cliente e Contato.
                 </DialogDescription>
                 <div className='grid gap-1'>
@@ -568,7 +759,6 @@ export function getColumns(): ColumnDef<Budget>[] {
           return (
             <DropdownMenuItem
               className='cursor-pointer'
-              // disabled={isChangeStatusPending}
               onClick={() => setStatusDialog(true)}
             >
               Alterar status
@@ -641,13 +831,15 @@ export function getColumns(): ColumnDef<Budget>[] {
                 <DropdownMenuSeparator />
                 <ChangeBudgetStatusAction />
                 <PlaceOrderAction />
-
                 <DeleteEstimateAction />
+                <SendEmailAction />
               </DropdownMenuContent>
             </DropdownMenu>
             <BudgetDocumentDownloaderDialog />
             <ChangeBudgetStatusDialog />
             <PlaceOrderDialog />
+            <DeleteEstimateDialog />
+            <SendEmailDialog />
           </div>
         )
       },

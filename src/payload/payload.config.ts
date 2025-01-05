@@ -78,6 +78,24 @@ export default buildConfig({
       handler: seed,
     },
   ],
+  email: {
+    fromName: 'Wotan Email Service',
+    fromAddress: 'wotan@test.com',
+
+    // Allow testing email service locally
+    logMockCredentials: true,
+
+    // SMTP Config
+    // transportOptions: {
+    //   host: process.env.SMTP_HOST,
+    //   auth: {
+    //     user: process.env.SMTP_USER,
+    //     pass: process.env.SMTP_PASS
+    //   },
+    //   port: 587,
+    //   secure: false,
+    // }
+  },
   plugins: [
     nestedDocs({
       collections: ['categories'],

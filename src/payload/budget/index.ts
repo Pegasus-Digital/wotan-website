@@ -1,8 +1,6 @@
 import type { CollectionConfig } from 'payload/types'
-import {
-  assignIncrementalId,
-  generateIncrementalId,
-} from '../utilities/genIncrementalId'
+import { assignIncrementalId } from '../utilities/genIncrementalId'
+import { onBudgetFromWebsite } from '../hooks/onBudgetFromWebsite'
 // import { clearUserCart } from './hooks/clearUserCart'
 // import { populateOrderedBy } from './hooks/populateOrderedBy'
 // import { updateUserPurchases } from './hooks/updateUserPurchases'
@@ -18,6 +16,7 @@ const Budget: CollectionConfig = {
   },
   hooks: {
     beforeChange: [assignIncrementalId],
+    afterChange: [onBudgetFromWebsite],
   },
   // access: {
   //   read: adminsOrOrderedBy,

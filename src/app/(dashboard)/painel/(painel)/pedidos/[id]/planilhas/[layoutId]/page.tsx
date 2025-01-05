@@ -2,8 +2,6 @@ import { Heading } from '@/pegasus/heading'
 import { LayoutContent } from './content'
 import { getLayoutById, getOrderByIncrementalId } from '../../../_logic/queries'
 
-// import { useSearchParams } from 'next/navigation'
-
 export default async function SeeBudget({
   params: { layoutId, id },
   searchParams: { edit },
@@ -15,9 +13,20 @@ export default async function SeeBudget({
     return <Heading>Layout de produto não encontrado</Heading>
   }
 
-  return (
-    // <div>
-    <LayoutContent order={order} edit={edit} layout={layout} />
-    // </div>
-  )
+  return <LayoutContent order={order} edit={edit} layout={layout} />
+}
+
+export async function generateMetadata({
+  params: { id },
+  searchParams: { edit },
+}) {
+  if (edit) {
+    return {
+      title: `Editar planilha nº: ${id}`,
+    }
+  }
+
+  return {
+    title: `Planilha nº: ${id}`,
+  }
 }

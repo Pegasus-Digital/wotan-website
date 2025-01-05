@@ -6,7 +6,6 @@ import { Budget } from '@/payload/payload-types'
 
 import { LoadingSpinner } from '@/components/spinner'
 import { BudgetDocument } from '@/lib/pdf-generator/templates/budget'
-import { ContentLayout } from '@/components/painel-sistema/content-layout'
 
 const PDFViewer = dynamic(
   () => import('@react-pdf/renderer').then((mod) => mod.PDFViewer),
@@ -18,17 +17,19 @@ const PDFViewer = dynamic(
 
 interface BudgetDocumentContentProps {
   budget: Budget
+  showToolbar?: boolean
 }
 
-export function BudgetDocumentContent({ budget }: BudgetDocumentContentProps) {
+export function ClientBudgetContent({
+  budget,
+  showToolbar = false,
+}: BudgetDocumentContentProps) {
   return (
-    <ContentLayout title={`Orçamento n° ${budget.incrementalId}`}>
-      <PDFViewer
-        className='min-h-[90vh] w-full flex-1 animate-fade-in'
-        showToolbar={false}
-      >
-        <BudgetDocument budget={budget} />
-      </PDFViewer>
-    </ContentLayout>
+    <PDFViewer
+      className='min-h-[90vh] w-full flex-1 animate-fade-in'
+      showToolbar={showToolbar}
+    >
+      <BudgetDocument budget={budget} />
+    </PDFViewer>
   )
 }

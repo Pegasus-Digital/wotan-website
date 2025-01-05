@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { formatCNPJ, formatCPF } from '@/lib/format'
 
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -18,8 +19,8 @@ import {
 
 import { Client, Salesperson } from '@/payload/payload-types'
 
+import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { format, formatRelative } from 'date-fns'
 
 import { Icons } from '@/components/icons'
 import { Heading } from '@/pegasus/heading'
@@ -28,9 +29,9 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Calendar } from '@/components/ui/calendar'
 import { Separator } from '@/components/ui/separator'
-import { Content, ContentHeader } from '@/components/content'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { ContentLayout } from '@/components/painel-sistema/content-layout'
 
 import {
   Popover,
@@ -69,7 +70,6 @@ import {
 
 import { updateClient } from '../_logic/actions'
 import { clientSchema } from '../_logic/validations'
-import { ContentLayout } from '@/components/painel-sistema/content-layout'
 
 interface SeeClientContentProps {
   edit: boolean
@@ -145,7 +145,8 @@ export function SeeClientContent({
       status,
     } = values
 
-    const numericDocument = document.replace(/\D/g, '') // Strip non-numeric characters
+    // Document without special characters
+    const numericDocument = document.replace(/\D/g, '')
 
     if (
       (type === 'company' && numericDocument.length !== 14) ||
@@ -153,8 +154,8 @@ export function SeeClientContent({
     ) {
       toast.error(
         type === 'company'
-          ? 'CNPJ deve ter 14 dígitos'
-          : 'CPF deve ter 11 dígitos',
+          ? 'CNPJ não está formatado corretamente'
+          : 'CPF não está formatado corretamente',
       )
       return
     }
@@ -190,37 +191,16 @@ export function SeeClientContent({
     return
   }
 
-  function formatDocument(value, type) {
-    const numericValue = value.replace(/\D/g, '')
-
+  function formatDocument(value: string, type: string) {
     if (type === 'company') {
-      // CNPJ: 00.000.000/0000-00
-      return numericValue
-        .replace(/^(\d{2})(\d)/, '$1.$2')
-        .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
-        .replace(/\.(\d{3})(\d)/, '.$1/$2')
-        .replace(/(\d{4})(\d)/, '$1-$2')
-        .slice(0, 18)
-    } else {
-      // CPF: 000.000.000-00
-      return numericValue
-        .replace(/^(\d{3})(\d)/, '$1.$2')
-        .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
-        .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
-        .slice(0, 14)
-    }
+      return formatCNPJ(value)
+    } else return formatCPF(value)
   }
 
   const type = watch('type')
   const name = watch('name')
 
   return (
-    // <Content>
-    //   <ContentHeader
-    //     title={`${edit ? 'Editar c' : 'C'}liente`}
-    //     description={`Criado em ${formatRelative(client.createdAt, new Date(), { locale: ptBR })}`}
-    //   />
-    //   <Separator className='mb-4' />
     <ContentLayout
       title={`${edit ? 'Editar c' : 'C'}liente`}
       navbarButtons={
@@ -294,7 +274,10 @@ export function SeeClientContent({
                   <FormLabel>Tipo</FormLabel>
                   <FormControl>
                     <RadioGroup
-                      onValueChange={field.onChange}
+                      onValueChange={(e) => {
+                        field.onChange(e)
+                        form.setValue('document', client.document)
+                      }}
                       disabled={editMode}
                       value={field.value}
                       className='flex items-center space-x-4'
@@ -343,9 +326,8 @@ export function SeeClientContent({
                               : '___.___.___-__'
                           }
                           value={formatDocument(field.value, type)}
-                          onChange={(e) =>
-                            field.onChange(e.target.value.replace(/\D/g, ''))
-                          }
+                          onChange={field.onChange}
+                          maxLength={type === 'company' ? 18 : 14}
                         />
                       )}
                     />
