@@ -26,7 +26,7 @@ export function ClientBudgetContent({
 }: BudgetDocumentContentProps) {
   return (
     <PDFViewer
-      className='min-h-[90vh] w-full flex-1 animate-fade-in'
+      className='min-h-[100vh] w-full flex-1 animate-fade-in'
       showToolbar={showToolbar}
     >
       <BudgetDocument budget={budget} />

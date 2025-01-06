@@ -23,10 +23,9 @@ export async function getBudgetById({
       id,
       collection: 'budget',
     })
-    console.log('Achei')
     return { data: budget }
   } catch (err) {
-    console.log('Error')
+    console.log('Error: Finding budget')
     return { data: null }
   }
 }

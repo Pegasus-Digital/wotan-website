@@ -80,21 +80,22 @@ export default buildConfig({
   ],
   email: {
     fromName: 'Wotan Email Service',
-    fromAddress: 'wotan@test.com',
+    fromAddress: process.env.SMTP_EMAIL,
 
     // Allow testing email service locally
-    logMockCredentials: true,
+    // logMockCredentials: true,
 
     // SMTP Config
-    // transportOptions: {
-    //   host: process.env.SMTP_HOST,
-    //   auth: {
-    //     user: process.env.SMTP_USER,
-    //     pass: process.env.SMTP_PASS
-    //   },
-    //   port: 587,
-    //   secure: false,
-    // }
+    transportOptions: {
+      host: process.env.SMTP_HOST,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+      port: Number(process.env.SMTP_PORT),
+      secure: Number(process.env.SMTP_PORT) === 465,
+      requireTLS: true,
+    },
   },
   plugins: [
     nestedDocs({

@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { ActionResponse } from '@/lib/actions'
 
 import payload from 'payload'
-import { Budget } from '@/payload/payload-types'
+import { Budget, Salesperson } from '@/payload/payload-types'
 
 interface EmailBudgetToCustomerProps {
   budget: Budget
@@ -20,16 +20,57 @@ export async function emailBudgetToCustomer({
 }: EmailBudgetToCustomerProps): Promise<
   ActionResponse<EmailBudgetToCustomerResponseData>
 > {
+  const salespersonEmail = (budget.salesperson as Salesperson).email
+  const salespersonName = (budget.salesperson as Salesperson).name
+
   try {
     // Send budget to customer via email
     await payload.sendEmail({
-      from: process.env.PLATFORM_EMAIL,
+      // sender: `${process.env.SMTP_EMAIL}`,
+      from: `${salespersonName} <${salespersonEmail}>`,
+      replyTo: `${salespersonName} <${salespersonEmail}>`,
       to: emailAddress,
       subject: 'Orçamento - Wotan Brindes',
       html: `
-      <h1>Olá cliente.</h1>
-      <p>Temos atualizações sobre seu orçamento, clique <a href='${process.env.NEXT_PUBLIC_SERVER_URL}/cliente/orcamento/${budget.id}' target='_blank'>aqui</a> para visualizar.</p>`,
+          <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f9f9f9;">
+            <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" style="max-width: 600px; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+              <tr>
+                <td style="background-color: #CC0F4B; padding: 20px; text-align: center; color: #ffffff;">
+                  <img src="${process.env.NEXT_PUBLIC_SERVER_URL}/media/logo2017.png" alt="Wotan Brindes Logo" style="width: 320px; height: auto; margin-bottom: 10px;" />
+                  <p style="margin: 5px 0; font-size: 16px;">Soluções personalizadas para a sua marca</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding: 20px; color: #333333; font-size: 16px; line-height: 1.6;">
+                  <p>Olá,</p>
+                  <p>
+                    Temos novidades sobre o seu orçamento! Para visualizar os detalhes e acompanhar as informações, clique no botão abaixo:
+                  </p>
+                  <p style="text-align: center; margin: 30px 0;">
+                    <a href="${process.env.NEXT_PUBLIC_SERVER_URL}/orcamento/${budget.id}" target="_blank" style="display: inline-block; background-color: #CC0F4B; color: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; font-size: 16px;">
+                      Ver Detalhes do Orçamento
+                    </a>
+                  </p>
+                  <p>
+                    Caso precise de mais informações ou tenha alguma dúvida, nossa equipe está à disposição para ajudar. Não hesite em entrar em contato conosco.
+                  </p>
+                  <p>Atenciosamente,</p>
+                  <p><strong>Equipe Wotan Brindes</strong></p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background-color: #f4f4f4; padding: 15px; text-align: center; font-size: 12px; color: #888888;">
+                  <p>Este é um email automático enviado por Wotan Brindes. Por favor, não responda diretamente a este email.</p>
+                  <p>© 2025 Wotan Brindes - Todos os direitos reservados.</p>
+                  <p><a href="https://wotanbrindes.com.br" style="color: #004080; text-decoration: none;">Visite nosso site</a></p>
+                </td>
+              </tr>
+            </table>
+          </body>
+      `,
     })
+
+    // console.log('Email sent.')
 
     await payload.update({
       collection: 'budget',
@@ -41,6 +82,7 @@ export async function emailBudgetToCustomer({
 
     revalidatePath('/painel/orcamentos')
   } catch (err) {
+    console.error(err)
     return {
       data: null,
       status: false,
