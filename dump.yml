@@ -24,6 +24,7 @@ services:
       - --bind_ip_all
     volumes:
       - data:/data/db
+      - ./dump:/dump
     logging:
       driver: none
     networks:

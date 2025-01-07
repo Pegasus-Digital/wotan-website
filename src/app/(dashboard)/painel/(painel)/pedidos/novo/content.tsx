@@ -13,19 +13,19 @@ import {
 
 import { toast } from 'sonner'
 import { parseValue } from '@/lib/format'
-import { BRAZIL_STATES } from '@/lib/brazil-states'
+import { cities, states } from 'estados-cidades'
 
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, useFormState, useFieldArray } from 'react-hook-form'
 
 import { Heading } from '@/pegasus/heading'
-import { P } from '@/components/typography/texts'
 
 import { Icons } from '@/components/icons'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { P } from '@/components/typography/texts'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
 import { Separator } from '@/components/ui/separator'
@@ -96,6 +96,7 @@ export function NewOrderContent({
   const [addProductDialog, setAddProductDialog] = useState<boolean>(false)
 
   const [selectedClient, setSelectedClient] = useState<Client | null>(null)
+  const [selectedState, setSelectedState] = useState<string | null>(null)
 
   const form = useForm<OrderProps>({
     resolver: zodResolver(orderSchema),
@@ -584,7 +585,27 @@ export function NewOrderContent({
                     <FormItem>
                       <FormLabel>Cidade</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value ?? ''}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder='Selecione a cidade' />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {selectedState ? (
+                              cities(selectedState).map((city) => (
+                                <SelectItem key={city} value={city}>
+                                  {city}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <SelectItem value={'unselected'}>
+                                Selecione o estado primeiro
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -600,16 +621,17 @@ export function NewOrderContent({
                       <FormControl>
                         <Select
                           value={state}
-                          onValueChange={(newState) => {
-                            setState(newState)
-                            field.onChange(newState)
+                          onValueChange={(value) => {
+                            setState(value)
+                            field.onChange(value)
+                            setSelectedState(value)
                           }}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder='Selecione o estado' />
                           </SelectTrigger>
                           <SelectContent>
-                            {BRAZIL_STATES.map((state) => (
+                            {states().map((state) => (
                               <SelectItem key={state} value={state}>
                                 {state}
                               </SelectItem>

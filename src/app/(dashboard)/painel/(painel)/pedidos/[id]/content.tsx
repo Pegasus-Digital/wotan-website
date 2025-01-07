@@ -13,7 +13,7 @@ import {
 } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
-import { BRAZIL_STATES } from '@/lib/brazil-states'
+import { cities, states } from 'estados-cidades'
 
 import { object, z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -232,6 +232,7 @@ export function SeeOrderContent({
   }
 
   const [state, setState] = useState<string>(order.adress.state)
+
   const [addressRadio, setAddressRadio] = useState<
     'same' | 'alternate' | undefined
   >('same')
@@ -700,7 +701,28 @@ export function SeeOrderContent({
                     <FormItem>
                       <FormLabel>Cidade</FormLabel>
                       <FormControl>
-                        <Input {...field} disabled={editMode} />
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value ?? ''}
+                          disabled={editMode}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder='Selecione a cidade' />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {state ? (
+                              cities(state).map((city) => (
+                                <SelectItem key={city} value={city}>
+                                  {city}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <SelectItem value={'unselected'}>
+                                Selecione o estado primeiro
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -716,9 +738,9 @@ export function SeeOrderContent({
                       <FormControl>
                         <Select
                           value={state}
-                          onValueChange={(newState) => {
-                            setState(newState)
-                            field.onChange(newState)
+                          onValueChange={(value) => {
+                            setState(value)
+                            field.onChange(value)
                           }}
                           disabled={editMode}
                         >
@@ -726,7 +748,7 @@ export function SeeOrderContent({
                             <SelectValue placeholder='Selecione o estado' />
                           </SelectTrigger>
                           <SelectContent>
-                            {BRAZIL_STATES.map((state) => (
+                            {states().map((state) => (
                               <SelectItem key={state} value={state}>
                                 {state}
                               </SelectItem>

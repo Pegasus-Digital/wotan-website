@@ -55,6 +55,16 @@ export function formatCNPJ(value: string) {
   return formattedCNPJ
 }
 
+export function formatCPF(value: string) {
+  const numericValue = value.replace(/\D/g, '') // Remove tudo que não for número
+
+  return numericValue
+    .replace(/^(\d{3})(\d)/, '$1.$2')
+    .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+    .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+    .slice(0, 14)
+}
+
 export function formatPhoneNumber(value: string) {
   const phoneNumber = value // <-- nº de celular não formatado
 

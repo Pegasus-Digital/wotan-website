@@ -1,10 +1,10 @@
 'use client'
 
 import { Content, ContentHeader } from '@/components/content'
-import { Separator } from '@/components/ui/separator'
 import { Salesperson } from '@/payload/payload-types'
 import { ContentLayout } from '@/components/painel-sistema/content-layout'
 import { useForm, useFormState, useFieldArray } from 'react-hook-form'
+import { states, cities } from 'estados-cidades'
 
 import { Icons } from '@/components/icons'
 import { Heading } from '@/pegasus/heading'
@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import { Textarea } from '@/components/ui/textarea'
+import { Separator } from '@/components/ui/separator'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
@@ -50,6 +51,7 @@ import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
 
 interface NewClientContentProps {
   salespeople: Salesperson[]
@@ -59,6 +61,8 @@ type ClientProps = z.infer<typeof clientSchema>
 
 export function NewClientContent({ salespeople }: NewClientContentProps) {
   const router = useRouter()
+
+  const [selectedState, setSelectedState] = useState<string | null>(null)
 
   const form = useForm<ClientProps>({
     resolver: zodResolver(clientSchema),
@@ -540,7 +544,7 @@ export function NewClientContent({ salespeople }: NewClientContentProps) {
               />
 
               <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
-                <FormField
+                {/* <FormField
                   control={form.control}
                   name='adress.city'
                   render={({ field }) => (
@@ -548,6 +552,40 @@ export function NewClientContent({ salespeople }: NewClientContentProps) {
                       <FormLabel>Cidade</FormLabel>
                       <FormControl>
                         <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                /> */}
+
+                <FormField
+                  control={form.control}
+                  name='adress.city'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cidade</FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value ?? ''}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder='Selecione a cidade' />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {selectedState ? (
+                              cities(selectedState).map((city) => (
+                                <SelectItem key={city} value={city}>
+                                  {city}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <SelectItem value={'unselected'}>
+                                Selecione o estado primeiro
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -562,42 +600,17 @@ export function NewClientContent({ salespeople }: NewClientContentProps) {
                       <FormLabel>Estado</FormLabel>
                       <FormControl>
                         <Select
-                          onValueChange={field.onChange}
+                          onValueChange={(value) => {
+                            field.onChange(value)
+                            setSelectedState(value)
+                          }}
                           value={field.value ?? ''}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder='Selecione o estado' />
                           </SelectTrigger>
                           <SelectContent>
-                            {[
-                              'AC',
-                              'AL',
-                              'AP',
-                              'AM',
-                              'BA',
-                              'CE',
-                              'DF',
-                              'ES',
-                              'GO',
-                              'MA',
-                              'MS',
-                              'MT',
-                              'MG',
-                              'PA',
-                              'PB',
-                              'PR',
-                              'PE',
-                              'PI',
-                              'RJ',
-                              'RN',
-                              'RS',
-                              'RO',
-                              'RR',
-                              'SC',
-                              'SP',
-                              'SE',
-                              'TO',
-                            ].map((state) => (
+                            {states().map((state) => (
                               <SelectItem key={state} value={state}>
                                 {state}
                               </SelectItem>

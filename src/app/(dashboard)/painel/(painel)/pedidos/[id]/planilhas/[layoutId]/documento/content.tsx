@@ -2,15 +2,11 @@
 
 import dynamic from 'next/dynamic'
 
-import { OrderDocument } from '@/lib/pdf-generator/templates/order'
-
-import { Content, ContentHeader } from '@/components/content'
-import { LoadingSpinner } from '@/components/spinner'
 import { Layout, Order } from '@/payload/payload-types'
-import { ProductionDocument } from '@/lib/pdf-generator/templates/production'
-import { formatRelative } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
+
+import { LoadingSpinner } from '@/components/spinner'
 import { ContentLayout } from '@/components/painel-sistema/content-layout'
+import { ProductionDocument } from '@/lib/pdf-generator/templates/production'
 
 const PDFViewer = dynamic(
   () => import('@react-pdf/renderer').then((mod) => mod.PDFViewer),
@@ -41,14 +37,9 @@ export function LayoutDocumentContent({
     return null
   })
   return (
-    // <Content className='flex flex-col'>
-    //   <ContentHeader
-    //     title={`Planilha de produção`}
-    //     description={`Gerado em ${formatRelative(order.updatedAt, new Date(), { locale: ptBR })}`}
-    //   />
     <ContentLayout title={`Planilha de produção`}>
       <PDFViewer
-        className='mt-2 w-full flex-1 animate-fade-in'
+        className='min-h-[90vh] w-full flex-1 animate-fade-in'
         showToolbar={false}
       >
         <ProductionDocument layoutItem={item} order={order} />

@@ -69,13 +69,13 @@ export async function updateClient(
   id: string,
 ): Promise<ActionResponse<UpdateActionResponseData>> {
   try {
-    const response = await payload.update({
+    const updatedClient = await payload.update({
+      id,
       collection: 'clients',
-      where: { id: { equals: id } },
-      data: { ...client, id },
+      data: { ...client },
     })
 
-    if (response.errors.length > 0) {
+    if (!updatedClient) {
       // console.error(response.errors)
 
       return {
@@ -86,9 +86,10 @@ export async function updateClient(
     }
 
     revalidatePath('/painel/clientes')
+    revalidatePath('/painel/orcamentos')
 
     return {
-      data: { client: response.docs[0] },
+      data: { client: updatedClient },
       status: true,
       message: 'Cliente atualizado com sucesso.',
     }
