@@ -62,5 +62,8 @@ export async function POST(request: NextRequest, response: NextResponse) {
     limit: 20,
   })
 
+  if (products?.docs) {
+    products.docs.reverse()
+  }
   return Response.json(products)
 }
