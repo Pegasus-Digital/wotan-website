@@ -69,6 +69,7 @@ export const clientSchema = z.object({
     'prospect',
     'website',
     'other',
+    'migration',
   ]),
   status: z.enum(['active', 'inactive', 'prospect']),
 })

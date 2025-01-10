@@ -43,6 +43,7 @@ const Clients: CollectionConfig = {
               name: 'document',
               type: 'text',
             },
+            { name: 'stateIncription', type: 'text' }
           ],
         },
         {
@@ -124,6 +125,7 @@ const Clients: CollectionConfig = {
           label: 'Outro',
           value: 'other',
         },
+        { label: 'Migração', value: 'migration' }
       ],
     },
     {

@@ -64,7 +64,10 @@ export const filterFields: DataTableFilterField<Client>[] = [
     label: 'Documento',
     value: 'document',
     placeholder: 'Filtrar por documento...',
+    
   },
+  
+  
 ]
 
 export function getColumns({
@@ -110,17 +113,17 @@ export function getColumns({
       accessorKey: 'document',
       header: 'Documento',
       cell: ({ row }) => {
-        const value: string = row.getValue('document')
+        const original= row.original
 
-        if (!value) return null
+        if (!original.document) return null
 
         // Check if it's a CPF (11 digits) or CNPJ (14 digits)
-        if (value.length === 11) {
+        if (original.type === 'individual') {
           // Format CPF
-          return value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4')
-        } else if (value.length === 14) {
+          return original.document.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4')
+        } else if (original.type === 'company') {
           // Format CNPJ
-          return value.replace(
+          return original.document.replace(
             /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
             '$1.$2.$3/$4-$5',
           )
@@ -129,6 +132,8 @@ export function getColumns({
           return 'Documento inválido'
         }
       },
+      // enableColumnFilter: false,
+      filterFn: () =>{ return true}
     },
     {
       id: 'salesperson',

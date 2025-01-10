@@ -6,7 +6,7 @@ import { DataTableSkeleton } from '@/components/table/data-table-skeleton'
 import { ClientsContent } from './content'
 
 import { getClients } from './_logic/queries'
-import { ISearchParams, searchParamsSchema } from '@/lib/validations'
+import { ISearchParams, clientParamsSchema } from '@/lib/validations'
 
 // This page is meant to be responsible for SEO, data fetching and/or other asynchronous functions
 
@@ -19,7 +19,7 @@ interface ProductsPageProps {
 }
 
 export default function Products({ searchParams }: ProductsPageProps) {
-  const search = searchParamsSchema.parse(searchParams)
+  const search = clientParamsSchema.parse(searchParams)
 
   const clientsPromise = getClients(search)
 
