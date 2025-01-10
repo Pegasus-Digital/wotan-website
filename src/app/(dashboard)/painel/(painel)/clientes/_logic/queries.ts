@@ -11,25 +11,31 @@ function formatDocument(input: string): {
   cpf: string;
   cnpj: string;
 } {
-  // Remove all non-numeric characters
-  const cleaned = input.replace(/[^0-9]/g, '');
+  const len = input.length
+  // console.log('toaq')
 
-  // Ensure length is between 3 and 14
-  if (cleaned.length < 3 || cleaned.length > 14) {
-    throw new Error('Input must contain between 3 and 14 characters.');
+  // // Ensure length is between 3 and 14
+  if (len < 3 || len > 14) {
+    // console.log('toaq2')
+
+    return { cpf: '', cnpj: '' };
   }
 
+  // console.log('toaq3')
+
+
+
   // Pad with zeros to ensure 11 digits for CPF and 14 for CNPJ
-  const paddedForCPF = cleaned.padEnd(11, '0').slice(0, 11);
-  const paddedForCNPJ = cleaned.padEnd(14, '0').slice(0, 14);
+  const paddedForCPF = input.padEnd(11, '0');
+  const paddedForCNPJ = input.padEnd(14, '0');
 
   // Format as CPF
   const cpfFull = `${paddedForCPF.slice(0, 3)}.${paddedForCPF.slice(3, 6)}.${paddedForCPF.slice(6, 9)}-${paddedForCPF.slice(9, 11)}`;
-  const cpf = cpfFull.slice(0, cleaned.length);
+  const cpf = cpfFull.slice(0, len);
 
   // Format as CNPJ
   const cnpjFull = `${paddedForCNPJ.slice(0, 2)}.${paddedForCNPJ.slice(2, 5)}.${paddedForCNPJ.slice(5, 8)}/${paddedForCNPJ.slice(8, 12)}-${paddedForCNPJ.slice(12, 14)}`;
-  const cnpj = cnpjFull.slice(0, cleaned.length);
+  const cnpj = cnpjFull.slice(0, len);
 
   return { cpf, cnpj };
 }
@@ -46,10 +52,10 @@ export async function getClients(
 
     const cleanDoc = document ? document.replace(/[^0-9]/g, '') : undefined
     // console.log('clean: ', cleanDoc)
-    const { cnpj: tryCNPJ, cpf: tryCPF } = formatDocument(cleanDoc)
+    const { cnpj: tryCNPJ, cpf: tryCPF } = formatDocument(cleanDoc !== undefined ? cleanDoc : '')
 
-    console.log('cpf:', tryCPF)
-    console.log('cnpj:', tryCNPJ)
+    // console.log('cpf:', tryCPF)
+    // console.log('cnpj:', tryCNPJ)
 
 
     const whereQuery = (cleanDoc !== undefined && cleanDoc.length > 3) ? {
@@ -83,7 +89,7 @@ export async function getClients(
       sort,
     })
 
-    console.log('data:', response.docs)
+    // console.log('data:', response.docs)
 
     return {
       data: response.docs,
