@@ -352,15 +352,15 @@ export function SeeClientContent({
                       field.onChange(value)
                       // setSalespersonId(value)
                     }}
-                    disabled={editMode}
+                    disabled
                     value={field.value}
                   >
                     <SelectTrigger className='disabled:opacity-100'>
                       {editMode && typeof client.salesperson === 'object' ? (
                         <div className='flex items-center space-x-2'>
                           {client.salesperson.avatar &&
-                          typeof client.salesperson.avatar === 'object' &&
-                          client.salesperson.avatar.url ? (
+                            typeof client.salesperson.avatar === 'object' &&
+                            client.salesperson.avatar.url ? (
                             <Image
                               width={20}
                               height={20}
@@ -453,7 +453,7 @@ export function SeeClientContent({
                         disabled={(date) =>
                           date > new Date() || date < new Date('1900-01-01')
                         }
-                        // initialFocus
+                      // initialFocus
                       />
                     </PopoverContent>
                   </Popover>

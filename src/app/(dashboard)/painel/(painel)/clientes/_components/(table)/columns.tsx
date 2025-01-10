@@ -60,14 +60,15 @@ import {
 import { DataTableColumnHeader } from '@/components/table/data-table-column-header'
 
 export const filterFields: DataTableFilterField<Client>[] = [
+  { label: 'Razão social', value: 'razaosocial', placeholder: 'Filtrar pela razão social...' },
   {
     label: 'Documento',
     value: 'document',
     placeholder: 'Filtrar por documento...',
-    
+
   },
-  
-  
+
+
 ]
 
 export function getColumns({
@@ -76,44 +77,25 @@ export function getColumns({
   salespeople: Salesperson[]
 }): ColumnDef<Client>[] {
   return [
-    // {
-    //   id: 'select',
-    //   header: ({ table }) => (
-    //     <Checkbox
-    //       // @ts-ignore TODO: Solve this TypeScript error
-    //       checked={
-    //         table.getIsAllPageRowsSelected() ||
-    //         (table.getIsSomePageRowsSelected() && 'indeterminate')
-    //       }
-    //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-    //       aria-label='Select all'
-    //     />
-    //   ),
-    //   cell: ({ row }) => (
-    //     <Checkbox
-    //       checked={row.getIsSelected()}
-    //       onCheckedChange={(value) => row.toggleSelected(!!value)}
-    //       aria-label='Select row'
-    //     />
-    //   ),
-    //   enableSorting: false,
-    //   enableHiding: false,
-    // },
     {
       accessorKey: 'razaosocial',
-      header: 'Nome/Razão social',
+      // id: 'nomeOrRazao',
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title='Razão Social/Nome' />
+      ),
       cell: ({ row }) => {
         const value = row.original
         const { razaosocial, name } = value
 
-        return razaosocial ? razaosocial : name
+        return razaosocial ? razaosocial : `Nome: ${name}`
       },
+      filterFn: () => { return true }
     },
     {
       accessorKey: 'document',
       header: 'Documento',
       cell: ({ row }) => {
-        const original= row.original
+        const original = row.original
 
         if (!original.document) return null
 
@@ -133,7 +115,7 @@ export function getColumns({
         }
       },
       // enableColumnFilter: false,
-      filterFn: () =>{ return true}
+      filterFn: () => { return true }
     },
     {
       id: 'salesperson',
@@ -305,8 +287,8 @@ export function getColumns({
                   {typeof client.salesperson === 'object' && (
                     <div className='flex items-center space-x-2 justify-self-center'>
                       {client.salesperson.avatar &&
-                      typeof client.salesperson.avatar === 'object' &&
-                      client.salesperson.avatar.url ? (
+                        typeof client.salesperson.avatar === 'object' &&
+                        client.salesperson.avatar.url ? (
                         <Image
                           width={20}
                           height={20}
@@ -410,7 +392,7 @@ export function getColumns({
             <DropdownMenuItem
               onClick={() => setDialogTransferState(true)}
               className='cursor-pointer'
-              // disabled={isTransferPending}
+            // disabled={isTransferPending}
             >
               Transferir cliente
             </DropdownMenuItem>

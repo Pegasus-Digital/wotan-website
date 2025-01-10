@@ -19,7 +19,6 @@ export const clientParamsSchema = z.object({
   per_page: z.coerce.number().default(10),
   sort: z.string().optional(),
   document: z.string().default(''),
-  status: z.string().optional(),
-  priority: z.string().optional(),
-  operator: z.string().optional(),
+  salesperson: z.string().default(''),
+  razaosocial: z.string().default(''),
 })

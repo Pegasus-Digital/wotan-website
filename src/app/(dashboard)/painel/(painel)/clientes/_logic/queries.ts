@@ -46,7 +46,7 @@ export async function getClients(
   noStore()
 
   try {
-    const { page, per_page, sort, document } = searchParams
+    const { page, per_page, sort, document, razaosocial, salesperson } = searchParams
 
     // console.log('doc:', document)
 
@@ -57,35 +57,59 @@ export async function getClients(
     // console.log('cpf:', tryCPF)
     // console.log('cnpj:', tryCNPJ)
 
+    let whereOr = []
 
-    const whereQuery = (cleanDoc !== undefined && cleanDoc.length > 3) ? {
-      // document: { contains: cleanDoc ? cleanDoc : '' },
-      or: [
-        {
-          document: {
-            contains: cleanDoc ? cleanDoc : ''
-          },
+    if (cleanDoc !== undefined && cleanDoc.length > 3) {
+      whereOr.push({
+        document: {
+          contains: cleanDoc ? cleanDoc : ''
         },
-        {
-          document: {
-            contains: tryCPF ? tryCPF : '',
-          },
-        },
-        {
+      },)
+
+      if (tryCNPJ !== undefined) {
+        whereOr.push({
           document: {
             contains: tryCNPJ ? tryCNPJ : '',
           },
-        },
-      ],
-    } : undefined
+        },)
+      }
+      if (tryCPF !== undefined) {
+        whereOr.push({
+          document: {
+            contains: tryCPF ? tryCPF : '',
+          },
+        },)
+      }
+    }
 
-    // console.log('where: ', whereQuery)
+    // console.log('razao:', razaosocial)
+
+    if (razaosocial !== undefined && razaosocial.length > 3) {
+      whereOr.push(
+        {
+          razaosocial: {
+            contains: razaosocial ? razaosocial : '',
+          },
+        },
+        {
+          name: {
+            contains: razaosocial ? razaosocial : '',
+          },
+        }
+      )
+    }
+
+    // console.log(whereOr)
+
+
+
+
 
     const response = await payload.find({
       collection: 'clients',
       page,
       limit: per_page,
-      where: whereQuery,
+      where: { or: whereOr },
       sort,
     })
 
