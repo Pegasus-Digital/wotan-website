@@ -378,6 +378,8 @@ export function NewClientContent({ salespeople }: NewClientContentProps) {
                         <SelectItem value='prospect'>Prospecção</SelectItem>
                         <SelectItem value='website'>Site</SelectItem>
                         <SelectItem value='other'>Outro</SelectItem>
+                        <SelectItem value='migration'>Migração de dados</SelectItem>
+
                       </SelectContent>
                     </Select>
                   </FormControl>

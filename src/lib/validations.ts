@@ -13,3 +13,13 @@ export const searchParamsSchema = z.object({
   priority: z.string().optional(),
   operator: z.string().optional(),
 })
+
+export const clientParamsSchema = z.object({
+  page: z.coerce.number().default(1),
+  per_page: z.coerce.number().default(10),
+  sort: z.string().optional(),
+  document: z.string().default(''),
+  status: z.string().optional(),
+  priority: z.string().optional(),
+  operator: z.string().optional(),
+})

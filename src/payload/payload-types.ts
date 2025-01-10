@@ -210,6 +210,7 @@ export interface Client {
   razaosocial?: string | null;
   type: 'company' | 'individual';
   document?: string | null;
+  stateIncription?: string | null;
   contacts?:
     | {
         name?: string | null;
@@ -224,7 +225,16 @@ export interface Client {
   observations?: string | null;
   ramo?: string | null;
   salesperson: string | Salesperson;
-  origin: 'ads' | 'indication' | 'fiergs-list' | 'telephone-list' | 'direct' | 'prospect' | 'website' | 'other';
+  origin:
+    | 'ads'
+    | 'indication'
+    | 'fiergs-list'
+    | 'telephone-list'
+    | 'direct'
+    | 'prospect'
+    | 'website'
+    | 'other'
+    | 'migration';
   status?: ('active' | 'inactive' | 'prospect') | null;
   updatedAt: string;
   createdAt: string;
