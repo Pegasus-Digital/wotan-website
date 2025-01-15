@@ -186,7 +186,7 @@ export function getColumns(): ColumnDef<OldBudget>[] {
             </Button>
             <Button size='icon' variant='ghost' asChild>
               <Link
-                href={`/painel/historico/orcamentos/${budget.incrementalId}.pdf`}
+                href={`/sistema/pdfs/${budget.incrementalId}.pdf`}
               >
                 <Icons.File className='h-5 w-5' />
               </Link>
