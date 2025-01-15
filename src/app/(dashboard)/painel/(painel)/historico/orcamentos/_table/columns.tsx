@@ -187,6 +187,9 @@ export function getColumns(): ColumnDef<OldBudget>[] {
             <Button size='icon' variant='ghost' asChild>
               <Link
                 href={`/sistema/pdfs/${budget.incrementalId}.pdf`}
+                locale={false}
+                target="_blank" rel="noopener noreferrer"
+                prefetch={false}
               >
                 <Icons.File className='h-5 w-5' />
               </Link>

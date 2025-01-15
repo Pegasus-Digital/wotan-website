@@ -329,9 +329,9 @@ export interface Address {
 export interface OldOrder {
   id: string;
   incrementalId?: number | null;
-  idcliente: string | Client;
+  idcliente?: number | null;
   client?: (string | null) | Client;
-  idcontato: number;
+  idcontato?: number | null;
   salesperson?: (string | null) | Salesperson;
   contato: string;
   foneContato?: string | null;
@@ -344,22 +344,18 @@ export interface OldOrder {
   comissao?: string | null;
   porcentagem?: number | null;
   obs?: string | null;
-  adress?: Address;
-  idcidade: number;
-  rua: string;
-  numero: string;
-  bairro: string;
-  cep: string;
-  quando?: string | null;
+  rua?: string | null;
+  numero?: string | null;
+  bairro?: string | null;
+  cep?: string | null;
   ordem?: string | null;
   serasa?: string | null;
-  pos?: boolean | null;
   itens?:
     | {
-        product: string | Product;
+        product?: (string | null) | Product;
         layout?: (string | null) | Layout;
-        quantity: number;
-        price: number;
+        quantity?: number | null;
+        price?: number | null;
         attributes?: (string | Attribute)[] | null;
         print?: string | null;
         sample?: boolean | null;
@@ -372,7 +368,6 @@ export interface OldOrder {
   paymentConditions?: string | null;
   paymentType?: ('boleto' | 'pix' | 'deposito') | null;
   agency?: string | null;
-  commission?: number | null;
   notes?: string | null;
   status?: ('pending' | 'completed' | 'cancelled') | null;
   updatedAt: string;

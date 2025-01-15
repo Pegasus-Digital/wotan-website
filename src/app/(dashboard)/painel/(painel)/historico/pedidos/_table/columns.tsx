@@ -221,58 +221,23 @@ export function getColumns(): ColumnDef<OldOrder>[] {
         const order = row.original
 
 
-        function DeleteEstimateAction() {
-          const [isDeletePending, startDeleteTransition] = useTransition()
-
-          return (
-            <DropdownMenuItem
-              onClick={() => {
-                startDeleteTransition(() => {
-                  toast.promise(deleteOrder({ orderId: order.id }), {
-                    loading: 'Deletando...',
-                    success: 'Pedido deletado com sucesso',
-                    error: 'Erro ao deletar pedido...',
-                  })
-                })
-              }}
-              className='cursor-pointer'
-              disabled={isDeletePending}
-            >
-              Deletar pedido
-            </DropdownMenuItem>
-          )
-        }
-
-
-
-
         return (
           <div className='flex w-min gap-1'>
             <Button size='icon' variant='ghost' asChild>
-              <Link href={`/painel/pedidos/${order.incrementalId}`}>
+              <Link href={`/painel/historico/pedidos/${order.incrementalId}`}>
                 <Icons.Look className='h-5 w-5' />
               </Link>
             </Button>
             <Button size='icon' variant='ghost' asChild>
-              <Link href={`/painel/pedidos/${order.incrementalId}?edit=true`}>
-                <Icons.Edit className='h-5 w-5' />
+              <Link
+                href={`/sistema/pdfs/pedidos/${order.incrementalId}.pdf`}
+                locale={false}
+                target="_blank" rel="noopener noreferrer"
+                prefetch={false}
+              >
+                <Icons.File className='h-5 w-5' />
               </Link>
             </Button>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button size='icon' variant='ghost'>
-                  <span className='sr-only'>Abrir menu</span>
-                  <Icons.Dots className='h-4 w-4' />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align='end'>
-                <DropdownMenuLabel>Interações</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-
-                <DeleteEstimateAction />
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         )
       },

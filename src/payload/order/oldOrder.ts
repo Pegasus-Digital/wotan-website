@@ -19,9 +19,8 @@ const OldOrder: CollectionConfig = {
     },
     {
       name: 'idcliente',
-      type: 'relationship',
-      relationTo: 'clients',
-      required: true,
+      type: 'number',
+      // required: true,
     },
     {
       name: 'client',
@@ -33,7 +32,7 @@ const OldOrder: CollectionConfig = {
     {
       name: 'idcontato',
       type: 'number',
-      required: true,
+      // required: true,
     },
     {
       name: 'salesperson',
@@ -87,38 +86,25 @@ const OldOrder: CollectionConfig = {
       name: 'obs',
       type: 'textarea',
     },
-    adress,
-    {
-      name: 'idcidade',
-      type: 'number',
-      required: true,
-    },
     {
       name: 'rua',
       type: 'text',
-      required: true,
+      // required: true,
     },
     {
       name: 'numero',
       type: 'text',
-      required: true,
+      // required: true,
     },
     {
       name: 'bairro',
       type: 'text',
-      required: true,
+      // required: true,
     },
     {
       name: 'cep',
       type: 'text',
-      required: true,
-    },
-    {
-      name: 'quando',
-      type: 'date',
-      admin: {
-        readOnly: true,
-      },
+      // required: true,
     },
     {
       name: 'ordem',
@@ -129,11 +115,6 @@ const OldOrder: CollectionConfig = {
       type: 'text',
     },
     {
-      name: 'pos',
-      type: 'checkbox',
-      defaultValue: false,
-    },
-    {
       name: 'itens',
       type: 'array',
       fields: [
@@ -141,7 +122,7 @@ const OldOrder: CollectionConfig = {
           name: 'product',
           type: 'relationship',
           relationTo: 'products',
-          required: true,
+          // required: true,
         },
         {
           name: 'layout',
@@ -151,12 +132,12 @@ const OldOrder: CollectionConfig = {
         {
           name: 'quantity',
           type: 'number',
-          required: true,
+          // required: true,
         },
         {
           name: 'price',
           type: 'number',
-          required: true,
+          // required: true,
         },
         {
           name: 'attributes',
@@ -210,7 +191,6 @@ const OldOrder: CollectionConfig = {
       ],
     },
     { name: 'agency', type: 'text' },
-    { name: 'commission', type: 'number' },
     { name: 'notes', type: 'textarea' },
     {
       name: 'status',
