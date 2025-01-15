@@ -29,7 +29,7 @@ const OldBudget: CollectionConfig = {
     },
     {
       name: 'email',
-      type: 'email',
+      type: 'text',
     },
     {
       name: 'salesperson',
