@@ -35,7 +35,9 @@ export interface Config {
     categories: Category;
     attributes: Attribute;
     'attribute-types': AttributeType;
+    'old-budget': OldBudget;
     budget: Budget;
+    'old-order': OldOrder;
     order: Order;
     layouts: Layout;
     users: User;
@@ -149,6 +151,64 @@ export interface Category {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "old-budget".
+ */
+export interface OldBudget {
+  id: string;
+  incrementalId?: number | null;
+  empresa: string;
+  contato: string;
+  fone?: string | null;
+  email?: string | null;
+  salesperson?: (string | null) | Salesperson;
+  comissioned?: boolean | null;
+  conditions?: string | null;
+  items?:
+    | {
+        productCode?: string | null;
+        details?: string | null;
+        qtde1?: number | null;
+        qtde2?: number | null;
+        qtde3?: number | null;
+        qtde4?: number | null;
+        qtde5?: number | null;
+        qtde6?: number | null;
+        qtde7?: number | null;
+        preco1?: number | null;
+        preco2?: number | null;
+        preco3?: number | null;
+        preco4?: number | null;
+        preco5?: number | null;
+        preco6?: number | null;
+        preco7?: number | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "salespersons".
+ */
+export interface Salesperson {
+  id: string;
+  name: string;
+  avatar?: string | Media | null;
+  roles: 'internal' | 'representative';
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  password: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "budget".
  */
 export interface Budget {
@@ -179,26 +239,6 @@ export interface Budget {
   selectedContact?: string | null;
   updatedAt: string;
   createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "salespersons".
- */
-export interface Salesperson {
-  id: string;
-  name: string;
-  avatar?: string | Media | null;
-  roles: 'internal' | 'representative';
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  password: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -235,6 +275,7 @@ export interface Client {
     | 'website'
     | 'other'
     | 'migration';
+  oldId?: string | null;
   status?: ('active' | 'inactive' | 'prospect') | null;
   updatedAt: string;
   createdAt: string;
@@ -283,27 +324,41 @@ export interface Address {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "order".
+ * via the `definition` "old-order".
  */
-export interface Order {
+export interface OldOrder {
   id: string;
   incrementalId?: number | null;
-  client: string | Client;
-  contact: string;
-  ogBudget?: (string | null) | Budget;
-  alternativeContact?: {
-    name?: string | null;
-    email?: string | null;
-    phone?: string | null;
-    whatsapp?: string | null;
-  };
-  adress?: Address;
+  idcliente: string | Client;
+  client?: (string | null) | Client;
+  idcontato: number;
   salesperson?: (string | null) | Salesperson;
+  contato: string;
+  foneContato?: string | null;
+  emailContato?: string | null;
+  frete?: number | null;
+  transp?: string | null;
+  prazo?: string | null;
+  cond?: string | null;
+  tipopagamento?: number | null;
+  comissao?: string | null;
+  porcentagem?: number | null;
+  obs?: string | null;
+  adress?: Address;
+  idcidade: number;
+  rua: string;
+  numero: string;
+  bairro: string;
+  cep: string;
+  quando?: string | null;
+  ordem?: string | null;
+  serasa?: string | null;
+  pos?: boolean | null;
   itens?:
     | {
         product: string | Product;
         layout?: (string | null) | Layout;
-        quantity?: number | null;
+        quantity: number;
         price: number;
         attributes?: (string | Attribute)[] | null;
         print?: string | null;
@@ -313,8 +368,6 @@ export interface Order {
         id?: string | null;
       }[]
     | null;
-  shippingTime?: string | null;
-  shippingCompany?: string | null;
   shippingType?: ('cif' | 'fob') | null;
   paymentConditions?: string | null;
   paymentType?: ('boleto' | 'pix' | 'deposito') | null;
@@ -418,6 +471,50 @@ export interface Layout {
   };
   ncm?: string | null;
   obs_final?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "order".
+ */
+export interface Order {
+  id: string;
+  incrementalId?: number | null;
+  client: string | Client;
+  contact: string;
+  ogBudget?: (string | null) | Budget;
+  alternativeContact?: {
+    name?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    whatsapp?: string | null;
+  };
+  adress?: Address;
+  salesperson?: (string | null) | Salesperson;
+  itens?:
+    | {
+        product: string | Product;
+        layout?: (string | null) | Layout;
+        quantity?: number | null;
+        price: number;
+        attributes?: (string | Attribute)[] | null;
+        print?: string | null;
+        sample?: boolean | null;
+        layoutSent?: boolean | null;
+        layoutApproved?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  shippingTime?: string | null;
+  shippingCompany?: string | null;
+  shippingType?: ('cif' | 'fob') | null;
+  paymentConditions?: string | null;
+  paymentType?: ('boleto' | 'pix' | 'deposito') | null;
+  agency?: string | null;
+  commission?: number | null;
+  notes?: string | null;
+  status?: ('pending' | 'completed' | 'cancelled') | null;
   updatedAt: string;
   createdAt: string;
 }

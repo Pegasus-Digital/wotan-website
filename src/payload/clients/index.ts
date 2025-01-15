@@ -128,6 +128,7 @@ const Clients: CollectionConfig = {
         { label: 'Migração', value: 'migration' }
       ],
     },
+    { name: 'oldId', type: 'text' },
     {
       name: 'status',
       type: 'select',

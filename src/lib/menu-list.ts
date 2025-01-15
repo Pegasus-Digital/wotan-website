@@ -15,6 +15,7 @@ import {
   LayoutGrid,
   SquarePen,
   LucideIcon,
+  Clock,
 } from 'lucide-react'
 
 type Submenu = {
@@ -89,6 +90,15 @@ const menusConfig: Record<string, Group[]> = {
         { href: '/painel/clientes', label: 'Clientes', icon: Users },
         { href: '/painel/vendedores', label: 'Vendedores', icon: Users },
         { href: '/painel/contato', label: 'Contato', icon: Mailbox },
+        {
+          href: '',
+          label: 'Histórico',
+          icon: Clock,
+          submenus: [
+            { href: '/painel/historico/orcamentos', label: 'Orçamentos' },
+            { href: '/painel/historico/pedidos', label: 'Pedidos' },
+          ],
+        },
       ],
     },
     {

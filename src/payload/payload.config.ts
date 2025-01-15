@@ -23,6 +23,8 @@ import { Salespersons } from './salespersons'
 import { Categories } from './products/categories'
 import { Attributes, AttributeTypes } from './products/atributes'
 import Layout from './layout'
+import { OldBudget } from './budget/oldBudget'
+import { OldOrder } from './order/oldOrder'
 
 const generateTitle: GenerateTitle = () => {
   return 'Wotan Brindes'
@@ -34,10 +36,10 @@ export default buildConfig({
     autoLogin:
       process.env.PAYLOAD_PUBLIC_ENABLE_AUTOLOGIN === 'true'
         ? {
-            email: 'admin@pegasusds.com.br',
-            password: 'wotan',
-            prefillOnly: true,
-          }
+          email: 'admin@pegasusds.com.br',
+          password: 'wotan',
+          prefillOnly: true,
+        }
         : false,
     bundler: webpackBundler(), // or viteBundler()
   },
@@ -47,7 +49,9 @@ export default buildConfig({
     Categories,
     Attributes,
     AttributeTypes,
+    OldBudget,
     Budget,
+    OldOrder,
     Order,
     Layout,
     Users,
