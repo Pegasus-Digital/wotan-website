@@ -17,6 +17,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button, buttonVariants } from '@/components/ui/button'
 
 import { Small } from '@/components/typography/texts'
+import { getRelativeDate } from '@/lib/date'
 
 
 
@@ -92,62 +93,81 @@ export function getColumns(): ColumnDef<OldBudget>[] {
         )
       },
     },
+    // {
+    //   accessorKey: 'items',
+    //   header: 'Produtos',
+    //   cell: ({ row }) => {
+    //     const items: any[] = row.getValue('items')
+
+    //     // Get the first 2 items
+    //     const displayedItems = items.slice(0, 2)
+    //     // Calculate the remaining items (from the 3rd item onwards)
+    //     const remainingItems = items.slice(2)
+
+    //     return (
+    //       <Card className='w-full border-transparent p-2 px-4'>
+    //         <CardContent className='m-0 space-y-2 p-0'>
+    //           {displayedItems.map((item, index) => (
+    //             <div key={item.id + '-' + index} className='flex items-center'>
+    //               <Small className='mr-2 w-12 text-right font-semibold'>
+    //                 {item.quantity}x
+    //               </Small>
+    //               <Badge className='w-fit'>
+    //                 {item.product.title
+    //                   ? item.product.title
+    //                   : 'PRODUTO NÃO ENCONTRADO'}
+    //               </Badge>
+    //             </div>
+    //           ))}
+
+    //           {remainingItems.length === 1 && (
+    //             <div className='flex items-center'>
+    //               <Small className='mr-2 w-12 text-right font-semibold'>
+    //                 {remainingItems[0].quantity}x
+    //               </Small>
+    //               <Badge className='w-fit'>
+    //                 {remainingItems[0].product.title}
+    //               </Badge>
+    //             </div>
+    //           )}
+
+    //           {remainingItems.length > 1 && (
+    //             <div className='flex items-center'>
+    //               <Small className='mr-2 w-12  text-right font-semibold'>
+    //                 {remainingItems.reduce(
+    //                   (total, item) => total + item.quantity,
+    //                   0,
+    //                 )}
+    //                 x
+    //               </Small>
+    //               <Badge className='w-fit'>
+    //                 + {remainingItems.length} outros{' '}
+    //                 {remainingItems.length === 1 ? 'item' : 'itens'}
+    //               </Badge>
+    //             </div>
+    //           )}
+    //         </CardContent>
+    //       </Card>
+    //     )
+    //   },
+    // },
     {
-      accessorKey: 'items',
-      header: 'Produtos',
+      id: 'createdAt',
+
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title='Data' />
+      ),
       cell: ({ row }) => {
-        const items: any[] = row.getValue('items')
+        const value: string = row.original.createdAt
 
-        // Get the first 2 items
-        const displayedItems = items.slice(0, 2)
-        // Calculate the remaining items (from the 3rd item onwards)
-        const remainingItems = items.slice(2)
+        if (!value) {
+          return 'Data não encontrada'
+        }
 
-        return (
-          <Card className='w-full border-transparent p-2 px-4'>
-            <CardContent className='m-0 space-y-2 p-0'>
-              {displayedItems.map((item, index) => (
-                <div key={item.id + '-' + index} className='flex items-center'>
-                  <Small className='mr-2 w-12 text-right font-semibold'>
-                    {item.quantity}x
-                  </Small>
-                  <Badge className='w-fit'>
-                    {item.product.title
-                      ? item.product.title
-                      : 'PRODUTO NÃO ENCONTRADO'}
-                  </Badge>
-                </div>
-              ))}
+        const date = new Date(value)
+        const formattedDate = getRelativeDate(date)
 
-              {remainingItems.length === 1 && (
-                <div className='flex items-center'>
-                  <Small className='mr-2 w-12 text-right font-semibold'>
-                    {remainingItems[0].quantity}x
-                  </Small>
-                  <Badge className='w-fit'>
-                    {remainingItems[0].product.title}
-                  </Badge>
-                </div>
-              )}
-
-              {remainingItems.length > 1 && (
-                <div className='flex items-center'>
-                  <Small className='mr-2 w-12  text-right font-semibold'>
-                    {remainingItems.reduce(
-                      (total, item) => total + item.quantity,
-                      0,
-                    )}
-                    x
-                  </Small>
-                  <Badge className='w-fit'>
-                    + {remainingItems.length} outros{' '}
-                    {remainingItems.length === 1 ? 'item' : 'itens'}
-                  </Badge>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )
+        return formattedDate
       },
     },
     {
@@ -160,15 +180,15 @@ export function getColumns(): ColumnDef<OldBudget>[] {
         return (
           <div className='flex w-min gap-1'>
             <Button size='icon' variant='ghost' asChild>
-              <Link href={`/painel/orcamentos/${budget.incrementalId}`}>
+              <Link href={`/painel/historico/orcamentos/${budget.incrementalId}`}>
                 <Icons.Look className='h-5 w-5' />
               </Link>
             </Button>
             <Button size='icon' variant='ghost' asChild>
               <Link
-                href={`/painel/orcamentos/${budget.incrementalId}?edit=true`}
+                href={`/painel/historico/orcamentos/${budget.incrementalId}.pdf`}
               >
-                <Icons.Edit className='h-5 w-5' />
+                <Icons.File className='h-5 w-5' />
               </Link>
             </Button>
           </div>
