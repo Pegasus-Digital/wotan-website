@@ -100,6 +100,7 @@ const Products: CollectionConfig = {
             { name: 'sizeWidth', type: 'text' },
             { name: 'sizeHeight', type: 'text' },
             { name: 'sizeDepth', type: 'text' },
+            { name: 'oldId', type: 'text' }
           ],
         },
         {

@@ -72,6 +72,7 @@ export interface Product {
   sizeWidth?: string | null;
   sizeHeight?: string | null;
   sizeDepth?: string | null;
+  oldId?: string | null;
   featuredImage: string | Media;
   images?:
     | {
