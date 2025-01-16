@@ -81,7 +81,11 @@ export async function getClients() {
   try {
     const response = await payload.find({
       collection: 'clients',
+      pagination: false,
+      limit: 10000,
+      sort: 'razaosocial'
     })
+
 
     return {
       data: response.docs,
