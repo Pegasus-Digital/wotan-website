@@ -223,11 +223,11 @@ export function getColumns(): ColumnDef<OldOrder>[] {
 
         return (
           <div className='flex w-min gap-1'>
-            <Button size='icon' variant='ghost' asChild>
+            {/* <Button size='icon' variant='ghost' asChild>
               <Link href={`/painel/historico/pedidos/${order.incrementalId}`}>
                 <Icons.Look className='h-5 w-5' />
               </Link>
-            </Button>
+            </Button> */}
             <Button size='icon' variant='ghost' asChild>
               <Link
                 href={`/sistema/pdfs/pedidos/${order.incrementalId}.pdf`}
