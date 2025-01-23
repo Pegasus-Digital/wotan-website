@@ -62,7 +62,7 @@ export function LoginContent() {
         //   )
         // else
         router.push(
-          `/sistema?success=${encodeURIComponent(
+          `/sistema/inicio?success=${encodeURIComponent(
             'Login realizado com sucesso.',
           )}`,
         )
@@ -105,7 +105,7 @@ export function LoginContent() {
                             <Input
                               className='ring-none outline-none'
                               type='text'
-                              placeholder='usuario@exemplo.com.br'
+                              placeholder='usuario@wotanbrindes.com.br'
                               {...field}
                             />
                           </FormControl>
