@@ -1,6 +1,6 @@
 'use client'
 
-import { Navbar } from './navbar'
+import { NavbarAdmin, NavbarSales } from './navbar'
 
 interface ContentLayoutProps {
   title: string
@@ -15,7 +15,21 @@ export function ContentLayout({
 }: ContentLayoutProps) {
   return (
     <div>
-      <Navbar title={title} children={navbarButtons} />
+      <NavbarAdmin title={title} children={navbarButtons} />
+      <div className=' px-4 pb-8 pt-8 tablet:px-8'>{children}</div>
+    </div>
+  )
+}
+
+
+export function ContentLayoutSales({
+  title,
+  children,
+  navbarButtons,
+}: ContentLayoutProps) {
+  return (
+    <div>
+      <NavbarSales title={title} children={navbarButtons} />
       <div className=' px-4 pb-8 pt-8 tablet:px-8'>{children}</div>
     </div>
   )

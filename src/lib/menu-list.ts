@@ -41,7 +41,7 @@ const menusConfig: Record<string, Group[]> = {
   '/sistema': [
     {
       groupLabel: '',
-      menus: [{ href: '/sistema', label: 'Dashboard', icon: LayoutDashboard }],
+      menus: [{ href: '/sistema/inicio', label: 'Início', icon: LayoutDashboard }],
     },
     {
       groupLabel: 'Menu',
@@ -50,18 +50,47 @@ const menusConfig: Record<string, Group[]> = {
           href: '/sistema/catalogo/produtos',
           label: 'Produtos',
           icon: Barcode,
+
         },
         { href: '/sistema/orcamentos', label: 'Orçamentos', icon: PackageOpen },
         { href: '/sistema/pedidos', label: 'Pedidos', icon: PackageCheck },
         { href: '/sistema/clientes', label: 'Meus clientes', icon: Users },
         { href: '/sistema/contato', label: 'Mensagens', icon: Mailbox },
-        {
-          href: '/sistema/preferencias',
-          label: 'Preferências',
-          icon: Settings,
-        },
+
+
       ],
+
     },
+    {
+      groupLabel: 'Administração',
+      menus: [{
+        href: '/sistema/preferencias',
+        label: 'Preferências',
+        icon: Settings,
+      },
+      {
+        href: '/sistema/catalogo/produtos',
+        label: 'Controle de produtos',
+        icon: ShoppingCart,
+        submenus: [
+          { href: '/sistema/catalogo/categorias', label: 'Categorias' },
+          { href: '/sistema/catalogo/atributos', label: 'Atributos' },
+          {
+            href: '/sistema/catalogo/busca-avancada',
+            label: 'Busca avançada',
+          },
+        ],
+      },
+      {
+        href: '',
+        label: 'Histórico',
+        icon: Clock,
+        submenus: [
+          { href: '/sistema/historico/orcamentos', label: 'Orçamentos' },
+          { href: '/sistema/historico/pedidos', label: 'Pedidos' },
+        ],
+      },]
+    }
   ],
   '/painel': [
     {

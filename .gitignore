@@ -16,6 +16,7 @@
 # payload
 /media
 /dump
+public/sistema
 
 # production
 /build
