@@ -111,7 +111,7 @@ export function LoginContent() {
                             <Input
                               className='ring-none outline-none'
                               type='text'
-                              placeholder='usuario@exemplo.com.br'
+                              placeholder='usuario@wotanbrindes.com.br'
                               {...field}
                             />
                           </FormControl>
