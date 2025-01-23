@@ -56,7 +56,7 @@ export default async function PesquisaPage({ params, searchParams }) {
       // Conditions for the first word
       ...generateWordConditions(words[0]),
     ],
-    and: createObjectsForWords(words),
+    and: [...createObjectsForWords(words), { active: { equals: true } }],
   }
 
   const { docs, ...paginationParams } = await payload.find({

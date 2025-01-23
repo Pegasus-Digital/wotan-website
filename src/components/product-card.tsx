@@ -14,8 +14,11 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const mainCategory =
-    product.categories.find((category: Category) => category.parent === null) ??
-    product.categories[0]
+    product.categories?.find(
+      (category: Category) => category.parent === null,
+    ) ??
+    product.categories?.[0] ??
+    null
 
   return (
     <Card className='group my-3 aspect-[16/10] shadow-wotan-light'>
@@ -32,27 +35,13 @@ export function ProductCard({ product }: ProductCardProps) {
 
       <CardFooter className='z-10 flex flex-col items-start space-y-2.5 py-4'>
         <Lead className='text-sm font-bold text-wotanRed-500'>
-          {typeof mainCategory === 'object' && mainCategory.title}
+          {mainCategory &&
+            typeof mainCategory === 'object' &&
+            mainCategory.title}
           {!mainCategory && 'Sem categoria'}
         </Lead>
 
         <P className='text-base font-bold text-foreground'>{product.title}</P>
-
-        {/* <div className='flex h-4 items-center gap-1'>
-          {typeof product.attributes === 'object' &&
-            product.attributes.map(
-              // Filter attributes by color, and render the colors
-              (attribute: Attribute) =>
-                typeof attribute.type === 'object' &&
-                attribute.type.type === 'color' && (
-                  <div
-                    key={attribute.id}
-                    style={{ backgroundColor: attribute.value }}
-                    className='h-4 w-4 rounded-full border'
-                  />
-                ),
-            )}
-        </div> */}
       </CardFooter>
     </Card>
   )

@@ -13,6 +13,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination'
+
 import { ProductCard } from '@/components/product-card'
 import { Button, buttonVariants } from '@/components/ui/button'
 
@@ -36,7 +37,7 @@ interface CategoryPageProps {
   categoryName: string
 }
 
-export async function CategoryPageContent({
+export function CategoryPageContent({
   products,
   pagination,
   categoryName,

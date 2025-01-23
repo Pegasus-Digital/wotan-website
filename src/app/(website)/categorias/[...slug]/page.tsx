@@ -1,70 +1,50 @@
 import payload from 'payload'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-
 import { CategoryPageContent } from './content'
 
 export default async function CategoryPage({ params, searchParams }) {
-  const category: string = params.slug[params.slug.length - 1]
-  const page: number = searchParams ? Number(searchParams.page) : 1
+  const categorySlug: string = params.slug.at(-1)
+  const page: number = searchParams?.page ? Number(searchParams.page) : 1
 
-  const res = await payload.find({
+  // Buscar a categoria primeiro
+  const categoryRes = await payload.find({
     collection: 'categories',
-    where: {
-      slug: {
-        equals: category,
-      },
-      active: {
-        not_equals: false,
-      },
-    },
+    where: { slug: { equals: categorySlug }, active: { not_equals: false } },
     limit: 1,
-    pagination: false,
   })
 
-  if (res.docs.length < 1) {
+  if (categoryRes.docs.length === 0) {
     notFound()
   }
 
-  const { docs, ...paginationParams } = await payload.find({
+  const categoryTitle = categoryRes.docs[0].title
+
+  // Buscar os produtos
+  const productsRes = await payload.find({
     collection: 'products',
-    where: {
-      'categories.breadcrumbs.label': {
-        contains: res.docs[0].title,
-      },
-    },
+    where: { 'categories.breadcrumbs.label': { contains: categoryTitle } },
     limit: 20,
-    page: page,
+    page,
   })
 
   return (
     <CategoryPageContent
-      products={docs}
-      pagination={paginationParams}
-      categoryName={res.docs[0].title}
+      products={productsRes.docs}
+      pagination={productsRes}
+      categoryName={categoryTitle}
     />
   )
 }
 
-export async function generateMetadata({
-  params,
-  searchParams,
-}): Promise<Metadata> {
-  const category: string = params.slug[params.slug.length - 1]
+export async function generateMetadata({ params }): Promise<Metadata> {
+  const categorySlug: string = params.slug.at(-1)
 
   const res = await payload.find({
     collection: 'categories',
-    where: {
-      slug: {
-        equals: category,
-      },
-      active: {
-        not_equals: false,
-      },
-    },
+    where: { slug: { equals: categorySlug }, active: { not_equals: false } },
     limit: 1,
-    pagination: false,
   })
 
-  return { title: `${res.docs[0].title}` }
+  return { title: res.docs.length > 0 ? res.docs[0].title : 'Categoria' }
 }
