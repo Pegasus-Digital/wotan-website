@@ -41,27 +41,47 @@ const menusConfig: Record<string, Group[]> = {
   '/sistema': [
     {
       groupLabel: '',
-      menus: [{ href: '/sistema', label: 'Dashboard', icon: LayoutDashboard }],
+      menus: [{ href: '/sistema/inicio', label: 'Dashboard', icon: LayoutDashboard }],
     },
     {
       groupLabel: 'Menu',
       menus: [
         {
-          href: '/sistema/catalogo/produtos',
+          href: '/painel/catalogo/produtos',
           label: 'Produtos',
           icon: Barcode,
+
         },
         { href: '/sistema/orcamentos', label: 'Orçamentos', icon: PackageOpen },
         { href: '/sistema/pedidos', label: 'Pedidos', icon: PackageCheck },
         { href: '/sistema/clientes', label: 'Meus clientes', icon: Users },
         { href: '/sistema/contato', label: 'Mensagens', icon: Mailbox },
-        {
-          href: '/sistema/preferencias',
-          label: 'Preferências',
-          icon: Settings,
-        },
+
+
       ],
+
     },
+    {
+      groupLabel: 'Administração',
+      menus: [{
+        href: '/sistema/preferencias',
+        label: 'Preferências',
+        icon: Settings,
+      },
+      {
+        href: '/painel/catalogo/produtos',
+        label: 'Controle de produtos',
+        icon: ShoppingCart,
+        submenus: [
+          { href: '/sistema/catalogo/categorias', label: 'Categorias' },
+          { href: '/sistema/catalogo/atributos', label: 'Atributos' },
+          {
+            href: '/sistema/catalogo/busca-avancada',
+            label: 'Busca avançada',
+          },
+        ],
+      },]
+    }
   ],
   '/painel': [
     {

@@ -2,18 +2,15 @@ import React from 'react'
 import { Metadata } from 'next'
 
 import { LoginContent } from './content'
-import { getAdminUser } from '@/app/_utilities/get-admin-user'
+import { getSalesUser } from '@/app/_utilities/get-sales-user'
 
 export default async function Login() {
-  await getAdminUser({
+  await getSalesUser({
     validUserRedirect: `/sistema?warning=${encodeURIComponent('Você já está logado.')}`,
   })
 
-  return (
-    <>
-      <LoginContent />
-    </>
-  )
+  return <LoginContent />
+
 }
 
 export const metadata: Metadata = {
