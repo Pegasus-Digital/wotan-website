@@ -129,7 +129,7 @@ export function FavoritesDrawer() {
                 >
                   <Link
                     className='group flex w-full gap-2'
-                    href={`/produtos/${product.id}`}
+                    href={`/produtos/${product.slug}`}
                   >
                     <Image
                       imgClassName='w-20 h-20 border rounded-md'
