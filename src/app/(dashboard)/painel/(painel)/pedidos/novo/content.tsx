@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useEffect, useState, useTransition } from 'react'
+import { useEffect, useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 
 import {
@@ -79,6 +79,7 @@ import { AttributesCombobox } from '../_components/attributes-selector'
 import { ContentLayout } from '@/components/painel-sistema/content-layout'
 import { LoadingSpinner } from '@/components/spinner'
 import Link from 'next/link'
+import { filterClients } from '@/lib/utils'
 
 type OrderProps = z.infer<typeof orderSchema>
 
@@ -97,6 +98,15 @@ export function NewOrderContent({
 
   const [selectedClient, setSelectedClient] = useState<Client | null>(null)
   const [selectedState, setSelectedState] = useState<string | null>(null)
+
+
+  const [search, setSearch] = useState("");
+
+  // Filter clients dynamically when the search input changes
+  const filteredClients = useMemo(() => {
+    return filterClients(clients, search);
+  }, [clients, search]);
+
 
   const form = useForm<OrderProps>({
     resolver: zodResolver(orderSchema),
@@ -241,100 +251,105 @@ export function NewOrderContent({
           <Card>
             <CardHeader>
               <Heading variant='h6' className='text-black'>
-                Cliente e Contato
+                Informações gerais
               </Heading>
             </CardHeader>
             <CardContent className='grid grid-cols-2 gap-6'>
-              <FormField
-                control={form.control}
-                name='client'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Cliente</FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={(value) => {
-                          field.onChange(value)
-                          const client = clients.find(
-                            (client) => client.id === value,
-                          )
-                          setSelectedClient(client)
-                          resetAddressForm()
-                          resetContactForm()
-                          setAddressRadio(null)
-                        }}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder='Selecione um Cliente' />
-                        </SelectTrigger>
-                        {
-                          <SelectContent side='bottom'>
-                            {!clients ||
-                              (clients.length === 0 && (
+              <div className='grid col-span-2 gap-6 grid-cols-3'>
+                <div className='col-span-2'>
+                  <FormField
+                    control={form.control}
+                    name='client'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Cliente</FormLabel>
+                        <FormControl>
+                          <Select
+                            onValueChange={(value) => {
+                              field.onChange(value)
+                              const client = clients.find(
+                                (client) => client.id === value,
+                              )
+                              setSelectedClient(client)
+                              resetAddressForm()
+                              resetContactForm()
+                              setAddressRadio(null)
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder='Selecione um Cliente' />
+                            </SelectTrigger>
+                            {
+                              <SelectContent side='bottom'>
+                                {!clients ||
+                                  (clients.length === 0 && (
+                                    <SelectItem
+                                      value={null}
+                                      disabled
+                                      className='flex items-center justify-center'
+                                    >
+                                      Você ainda não possui nenhum cliente.
+                                    </SelectItem>
+                                  ))}
+
+                                {filteredClients.map((client) => (
+                                  <SelectItem key={client.id} value={client.id}>
+                                    {client.name} - <b>{client.document}</b>
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            }
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Filtrar clientes ...' className='mt-auto bottom-0' />
+                <div className='col-span-3'>
+                  <FormField
+                    control={form.control}
+                    name='contact'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Contato</FormLabel>
+                        <FormControl>
+                          <Select onValueChange={field.onChange}>
+                            <SelectTrigger>
+                              <SelectValue placeholder='Selecione um Contato' />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {!selectedClient && (
                                 <SelectItem
                                   value={null}
                                   disabled
                                   className='flex items-center justify-center'
                                 >
-                                  Você ainda não possui nenhum cliente.
+                                  Selecione um cliente para ver seus contatos
                                 </SelectItem>
-                              ))}
-
-                            {clients.map((client) => (
-                              <SelectItem key={client.id} value={client.id}>
-                                {client.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        }
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name='contact'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Contato</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange}>
-                        <SelectTrigger>
-                          <SelectValue placeholder='Selecione um Contato' />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {!selectedClient && (
-                            <SelectItem
-                              value={null}
-                              disabled
-                              className='flex items-center justify-center'
-                            >
-                              Selecione um cliente para ver seus contatos
-                            </SelectItem>
-                          )}
-                          {selectedClient?.contacts?.length === 0 && (
-                            <SelectItem value={null} disabled>
-                              Não encontramos nenhum contato para este cliente.
-                            </SelectItem>
-                          )}
-                          {selectedClient &&
-                            selectedClient?.contacts.length > 0 &&
-                            selectedClient.contacts.map((contact) => (
-                              <SelectItem key={contact.id} value={contact.id}>
-                                {contact.name}
-                              </SelectItem>
-                            ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
+                              )}
+                              {selectedClient?.contacts?.length === 0 && (
+                                <SelectItem value={null} disabled>
+                                  Não encontramos nenhum contato para este cliente.
+                                </SelectItem>
+                              )}
+                              {selectedClient &&
+                                selectedClient?.contacts.length > 0 &&
+                                selectedClient.contacts.map((contact) => (
+                                  <SelectItem key={contact.id} value={contact.id}>
+                                    {contact.name}
+                                  </SelectItem>
+                                ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
               <FormField
                 control={form.control}
                 name='salesperson'
@@ -416,56 +431,6 @@ export function NewOrderContent({
                   </FormItem>
                 )}
               />
-
-              <FormField
-                control={form.control}
-                name={'shippingCompany'}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Transportadora</FormLabel>
-                    <FormControl>
-                      <Input {...field} className='disabled:opacity-100' />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name={'shippingTime'}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Prazo de Entrega</FormLabel>
-                    <FormControl>
-                      <Input {...field} className='disabled:opacity-100' />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name={'shippingType'}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tipo de Frete</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange}>
-                        <SelectTrigger className='disabled:opacity-100'>
-                          <SelectValue placeholder='Selecione um tipo de frete' />
-                        </SelectTrigger>
-                        <SelectContent side='bottom'>
-                          <SelectItem value='cif'>CIF</SelectItem>
-                          <SelectItem value='fob'>FOB</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={form.control}
                 name={'paymentType'}
@@ -488,6 +453,59 @@ export function NewOrderContent({
                   </FormItem>
                 )}
               />
+              <div className='grid grid-cols-3 gap-6 col-span-2'>
+
+
+                <FormField
+                  control={form.control}
+                  name={'shippingCompany'}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Transportadora</FormLabel>
+                      <FormControl>
+                        <Input {...field} className='disabled:opacity-100' />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name={'shippingTime'}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Prazo de Entrega</FormLabel>
+                      <FormControl>
+                        <Input {...field} className='disabled:opacity-100' />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name={'shippingType'}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tipo de Frete</FormLabel>
+                      <FormControl>
+                        <Select onValueChange={field.onChange}>
+                          <SelectTrigger className='disabled:opacity-100'>
+                            <SelectValue placeholder='Selecione um tipo de frete' />
+                          </SelectTrigger>
+                          <SelectContent side='bottom'>
+                            <SelectItem value='cif'>CIF</SelectItem>
+                            <SelectItem value='fob'>FOB</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </CardContent>
           </Card>
           <Separator className='my-4' />

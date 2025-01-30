@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useState, useTransition } from 'react'
+import { useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 
 import {
@@ -89,6 +89,7 @@ import { AttributesCombobox } from '../../pedidos/_components/attributes-selecto
 import { ContentLayout } from '@/components/painel-sistema/content-layout'
 import { LoadingSpinner } from '@/components/spinner'
 import Link from 'next/link'
+import { filterClients } from '@/lib/utils'
 
 type BudgetProps = z.infer<typeof budgetSchema>
 
@@ -105,6 +106,13 @@ export function NewBudgetContent({
   const [addProductDialog, setAddProductDialog] = useState<boolean>(false)
 
   const router = useRouter()
+
+  const [search, setSearch] = useState("");
+
+  // Filter clients dynamically when the search input changes
+  const filteredClients = useMemo(() => {
+    return filterClients(clients, search);
+  }, [clients, search]);
 
   const form = useForm<BudgetProps>({
     resolver: zodResolver(budgetSchema),
@@ -408,9 +416,9 @@ export function NewBudgetContent({
                                 </SelectItem>
                               ))}
 
-                            {clients.map((client) => (
+                            {filteredClients.map((client) => (
                               <SelectItem key={client.id} value={client.id}>
-                                {client.name}
+                                {client.name} - <b>{client.document}</b>
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -421,6 +429,8 @@ export function NewBudgetContent({
                   </FormItem>
                 )}
               />
+              <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Filtrar clientes ...' className='mt-auto bottom-0' />
+
 
               <FormField
                 control={form.control}

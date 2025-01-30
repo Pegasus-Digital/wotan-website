@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useState, useTransition } from 'react'
+import { useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 
 import {
@@ -94,6 +94,7 @@ import { ContentLayout } from '@/components/painel-sistema/content-layout'
 import Link from 'next/link'
 import { LoadingSpinner } from '@/components/spinner'
 import { Badge } from '@/components/ui/badge'
+import { filterClients } from '@/lib/utils'
 
 type BudgetProps = z.infer<typeof budgetSchema>
 
@@ -113,6 +114,14 @@ export function SeeBudgetContent({
   const [selectedClient, setSelectedClient] = useState<Client | null>(
     (budget.client as Client) ?? null,
   )
+
+
+  const [search, setSearch] = useState("");
+
+  // Filter clients dynamically when the search input changes
+  const filteredClients = useMemo(() => {
+    return filterClients(clients, search);
+  }, [clients, search]);
   const [addProductDialog, setAddProductDialog] = useState<boolean>(false)
 
   const router = useRouter()
@@ -149,15 +158,15 @@ export function SeeBudgetContent({
           typeof item.product === 'string'
             ? item.product
             : {
-                id: item.product.id,
-                title: item.product.title,
-                sku: item.product.sku,
-                minimumQuantity: item.product.minimumQuantity,
-                active: item.product.active,
-                featuredImage: item.product.featuredImage,
-                priceQuantityTable: item.product.priceQuantityTable,
-                attributes: item.product.attributes,
-              },
+              id: item.product.id,
+              title: item.product.title,
+              sku: item.product.sku,
+              minimumQuantity: item.product.minimumQuantity,
+              active: item.product.active,
+              featuredImage: item.product.featuredImage,
+              priceQuantityTable: item.product.priceQuantityTable,
+              attributes: item.product.attributes,
+            },
         attributes:
           item?.attributes?.map((attribute) =>
             typeof attribute === 'string' ? attribute : attribute.id,
@@ -503,12 +512,12 @@ export function SeeBudgetContent({
                                 )}
 
                                 {!editMode &&
-                                  clients.map((client) => (
+                                  filteredClients.map((client) => (
                                     <SelectItem
                                       key={client.id}
                                       value={client.id}
                                     >
-                                      {client.name}
+                                      {client.name} - <b>{client.document}</b>
                                     </SelectItem>
                                   ))}
 
@@ -538,6 +547,7 @@ export function SeeBudgetContent({
                       </FormItem>
                     )}
                   />
+                  <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Filtrar clientes ...' className='mt-auto bottom-0' />
 
                   <FormField
                     control={form.control}
@@ -645,8 +655,8 @@ export function SeeBudgetContent({
                       {typeof budget.salesperson === 'object' ? (
                         <div className='flex items-center space-x-2'>
                           {budget.salesperson.avatar &&
-                          typeof budget.salesperson.avatar === 'object' &&
-                          budget.salesperson.avatar.url ? (
+                            typeof budget.salesperson.avatar === 'object' &&
+                            budget.salesperson.avatar.url ? (
                             <Image
                               width={20}
                               height={20}
@@ -879,7 +889,7 @@ export function SeeBudgetContent({
 
                       <TableCell>
                         {!editMode &&
-                        typeof item.product.attributes === 'object' ? (
+                          typeof item.product.attributes === 'object' ? (
                           <AttributesCombobox
                             attributeArray={item.product.attributes.filter(
                               isAttribute,
