@@ -14,7 +14,7 @@ export async function getOrders(
   noStore()
 
   try {
-    const { page, per_page, sort, client } = searchParams
+    const { page, per_page, sort, client, incrementalId } = searchParams
 
     let whereOr = []
 
@@ -33,6 +33,35 @@ export async function getOrders(
       )
     }
 
+    if (incrementalId !== undefined) {
+      whereOr.push(
+        {
+          incrementalId: {
+            equals: incrementalId,
+          },
+        },
+
+      )
+      if (incrementalId >= 100) {
+        const lowerBound = incrementalId;
+        const upperBound = incrementalId * 10 + 9; // Covers numbers like 9124, 9125, etc.
+
+        whereOr.push({
+          and: [
+            {
+              incrementalId: {
+                greater_than_equal: lowerBound,
+              },
+            },
+            {
+              incrementalId: {
+                less_than_equal: upperBound,
+              },
+            }
+          ]
+        });
+      }
+    }
     // console.log('whereOr', whereOr)
 
     const response = await payload.find({
