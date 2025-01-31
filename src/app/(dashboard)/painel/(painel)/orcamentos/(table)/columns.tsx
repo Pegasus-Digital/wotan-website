@@ -64,8 +64,13 @@ export const filterFields: DataTableFilterField<Budget>[] = [
   {
     label: 'Número',
     value: 'incrementalId',
-    placeholder: 'Filtrar por id...',
+    placeholder: 'Filtrar por número...',
   },
+  {
+    label: 'Cliente',
+    value: 'contact',
+    placeholder: 'Filtrar por cliente...',
+  }
 ]
 
 export function getColumns(): ColumnDef<Budget>[] {
@@ -87,9 +92,10 @@ export function getColumns(): ColumnDef<Budget>[] {
       },
     },
     {
-      id: 'company',
+      accessorKey: 'contact',
       accessorFn: (row) => row.contact.companyName,
       header: 'Cliente',
+      filterFn: () => { return true }
     },
     {
       id: 'salesperson',

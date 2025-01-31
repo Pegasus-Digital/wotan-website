@@ -64,6 +64,11 @@ export const filterFields: DataTableFilterField<Order>[] = [
     value: 'incrementalId',
     placeholder: 'Filtrar por id...',
   },
+  {
+    label: 'Cliente',
+    value: 'client',
+    placeholder: 'Filtrar por cliente...',
+  }
 ]
 
 export function getColumns(): ColumnDef<Order>[] {
@@ -122,6 +127,7 @@ export function getColumns(): ColumnDef<Order>[] {
           </p>
         )
       },
+      filterFn: () => { return true },
     },
     {
       id: 'salesperson',

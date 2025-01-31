@@ -1,6 +1,6 @@
 import { OrdersContent } from './content'
 
-import { ISearchParams, searchParamsSchema } from '@/lib/validations'
+import { ISearchParams, ordersParamsSchema } from '@/lib/validations'
 
 import { getOrders } from './_logic/queries'
 
@@ -15,7 +15,7 @@ interface OrdersPageProps {
 }
 
 export default async function Orders({ searchParams }: OrdersPageProps) {
-  const search = searchParamsSchema.parse(searchParams)
+  const search = ordersParamsSchema.parse(searchParams)
 
   const ordersPromise = getOrders(search)
 

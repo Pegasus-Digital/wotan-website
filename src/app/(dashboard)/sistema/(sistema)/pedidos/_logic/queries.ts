@@ -3,24 +3,49 @@ import 'server-only'
 import payload from 'payload'
 
 import { z } from 'zod'
-import { searchParamsSchema } from '@/lib/validations'
+import { ordersParamsSchema, searchParamsSchema } from '@/lib/validations'
 
 import { unstable_noStore as noStore } from 'next/cache'
 
+
 export async function getOrders(
-  searchParams: z.infer<typeof searchParamsSchema>,
+  searchParams: z.infer<typeof ordersParamsSchema>,
 ) {
   noStore()
 
   try {
-    const { page, per_page, sort } = searchParams
+    const { page, per_page, sort, client } = searchParams
+
+    let whereOr = []
+
+    if (client !== undefined && client.length > 3) {
+      whereOr.push(
+        {
+          'client.razaosocial': {
+            contains: client ? client : '',
+          },
+        },
+        {
+          'client.razaosocial': {
+            contains: client ? client : '',
+          },
+        }
+      )
+    }
+
+    // console.log('whereOr', whereOr)
 
     const response = await payload.find({
       collection: 'order',
       page,
       limit: per_page,
+      where: {
+        or: whereOr,
+      },
       sort,
     })
+
+
 
     return {
       data: response.docs,

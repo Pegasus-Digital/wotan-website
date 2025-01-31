@@ -14,6 +14,21 @@ export const searchParamsSchema = z.object({
   operator: z.string().optional(),
 })
 
+export const budgetsParamsSchema = z.object({
+  page: z.coerce.number().default(1),
+  per_page: z.coerce.number().default(10),
+  sort: z.string().optional(),
+  incrementalId: z.string().default(''),
+  contact: z.string().default(''),
+})
+
+export const ordersParamsSchema = z.object({
+  page: z.coerce.number().default(1),
+  per_page: z.coerce.number().default(10),
+  sort: z.string().optional(),
+  client: z.string().default(''),
+})
+
 export const clientParamsSchema = z.object({
   page: z.coerce.number().default(1),
   per_page: z.coerce.number().default(10),

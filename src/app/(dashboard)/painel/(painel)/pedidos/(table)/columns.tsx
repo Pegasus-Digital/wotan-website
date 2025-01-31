@@ -49,21 +49,16 @@ import { LayoutDocumentDownloader } from '../_components/planilha-pdf-downloader
 import { numericFilter } from '@/components/table/hooks/use-data-table'
 
 export const filterFields: DataTableFilterField<Order>[] = [
-  // {
-  //   label: 'Company Name',
-  //   value: '',
-  //   placeholder: 'Filtrar nome da empresa...',
-  // },
-  // {
-  //   label: 'Company',
-  //   value: 'companyName',
-  //   placeholder: 'Filtrar nome da empresa...',
-  // },
   {
     label: 'Número',
     value: 'incrementalId',
     placeholder: 'Filtrar por id...',
   },
+  {
+    label: 'Cliente',
+    value: 'client',
+    placeholder: 'Filtrar por cliente...',
+  }
 ]
 
 export function getColumns(): ColumnDef<Order>[] {
@@ -122,6 +117,7 @@ export function getColumns(): ColumnDef<Order>[] {
           </p>
         )
       },
+      filterFn: () => { return true },
     },
     {
       id: 'salesperson',
@@ -317,8 +313,8 @@ export function getColumns(): ColumnDef<Order>[] {
             <DropdownMenuItem
               className='cursor-pointer'
               disabled
-              // disabled={isChangeStatusPending}
-              // onClick={() => setDialogStatusState(true)}
+            // disabled={isChangeStatusPending}
+            // onClick={() => setDialogStatusState(true)}
             >
               Alterar status
             </DropdownMenuItem>

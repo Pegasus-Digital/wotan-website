@@ -3,24 +3,44 @@ import 'server-only'
 import payload from 'payload'
 
 import { z } from 'zod'
-import { searchParamsSchema } from '@/lib/validations'
+import { budgetsParamsSchema } from '@/lib/validations'
 
 import { unstable_noStore as noStore } from 'next/cache'
 
 export async function getEstimates(
-  searchParams: z.infer<typeof searchParamsSchema>,
+  searchParams: z.infer<typeof budgetsParamsSchema>,
 ) {
   noStore()
 
   try {
-    const { page, per_page, sort } = searchParams
+    const { page, per_page, sort, } = searchParams
 
+    const contact = searchParams.contact
+
+    let whereOr = []
+
+    if (contact !== undefined && contact.length > 3) {
+      whereOr.push(
+        {
+          'contact.companyName': {
+            contains: contact ? contact : '',
+          },
+        },
+        {
+          'contact.companyName': {
+            contains: contact ? contact : '',
+          },
+        }
+      )
+    }
     const response = await payload.find({
       collection: 'budget',
       page,
       limit: per_page,
+      where: { or: whereOr },
       sort,
     })
+
 
     return {
       data: response.docs,

@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { EstimatesContent } from './content'
 
-import { ISearchParams, searchParamsSchema } from '@/lib/validations'
+import { ISearchParams, budgetsParamsSchema } from '@/lib/validations'
 
 import { getEstimates } from './_logic/queries'
 
@@ -16,7 +16,7 @@ interface EstimatesPageProps {
 }
 
 export default async function Estimates({ searchParams }: EstimatesPageProps) {
-  const search = searchParamsSchema.parse(searchParams)
+  const search = budgetsParamsSchema.parse(searchParams)
 
   const estimatesPromise = getEstimates(search)
 
