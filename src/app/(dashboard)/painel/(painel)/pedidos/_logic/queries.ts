@@ -67,9 +67,6 @@ export async function getOrders(
       }
     }
 
-
-    console.log('whereOr', whereOr)
-
     const response = await payload.find({
       collection: 'order',
       page,
