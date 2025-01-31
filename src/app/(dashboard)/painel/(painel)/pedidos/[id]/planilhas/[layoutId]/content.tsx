@@ -130,7 +130,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
 
   const contact = client.contacts.filter(
     (contact) => contact.id === order.contact,
-  )
+  )[0]
 
   // console.log(item)
   // console.log('Order default:', order)
@@ -223,7 +223,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                 ? order.client.name
                 : order.client}
             </Label>
-            <Label>Contato: {contact[0].name}</Label>
+            <Label>Contato: {typeof contact === 'object' && contact ? contact.name : 'Não cadastrado.'}</Label>
             {order.paymentConditions && (
               <Label>Condição de Pagamento: {order.paymentConditions}</Label>
             )}
