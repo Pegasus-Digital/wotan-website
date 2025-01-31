@@ -17,7 +17,7 @@ export async function getOrders(
 
     let whereOr = []
 
-    if (client !== undefined && client.length > 3) {
+    if (client !== undefined && client.length >= 3) {
       whereOr.push(
         {
           'client.razaosocial': {

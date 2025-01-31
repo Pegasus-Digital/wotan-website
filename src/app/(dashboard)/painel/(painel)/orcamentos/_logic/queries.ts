@@ -19,7 +19,7 @@ export async function getEstimates(
 
     let whereOr = []
 
-    if (contact !== undefined && contact.length > 3) {
+    if (contact !== undefined && contact.length >= 3) {
       whereOr.push(
         {
           'contact.companyName': {
