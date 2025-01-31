@@ -99,7 +99,9 @@ export function getColumns(): ColumnDef<Order>[] {
     {
       id: 'incrementalId',
       accessorFn: (row) => row.incrementalId,
-      filterFn: numericFilter,
+      // filterFn: numericFilter,
+      filterFn: () => { return true },
+
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title='Número' />
       ),

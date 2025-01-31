@@ -27,6 +27,7 @@ export const ordersParamsSchema = z.object({
   per_page: z.coerce.number().default(10),
   sort: z.string().optional(),
   client: z.string().default(''),
+  incrementalId: z.coerce.number().optional(),
 })
 
 export const clientParamsSchema = z.object({

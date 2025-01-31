@@ -13,7 +13,7 @@ export async function getOrders(
   noStore()
 
   try {
-    const { page, per_page, sort, client } = searchParams
+    const { page, per_page, sort, client, incrementalId } = searchParams
 
     let whereOr = []
 
@@ -32,7 +32,43 @@ export async function getOrders(
       )
     }
 
-    // console.log('whereOr', whereOr)
+
+    if (incrementalId !== undefined) {
+      whereOr.push({
+        incrementalId: {
+          equals: incrementalId, // Exact match
+        },
+      });
+
+      let factor = 10;
+      let currentId = incrementalId;
+
+      // Dynamically generate ranges as long as incrementalId * factor is within a reasonable range
+      while (currentId * factor <= 999999) { // Adjust upper limit if needed
+        const lowerBound = currentId * factor;
+        const upperBound = lowerBound + 9;
+
+        whereOr.push({
+          and: [
+            {
+              incrementalId: {
+                greater_than_equal: lowerBound,
+              },
+            },
+            {
+              incrementalId: {
+                less_than_equal: upperBound,
+              },
+            },
+          ],
+        });
+
+        factor *= 10; // Move to the next order of magnitude
+      }
+    }
+
+
+    console.log('whereOr', whereOr)
 
     const response = await payload.find({
       collection: 'order',
@@ -44,7 +80,7 @@ export async function getOrders(
       sort,
     })
 
-
+    // console.log('response', response)
 
     return {
       data: response.docs,
