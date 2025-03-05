@@ -106,6 +106,7 @@ interface SeeOrderContentProps {
 }
 
 export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
+  const router = useRouter()
   const form = useForm<LayoutProps>({
     resolver: zodResolver(layoutSchema),
     defaultValues: { ...layout },
@@ -178,6 +179,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
 
     if (response.status) {
       toast.success('Layout atualizado com sucesso.')
+      router.back
     } else {
       toast.error('Ocorreu um erro ao atualizar o layout.')
     }
