@@ -59,6 +59,7 @@ import {
 import { getClients } from '../_logic/get-clients'
 import { updateBudgetStatus } from '../_logic/actions'
 import { createOrder } from '../../pedidos/_logic/actions'
+import { getRelativeDate } from '@/lib/date'
 
 export const filterFields: DataTableFilterField<Budget>[] = [
   {
@@ -235,6 +236,24 @@ export function getColumns(): ColumnDef<Budget>[] {
             {status}
           </Badge>
         )
+      },
+    },
+    {
+      accessorKey: 'updatedAt',
+      enableHiding: true,
+
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title='Atualizado' />
+      ),
+      cell: ({ row }) => {
+        const value: string = row.getValue('updatedAt')
+
+        if (!value) return 'Nunca foi atualizado'
+
+        const date = new Date(value)
+        const formattedDate = getRelativeDate(date)
+
+        return formattedDate
       },
     },
     {

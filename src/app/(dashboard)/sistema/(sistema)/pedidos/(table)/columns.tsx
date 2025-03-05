@@ -47,6 +47,7 @@ import { Heading } from '@/pegasus/heading'
 import { Label } from '@/components/ui/label'
 import { LayoutDocumentDownloader } from '../_components/planilha-pdf-downloader'
 import { numericFilter } from '@/components/table/hooks/use-data-table'
+import { getRelativeDate } from '@/lib/date'
 
 export const filterFields: DataTableFilterField<Order>[] = [
   // {
@@ -287,6 +288,24 @@ export function getColumns(): ColumnDef<Order>[] {
             )}
           </>
         )
+      },
+    },
+    {
+      accessorKey: 'updatedAt',
+      enableHiding: true,
+
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title='Atualizado' />
+      ),
+      cell: ({ row }) => {
+        const value: string = row.getValue('updatedAt')
+
+        if (!value) return 'Nunca foi atualizado'
+
+        const date = new Date(value)
+        const formattedDate = getRelativeDate(date)
+
+        return formattedDate
       },
     },
     {
