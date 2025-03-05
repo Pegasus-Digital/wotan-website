@@ -132,12 +132,12 @@ export function ProductionDocument({
             <View style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
               <Text style={{ fontWeight: 'medium', fontSize: 11 }}>
                 Razão social:{' '}
-                {typeof client === 'object' ? client.name : client}
+                {typeof client === 'object' ? client.razaosocial : client}
               </Text>
               <Text>
                 CNPJ: {typeof client === 'object' ? client.document : client}
               </Text>
-              <Text>Contato: {typeof contact === 'object' && contact ? contact.name : 'Não cadastrado.'}</Text>
+              <Text>Contato: {typeof contact === 'object' && contact ? contact.name : 'Não cadastrado.'} {typeof contact === 'object' && contact ? `(${contact.email})` : ''}</Text>
               <Text>Condição de pagamento: {order.paymentConditions}</Text>
               <Text>Prazo de entrega: {layoutValues.prazoentrega}</Text>
             </View>

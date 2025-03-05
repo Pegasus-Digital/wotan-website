@@ -93,6 +93,7 @@ import { updateLayout } from '../../../_logic/actions'
 import { formatBRL, formatBRLWithoutPrefix, parseValue } from '@/lib/format'
 import { getDDMMYYDate } from '@/lib/date'
 import { ContentLayoutSales } from '@/components/painel-sistema/content-layout'
+import { AttributeType } from '@/payload/payload-types'
 
 // Define the validation schema
 
@@ -143,22 +144,19 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
     control,
     name: 'supplyer',
   })
-  const layoutItem = order.itens.find((item) => {
-    if (
-      (typeof item.layout === 'object' ? item.layout.id : item.layout) ===
-      layout.id
-    ) {
-      return {
-        ...item,
-      }
-    }
-    return null
-  })
+
 
   const agencyComissionPercent = watch('commisions.agency.value')
   const salespersonComissionPercent = watch('commisions.salesperson.value')
 
-  const totalValue = (layoutItem.quantity * layoutItem.price) / 100
+  const itemAttributes =
+  typeof item.attributes === 'object'
+    ? item.attributes.map((attr) => {
+      return typeof attr === 'object' ? attr : null
+    })
+    : []
+
+  const totalValue = (item.quantity * item.price) / 100
 
   const agencyComission = (totalValue * agencyComissionPercent) / 100
   const salespersonComission = (totalValue * salespersonComissionPercent) / 100
@@ -207,7 +205,16 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                 : ''}
             </Heading>
             <Label>Quantidade: {item && item.quantity}</Label>
-            <Label>Material: | Cor:</Label>
+            {/* <Label>Material: {item && item.}| Cor: | Tamanho:</Label> */}
+            {itemAttributes &&
+                  itemAttributes.map((attr) => {
+                    const attributeType = attr.type as AttributeType
+                    return (
+                      <Label key={attr.id}>
+                        {attributeType.name}: {attr.name}
+                      </Label>
+                    )
+                  })}
           </div>
           <div className='flex flex-col justify-start gap-2'>
             <Label>Pedido: #{order.incrementalId}</Label>
@@ -224,7 +231,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                 ? order.client.name
                 : order.client}
             </Label>
-            <Label>Contato: {typeof contact === 'object' && contact ? contact.name : 'Não cadastrado.'}</Label>
+            <Label>Contato: {typeof contact === 'object' && contact ? contact.name : 'Não cadastrado.'} {typeof contact === 'object' && contact ? `(${contact.email})` : ''}</Label>
             {order.paymentConditions && (
               <Label>Condição de Pagamento: {order.paymentConditions}</Label>
             )}
@@ -1220,7 +1227,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Desconto</FormLabel>
+                    <FormLabel>Volumes</FormLabel>
                     <FormControl>
                       <Input
                         {...field}

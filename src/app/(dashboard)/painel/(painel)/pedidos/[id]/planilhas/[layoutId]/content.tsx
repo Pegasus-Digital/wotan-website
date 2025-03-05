@@ -11,6 +11,7 @@ import {
   Attribute,
   Salesperson,
   Layout,
+  AttributeType,
 } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
@@ -155,6 +156,14 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
     return null
   })
 
+
+  const itemAttributes =
+  typeof item.attributes === 'object'
+    ? item.attributes.map((attr) => {
+      return typeof attr === 'object' ? attr : null
+    })
+    : []
+
   const agencyComissionPercent = watch('commisions.agency.value')
   const salespersonComissionPercent = watch('commisions.salesperson.value')
 
@@ -206,7 +215,16 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                 : ''}
             </Heading>
             <Label>Quantidade: {item && item.quantity}</Label>
-            <Label>Material: | Cor:</Label>
+            {/* <Label>Material: | Cor:</Label> */}
+            {itemAttributes &&
+                  itemAttributes.map((attr) => {
+                    const attributeType = attr.type as AttributeType
+                    return (
+                      <Label key={attr.id}>
+                        {attributeType.name}: {attr.name}
+                      </Label>
+                    )
+                  })}
           </div>
           <div className='flex flex-col justify-start gap-2'>
             <Label>Pedido: #{order.incrementalId}</Label>
@@ -223,7 +241,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                 ? order.client.name
                 : order.client}
             </Label>
-            <Label>Contato: {typeof contact === 'object' && contact ? contact.name : 'Não cadastrado.'}</Label>
+            <Label>Contato: {typeof contact === 'object' && contact ? contact.name : 'Não cadastrado.'} {typeof contact === 'object' && contact ? `(${contact.email})` : ''}</Label>
             {order.paymentConditions && (
               <Label>Condição de Pagamento: {order.paymentConditions}</Label>
             )}
@@ -1219,7 +1237,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                 control={form.control}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Desconto</FormLabel>
+                    <FormLabel>Volumes</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
