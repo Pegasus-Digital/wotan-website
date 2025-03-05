@@ -43,7 +43,7 @@ export async function getProducts(
       page,
       limit: per_page,
       where: {
-        and: [{ title: { contains: title ? title : '' } }],
+        and: [{ title: { contains: title ? title : '' } }, { _status:{ equals:'published'}}],
       },
       sort,
     })

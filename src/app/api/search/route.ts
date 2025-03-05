@@ -48,19 +48,25 @@ export async function POST(request: NextRequest, response: NextResponse) {
     }))
   }
 
+  const notDraft = { _status:{ equals:'published'}} 
+
   const whereQuery = {
     or: [
       // Conditions for the first word
       ...generateWordConditions(words[0]),
     ],
-    and: createObjectsForWords(words),
+    and: [...createObjectsForWords(words), notDraft ],
   }
+
+  // console.log(whereQuery)
 
   const products = await payload.find({
     collection: 'products',
     where: whereQuery,
     limit: 20,
   })
+
+  console.log(products)
 
   // if (products?.docs) {
   //   products.docs.reverse()
