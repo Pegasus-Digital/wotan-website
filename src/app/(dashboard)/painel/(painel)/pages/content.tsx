@@ -112,6 +112,7 @@ export function PagesContent({ pages }: PagesContentProps) {
                       size="sm"
                       className="w-full justify-start"
                       aria-label={`Editar layout de ${page.title}`}
+                      disabled={true}
                     >
                       <Layout className="h-4 w-4 mr-2 shrink-0" aria-hidden="true" />
                       <span className="truncate">Editar Layout</span>
