@@ -42,6 +42,11 @@ function CarouselEditor({
   const [images, setMedia] = useState<Media[]>(initialImages)
   const [isDragging, setIsDragging] = useState(false)
 
+  // Update local state when initialImages prop changes
+  useEffect(() => {
+    setMedia(initialImages)
+  }, [initialImages])
+
   // Update parent when images change
   useEffect(() => {
     onImagesChange?.(images)
@@ -110,54 +115,56 @@ function CarouselEditor({
                     className='space-y-4'
                   >
                     {images.map((image, index) => (
-                      <Draggable
-                        key={image.id}
-                        draggableId={image.id}
-                        index={index}
-                      >
-                        {(provided, snapshot) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            className={`flex items-center gap-4 rounded-lg border px-4 py-2 transition-colors ${
-                              snapshot.isDragging
-                                ? 'bg-muted shadow-lg'
-                                : 'hover:bg-muted/50'
-                            }`}
-                          >
-                            <div {...provided.dragHandleProps}>
-                              <GripVertical className='h-5 w-5 text-muted-foreground' />
-                            </div>
-
-                            <div className='relative aspect-[1280/480] h-16 overflow-hidden rounded-md bg-muted'>
-                              <Image
-                                resource={image}
-                                fill
-                                className='object-cover'
-                              />
-                            </div>
-
-                            <div className='min-w-0 flex-1'>
-                              <p className='truncate font-medium'>
-                                {image.filename}
-                              </p>
-                              <p className='text-sm text-muted-foreground'>
-                                Posição: {index + 1}
-                              </p>
-                            </div>
-
-                            <Button
-                              variant='ghost'
-                              size='icon'
-                              onClick={() => handleRemoveImage(index)}
-                              className='text-destructive hover:text-destructive'
-                              disabled={isDragging}
+                      image && image.id ? (
+                        <Draggable
+                          key={image.id}
+                          draggableId={image.id}
+                          index={index}
+                        >
+                          {(provided, snapshot) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              className={`flex items-center gap-4 rounded-lg border px-4 py-2 transition-colors ${
+                                snapshot.isDragging
+                                  ? 'bg-muted shadow-lg'
+                                  : 'hover:bg-muted/50'
+                              }`}
                             >
-                              <Icons.Trash className='h-5 w-5 hover:text-white' />
-                            </Button>
-                          </div>
-                        )}
-                      </Draggable>
+                              <div {...provided.dragHandleProps}>
+                                <GripVertical className='h-5 w-5 text-muted-foreground' />
+                              </div>
+
+                              <div className='relative aspect-[1280/480] h-16 overflow-hidden rounded-md bg-muted'>
+                                <Image
+                                  resource={image}
+                                  fill
+                                  className='object-cover'
+                                />
+                              </div>
+
+                              <div className='min-w-0 flex-1'>
+                                <p className='truncate font-medium'>
+                                  {image.filename}
+                                </p>
+                                <p className='text-sm text-muted-foreground'>
+                                  Posição: {index + 1}
+                                </p>
+                              </div>
+
+                              <Button
+                                variant='ghost'
+                                size='icon'
+                                onClick={() => handleRemoveImage(index)}
+                                className='text-destructive hover:text-destructive'
+                                disabled={isDragging}
+                              >
+                                <Icons.Trash className='h-5 w-5 hover:text-white' />
+                              </Button>
+                            </div>
+                          )}
+                        </Draggable>
+                      ) : null
                     ))}
                     {provided.placeholder}
                   </div>
