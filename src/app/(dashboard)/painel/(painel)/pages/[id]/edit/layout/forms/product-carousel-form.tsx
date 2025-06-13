@@ -65,6 +65,7 @@ const productCarouselSchema = z.object({
     type: z.enum(['reference', 'custom']),
     newTab: z.boolean(),
     label: z.string(),
+    url: z.string().optional(),
     reference: z.union([
       z.object({
         relationTo: z.literal('pages'),

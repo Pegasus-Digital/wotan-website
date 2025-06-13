@@ -61,7 +61,7 @@ export function Link({ form }: { form: any }) {
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                         className='flex gap-4'
-                        disabled={!form.watch('seeMore')}
+                        disabled={!form.watch('seeMore')||true}
                       >
                         <div className='flex items-center space-x-2'>
                           <RadioGroupItem value='reference' id='reference' />
@@ -77,28 +77,7 @@ export function Link({ form }: { form: any }) {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name='seeMoreLink.newTab'
-                render={({ field }) => (
-                  <FormItem className='flex items-center justify-between'>
-                    <div className='space-y-0.5'>
-                      <FormLabel>Abrir em nova aba</FormLabel>
-                      <FormDescription>
-                        Se ativado, força o navegador a abrir o link em uma nova
-                        aba.
-                      </FormDescription>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                        disabled={!form.watch('seeMore')}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
+
               <FormField
                 control={form.control}
                 name='seeMoreLink.label'
@@ -117,6 +96,75 @@ export function Link({ form }: { form: any }) {
                       />
                     </FormControl>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {form.watch('seeMoreLink.type') === 'reference' && (
+                <FormField
+                  control={form.control}
+                  name='seeMoreLink.reference'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Referência</FormLabel>
+                      <FormDescription>
+                        Selecione a página, produto ou categoria de referência
+                      </FormDescription>
+                      <FormControl>
+                        <select
+                          {...field}
+                          className='w-full rounded-md border border-input bg-background px-3 py-2 disabled:cursor-not-allowed disabled:opacity-50'
+                          disabled={true}
+                        >
+                          <option value="">Selecionar</option>
+                        </select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              {form.watch('seeMoreLink.type') === 'custom' && (
+                <FormField
+                  control={form.control}
+                  name='seeMoreLink.url'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>URL</FormLabel>
+                      <FormDescription>
+                        Digite a URL personalizada para o link
+                      </FormDescription>
+                      <FormControl>
+                        <input
+                          {...field}
+                          className='w-full rounded-md border border-input bg-background px-3 py-2 disabled:cursor-not-allowed disabled:opacity-50'
+                          disabled={!form.watch('seeMore')}
+                          placeholder='Digite a URL'
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+                            <FormField
+                control={form.control}
+                name='seeMoreLink.newTab'
+                render={({ field }) => (
+                  <FormItem className='flex items-center justify-between'>
+                    <div className='space-y-0.5'>
+                      <FormLabel>Abrir em nova aba</FormLabel>
+                      <FormDescription>
+                        Se ativado, força o navegador a abrir o link em uma nova
+                        aba.
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        disabled={!form.watch('seeMore')}
+                      />
+                    </FormControl>
                   </FormItem>
                 )}
               />
