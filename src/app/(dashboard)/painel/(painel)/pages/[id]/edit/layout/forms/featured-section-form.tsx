@@ -216,15 +216,20 @@ export function FeaturedSectionForm({
     }))
   }
 
-  const handleSetCardImages = useCallback((newMedia: Media[]) => {
-    setCardImages(prev => {
-      const updatedImages = [...prev]
-      newMedia.forEach((media, index) => {
-        updatedImages[index] = media
-      })
-      return updatedImages
-    })
-  }, [])
+  const handleSetCardImages = useCallback(
+    (newMedia: Media[]) => {
+
+    // setCardImages(prev => {
+    //   const updatedImages = [...prev]
+    //   newMedia.forEach((media, index) => {
+    //     updatedImages[index] = media
+    //   })
+    //   return updatedImages
+    // })
+    // console.log('newMedia', newMedia)
+    
+    setCardImages(newMedia)
+  }, [cardImages])
 
   const handleRemoveCardImage = useCallback((index: number) => {
     setCardImages(prev => prev.filter((_, i) => i !== index))
@@ -235,6 +240,13 @@ export function FeaturedSectionForm({
     setIsDragging(false)
     if (!result.destination) return
 
+    // Check if any image doesn't have an ID yet
+    const hasUndefinedIds = cardImages.some(image => !image?.id)
+    if (hasUndefinedIds) {
+      toast.error('Aguarde o carregamento das imagens para reordenar')
+      return
+    }
+
     const items = Array.from(cardImages)
     const [reorderedItem] = items.splice(result.source.index, 1)
     items.splice(result.destination.index, 0, reorderedItem)
@@ -243,14 +255,26 @@ export function FeaturedSectionForm({
   }, [cardImages])
 
   const onDragStart = useCallback(() => {
+    // Check if any image doesn't have an ID yet
+    const hasUndefinedIds = cardImages.some(image => !image?.id)
+    if (hasUndefinedIds) {
+      toast.error('Aguarde o carregamento das imagens para reordenar')
+      return
+    }
+    
     setIsDragging(true)
-  }, [])
+  }, [cardImages])
 
   function handleSubmit(data: FeaturedSectionFormValues) {
     const errors = form.formState.errors
 
     if (Object.keys(errors).length > 0) {
       alert('Form has validation errors. Check console for details.')
+      return
+    }
+
+    if (cardImages.length !== 4) {
+      toast.error('São necessárias 4 imagens, uma para cada card em destaque.')
       return
     }
 
@@ -536,9 +560,10 @@ export function FeaturedSectionForm({
                             >
                               {cardImages.map((image, index) => (
                                 <Draggable
-                                  key={image.id}
-                                  draggableId={image.id}
+                                  key={image?.id || `temp-${index}`}
+                                  draggableId={image?.id || `temp-${index}`}
                                   index={index}
+                                  isDragDisabled={!image?.id}
                                 >
                                   {(provided, snapshot) => (
                                     <div
@@ -551,7 +576,7 @@ export function FeaturedSectionForm({
                                       }`}
                                     >
                                       <div {...provided.dragHandleProps}>
-                                        <GripVertical className='h-5 w-5 text-muted-foreground' />
+                                        <GripVertical className={`h-5 w-5 ${!image?.id ? 'text-muted-foreground/50 cursor-not-allowed' : 'text-muted-foreground'}`} />
                                       </div>
 
                                       <div className='relative aspect-[1280/480] h-16 overflow-hidden rounded-md bg-muted'>
@@ -564,7 +589,7 @@ export function FeaturedSectionForm({
 
                                       <div className='min-w-0 flex-1'>
                                         <p className='truncate font-medium'>
-                                          {image.filename}
+                                          {image?.filename}
                                         </p>
                                         <p className='text-sm text-muted-foreground'>
                                           Posição: {index + 1}
