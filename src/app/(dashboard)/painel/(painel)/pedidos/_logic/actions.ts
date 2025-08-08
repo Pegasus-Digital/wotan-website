@@ -14,6 +14,15 @@ interface DeleteOrderProps {
 
 interface DeleteOrderResponseData {}
 
+interface UpdateOrderStatusProps {
+  orderId: string
+  status: Order['status']
+}
+
+interface UpdateOrderStatusResponseData {
+  order: Order
+}
+
 export async function deleteOrder(
   data: DeleteOrderProps,
 ): Promise<ActionResponse<DeleteOrderResponseData>> {
@@ -167,6 +176,35 @@ export async function updateLayout({
       data: null,
       status: false,
       message: '[500] Ocorreu um erro ao atualizar o layout.',
+    }
+  }
+}
+
+
+export async function updateOrderStatus({
+  orderId,
+  status,
+}: UpdateOrderStatusProps): Promise<ActionResponse<UpdateOrderStatusResponseData>> {
+  try {
+    const response = await payload.update({
+      id: orderId,
+      collection: 'order',
+      data: { status },
+    })
+
+    revalidatePath('/painel/pedidos')
+
+    return {
+      data: { order: response },
+      status: true,
+      message: 'Status do pedido atualizado com sucesso.',
+    }
+  } catch (err) {
+    console.error(err)
+    return {
+      data: null,
+      status: false,
+      message: '[500] Ocorreu um erro ao atualizar o status do pedido.',
     }
   }
 }

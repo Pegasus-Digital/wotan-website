@@ -26,6 +26,8 @@ import {
   DialogHeader,
   DialogContent,
   DialogDescription,
+  DialogFooter,
+  DialogClose,
 } from '@/components/ui/dialog'
 
 import {
@@ -37,7 +39,7 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
 
-import { deleteOrder } from '../_logic/actions'
+import { deleteOrder, updateOrderStatus } from '../_logic/actions'
 import {
   Popover,
   PopoverContent,
@@ -48,6 +50,7 @@ import { Label } from '@/components/ui/label'
 import { LayoutDocumentDownloader } from '../_components/planilha-pdf-downloader'
 import { numericFilter } from '@/components/table/hooks/use-data-table'
 import { getRelativeDate } from '@/lib/date'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export const filterFields: DataTableFilterField<Order>[] = [
   {
@@ -306,6 +309,7 @@ export function getColumns(): ColumnDef<Order>[] {
         const order = row.original
 
         const [downloaderDialog, setDownloaderDialog] = useState(false)
+        const [dialogStatusState, setDialogStatusState] = useState(false)
 
         function DeleteEstimateAction() {
           const [isDeletePending, startDeleteTransition] = useTransition()
@@ -333,9 +337,7 @@ export function getColumns(): ColumnDef<Order>[] {
           return (
             <DropdownMenuItem
               className='cursor-pointer'
-              disabled
-            // disabled={isChangeStatusPending}
-            // onClick={() => setDialogStatusState(true)}
+              onClick={() => setDialogStatusState(true)}
             >
               Alterar status
             </DropdownMenuItem>
@@ -367,6 +369,68 @@ export function getColumns(): ColumnDef<Order>[] {
             </Dialog>
           )
         }
+
+        function ChangeOrderStatusDialog() {
+          const [selectedStatus, setSelectedStatus] = useState<
+            Order['status']
+          >(order.status)
+
+          return (
+            <Dialog open={dialogStatusState} onOpenChange={setDialogStatusState}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Alterar Status do Orçamento</DialogTitle>
+                </DialogHeader>
+                <DialogDescription className='font-bold'>
+                  Atualize o status do orçamento.
+                </DialogDescription>
+                <Select
+                  onValueChange={(value) =>
+                    setSelectedStatus(value as Order['status'])
+                  }
+                  value={selectedStatus}
+                >
+                  <SelectTrigger className='w-full'>
+                    <SelectValue placeholder='Selecione um Status' />
+                  </SelectTrigger>
+
+                  <SelectContent side='bottom'>
+                    <SelectItem value='pending'>Pendente</SelectItem>
+                    <SelectItem value='completed'>Concluído</SelectItem>
+                    <SelectItem value='cancelled'>Cancelado</SelectItem>
+                  </SelectContent>
+                </Select>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant='outline'>Voltar</Button>
+                  </DialogClose>
+                  <Button
+                    variant='default'
+                    onClick={() => {
+                      setDialogStatusState(false)
+
+                      toast.promise(
+                        updateOrderStatus({
+                          orderId: order.id,
+                          status: selectedStatus,
+                        }),
+                        {
+                          loading: 'Atualizando...',
+                          success: 'Status atualizado com sucesso',
+                          error: 'Erro ao atualizar o status...',
+                        },
+                      )
+                    }}
+                  >
+                    Confirmar
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )
+        }
+
+
         return (
           <div className='flex w-min gap-1'>
             <Button size='icon' variant='ghost' asChild>
@@ -404,6 +468,7 @@ export function getColumns(): ColumnDef<Order>[] {
               </DropdownMenuContent>
             </DropdownMenu>
             <OrderDocumentDownloaderDialog />
+            <ChangeOrderStatusDialog />
           </div>
         )
       },
