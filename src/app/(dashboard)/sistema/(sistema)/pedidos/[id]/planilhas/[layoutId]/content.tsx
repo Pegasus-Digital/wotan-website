@@ -179,7 +179,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
 
     if (response.status) {
       toast.success('Layout atualizado com sucesso.')
-      router.back
+      router.push('/sistema/pedidos')
     } else {
       toast.error('Ocorreu um erro ao atualizar o layout.')
     }

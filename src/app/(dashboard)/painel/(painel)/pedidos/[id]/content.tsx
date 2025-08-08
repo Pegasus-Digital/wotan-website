@@ -160,6 +160,7 @@ export function SeeOrderContent({
         price: item.price,
         sample: item.sample,
         print: item.print,
+        layout: item.layout,
         layoutSent: item.layoutSent,
         layoutApproved: item.layoutApproved,
         attributes:
