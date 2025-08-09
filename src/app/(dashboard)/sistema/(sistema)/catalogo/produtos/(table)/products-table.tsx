@@ -23,9 +23,6 @@ interface ProductsTableProps {
 
 export function ProductsTable({ productsPromise }: ProductsTableProps) {
   const { data, pageCount } = React.use(productsPromise)
-  // const [selectedProducts, setSelectedProducts] = React.useState<ProductInfo[]>(
-  //   [],
-  // )
 
   const columns = React.useMemo<ColumnDef<Product, unknown>[]>(
     () => getColumns(),

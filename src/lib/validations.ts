@@ -12,6 +12,7 @@ export const searchParamsSchema = z.object({
   status: z.string().optional(),
   priority: z.string().optional(),
   operator: z.string().optional(),
+  sku: z.string().optional(),
 })
 
 export const budgetsParamsSchema = z.object({

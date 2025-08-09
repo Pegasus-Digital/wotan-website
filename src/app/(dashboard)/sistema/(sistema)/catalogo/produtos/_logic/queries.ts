@@ -36,14 +36,18 @@ export async function getProducts(
   noStore()
 
   try {
-    const { page, per_page, title, sort } = searchParams
+    const { page, per_page, title, sort, sku } = searchParams
 
     const response = await payload.find({
       collection: 'products',
       page,
       limit: per_page,
       where: {
-        and: [{ title: { contains: title ? title : '' } }, { _status:{ equals:'published'}}],
+        and: [
+          { title: { contains: title ? title : '' } },
+          { sku: { contains: sku ? sku : '' } },
+          { _status: { equals: 'published' } },
+        ],
       },
       sort,
     })

@@ -1,8 +1,9 @@
 'use client'
 
+import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import { useMemo, useState, useTransition } from 'react'
 
 import {
   Order,
@@ -15,7 +16,7 @@ import {
 import { toast } from 'sonner'
 import { cities, states } from 'estados-cidades'
 
-import { object, z } from 'zod'
+import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, useFormState, useFieldArray } from 'react-hook-form'
 
@@ -29,7 +30,6 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
 import { Separator } from '@/components/ui/separator'
-import { Content, ContentHeader } from '@/components/content'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { AttributesCombobox } from '../_components/attributes-selector'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
@@ -75,11 +75,11 @@ import {
 
 import { updateOrder } from '../_logic/actions'
 import { orderSchema } from '../_logic/validation'
-import { ContentLayoutSales } from '@/components/painel-sistema/content-layout'
+import { ContentLayout } from '@/components/painel-sistema/content-layout'
 import { LoadingSpinner } from '@/components/spinner'
-import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { PackageOpen } from 'lucide-react'
+import { filterClients } from '@/lib/utils'
 
 type OrderProps = z.infer<typeof orderSchema>
 
@@ -100,6 +100,13 @@ export function SeeOrderContent({
 
   const [addProductDialog, setAddProductDialog] = useState<boolean>(false)
   const [editMode, toggleEditMode] = useState<boolean>(!edit)
+
+  const [search, setSearch] = useState('')
+
+  // Filter clients dynamically when the search input changes
+  const filteredClients = useMemo(() => {
+    return filterClients(clients, search)
+  }, [clients, search])
 
   const [selectedClient, setSelectedClient] = useState<Client | null>(
     (order.client as Client) ?? null,
@@ -133,14 +140,14 @@ export function SeeOrderContent({
           typeof item.product === 'string'
             ? item.product
             : {
-              id: item.product.id,
-              title: item.product.title,
-              sku: item.product.sku,
-              minimumQuantity: item.product.minimumQuantity,
-              active: item.product.active,
-              featuredImage: item.product.featuredImage,
-              attributes: item.product.attributes,
-            },
+                id: item.product.id,
+                title: item.product.title,
+                sku: item.product.sku,
+                minimumQuantity: item.product.minimumQuantity,
+                active: item.product.active,
+                featuredImage: item.product.featuredImage,
+                attributes: item.product.attributes,
+              },
         quantity: item.quantity,
         price: item.price,
         sample: item.sample,
@@ -158,7 +165,7 @@ export function SeeOrderContent({
 
   const { control, handleSubmit } = form
 
-  const { fields, append, remove, update, insert } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     control,
     name: 'itens',
   })
@@ -270,13 +277,7 @@ export function SeeOrderContent({
   }
 
   return (
-    // <Content>
-    //   <ContentHeader
-    //     title={`${!editMode ? 'Editar o p' : 'P'}edido #${order.incrementalId}`}
-    //     description={`Visualize ou edite o pedido conforme necessário.`}
-    //   />
-    //   <Separator className='mb-4' />
-    <ContentLayoutSales
+    <ContentLayout
       title={`${!editMode ? 'Editar o p' : 'P'}edido #${order.incrementalId}`}
       navbarButtons={
         <>
@@ -325,116 +326,135 @@ export function SeeOrderContent({
           <Card>
             <CardHeader>
               <Heading variant='h6' className='text-foreground'>
-                Cliente e Contato
+                Informações gerais
               </Heading>
             </CardHeader>
             <CardContent>
               <div className='grid grid-cols-2 gap-6'>
-                <FormField
-                  control={form.control}
-                  name='client'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Cliente</FormLabel>
-                      <FormControl>
-                        <Select
-                          value={
-                            !editMode
-                              ? selectedClient.id
-                              : (order.client as Client).id
-                          }
-                          onValueChange={(value) => {
-                            field.onChange(value)
-                            const client = clients.find(
-                              (client) => client.id === value,
-                            )
-                            setSelectedClient(client)
-                            resetAddressForm()
-                            resetContactForm()
-                            setAddressRadio(null)
-                          }}
-                        >
-                          <SelectTrigger disabled={editMode}>
-                            <SelectValue placeholder='Selecione um Cliente' />
-                          </SelectTrigger>
-                          <SelectContent side='bottom'>
-                            {!editMode && clients.length === 0 && (
-                              <SelectItem
-                                value={null}
-                                disabled
-                                className='flex items-center justify-center'
-                              >
-                                Você ainda não possui nenhum cliente.
-                              </SelectItem>
-                            )}
+                <div className='col-span-2 grid grid-cols-3 gap-6'>
+                  <div className='col-span-2'>
+                    <FormField
+                      control={form.control}
+                      name='client'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Cliente</FormLabel>
+                          <FormControl>
+                            <Select
+                              value={
+                                !editMode
+                                  ? selectedClient.id
+                                  : (order.client as Client).id
+                              }
+                              onValueChange={(value) => {
+                                field.onChange(value)
+                                const client = clients.find(
+                                  (client) => client.id === value,
+                                )
+                                setSelectedClient(client)
+                                resetAddressForm()
+                                resetContactForm()
+                                setAddressRadio(null)
+                              }}
+                            >
+                              <SelectTrigger disabled={editMode}>
+                                <SelectValue placeholder='Selecione um Cliente' />
+                              </SelectTrigger>
+                              <SelectContent side='bottom'>
+                                {!editMode && clients.length === 0 && (
+                                  <SelectItem
+                                    value={null}
+                                    disabled
+                                    className='flex items-center justify-center'
+                                  >
+                                    Você ainda não possui nenhum cliente.
+                                  </SelectItem>
+                                )}
 
-                            {!editMode &&
-                              clients.map((client) => (
-                                <SelectItem key={client.id} value={client.id}>
-                                  {client.name}
-                                </SelectItem>
-                              ))}
+                                {!editMode &&
+                                  filteredClients.map((client) => (
+                                    <SelectItem
+                                      key={client.id}
+                                      value={client.id}
+                                    >
+                                      {client.name} - <b>{client.document}</b>
+                                    </SelectItem>
+                                  ))}
 
-                            {editMode && (
-                              <SelectItem
-                                key={(order.client as Client).id}
-                                value={(order.client as Client).id}
-                              >
-                                {(order.client as Client).name}
-                              </SelectItem>
-                            )}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name='contact'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Contato</FormLabel>
-                      <FormControl>
-                        <Select
-                          defaultValue={order.contact}
-                          onValueChange={field.onChange}
-                          disabled={editMode || !selectedClient}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder='Selecione um Contato' />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {!selectedClient && (
-                              <SelectItem
-                                value={null}
-                                disabled
-                                className='flex items-center justify-center'
-                              >
-                                Selecione um cliente para ver seus contatos
-                              </SelectItem>
-                            )}
-                            {selectedClient?.contacts?.length === 0 && (
-                              <SelectItem value={null} disabled>
-                                Não encontramos nenhum contato para este
-                                cliente.
-                              </SelectItem>
-                            )}
-                            {selectedClient &&
-                              selectedClient?.contacts.length > 0 &&
-                              selectedClient.contacts.map((contact) => (
-                                <SelectItem key={contact.id} value={contact.id}>
-                                  {contact.name}
-                                </SelectItem>
-                              ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                                {editMode && (
+                                  <SelectItem
+                                    key={(order.client as Client).id}
+                                    value={(order.client as Client).id}
+                                  >
+                                    {(order.client as Client).name}
+                                  </SelectItem>
+                                )}
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <Input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder='Filtrar clientes ...'
+                    className='bottom-0 mt-auto'
+                  />
+
+                  <div className='col-span-3'>
+                    <FormField
+                      control={form.control}
+                      name='contact'
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Contato</FormLabel>
+                          <FormControl>
+                            <Select
+                              defaultValue={order.contact}
+                              onValueChange={field.onChange}
+                              disabled={editMode || !selectedClient}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder='Selecione um Contato' />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {!selectedClient && (
+                                  <SelectItem
+                                    value={null}
+                                    disabled
+                                    className='flex items-center justify-center'
+                                  >
+                                    Selecione um cliente para ver seus contatos
+                                  </SelectItem>
+                                )}
+                                {selectedClient?.contacts?.length === 0 && (
+                                  <SelectItem value={null} disabled>
+                                    Não encontramos nenhum contato para este
+                                    cliente.
+                                  </SelectItem>
+                                )}
+                                {selectedClient &&
+                                  selectedClient?.contacts.length > 0 &&
+                                  selectedClient.contacts.map((contact) => (
+                                    <SelectItem
+                                      key={contact.id}
+                                      value={contact.id}
+                                    >
+                                      {contact.name}
+                                    </SelectItem>
+                                  ))}
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
                 <FormField
                   control={form.control}
                   name='salesperson'
@@ -531,57 +551,6 @@ export function SeeOrderContent({
                 />
                 <FormField
                   control={form.control}
-                  name={'shippingCompany'}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Transportadora</FormLabel>
-                      <FormControl>
-                        <Input {...field} disabled={editMode} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name={'shippingTime'}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Prazo de Entrega</FormLabel>
-                      <FormControl>
-                        <Input {...field} disabled={editMode} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name={'shippingType'}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tipo de Frete</FormLabel>
-                      <FormControl>
-                        <Select
-                          defaultValue={order.shippingType}
-                          disabled={editMode}
-                          onValueChange={field.onChange}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder='Selecione um tipo de frete' />
-                          </SelectTrigger>
-                          <SelectContent side='bottom'>
-                            <SelectItem value='cif'>CIF</SelectItem>
-                            <SelectItem value='fob'>FOB</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
                   name={'paymentType'}
                   render={({ field }) => (
                     <FormItem>
@@ -606,6 +575,59 @@ export function SeeOrderContent({
                     </FormItem>
                   )}
                 />
+                <div className='col-span-2 grid grid-cols-3 gap-6'>
+                  <FormField
+                    control={form.control}
+                    name={'shippingCompany'}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Transportadora</FormLabel>
+                        <FormControl>
+                          <Input {...field} disabled={editMode} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={'shippingTime'}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Prazo de Entrega</FormLabel>
+                        <FormControl>
+                          <Input {...field} disabled={editMode} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={'shippingType'}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Tipo de Frete</FormLabel>
+                        <FormControl>
+                          <Select
+                            defaultValue={order.shippingType}
+                            disabled={editMode}
+                            onValueChange={field.onChange}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder='Selecione um tipo de frete' />
+                            </SelectTrigger>
+                            <SelectContent side='bottom'>
+                              <SelectItem value='cif'>CIF</SelectItem>
+                              <SelectItem value='fob'>FOB</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -796,7 +818,6 @@ export function SeeOrderContent({
           <Table>
             <TableHeader className='w-full'>
               <TableRow className='w-full'>
-                {/* <TableHead className='w-32'></TableHead> */}
                 <TableHead className='w-24'>Código</TableHead>
                 <TableHead className='w-48'>Nome</TableHead>
                 <TableHead className='w-48'>Quantidade</TableHead>
@@ -858,6 +879,7 @@ export function SeeOrderContent({
                                     }}
                                     inputMode='numeric'
                                     placeholder='0,00'
+                                    className='w-20'
                                   />
                                 </div>
                               </FormControl>
@@ -869,7 +891,7 @@ export function SeeOrderContent({
 
                       <TableCell>
                         {!editMode &&
-                          typeof field.product.attributes === 'object' ? (
+                        typeof field.product.attributes === 'object' ? (
                           <AttributesCombobox
                             attributeArray={field.product.attributes.filter(
                               isAttribute,
@@ -883,8 +905,12 @@ export function SeeOrderContent({
                               //   return
                               // }
 
+                              // Get current form values for this item to preserve them
+                              const currentValues = form.getValues(
+                                `itens.${index}`,
+                              )
                               update(index, {
-                                ...field,
+                                ...currentValues,
                                 attributes: attributes.map(
                                   (attribute) => attribute.id,
                                 ),
@@ -1055,7 +1081,7 @@ export function SeeOrderContent({
         open={addProductDialog}
         onClose={() => setAddProductDialog(false)}
         addProduct={(product) => {
-          insert(0, {
+          append({
             quantity: product.minimumQuantity,
             price: 0,
             product: {
@@ -1071,7 +1097,7 @@ export function SeeOrderContent({
           })
         }}
       />
-    </ContentLayoutSales>
+    </ContentLayout>
   )
 }
 
