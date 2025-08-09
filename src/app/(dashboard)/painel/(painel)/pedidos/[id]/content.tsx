@@ -1,8 +1,9 @@
 'use client'
 
+import Link from 'next/link'
 import Image from 'next/image'
-import { useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import { useMemo, useState, useTransition } from 'react'
 
 import {
   Order,
@@ -15,7 +16,7 @@ import {
 import { toast } from 'sonner'
 import { cities, states } from 'estados-cidades'
 
-import { object, z } from 'zod'
+import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, useFormState, useFieldArray } from 'react-hook-form'
 
@@ -29,7 +30,6 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
 import { Separator } from '@/components/ui/separator'
-import { Content, ContentHeader } from '@/components/content'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { AttributesCombobox } from '../_components/attributes-selector'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
@@ -77,9 +77,8 @@ import { updateOrder } from '../_logic/actions'
 import { orderSchema } from '../_logic/validation'
 import { ContentLayout } from '@/components/painel-sistema/content-layout'
 import { LoadingSpinner } from '@/components/spinner'
-import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
-import { Check, ChevronsUpDown, PackageOpen } from 'lucide-react'
+import { PackageOpen } from 'lucide-react'
 import { filterClients } from '@/lib/utils'
 
 type OrderProps = z.infer<typeof orderSchema>
@@ -90,11 +89,6 @@ interface SeeOrderContentProps {
   salespeople: Salesperson[]
   clients: Client[]
 }
-
-
-
-
-
 
 export function SeeOrderContent({
   order,
@@ -107,18 +101,16 @@ export function SeeOrderContent({
   const [addProductDialog, setAddProductDialog] = useState<boolean>(false)
   const [editMode, toggleEditMode] = useState<boolean>(!edit)
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('')
 
   // Filter clients dynamically when the search input changes
   const filteredClients = useMemo(() => {
-    return filterClients(clients, search);
-  }, [clients, search]);
-
+    return filterClients(clients, search)
+  }, [clients, search])
 
   const [selectedClient, setSelectedClient] = useState<Client | null>(
     (order.client as Client) ?? null,
   )
-
 
   const form = useForm<OrderProps>({
     resolver: zodResolver(orderSchema),
@@ -148,14 +140,14 @@ export function SeeOrderContent({
           typeof item.product === 'string'
             ? item.product
             : {
-              id: item.product.id,
-              title: item.product.title,
-              sku: item.product.sku,
-              minimumQuantity: item.product.minimumQuantity,
-              active: item.product.active,
-              featuredImage: item.product.featuredImage,
-              attributes: item.product.attributes,
-            },
+                id: item.product.id,
+                title: item.product.title,
+                sku: item.product.sku,
+                minimumQuantity: item.product.minimumQuantity,
+                active: item.product.active,
+                featuredImage: item.product.featuredImage,
+                attributes: item.product.attributes,
+              },
         quantity: item.quantity,
         price: item.price,
         sample: item.sample,
@@ -173,12 +165,10 @@ export function SeeOrderContent({
 
   const { control, handleSubmit } = form
 
-  const { fields, append, remove, update, insert } = useFieldArray({
+  const { fields, append, remove, update } = useFieldArray({
     control,
     name: 'itens',
   })
-
-
 
   const { isSubmitting } = useFormState({ control: form.control })
 
@@ -287,12 +277,6 @@ export function SeeOrderContent({
   }
 
   return (
-    // <Content>
-    //   <ContentHeader
-    //     title={`${!editMode ? 'Editar o p' : 'P'}edido #${order.incrementalId}`}
-    //     description={`Visualize ou edite o pedido conforme necessário.`}
-    //   />
-    //   <Separator className='mb-4' />
     <ContentLayout
       title={`${!editMode ? 'Editar o p' : 'P'}edido #${order.incrementalId}`}
       navbarButtons={
@@ -347,7 +331,7 @@ export function SeeOrderContent({
             </CardHeader>
             <CardContent>
               <div className='grid grid-cols-2 gap-6'>
-                <div className='grid col-span-2 gap-6 grid-cols-3'>
+                <div className='col-span-2 grid grid-cols-3 gap-6'>
                   <div className='col-span-2'>
                     <FormField
                       control={form.control}
@@ -389,7 +373,10 @@ export function SeeOrderContent({
 
                                 {!editMode &&
                                   filteredClients.map((client) => (
-                                    <SelectItem key={client.id} value={client.id}>
+                                    <SelectItem
+                                      key={client.id}
+                                      value={client.id}
+                                    >
                                       {client.name} - <b>{client.document}</b>
                                     </SelectItem>
                                   ))}
@@ -410,79 +397,14 @@ export function SeeOrderContent({
                       )}
                     />
                   </div>
-                  <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Filtrar clientes ...' className='mt-auto bottom-0' />
+                  <Input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder='Filtrar clientes ...'
+                    className='bottom-0 mt-auto'
+                  />
 
-                  {/* <FormField
-                  control={form.control}
-                  name="client"
-                  render={({ field }) => (
-                    <FormItem className="">
-                      <FormLabel>Cliente</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              role="combobox"
-                              className={cn(
-                                "w-full justify-between",
-                                !field.value && "text-muted-foreground"
-                              )}
-                              value={search}
-                              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
-
-                            >
-                              {field.value
-                                ? clients.find((client) => client.id === field.value)?.razaosocial || "Select client"
-                                : "Select client"}
-                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="min-w-sm max-w-xl w-auto p-0   " align='start' >
-                          <Command>
-                            <CommandInput
-                              placeholder="Procure um cliente..."
-                              value={search}
-                              onValueChange={(e) => setSearch(e)} />
-                            <CommandList>
-                              <CommandEmpty>Nenhum cliente encontrado.</CommandEmpty>
-                              <CommandGroup>
-                                {filteredClients.map((client) => (
-                                  <CommandItem
-                                    value={client.id}
-                                    key={client.id}
-                                    onSelect={() => {
-                                      form.setValue("client", client.id)
-                                      setSearch("");
-                                      setSelectedClient(client)
-                                      resetAddressForm()
-                                      resetContactForm()
-                                      setAddressRadio(null)
-                                    }}
-                                  >
-                                    {client.name}
-                                    <Check
-                                      className={cn(
-                                        "ml-auto",
-                                        client.id === field.value
-                                          ? "opacity-100"
-                                          : "opacity-0"
-                                      )}
-                                    />
-                                  </CommandItem>
-                                ))}
-                              </CommandGroup>
-                            </CommandList>
-                          </Command>
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
                   <div className='col-span-3'>
-
                     <FormField
                       control={form.control}
                       name='contact'
@@ -517,7 +439,10 @@ export function SeeOrderContent({
                                 {selectedClient &&
                                   selectedClient?.contacts.length > 0 &&
                                   selectedClient.contacts.map((contact) => (
-                                    <SelectItem key={contact.id} value={contact.id}>
+                                    <SelectItem
+                                      key={contact.id}
+                                      value={contact.id}
+                                    >
                                       {contact.name}
                                     </SelectItem>
                                   ))}
@@ -650,7 +575,7 @@ export function SeeOrderContent({
                     </FormItem>
                   )}
                 />
-                <div className='grid grid-cols-3 gap-6 col-span-2'>
+                <div className='col-span-2 grid grid-cols-3 gap-6'>
                   <FormField
                     control={form.control}
                     name={'shippingCompany'}
@@ -701,8 +626,8 @@ export function SeeOrderContent({
                         <FormMessage />
                       </FormItem>
                     )}
-                  /></div>
-
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -893,7 +818,6 @@ export function SeeOrderContent({
           <Table>
             <TableHeader className='w-full'>
               <TableRow className='w-full'>
-                {/* <TableHead className='w-32'></TableHead> */}
                 <TableHead className='w-24'>Código</TableHead>
                 <TableHead className='w-48'>Nome</TableHead>
                 <TableHead className='w-48'>Quantidade</TableHead>
@@ -955,6 +879,7 @@ export function SeeOrderContent({
                                     }}
                                     inputMode='numeric'
                                     placeholder='0,00'
+                                    className='w-20'
                                   />
                                 </div>
                               </FormControl>
@@ -966,7 +891,7 @@ export function SeeOrderContent({
 
                       <TableCell>
                         {!editMode &&
-                          typeof field.product.attributes === 'object' ? (
+                        typeof field.product.attributes === 'object' ? (
                           <AttributesCombobox
                             attributeArray={field.product.attributes.filter(
                               isAttribute,
@@ -980,8 +905,12 @@ export function SeeOrderContent({
                               //   return
                               // }
 
+                              // Get current form values for this item to preserve them
+                              const currentValues = form.getValues(
+                                `itens.${index}`,
+                              )
                               update(index, {
-                                ...field,
+                                ...currentValues,
                                 attributes: attributes.map(
                                   (attribute) => attribute.id,
                                 ),
@@ -1152,7 +1081,7 @@ export function SeeOrderContent({
         open={addProductDialog}
         onClose={() => setAddProductDialog(false)}
         addProduct={(product) => {
-          insert(0, {
+          append({
             quantity: product.minimumQuantity,
             price: 0,
             product: {
@@ -1380,5 +1309,3 @@ function AddProductDialog({
     </Dialog>
   )
 }
-
-

@@ -51,8 +51,8 @@ export function ProductionDocument({
   const attributes =
     typeof layoutItem.attributes === 'object'
       ? layoutItem.attributes.map((attr) => {
-        return typeof attr === 'object' ? attr : null
-      })
+          return typeof attr === 'object' ? attr : null
+        })
       : []
 
   const layoutValues =
@@ -73,7 +73,7 @@ export function ProductionDocument({
   const productionCost =
     (productUnitCost * layoutItem.quantity) / 100 +
     (layoutValues.additionalCosts.cost + layoutValues.additionalCosts2.cost) /
-    100 +
+      100 +
     agencyComission +
     salespersonComission
 
@@ -137,9 +137,17 @@ export function ProductionDocument({
               <Text>
                 CNPJ: {typeof client === 'object' ? client.document : client}
               </Text>
-              <Text>Contato: {typeof contact === 'object' && contact ? contact.name : 'Não cadastrado.'} {typeof contact === 'object' && contact ? `(${contact.email})` : ''}</Text>
+              <Text>
+                Contato:{' '}
+                {typeof contact === 'object' && contact
+                  ? contact.name
+                  : 'Não cadastrado.'}{' '}
+                {typeof contact === 'object' && contact
+                  ? `(${contact.email})`
+                  : ''}
+              </Text>
               <Text>Condição de pagamento: {order.paymentConditions}</Text>
-              <Text>Prazo de entrega: {layoutValues.prazoentrega}</Text>
+              <Text>Prazo de entrega: {order.shippingTime}</Text>
             </View>
           </View>
         </View>
@@ -424,7 +432,7 @@ export function ProductionDocument({
                 {formatBRL(
                   (layoutValues.additionalCosts.cost +
                     layoutValues.additionalCosts2.cost) /
-                  100,
+                    100,
                 )}
               </Text>
               <Text>Valor da venda: {formatBRL(totalValue)}</Text>
@@ -441,7 +449,7 @@ export function ProductionDocument({
                 Valor do frete:{' '}
                 {formatBRL(
                   (layoutValues.delivery.cost + layoutValues.delivery2.cost) /
-                  100,
+                    100,
                 )}
               </Text>
               <Text>Transportadora: {layoutValues.transp}</Text>

@@ -180,11 +180,12 @@ export async function updateLayout({
   }
 }
 
-
 export async function updateOrderStatus({
   orderId,
   status,
-}: UpdateOrderStatusProps): Promise<ActionResponse<UpdateOrderStatusResponseData>> {
+}: UpdateOrderStatusProps): Promise<
+  ActionResponse<UpdateOrderStatusResponseData>
+> {
   try {
     const response = await payload.update({
       id: orderId,

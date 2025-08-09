@@ -128,14 +128,8 @@ const Order: CollectionConfig = {
       name: 'shippingType',
       type: 'select',
       options: [
-        {
-          label: 'CIF',
-          value: 'cif',
-        },
-        {
-          label: 'FOB',
-          value: 'fob',
-        },
+        { label: 'CIF', value: 'cif' },
+        { label: 'FOB', value: 'fob' },
       ],
     },
     { name: 'paymentConditions', type: 'text' },

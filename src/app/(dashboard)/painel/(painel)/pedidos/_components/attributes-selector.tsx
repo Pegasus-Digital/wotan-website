@@ -1,22 +1,27 @@
+import { useEffect, useState } from 'react'
+
+import { Attribute } from '@/payload/payload-types'
+
+import { cn } from '@/lib/utils'
+
 import { Icons } from '@/components/icons'
+import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+
 import {
   Command,
+  CommandItem,
+  CommandList,
   CommandEmpty,
   CommandGroup,
   CommandInput,
-  CommandItem,
-  CommandList,
 } from '@/components/ui/command'
-import { Label } from '@/components/ui/label'
+
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
-import { Attribute } from '@/payload/payload-types'
-import { useEffect, useState } from 'react'
 
 interface AttributesComboboxProps {
   attributeArray: Attribute[]
@@ -29,8 +34,6 @@ export function AttributesCombobox({
   selectedAttributes,
   onUpdate,
 }: AttributesComboboxProps) {
-  // console.log('attributeArray:', attributeArray)
-  // console.log('selectedAttributes:', selectedAttributes)
   const [open, setOpen] = useState<boolean>(false)
 
   const [value, setValue] = useState<Attribute[]>(
@@ -65,7 +68,6 @@ export function AttributesCombobox({
     )
 
     if (!arraysAreEqual(value, newSelectedAttributes)) {
-      // console.log('update', value)
       onUpdate(value)
     }
   }, [selectedAttributes, attributeArray, value, onUpdate])

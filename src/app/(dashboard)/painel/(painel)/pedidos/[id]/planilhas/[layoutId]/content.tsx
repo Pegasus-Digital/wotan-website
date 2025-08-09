@@ -1,28 +1,20 @@
 'use client'
 
-import Image from 'next/image'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-import {
-  Order,
-  Client,
-  Product,
-  Attribute,
-  Salesperson,
-  Layout,
-  AttributeType,
-} from '@/payload/payload-types'
+import { getDDMMYYDate } from '@/lib/date'
+import { formatBRL, formatBRLWithoutPrefix, parseValue } from '@/lib/format'
+
+import { Order, Layout, AttributeType } from '@/payload/payload-types'
 
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
 
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm, useFormState, useFieldArray } from 'react-hook-form'
+import { useForm, useFieldArray } from 'react-hook-form'
 
 import { Heading } from '@/pegasus/heading'
-import { P } from '@/components/typography/texts'
 
 import { Icons } from '@/components/icons'
 import { Input } from '@/components/ui/input'
@@ -30,16 +22,9 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
-import { Separator } from '@/components/ui/separator'
-import { Content, ContentHeader } from '@/components/content'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
+import { ContentLayout } from '@/components/painel-sistema/content-layout'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 import {
   Form,
@@ -51,51 +36,15 @@ import {
 } from '@/components/ui/form'
 
 import {
-  Table,
-  TableRow,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-} from '@/components/ui/table'
-
-import {
-  Command,
-  CommandItem,
-  CommandList,
-  CommandInput,
-  CommandGroup,
-  CommandEmpty,
-} from '@/components/ui/command'
-
-import {
-  Dialog,
-  DialogTitle,
-  DialogClose,
-  DialogHeader,
-  DialogFooter,
-  DialogContent,
-  DialogDescription,
-} from '@/components/ui/dialog'
-
-import {
   Select,
   SelectItem,
-  SelectGroup,
-  SelectLabel,
   SelectValue,
   SelectTrigger,
   SelectContent,
-  SelectSeparator,
 } from '@/components/ui/select'
-import { layoutSchema } from '../../../_logic/validation'
-import update from 'payload/dist/collections/operations/update'
-import { updateLayout } from '../../../_logic/actions'
-import { formatBRL, formatBRLWithoutPrefix, parseValue } from '@/lib/format'
-import { getDDMMYYDate } from '@/lib/date'
-import { ContentLayout } from '@/components/painel-sistema/content-layout'
 
-// Define the validation schema
+import { updateLayout } from '../../../_logic/actions'
+import { layoutSchema } from '../../../_logic/validation'
 
 type LayoutProps = z.infer<typeof layoutSchema>
 
@@ -116,8 +65,6 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
   const [editMode, toggleEditMode] = useState<boolean>(!edit)
 
   const item = order.itens.find((item) => {
-    // console.log('item', item)
-    // console.log('layout', layout.id)
     if (
       (typeof item.layout === 'object' ? item.layout.id : item.layout) ===
       layout.id
@@ -134,14 +81,7 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
   const contact = client.contacts.filter(
     (contact) => contact.id === order.contact,
   )[0]
-
-  // console.log(item)
-  // console.log('Order default:', order)
-
   const { control, handleSubmit, formState, watch } = form
-
-  // const { errors, isValid } = useFormState({ control })
-
   const { fields, append } = useFieldArray({
     control,
     name: 'supplyer',
@@ -158,13 +98,12 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
     return null
   })
 
-
   const itemAttributes =
-  typeof item.attributes === 'object'
-    ? item.attributes.map((attr) => {
-      return typeof attr === 'object' ? attr : null
-    })
-    : []
+    typeof item.attributes === 'object'
+      ? item.attributes.map((attr) => {
+          return typeof attr === 'object' ? attr : null
+        })
+      : []
 
   const agencyComissionPercent = watch('commisions.agency.value')
   const salespersonComissionPercent = watch('commisions.salesperson.value')
@@ -198,12 +137,6 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
   }
 
   return (
-    // <Content>
-    //   <ContentHeader
-    //     title={`${edit ? 'Editar p' : 'P'}lanilha de Produção`}
-    //     description={`Visualize ou edite a planilha conforme necessário.`}
-    //   />
-    //   <Separator className='mb-4' />
     <ContentLayout title={`${edit ? 'Editar p' : 'P'}lanilha de Produção`}>
       <Form {...form}>
         <div className='sticky top-0 z-10 flex  items-center justify-between border-b bg-background px-4 pb-2 pt-4 '>
@@ -218,20 +151,19 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                 : ''}
             </Heading>
             <Label>Quantidade: {item && item.quantity}</Label>
-            {/* <Label>Material: | Cor:</Label> */}
             {itemAttributes &&
-                  itemAttributes.map((attr) => {
-                    const attributeType = attr.type as AttributeType
-                    return (
-                      <Label key={attr.id}>
-                        {attributeType.name}: {attr.name}
-                      </Label>
-                    )
-                  })}
+              itemAttributes.map((attr) => {
+                const attributeType = attr.type as AttributeType
+                return (
+                  <Label key={attr.id}>
+                    {attributeType.name}: {attr.name}
+                  </Label>
+                )
+              })}
           </div>
           <div className='flex flex-col justify-start gap-2'>
             <Label>Pedido: #{order.incrementalId}</Label>
-            <Label> Data: {getDDMMYYDate(new Date(order.createdAt))}</Label>
+            <Label>Data: {getDDMMYYDate(new Date(order.createdAt))}</Label>
 
             {order.shippingTime && (
               <Label>Prazo de Entrega: {order.shippingTime}</Label>
@@ -244,7 +176,15 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                 ? order.client.name
                 : order.client}
             </Label>
-            <Label>Contato: {typeof contact === 'object' && contact ? contact.name : 'Não cadastrado.'} {typeof contact === 'object' && contact ? `(${contact.email})` : ''}</Label>
+            <Label>
+              Contato:{' '}
+              {typeof contact === 'object' && contact
+                ? contact.name
+                : 'Não cadastrado.'}{' '}
+              {typeof contact === 'object' && contact
+                ? `(${contact.email})`
+                : ''}
+            </Label>
             {order.paymentConditions && (
               <Label>Condição de Pagamento: {order.paymentConditions}</Label>
             )}
@@ -531,9 +471,9 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                 )}
               </div>
             </CardHeader>
-            <CardContent className='grid grid-cols-1 gap-4 space-y-2 tablet:grid-cols-2'>
+            <CardContent className='grid grid-cols-1 gap-4 tablet:grid-cols-2'>
               {fields.map((supplier, index) => (
-                <Card key={index} className='border-y-0 shadow-none'>
+                <Card key={index} className='px-2 py-4'>
                   <CardContent className='flex flex-col space-y-2'>
                     <FormField
                       control={form.control}
