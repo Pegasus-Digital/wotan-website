@@ -1,188 +1,197 @@
 'use client'
 
-import { formatBRL } from '@/lib/format'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { CardDescription } from '@/components/ui/card'
 
-import { Separator } from '@/components/ui/separator'
-import { Card, CardHeader } from '@/components/ui/card'
-import { Content, ContentHeader } from '@/components/content'
-
-import { Large, Small } from '@/components/typography/texts'
-import { Heading } from '@/pegasus/heading'
 import { ContentLayout } from '@/components/painel-sistema/content-layout'
+
+import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from 'recharts'
+
 import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  AreaChart,
-  Area,
-  RadarChart,
-  Radar,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  ScatterChart,
-  Scatter,
-  Tooltip,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Legend,
-} from 'recharts'
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+} from '@/components/ui/chart'
 
-const ordersData = [
-  { mes: 'JAN', pedidos: 400, orcamentos: 100 },
-  { mes: 'FEV', pedidos: 300, orcamentos: 150 },
-  { mes: 'MAR', pedidos: 500, orcamentos: 80 },
-  { mes: 'ABR', pedidos: 200, orcamentos: 120 },
-  { mes: 'MAI', pedidos: 400, orcamentos: 170 },
-  { mes: 'JUN', pedidos: 450, orcamentos: 140 },
-  { mes: 'JUL', pedidos: 500, orcamentos: 160 },
-  { mes: 'AGO', pedidos: 480, orcamentos: 180 },
-  { mes: 'SET', pedidos: 470, orcamentos: 200 },
-]
+const ordersChartConfig: ChartConfig = {
+  totalCents: { label: 'Total', color: 'hsl(var(--primary))' },
+  count: { label: 'Pedidos', color: 'hsl(var(--primary))' },
+} satisfies ChartConfig
 
-// const budgetsData = [
-//   { mes: 'JAN', orcamentos: 100 },
-//   { mes: 'FEV', orcamentos: 150 },
-//   { mes: 'MAR', orcamentos: 80 },
-//   { mes: 'ABR', orcamentos: 120 },
-//   { mes: 'MAI', orcamentos: 170 },
-//   { mes: 'JUN', orcamentos: 140 },
-//   { mes: 'JUL', orcamentos: 160 },
-//   { mes: 'AGO', orcamentos: 180 },
-//   { mes: 'SET', orcamentos: 200 },
-// ]
+const budgetsChartConfig: ChartConfig = {
+  count: { label: 'Orçamentos', color: 'hsl(var(--secondary))' },
+} satisfies ChartConfig
 
-const productsData = [
-  { nome: 'Produto A', vendas: 200 },
-  { nome: 'Produto B', vendas: 100 },
-  { nome: 'Produto C', vendas: 300 },
-  { nome: 'Produto D', vendas: 150 },
-  { nome: 'Produto E', vendas: 250 },
-]
+export function DashboardContent({
+  orders,
+  budgets,
+}: {
+  orders: any[]
+  budgets: any[]
+}) {
+  console.log(budgets)
 
-const performanceData = [
-  { produto: 'A', vendas: 240, orcamentos: 120 },
-  { produto: 'B', vendas: 130, orcamentos: 90 },
-  { produto: 'C', vendas: 280, orcamentos: 170 },
-  { produto: 'D', vendas: 200, orcamentos: 140 },
-  { produto: 'E', vendas: 260, orcamentos: 200 },
-]
-
-const scatterData = [
-  { x: 100, y: 200 },
-  { x: 120, y: 100 },
-  { x: 170, y: 300 },
-  { x: 140, y: 250 },
-  { x: 150, y: 400 },
-]
-export function DashboardContent() {
   return (
-    // <Content>
-    //   <ContentHeader
-    //     title='Dashboard'
-    //     description='Analise com facilidade as recentes movimentações.'
-    //   />
     <ContentLayout title='Dashboard'>
-      {/* <Separator className='mb-4' /> */}
+      <div className='grid grid-cols-1 gap-6'>
+        <Card>
+          <CardHeader>
+            <CardTitle>Pedidos</CardTitle>
+            <CardDescription>
+              Pedidos realizados nos últimos 12 meses
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer
+              config={ordersChartConfig}
+              className='max-h-96 w-full'
+            >
+              <BarChart accessibilityLayer data={orders}>
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey='label'
+                  tickLine={false}
+                  tickMargin={10}
+                  axisLine={false}
+                  // tickFormatter={(value) => value.slice(0, 3)}
+                />
+                <ChartTooltip
+                  cursor={false}
+                  content={({ active, payload, label }) => {
+                    if (!active || !payload?.length) return null
 
-      <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-        {/* Orders Line Chart */}
-        <div className='rounded-lg bg-white p-6 shadow-lg'>
-          <h2 className='mb-4 text-xl font-semibold'>Pedidos por Mês</h2>
-          <LineChart width={500} height={300} data={ordersData}>
-            <CartesianGrid stroke='#ccc' />
-            <XAxis dataKey='mes' />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line type='monotone' dataKey='pedidos' stroke='#8884d8' />
-            <Line type='natural' dataKey='orcamentos' stroke='#82ca9d' />
-          </LineChart>
-        </div>
+                    const data = payload[0].payload
 
-        {/* Budgets Area Chart */}
-        {/* <div className='rounded-lg bg-white p-6 shadow-lg'>
-          <h2 className='mb-4 text-xl font-semibold'>Orçamentos por Mês</h2>
-          <AreaChart width={500} height={300} data={budgetsData}>
-            <CartesianGrid stroke='#ccc' />
-            <XAxis dataKey='mes' />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Area
-              type='monotone'
-              dataKey='orcamentos'
-              stroke='#82ca9d'
-              fill='#82ca9d'
-            />
-          </AreaChart>
-        </div> */}
+                    return (
+                      <div className='grid min-w-[8rem] items-start gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl'>
+                        <div className='grid gap-1.5'>
+                          <div className='flex w-full flex-wrap items-center gap-2'>
+                            <div
+                              className='h-2.5 w-2.5 shrink-0 rounded-[2px] border-[--color-border] bg-[--color-bg]'
+                              style={
+                                {
+                                  '--color-bg': 'hsl(var(--primary))',
+                                  '--color-border': 'hsl(var(--primary))',
+                                } as React.CSSProperties
+                              }
+                            />
+                            <div className='flex flex-1 items-center justify-between leading-none'>
+                              <span className='text-muted-foreground'>
+                                Pedidos
+                              </span>
+                              <span className='font-mono font-medium tabular-nums text-foreground'>
+                                {data.count}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  }}
+                />
+                <Bar dataKey='totalCents' fill='hsl(var(--primary))' radius={8}>
+                  <LabelList dataKey='total' position='top' />
+                </Bar>
+              </BarChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Orçamentos e Produtos por Mês</CardTitle>
+            <CardDescription>
+              Orçamentos realizados nos últimos 12 meses - Passe o mouse para
+              ver os produtos mais solicitados
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer
+              config={budgetsChartConfig}
+              className='max-h-96 w-full'
+            >
+              <BarChart accessibilityLayer data={budgets}>
+                <CartesianGrid vertical={false} />
+                <XAxis
+                  dataKey='label'
+                  tickLine={false}
+                  tickMargin={10}
+                  axisLine={false}
+                />
+                <YAxis tickLine={false} axisLine={false} tickMargin={8} />
+                <ChartTooltip
+                  cursor={false}
+                  content={({ active, payload, label }) => {
+                    if (!active || !payload?.length) return null
 
-        {/* Products Pie Chart */}
-        <div className='rounded-lg bg-white p-6 shadow-lg'>
-          <h2 className='mb-4 text-xl font-semibold'>Vendas de Produtos</h2>
-          <PieChart width={400} height={400}>
-            <Pie
-              data={productsData}
-              dataKey='vendas'
-              nameKey='nome'
-              cx='50%'
-              cy='50%'
-              outerRadius={100}
-              fill='#8884d8'
-              label
-            />
-            <Tooltip />
-          </PieChart>
-        </div>
+                    const data = payload[0].payload
 
-        {/* Product Performance Radar Chart */}
-        <div className='rounded-lg bg-white p-6 shadow-lg'>
-          <h2 className='mb-4 text-xl font-semibold'>Desempenho de Produtos</h2>
-          <RadarChart
-            outerRadius={90}
-            width={500}
-            height={300}
-            data={performanceData}
-          >
-            <PolarGrid />
-            <PolarAngleAxis dataKey='produto' />
-            <PolarRadiusAxis />
-            <Radar
-              name='Vendas'
-              dataKey='vendas'
-              stroke='#8884d8'
-              fill='#8884d8'
-              fillOpacity={0.6}
-            />
-            <Radar
-              name='Orçamentos'
-              dataKey='orcamentos'
-              stroke='#82ca9d'
-              fill='#82ca9d'
-              fillOpacity={0.6}
-            />
-            <Legend />
-          </RadarChart>
-        </div>
+                    return (
+                      <div className='grid min-w-[12rem] max-w-[24rem] items-start gap-2 rounded-lg border border-border/50 bg-background px-3 py-2 text-xs shadow-xl'>
+                        <div className='grid gap-2'>
+                          {/* Budget count */}
+                          <div className='flex w-full flex-wrap items-center gap-2'>
+                            <div
+                              className='h-2.5 w-2.5 shrink-0 rounded-[2px] border-[--color-border] bg-[--color-bg]'
+                              style={
+                                {
+                                  '--color-bg': 'hsl(var(--secondary))',
+                                  '--color-border': 'hsl(var(--secondary))',
+                                } as React.CSSProperties
+                              }
+                            />
+                            <div className='flex flex-1 items-center justify-between leading-none'>
+                              <span className='text-muted-foreground'>
+                                Orçamentos
+                              </span>
+                              <span className='font-mono font-medium tabular-nums text-foreground'>
+                                {data.count}
+                              </span>
+                            </div>
+                          </div>
 
-        {/* Scatter Chart Example */}
-        <div className='rounded-lg bg-white p-6 shadow-lg'>
-          <h2 className='mb-4 text-xl font-semibold'>Relação entre Fatores</h2>
-          <ScatterChart width={500} height={300}>
-            <CartesianGrid />
-            <XAxis type='number' dataKey='x' name='Orçamentos' />
-            <YAxis type='number' dataKey='y' name='Vendas' />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-            <Scatter name='Produtos' data={scatterData} fill='#8884d8' />
-          </ScatterChart>
-        </div>
+                          {/* Top products */}
+                          {data.topProducts && data.topProducts.length > 0 && (
+                            <div className='border-t pt-2'>
+                              <div className='mb-1 font-medium text-muted-foreground'>
+                                Produtos mais solicitados:
+                              </div>
+                              <div className='space-y-1'>
+                                {data.topProducts.map(
+                                  (product: any, index: number) => (
+                                    <div
+                                      key={index}
+                                      className='flex items-center justify-between'
+                                    >
+                                      <div className='flex items-center gap-1.5'>
+                                        <span className='flex h-4 w-4 items-center justify-center rounded-full bg-primary/20 text-[10px] font-medium text-primary'>
+                                          {index + 1}
+                                        </span>
+                                        <span className='max-w-[120px] truncate text-[11px] text-foreground'>
+                                          {product.title || 'Produto sem nome'}
+                                        </span>
+                                      </div>
+                                      <span className='ml-2 text-[10px] text-muted-foreground'>
+                                        {product.count}x
+                                      </span>
+                                    </div>
+                                  ),
+                                )}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  }}
+                />
+                <Bar dataKey='count' fill='hsl(var(--secondary))' radius={8}>
+                  <LabelList dataKey='count' position='top' />
+                </Bar>
+              </BarChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
       </div>
     </ContentLayout>
-    // </Content>
   )
 }
