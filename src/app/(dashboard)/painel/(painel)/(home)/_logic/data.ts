@@ -1,3 +1,5 @@
+import 'server-only'
+
 import payload from 'payload'
 import { getLast12MonthDateRanges } from './helpers'
 
