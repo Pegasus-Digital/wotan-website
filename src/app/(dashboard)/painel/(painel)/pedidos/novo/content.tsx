@@ -1,8 +1,9 @@
 'use client'
 
+import Link from 'next/link'
 import Image from 'next/image'
-import { useEffect, useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import { useMemo, useState, useTransition } from 'react'
 
 import {
   Client,
@@ -13,15 +14,15 @@ import {
 
 import { toast } from 'sonner'
 import { parseValue } from '@/lib/format'
+import { filterClients } from '@/lib/utils'
 import { cities, states } from 'estados-cidades'
 
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, useFormState, useFieldArray } from 'react-hook-form'
 
-import { Heading } from '@/pegasus/heading'
-
 import { Icons } from '@/components/icons'
+import { Heading } from '@/pegasus/heading'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
@@ -29,9 +30,11 @@ import { P } from '@/components/typography/texts'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
 import { Separator } from '@/components/ui/separator'
-import { Content, ContentHeader } from '@/components/content'
+import { LoadingSpinner } from '@/components/spinner'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { AttributesCombobox } from '../_components/attributes-selector'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { ContentLayout } from '@/components/painel-sistema/content-layout'
 
 import {
   Form,
@@ -75,12 +78,6 @@ import {
 import { createOrder } from '../_logic/actions'
 import { orderSchema } from '../_logic/validation'
 
-import { AttributesCombobox } from '../_components/attributes-selector'
-import { ContentLayout } from '@/components/painel-sistema/content-layout'
-import { LoadingSpinner } from '@/components/spinner'
-import Link from 'next/link'
-import { filterClients } from '@/lib/utils'
-
 type OrderProps = z.infer<typeof orderSchema>
 
 interface NewOrderContentProps {
@@ -99,14 +96,12 @@ export function NewOrderContent({
   const [selectedClient, setSelectedClient] = useState<Client | null>(null)
   const [selectedState, setSelectedState] = useState<string | null>(null)
 
-
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('')
 
   // Filter clients dynamically when the search input changes
   const filteredClients = useMemo(() => {
-    return filterClients(clients, search);
-  }, [clients, search]);
-
+    return filterClients(clients, search)
+  }, [clients, search])
 
   const form = useForm<OrderProps>({
     resolver: zodResolver(orderSchema),
@@ -255,7 +250,7 @@ export function NewOrderContent({
               </Heading>
             </CardHeader>
             <CardContent className='grid grid-cols-2 gap-6'>
-              <div className='grid col-span-2 gap-6 grid-cols-3'>
+              <div className='col-span-2 grid grid-cols-3 gap-6'>
                 <div className='col-span-2'>
                   <FormField
                     control={form.control}
@@ -306,7 +301,12 @@ export function NewOrderContent({
                     )}
                   />
                 </div>
-                <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Filtrar clientes ...' className='mt-auto bottom-0' />
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder='Filtrar clientes ...'
+                  className='bottom-0 mt-auto'
+                />
                 <div className='col-span-3'>
                   <FormField
                     control={form.control}
@@ -331,13 +331,17 @@ export function NewOrderContent({
                               )}
                               {selectedClient?.contacts?.length === 0 && (
                                 <SelectItem value={null} disabled>
-                                  Não encontramos nenhum contato para este cliente.
+                                  Não encontramos nenhum contato para este
+                                  cliente.
                                 </SelectItem>
                               )}
                               {selectedClient &&
                                 selectedClient?.contacts.length > 0 &&
                                 selectedClient.contacts.map((contact) => (
-                                  <SelectItem key={contact.id} value={contact.id}>
+                                  <SelectItem
+                                    key={contact.id}
+                                    value={contact.id}
+                                  >
                                     {contact.name}
                                   </SelectItem>
                                 ))}
@@ -453,9 +457,7 @@ export function NewOrderContent({
                   </FormItem>
                 )}
               />
-              <div className='grid grid-cols-3 gap-6 col-span-2'>
-
-
+              <div className='col-span-2 grid grid-cols-3 gap-6'>
                 <FormField
                   control={form.control}
                   name={'shippingCompany'}
@@ -774,9 +776,11 @@ export function NewOrderContent({
                               field.attributes ? field.attributes : []
                             }
                             onUpdate={(attributes) => {
-                              // if (!attributes || attributes.length === 0) return
+                              const currentValues = form.getValues(
+                                `itens.${index}`,
+                              )
                               update(index, {
-                                ...field,
+                                ...currentValues,
                                 attributes: attributes.map(
                                   (attribute) => attribute.id,
                                 ),

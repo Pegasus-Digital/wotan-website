@@ -723,9 +723,11 @@ export function NewBudgetContent({
                               item.attributes ? item.attributes : []
                             }
                             onUpdate={(attributes) => {
-                              // if (!attributes || attributes.length === 0) return
+                              const currentValues = form.getValues(
+                                `items.${index}`,
+                              )
                               update(index, {
-                                ...item,
+                                ...currentValues,
                                 attributes: attributes.map(
                                   (attribute) => attribute.id,
                                 ),

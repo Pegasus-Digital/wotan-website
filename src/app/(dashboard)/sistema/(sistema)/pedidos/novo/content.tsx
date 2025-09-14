@@ -756,9 +756,11 @@ export function NewOrderContent({
                               field.attributes ? field.attributes : []
                             }
                             onUpdate={(attributes) => {
-                              // if (!attributes || attributes.length === 0) return
+                              const currentValues = form.getValues(
+                                `itens.${index}`,
+                              )
                               update(index, {
-                                ...field,
+                                ...currentValues,
                                 attributes: attributes.map(
                                   (attribute) => attribute.id,
                                 ),

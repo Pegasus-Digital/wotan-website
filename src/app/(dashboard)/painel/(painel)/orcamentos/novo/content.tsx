@@ -107,12 +107,12 @@ export function NewBudgetContent({
 
   const router = useRouter()
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('')
 
   // Filter clients dynamically when the search input changes
   const filteredClients = useMemo(() => {
-    return filterClients(clients, search);
-  }, [clients, search]);
+    return filterClients(clients, search)
+  }, [clients, search])
 
   const form = useForm<BudgetProps>({
     resolver: zodResolver(budgetSchema),
@@ -429,8 +429,12 @@ export function NewBudgetContent({
                   </FormItem>
                 )}
               />
-              <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Filtrar clientes ...' className='mt-auto bottom-0' />
-
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder='Filtrar clientes ...'
+                className='bottom-0 mt-auto'
+              />
 
               <FormField
                 control={form.control}
@@ -733,9 +737,11 @@ export function NewBudgetContent({
                               item.attributes ? item.attributes : []
                             }
                             onUpdate={(attributes) => {
-                              // if (!attributes || attributes.length === 0) return
+                              const currentValues = form.getValues(
+                                `items.${index}`,
+                              )
                               update(index, {
-                                ...item,
+                                ...currentValues,
                                 attributes: attributes.map(
                                   (attribute) => attribute.id,
                                 ),
