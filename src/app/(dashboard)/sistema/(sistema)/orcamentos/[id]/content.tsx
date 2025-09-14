@@ -1,14 +1,16 @@
 'use client'
 
+import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 
+import { useState, useTransition } from 'react'
+
 import {
-  Attribute,
   Budget,
   Client,
   Product,
+  Attribute,
   Salesperson,
 } from '@/payload/payload-types'
 
@@ -20,32 +22,33 @@ import {
 } from '@/lib/format'
 
 import { toast } from 'sonner'
-import { ptBR } from 'date-fns/locale'
-import { formatRelative } from 'date-fns'
 
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useFieldArray, useForm, useFormState } from 'react-hook-form'
 
 import { Heading } from '@/pegasus/heading'
-import { P } from '@/components/typography/texts'
 
 import { Icons } from '@/components/icons'
 import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
+import { P } from '@/components/typography/texts'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
 import { Separator } from '@/components/ui/separator'
-import { Content, ContentHeader } from '@/components/content'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { LoadingSpinner } from '@/components/spinner'
+import { ContentLayoutSales } from '@/components/painel-sistema/content-layout'
+import { AttributesCombobox } from '../../pedidos/_components/attributes-selector'
 
 import {
   Tooltip,
+  TooltipTrigger,
   TooltipContent,
   TooltipProvider,
-  TooltipTrigger,
 } from '@/components/ui/tooltip'
+
 import { TooltipArrow } from '@radix-ui/react-tooltip'
 
 import {
@@ -89,11 +92,6 @@ import {
 
 import { UpdateBudget } from '../_logic/actions'
 import { budgetSchema } from '../_logic/validation'
-import { AttributesCombobox } from '../../pedidos/_components/attributes-selector'
-import { ContentLayoutSales } from '@/components/painel-sistema/content-layout'
-import Link from 'next/link'
-import { LoadingSpinner } from '@/components/spinner'
-import { Badge } from '@/components/ui/badge'
 
 type BudgetProps = z.infer<typeof budgetSchema>
 
@@ -149,15 +147,15 @@ export function SeeBudgetContent({
           typeof item.product === 'string'
             ? item.product
             : {
-              id: item.product.id,
-              title: item.product.title,
-              sku: item.product.sku,
-              minimumQuantity: item.product.minimumQuantity,
-              active: item.product.active,
-              featuredImage: item.product.featuredImage,
-              priceQuantityTable: item.product.priceQuantityTable,
-              attributes: item.product.attributes,
-            },
+                id: item.product.id,
+                title: item.product.title,
+                sku: item.product.sku,
+                minimumQuantity: item.product.minimumQuantity,
+                active: item.product.active,
+                featuredImage: item.product.featuredImage,
+                priceQuantityTable: item.product.priceQuantityTable,
+                attributes: item.product.attributes,
+              },
         attributes:
           item?.attributes?.map((attribute) =>
             typeof attribute === 'string' ? attribute : attribute.id,
@@ -645,8 +643,8 @@ export function SeeBudgetContent({
                       {typeof budget.salesperson === 'object' ? (
                         <div className='flex items-center space-x-2'>
                           {budget.salesperson.avatar &&
-                            typeof budget.salesperson.avatar === 'object' &&
-                            budget.salesperson.avatar.url ? (
+                          typeof budget.salesperson.avatar === 'object' &&
+                          budget.salesperson.avatar.url ? (
                             <Image
                               width={20}
                               height={20}
@@ -879,7 +877,7 @@ export function SeeBudgetContent({
 
                       <TableCell>
                         {!editMode &&
-                          typeof item.product.attributes === 'object' ? (
+                        typeof item.product.attributes === 'object' ? (
                           <AttributesCombobox
                             attributeArray={item.product.attributes.filter(
                               isAttribute,
@@ -888,11 +886,11 @@ export function SeeBudgetContent({
                               item.attributes ? item.attributes : []
                             }
                             onUpdate={(attributes) => {
-                              // if (!attributes || attributes.length === 0) {
-                              //   return
-                              // }
+                              const currentValues = form.getValues(
+                                `items.${index}`,
+                              )
                               update(index, {
-                                ...item,
+                                ...currentValues,
                                 attributes: attributes.map(
                                   (attribute) => attribute.id,
                                 ),

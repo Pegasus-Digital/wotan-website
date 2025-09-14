@@ -20,8 +20,6 @@ import {
 } from '@/lib/format'
 
 import { toast } from 'sonner'
-import { ptBR } from 'date-fns/locale'
-import { formatRelative } from 'date-fns'
 
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -37,8 +35,6 @@ import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Textarea } from '@/components/ui/textarea'
 import { Separator } from '@/components/ui/separator'
-import { Content, ContentHeader } from '@/components/content'
-import { Card, CardContent, CardHeader } from '@/components/ui/card'
 
 import {
   Tooltip,
@@ -46,6 +42,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+
 import { TooltipArrow } from '@radix-ui/react-tooltip'
 
 import {
@@ -115,13 +112,12 @@ export function SeeBudgetContent({
     (budget.client as Client) ?? null,
   )
 
-
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('')
 
   // Filter clients dynamically when the search input changes
   const filteredClients = useMemo(() => {
-    return filterClients(clients, search);
-  }, [clients, search]);
+    return filterClients(clients, search)
+  }, [clients, search])
   const [addProductDialog, setAddProductDialog] = useState<boolean>(false)
 
   const router = useRouter()
@@ -158,15 +154,15 @@ export function SeeBudgetContent({
           typeof item.product === 'string'
             ? item.product
             : {
-              id: item.product.id,
-              title: item.product.title,
-              sku: item.product.sku,
-              minimumQuantity: item.product.minimumQuantity,
-              active: item.product.active,
-              featuredImage: item.product.featuredImage,
-              priceQuantityTable: item.product.priceQuantityTable,
-              attributes: item.product.attributes,
-            },
+                id: item.product.id,
+                title: item.product.title,
+                sku: item.product.sku,
+                minimumQuantity: item.product.minimumQuantity,
+                active: item.product.active,
+                featuredImage: item.product.featuredImage,
+                priceQuantityTable: item.product.priceQuantityTable,
+                attributes: item.product.attributes,
+              },
         attributes:
           item?.attributes?.map((attribute) =>
             typeof attribute === 'string' ? attribute : attribute.id,
@@ -547,7 +543,12 @@ export function SeeBudgetContent({
                       </FormItem>
                     )}
                   />
-                  <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder='Filtrar clientes ...' className='mt-auto bottom-0' />
+                  <Input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder='Filtrar clientes ...'
+                    className='bottom-0 mt-auto'
+                  />
 
                   <FormField
                     control={form.control}
@@ -655,8 +656,8 @@ export function SeeBudgetContent({
                       {typeof budget.salesperson === 'object' ? (
                         <div className='flex items-center space-x-2'>
                           {budget.salesperson.avatar &&
-                            typeof budget.salesperson.avatar === 'object' &&
-                            budget.salesperson.avatar.url ? (
+                          typeof budget.salesperson.avatar === 'object' &&
+                          budget.salesperson.avatar.url ? (
                             <Image
                               width={20}
                               height={20}
@@ -784,25 +785,25 @@ export function SeeBudgetContent({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {fields.map((item, index) => (
-                <TableRow key={item.id}>
-                  {typeof item.product === 'object' && (
+              {fields.map((field, index) => (
+                <TableRow key={field.id}>
+                  {typeof field.product === 'object' && (
                     <>
                       <TableCell className='pl-2 pr-0'>
                         <Image
                           src={
-                            typeof item.product.featuredImage === 'object'
-                              ? item.product.featuredImage.url
+                            typeof field.product.featuredImage === 'object'
+                              ? field.product.featuredImage.url
                               : ''
                           }
-                          alt={item.product.title}
+                          alt={field.product.title}
                           className='h-24 w-24 rounded-md object-cover'
                           width={96}
                           height={96}
                         />
                       </TableCell>
                       <TableCell className=' pl-2 pr-0'>
-                        {item.product.sku}
+                        {field.product.sku}
                       </TableCell>
                       <TableCell className=' pl-2 pr-0'>
                         <FormField
@@ -846,7 +847,7 @@ export function SeeBudgetContent({
                         <FormField
                           control={form.control}
                           name={`items.${index}.price`}
-                          render={({ field }) => (
+                          render={({ field: priceField }) => (
                             <FormItem>
                               <FormControl>
                                 <TooltipProvider>
@@ -856,13 +857,13 @@ export function SeeBudgetContent({
                                         <Label>R$</Label>
 
                                         <Input
-                                          {...field}
+                                          {...priceField}
                                           disabled={editMode}
                                           value={formatBRLWithoutPrefix(
-                                            Number(field.value),
+                                            Number(priceField.value),
                                           )}
                                           onChange={(e) => {
-                                            field.onChange(
+                                            priceField.onChange(
                                               parseValue(e.target.value),
                                             )
                                           }}
@@ -873,7 +874,7 @@ export function SeeBudgetContent({
                                       </div>
                                     </TooltipTrigger>
                                     <PriceQuantityTooltipContent
-                                      productId={(item.product as Product).id}
+                                      productId={(field.product as Product).id}
                                       quantity={
                                         form.getValues('items')[index].quantity
                                       }
@@ -889,20 +890,20 @@ export function SeeBudgetContent({
 
                       <TableCell>
                         {!editMode &&
-                          typeof item.product.attributes === 'object' ? (
+                        typeof field.product.attributes === 'object' ? (
                           <AttributesCombobox
-                            attributeArray={item.product.attributes.filter(
+                            attributeArray={field.product.attributes.filter(
                               isAttribute,
                             )}
                             selectedAttributes={
-                              item.attributes ? item.attributes : []
+                              field.attributes ? field.attributes : []
                             }
                             onUpdate={(attributes) => {
-                              // if (!attributes || attributes.length === 0) {
-                              //   return
-                              // }
+                              const currentValues = form.getValues(
+                                `items.${index}`,
+                              )
                               update(index, {
-                                ...item,
+                                ...currentValues,
                                 attributes: attributes.map(
                                   (attribute) => attribute.id,
                                 ),
@@ -911,11 +912,11 @@ export function SeeBudgetContent({
                           />
                         ) : (
                           <div className='flex flex-col gap-1'>
-                            {typeof item.product === 'object' &&
-                              typeof item.product.attributes === 'object' &&
-                              item.product.attributes.filter(isAttribute).map(
+                            {typeof field.product === 'object' &&
+                              typeof field.product.attributes === 'object' &&
+                              field.product.attributes.filter(isAttribute).map(
                                 (attribute) =>
-                                  item.attributes.includes(attribute.id) && (
+                                  field.attributes.includes(attribute.id) && (
                                     <Label key={attribute.id}>
                                       {typeof attribute.type === 'object' &&
                                         attribute.type.name + ': '}
@@ -971,7 +972,7 @@ export function SeeBudgetContent({
                               size='icon'
                               onClick={() =>
                                 insert(index + 1, {
-                                  ...item,
+                                  ...field,
                                 })
                               }
                               variant='outline'
