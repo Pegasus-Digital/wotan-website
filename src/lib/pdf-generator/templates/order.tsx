@@ -153,6 +153,7 @@ export function OrderDocument({ order }: OrderDocumentProps) {
                 <Text>Inscrição Estadual: {client.document}</Text>
                 <Text>Contato: {contact[0].name}</Text>
                 <Text>Telefone: {formatPhoneNumber(contact[0].phone)}</Text>
+                <Text>Email: {contact[0].email}</Text>
               </View>
 
               <View
@@ -228,7 +229,7 @@ export function OrderDocument({ order }: OrderDocumentProps) {
                         <Text>Bairro: {order.adress.neighborhood}</Text>
                         <Text>CEP: {order.adress.cep}</Text>
                         <Text>
-                          Cidade: {order.adress.city} - {order.adress.state}
+                          Cidade: {order.adress.city? order.adress.city : '-'} - {order.adress.state? order.adress.state : '-'}
                         </Text>
                       </>
                     ) : (
