@@ -209,6 +209,7 @@ export const orderSchema = z.object({
       z.object({
         layout: z.union([z.string(), layoutSchema]).optional(),
         product: z.union([z.string(), productSchema]),
+        description: z.string().optional(),
         quantity: z.coerce.number().positive().optional(),
         price: z.coerce
           .number()

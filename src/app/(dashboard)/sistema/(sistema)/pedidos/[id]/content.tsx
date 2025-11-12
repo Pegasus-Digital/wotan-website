@@ -148,6 +148,7 @@ export function SeeOrderContent({
                 featuredImage: item.product.featuredImage,
                 attributes: item.product.attributes,
               },
+        description: item.description || (typeof item.product === 'object' ? item.product.description : ''),
         quantity: item.quantity,
         price: item.price,
         sample: item.sample,
@@ -214,6 +215,7 @@ export function SeeOrderContent({
 
           product:
             typeof item.product === 'string' ? item.product : item.product.id,
+          description: item.description,
           quantity: item.quantity,
           price: item.price,
           sample: item.sample,
@@ -840,7 +842,29 @@ export function SeeOrderContent({
                   {typeof field.product === 'object' && (
                     <>
                       <TableCell>{field.product.sku}</TableCell>
-                      <TableCell>{field.product.title}</TableCell>
+                      <TableCell>
+                        {field.product.sku === 'XXX' ? (
+                          <FormField
+                            control={form.control}
+                            name={`itens.${index}.description`}
+                            render={({ field }) => (
+                              <FormItem className='col-span-2'>
+                                <FormControl>
+                                  <Textarea
+                                    maxLength={300}
+                                    {...field}
+                                    value={field.value || ''}
+                                    className='disabled:opacity-100'
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        ) : (
+                          field.product.title
+                        )}
+                      </TableCell>
                       <TableCell className='font-medium'>
                         <FormField
                           control={form.control}
@@ -1084,6 +1108,7 @@ export function SeeOrderContent({
           append({
             quantity: product.minimumQuantity,
             price: 0,
+            description: product.description || '',
             product: {
               id: product.id,
               sku: product.sku,

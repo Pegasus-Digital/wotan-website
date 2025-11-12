@@ -291,6 +291,7 @@ export function OrderDocument({ order }: OrderDocumentProps) {
             {order.itens.map((item) => {
               const product = item.product as Product
               const attributes = item.attributes as Attribute[]
+              const description = item.description as string
 
               return (
                 <View
@@ -322,7 +323,7 @@ export function OrderDocument({ order }: OrderDocumentProps) {
                         marginBottom: 4,
                       }}
                     >
-                      {product.title}
+                      {product.sku === 'XXX' && description ? description : product.title}
                     </Text>
                     {attributes &&
                       attributes.map((attr) => {

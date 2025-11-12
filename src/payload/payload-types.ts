@@ -492,6 +492,7 @@ export interface Order {
     | {
         product: string | Product;
         layout?: (string | null) | Layout;
+        description?: string | null;
         quantity?: number | null;
         price: number;
         attributes?: (string | Attribute)[] | null;

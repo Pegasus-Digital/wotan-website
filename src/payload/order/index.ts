@@ -80,6 +80,10 @@ const Order: CollectionConfig = {
           relationTo: 'layouts',
         },
         {
+          name: 'description',
+          type: 'text',
+        },
+        {
           name: 'quantity', // Quantidade field
           label: 'Quantity',
           type: 'number',
