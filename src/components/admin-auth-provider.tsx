@@ -66,7 +66,7 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       if (res.ok) {
         const { user, errors } = await res.json()
-        if (errors) throw new Error(errors[0].message)
+        if (errors && errors[0]?.message) throw new Error(errors[0].message)
         setUser(user)
         setStatus('loggedIn')
         return user
@@ -205,7 +205,7 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       if (res.ok) {
         const { data, errors } = await res.json()
-        if (errors) throw new Error(errors[0].message)
+        if (errors && errors[0]?.message) throw new Error(errors[0].message)
         setUser(data?.loginUser?.user)
       } else {
         throw new Error('Credenciais inválidas')
@@ -235,7 +235,7 @@ export const AdminAuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       if (res.ok) {
         const { data, errors } = await res.json()
-        if (errors) throw new Error(errors[0].message)
+        if (errors && errors[0]?.message) throw new Error(errors[0].message)
         setUser(data?.loginUser?.user)
         setStatus(data?.loginUser?.user ? 'loggedIn' : undefined)
       } else {

@@ -43,7 +43,13 @@ export async function createMessage({
       status: true,
       message: 'A mensagem foi arquivada.',
     }
-  } catch (error) {}
+  } catch (error) {
+    return {
+      data: null,
+      status: false,
+      message: '[500] Ocorreu um erro ao criar a mensagem.',
+    }
+  }
 }
 
 interface ArchiveMessageProps {

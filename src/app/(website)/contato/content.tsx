@@ -91,12 +91,12 @@ export function ContactContent({ address, contact }) {
       },
     })
 
-    if (response.status === true) {
+    if (response?.status === true) {
       form.reset()
       return toast.success('Recebemos o contato com sucesso!')
     }
 
-    if (response.status === false) {
+    if (response?.status === false) {
       return toast.error('Ocorreu um erro ao receber sua mensagem.')
     }
   }
