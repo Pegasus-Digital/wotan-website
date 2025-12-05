@@ -27,6 +27,10 @@ process.on('unhandledRejection', (reason, promise) => {
   if (reason instanceof Error) {
     console.error('Error message:', reason.message);
     console.error('Error stack:', reason.stack);
+  } else if (reason !== null && reason !== undefined) {
+    console.error('Rejection reason (non-Error):', String(reason));
+  } else {
+    console.error('Rejection reason is null or undefined');
   }
 });
 

@@ -29,7 +29,6 @@ export function DashboardContent({
   orders: any[]
   budgets: any[]
 }) {
-  console.log(budgets)
 
   return (
     <ContentLayout title='Dashboard'>

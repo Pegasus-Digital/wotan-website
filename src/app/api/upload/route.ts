@@ -9,7 +9,7 @@ export async function POST(request: NextRequest, response: NextResponse) {
   try {
     const data = await request.json()
 
-    console.log(data)
+    console.log('upload data:', data)
     const payload = await getPayloadClient()
 
     // return fetch('http://localhost:3000/api/media', {

@@ -33,6 +33,6 @@ export const isSelf: Access = ({ req: { user } }) => {
 }
 
 export const isLoggedIn: Access = ({ req: { user } }) => {
-  console.log(user)
+  console.log('user:', user)
   return !!user
 }

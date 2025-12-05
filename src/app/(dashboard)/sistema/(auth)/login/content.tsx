@@ -55,7 +55,7 @@ export function LoginContent() {
     async (data: z.infer<typeof formLogin>) => {
       try {
         const response = await login(data)
-        console.log(response)
+        console.log('login response:', response)
         // if (redirect?.current)
         //   router.push(
         //     `${redirect.current as string}&success=${encodeURIComponent('Login realizado com sucesso.')}`,
