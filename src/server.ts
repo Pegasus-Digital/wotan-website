@@ -54,7 +54,8 @@ const start = async (): Promise<void> => {
           }
         })
         .catch((error) => {
-          payload.logger.error({ err: error }, 'Error in admin authentication middleware');
+          const errorMessage = error instanceof Error ? error.message : error ? String(error) : 'Unknown error';
+          payload.logger.error({ err: errorMessage }, 'Error in admin authentication middleware');
           res.clearCookie('payload-token');
           const redirectUrl = `/painel/login?error=${encodeURIComponent(
             'Erro ao verificar autenticação'
@@ -81,7 +82,8 @@ const start = async (): Promise<void> => {
           }
         })
         .catch((error) => {
-          payload.logger.error({ err: error }, 'Error in sales authentication middleware');
+          const errorMessage = error instanceof Error ? error.message : error ? String(error) : 'Unknown error';
+          payload.logger.error({ err: errorMessage }, 'Error in sales authentication middleware');
           res.clearCookie('payload-token');
           const redirectUrl = `/sistema/login?error=${encodeURIComponent(
             'Erro ao verificar autenticação'
@@ -129,7 +131,8 @@ const start = async (): Promise<void> => {
       });
     })
     .catch((err) => {
-      payload.logger.error({ err }, 'Error starting Next.js');
+      const errorMessage = err instanceof Error ? err.message : err ? String(err) : 'Unknown error';
+      payload.logger.error({ err: errorMessage }, 'Error starting Next.js');
     });
 };
 

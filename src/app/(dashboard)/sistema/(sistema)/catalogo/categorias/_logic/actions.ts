@@ -117,7 +117,7 @@ export async function deleteCategory(
       return {
         data: null,
         status: false,
-        message: `[400] Ocorreu um erro ao deletar a categoria. ${JSON.stringify(response.errors.map((error) => error.message))}`,
+        message: `[400] Ocorreu um erro ao deletar a categoria. ${JSON.stringify(response.errors.map((error) => error?.message || 'Unknown error'))}`,
       }
     }
 

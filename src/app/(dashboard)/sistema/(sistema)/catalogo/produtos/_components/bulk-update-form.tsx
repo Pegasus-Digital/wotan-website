@@ -66,19 +66,19 @@ export function BulkUpdateProductForm({
   async function onSubmit(values: z.infer<typeof bulkUpdateProductSchema>) {
     const { categories } = values
 
-    toast.message(`Aguarde, atualizando ${products.length} produtos.`)
+    toast?.message(`Aguarde, atualizando ${products.length} produtos.`)
 
     const response = await bulkUpdateProductCategories(products, {
       categories,
     })
 
     if (response.status === true) {
-      toast.success(response.message)
+      toast.success(response?.message)
       setOpen(false)
     }
 
     if (response.status === false) {
-      toast.error(response.message)
+      toast.error(response?.message)
       setOpen(false)
     }
   }

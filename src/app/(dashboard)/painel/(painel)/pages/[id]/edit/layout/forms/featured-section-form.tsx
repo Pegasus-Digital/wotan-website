@@ -334,7 +334,7 @@ export function FeaturedSectionForm({
                   {Object.entries(form.formState.errors).map(
                     ([field, error]) => (
                       <li key={field}>
-                        {field}: {error.message}
+                        {field}: {error?.message}
                       </li>
                     ),
                   )}

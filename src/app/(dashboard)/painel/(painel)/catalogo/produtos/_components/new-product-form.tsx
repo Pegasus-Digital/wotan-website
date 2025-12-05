@@ -189,14 +189,14 @@ export function NewProductForm() {
     })
 
     if (response.status === true) {
-      toast.success(response.message)
+      toast.success(response?.message)
       setTimeout(() => {
         router.back()
       }, 3000)
     }
 
     if (response.status === false) {
-      toast.error(response.message)
+      toast.error(response?.message)
     }
   }
 

@@ -151,7 +151,7 @@ export function ClientGridForm({ initialData, onSubmit, isSubmitting }: ClientGr
                 <ul className="list-disc pl-5">
                   {Object.entries(form.formState.errors).map(([field, error]) => (
                     <li key={field}>
-                      {field}: {error.message}
+                      {field}: {error?.message}
                     </li>
                   ))}
                 </ul>

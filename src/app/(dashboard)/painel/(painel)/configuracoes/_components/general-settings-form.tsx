@@ -50,11 +50,11 @@ export function GeneralSettingsForm({ company }: CompanyProps) {
     })
 
     if (response.status === true) {
-      toast.success(response.message)
+      toast.success(response?.message)
     }
 
     if (response.status === false) {
-      toast.error(response.message)
+      toast.error(response?.message)
     }
   }
 

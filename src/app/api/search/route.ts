@@ -3,9 +3,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import payload from 'payload'
 
 export async function POST(request: NextRequest, response: NextResponse) {
-  const data = await request.json()
+  try {
+    const data = await request.json()
 
-  const words = data.query.split(' ').filter((word) => word.length >= 3)
+    const words = data.query.split(' ').filter((word) => word.length >= 3)
 
   function createObjectsForWords(words) {
     const objects = []
@@ -71,5 +72,10 @@ export async function POST(request: NextRequest, response: NextResponse) {
   // if (products?.docs) {
   //   products.docs.reverse()
   // }
-  return Response.json(products)
+    return Response.json(products)
+  } catch (error) {
+    console.error('Error in search route:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+    return Response.json({ error: errorMessage }, { status: 500 })
+  }
 }

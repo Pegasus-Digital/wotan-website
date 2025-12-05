@@ -84,12 +84,12 @@ export function UpdateAttributeForm({
     })
 
     if (response.status === true) {
-      toast.success(response.message)
+      toast.success(response?.message)
       setOpen(false)
     }
 
     if (response.status === false) {
-      toast.error(response.message)
+      toast.error(response?.message)
     }
   }
 

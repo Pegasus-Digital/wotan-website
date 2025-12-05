@@ -177,11 +177,11 @@ export function getColumns(): ColumnDef<ContactMessage>[] {
           const response = await archiveMessage({ message })
 
           if (response.status === true) {
-            toast.success(response.message)
+            toast.success(response?.message)
           }
 
           if (response.status === false) {
-            toast.error(response.message)
+            toast.error(response?.message)
           }
         }
 

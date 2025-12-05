@@ -27,7 +27,7 @@ export async function createAttribute(
     revalidatePath('/sistema/catalogo/atributos')
 
     return {
-      data: { attribute: response },
+      data: { attribute: null },
       status: true,
       message: 'Atributo criado com sucesso.',
     }
@@ -125,7 +125,7 @@ export async function updateAttribute(
     revalidatePath('/sistema/catalogo/atributos')
 
     return {
-      data: { attribute: response },
+      data: { attribute: null },
       status: true,
       message: 'Atributo atualizado com sucesso.',
     }

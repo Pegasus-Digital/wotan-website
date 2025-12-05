@@ -7,9 +7,10 @@ export const onBudgetFromWebsite: AfterChangeHook = async ({
   req: { payload },
 }) => {
   if (operation === 'create' && doc.origin === 'website') {
-    const subject = `Orçamento #${doc.incrementalId ?? 'recebido'} | Plataforma Wotan`
+    try {
+      const subject = `Orçamento #${doc.incrementalId ?? 'recebido'} | Plataforma Wotan`
 
-    await payload.sendEmail({
+      await payload.sendEmail({
       from: process.env.PLATFORM_EMAIL,
       to: process.env.ADMIN_EMAIL,
       subject,
@@ -93,6 +94,12 @@ export const onBudgetFromWebsite: AfterChangeHook = async ({
       </tr>
     </table>
   </body>`,
-    })
+      })
+    } catch (error) {
+      payload.logger.error(
+        `Error sending email for budget #${doc.incrementalId ?? 'unknown'}:`,
+        error instanceof Error ? error.message : 'Unknown error',
+      )
+    }
   }
 }

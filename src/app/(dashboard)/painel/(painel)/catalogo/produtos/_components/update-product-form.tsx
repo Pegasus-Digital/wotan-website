@@ -212,7 +212,7 @@ export function UpdateProductForm({
     })
 
     if (response.status === true) {
-      toast.success(response.message)
+      toast.success(response?.message)
 
       // If SKU is updated, then redirect user to the new page
       if (currentProduct.sku !== sku) {
@@ -221,7 +221,7 @@ export function UpdateProductForm({
     }
 
     if (response.status === false) {
-      toast.error(response.message)
+      toast.error(response?.message)
     }
   }
 

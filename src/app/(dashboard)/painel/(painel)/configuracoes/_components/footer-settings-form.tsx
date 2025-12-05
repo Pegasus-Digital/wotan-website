@@ -85,9 +85,9 @@ export default function FooterSettingsForm({ footer }: FooterProps) {
     })
 
     if (response.status === true) {
-      toast.success(response.message)
+      toast.success(response?.message)
     } else {
-      toast.error(response.message)
+      toast.error(response?.message)
     }
   }
 

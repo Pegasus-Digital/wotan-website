@@ -315,7 +315,7 @@ export function SeeBudgetContent({
     }
 
     if (response.status === false) {
-      toast.error(response.message)
+      toast.error(response?.message)
     }
   }
 

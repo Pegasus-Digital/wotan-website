@@ -99,7 +99,7 @@ export function ThreeColumnsForm({ initialData, onSubmit, isSubmitting }: ThreeC
                 <ul className="list-disc pl-5">
                   {Object.entries(form.formState.errors).map(([field, error]) => (
                     <li key={field}>
-                      {field}: {error.message}
+                      {field}: {error?.message}
                     </li>
                   ))}
                 </ul>

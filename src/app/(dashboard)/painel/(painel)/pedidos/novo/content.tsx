@@ -184,12 +184,12 @@ export function NewOrderContent({
     })
 
     if (response.status === true) {
-      toast.success(response.message)
+      toast.success(response?.message)
       router.push('/painel/pedidos')
     }
 
     if (response.status === false) {
-      toast.error(response.message)
+      toast.error(response?.message)
     }
   }
 

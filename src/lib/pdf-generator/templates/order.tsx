@@ -97,6 +97,8 @@ export function OrderDocument({ order }: OrderDocumentProps) {
 
   const client = typeof order.client === 'object' ? order.client : null
 
+  const isCompany = client.type === 'company'
+
   const contact = client.contacts.filter(
     (contact) => contact.id === order.contact,
   )
@@ -148,12 +150,12 @@ export function OrderDocument({ order }: OrderDocumentProps) {
                   width: '60%',
                 }}
               >
-                <Text>Razão Social: {client.razaosocial}</Text>
-                <Text>CNPJ: {client.document}</Text>
+                <Text>{isCompany ? 'Razão Social' : 'Nome'}: {client.razaosocial ? client.razaosocial : client.name}</Text>
+                <Text>{isCompany ? 'CNPJ' : 'CPF'}: {client.document}</Text>
                 <Text>Inscrição Estadual: {client.document}</Text>
                 <Text>Contato: {contact[0].name}</Text>
                 <Text>Telefone: {formatPhoneNumber(contact[0].phone)}</Text>
-                <Text>Email: {contact[0].email}</Text>
+                {contact[0].email && <Text>Email: {contact[0].email}</Text>}
               </View>
 
               <View
