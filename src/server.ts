@@ -25,8 +25,9 @@ app.use(express.static(path.join(__dirname, '../public')));
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
   if (reason instanceof Error) {
-    console.error('Error message:', reason.message);
-    console.error('Error stack:', reason.stack);
+    console.error('Reason:', reason);
+    console.error('Error message:', reason?.message);
+    console.error('Error stack:', reason?.stack);
   } else if (reason !== null && reason !== undefined) {
     console.error('Rejection reason (non-Error):', String(reason));
   } else {
