@@ -14,7 +14,7 @@ export const seed: PayloadHandler = async (req, res): Promise<void> => {
     await seedScript(payload)
     res.json({ success: true })
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'Unknown error'
+    const message = error instanceof Error ? error?.message : 'Unknown error'
     payload.logger.error(message)
     res.json({ error: message })
   }

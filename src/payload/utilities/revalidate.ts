@@ -20,7 +20,7 @@ export const revalidate = async (args: {
       )
     }
   } catch (err: unknown) {
-    const errorMessage = err instanceof Error ? err.message : String(err)
+    const errorMessage = err instanceof Error ? err?.message : String(err)
     payload.logger.error(
       `Error hitting revalidate route for page '${slug}' in collection '${collection}': ${errorMessage}`,
     )

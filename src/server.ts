@@ -59,7 +59,7 @@ const start = async (): Promise<void> => {
           }
         })
         .catch((error) => {
-          const errorMessage = error instanceof Error ? error.message : error ? String(error) : 'Unknown error';
+          const errorMessage = error instanceof Error ? error?.message : error ? String(error) : 'Unknown error';
           payload.logger.error({ err: errorMessage }, 'Error in admin authentication middleware');
           res.clearCookie('payload-token');
           const redirectUrl = `/painel/login?error=${encodeURIComponent(
@@ -87,7 +87,7 @@ const start = async (): Promise<void> => {
           }
         })
         .catch((error) => {
-          const errorMessage = error instanceof Error ? error.message : error ? String(error) : 'Unknown error';
+          const errorMessage = error instanceof Error ? error?.message : error ? String(error) : 'Unknown error';
           payload.logger.error({ err: errorMessage }, 'Error in sales authentication middleware');
           res.clearCookie('payload-token');
           const redirectUrl = `/sistema/login?error=${encodeURIComponent(
@@ -136,7 +136,7 @@ const start = async (): Promise<void> => {
       });
     })
     .catch((err) => {
-      const errorMessage = err instanceof Error ? err.message : err ? String(err) : 'Unknown error';
+      const errorMessage = err instanceof Error ? err?.message : err ? String(err) : 'Unknown error';
       payload.logger.error({ err: errorMessage }, 'Error starting Next.js');
     });
 };

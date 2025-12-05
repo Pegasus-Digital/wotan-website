@@ -98,7 +98,7 @@ export const onBudgetFromWebsite: AfterChangeHook = async ({
     } catch (error) {
       payload.logger.error(
         `Error sending email for budget #${doc.incrementalId ?? 'unknown'}:`,
-        error instanceof Error ? error.message : 'Unknown error',
+        error instanceof Error ? error?.message : 'Unknown error',
       )
     }
   }
