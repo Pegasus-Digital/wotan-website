@@ -69,7 +69,7 @@ export const SalesAuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       if (res.ok) {
         const { user, errors } = await res.json()
-        if (errors && errors[0]?.message) throw new Error(errors[0].message)
+        if (errors && errors[0]?.message) throw new Error(errors[0]?.message || 'Unknown error')
         setUser(user)
         setStatus('loggedIn')
         return user
@@ -207,7 +207,7 @@ export const SalesAuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       if (res.ok) {
         const { data, errors } = await res.json()
-        if (errors && errors[0]?.message) throw new Error(errors[0].message)
+        if (errors && errors[0]?.message) throw new Error(errors[0]?.message || 'Unknown error')
         setUser(data?.loginUser?.user)
       } else {
         throw new Error('Credenciais inválidas')
@@ -237,7 +237,7 @@ export const SalesAuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
       if (res.ok) {
         const { data, errors } = await res.json()
-        if (errors && errors[0]?.message) throw new Error(errors[0].message)
+        if (errors && errors[0]?.message) throw new Error(errors[0]?.message || 'Unknown error')
         setUser(data?.loginUser?.user)
         setStatus(data?.loginUser?.user ? 'loggedIn' : undefined)
       } else {

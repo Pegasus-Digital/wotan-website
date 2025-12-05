@@ -21,6 +21,15 @@ app.use(cookieParser());
 // Serve static files from the "public" folder
 app.use(express.static(path.join(__dirname, '../public')));
 
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  if (reason instanceof Error) {
+    console.error('Error message:', reason.message);
+    console.error('Error stack:', reason.stack);
+  }
+});
+
 const start = async (): Promise<void> => {
   await payload.init({
     express: app,
@@ -32,17 +41,26 @@ const start = async (): Promise<void> => {
 
   const dashboardMiddleware = (req, res, next) => {
     if (req.path !== '/login' && !req.headers['next-action']) {
-      isAdminAuthenticated(req).then((loggedIn) => {
-        if (!loggedIn) {
+      isAdminAuthenticated(req)
+        .then((loggedIn) => {
+          if (!loggedIn) {
+            res.clearCookie('payload-token');
+            const redirectUrl = `/painel/login?error=${encodeURIComponent(
+              'Você deve estar logado para acessar o painel de Administrador'
+            )}&redirect=${encodeURIComponent(req.originalUrl)}`;
+            res.redirect(redirectUrl);
+          } else {
+            next();
+          }
+        })
+        .catch((error) => {
+          payload.logger.error({ err: error }, 'Error in admin authentication middleware');
           res.clearCookie('payload-token');
           const redirectUrl = `/painel/login?error=${encodeURIComponent(
-            'Você deve estar logado para acessar o painel de Administrador'
+            'Erro ao verificar autenticação'
           )}&redirect=${encodeURIComponent(req.originalUrl)}`;
           res.redirect(redirectUrl);
-        } else {
-          next();
-        }
-      });
+        });
     } else {
       next();
     }
@@ -50,17 +68,26 @@ const start = async (): Promise<void> => {
 
   const salesMiddleware = (req, res, next) => {
     if (req.path !== '/login' && !req.headers['next-action']) {
-      isSalesAuthenticated(req).then((loggedIn) => {
-        if (!loggedIn) {
+      isSalesAuthenticated(req)
+        .then((loggedIn) => {
+          if (!loggedIn) {
+            res.clearCookie('payload-token');
+            const redirectUrl = `/sistema/login?error=${encodeURIComponent(
+              'Você deve estar logado para acessar o Sistema'
+            )}&redirect=${encodeURIComponent(req.originalUrl)}`;
+            res.redirect(redirectUrl);
+          } else {
+            next();
+          }
+        })
+        .catch((error) => {
+          payload.logger.error({ err: error }, 'Error in sales authentication middleware');
           res.clearCookie('payload-token');
           const redirectUrl = `/sistema/login?error=${encodeURIComponent(
-            'Você deve estar logado para acessar o Sistema'
+            'Erro ao verificar autenticação'
           )}&redirect=${encodeURIComponent(req.originalUrl)}`;
           res.redirect(redirectUrl);
-        } else {
-          next();
-        }
-      });
+        });
     } else {
       next();
     }

@@ -17,6 +17,7 @@ export async function GET(request: NextRequest, response: NextResponse) {
     return Response.json(response.docs)
   } catch (error) {
     console.error(error)
-    return Response.json(error)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+    return Response.json({ error: errorMessage }, { status: 500 })
   }
 }
