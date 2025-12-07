@@ -16,6 +16,13 @@ services:
         NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
         PAYLOAD_PUBLIC_SERVER_URL: ${PAYLOAD_PUBLIC_SERVER_URL}
 
+        # SMTP config (needed during build when Payload initializes)
+        SMTP_EMAIL: ${SMTP_EMAIL}
+        SMTP_HOST: ${SMTP_HOST}
+        SMTP_USER: ${SMTP_USER}
+        SMTP_PASS: ${SMTP_PASS}
+        SMTP_PORT: ${SMTP_PORT}
+
     image: wotan-website:latest
 
     env_file:
@@ -26,6 +33,13 @@ services:
       DATABASE_URI: ${DATABASE_URI:-mongodb://mongo:27017/wotan}
       PAYLOAD_SECRET: ${PAYLOAD_SECRET}
       PAYLOAD_CONFIG_PATH: dist/payload/payload.config.js
+      PAYLOAD_PUBLIC_SERVER_URL: ${PAYLOAD_PUBLIC_SERVER_URL}
+      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
+      SMTP_EMAIL: ${SMTP_EMAIL}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      SMTP_PORT: ${SMTP_PORT}
 
     depends_on:
       - mongo
