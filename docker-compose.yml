@@ -1,21 +1,43 @@
 version: '3'
 
+
+
 services:
   payload:
-    image: node:18-alpine
-    ports:
-      - '3000:3000'
-    volumes:
-      - .:/home/node/app
-      - node_modules:/home/node/app/node_modules
-    working_dir: /home/node/app/
-    command: sh -c "yarn install && yarn build && yarn serve"
-    depends_on:
-      - mongo
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # NEXT BUILD REQUIRES THESE AT BUILD TIME
+        PAYLOAD_SECRET: ${PAYLOAD_SECRET}
+        DATABASE_URI: ${DATABASE_URI:-mongodb://mongo:27017/wotan}
+
+        # Next-only public envs (safe for build)
+        NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
+        PAYLOAD_PUBLIC_SERVER_URL: ${PAYLOAD_PUBLIC_SERVER_URL}
+
+    image: wotan-website:latest
+
     env_file:
       - .env
+
+    environment:
+      NODE_ENV: production
+      DATABASE_URI: ${DATABASE_URI:-mongodb://mongo:27017/wotan}
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET}
+      PAYLOAD_CONFIG_PATH: dist/payload/payload.config.js
+
+    depends_on:
+      - mongo
+
+    ports:
+      - "3000:3000"
+
     networks:
       - app_network
+
+    restart: unless-stopped
+
 
   mongo:
     image: mongo:latest
@@ -28,10 +50,11 @@ services:
       driver: none
     networks:
       - app_network
+    restart: unless-stopped
+
 
 volumes:
   data:
-  node_modules:
 
 networks:
   app_network:

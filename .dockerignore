@@ -1,0 +1,56 @@
+# Dependencies
+node_modules
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Build outputs
+.next
+dist
+build
+out
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Documentation
+README.md
+*.md
+
+# Misc
+*.log
+.cache
+coverage
+.nyc_output
+
+# Database
+*.sql
+*.db
+
+# Lock files (we only need yarn.lock)
+package-lock.json
+pnpm-lock.yaml
+
