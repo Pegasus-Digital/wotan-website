@@ -16,6 +16,6 @@ export async function updatePage(pageId: string, data: Partial<Page>) {
     revalidatePath('/painel/pages')
     return updatedPage
   } catch (error) {
-    throw error
+    throw new Error(`Failed to update page: ${error instanceof Error ? error.message : 'Unknown error'}`, { cause: error })
   }
 } 

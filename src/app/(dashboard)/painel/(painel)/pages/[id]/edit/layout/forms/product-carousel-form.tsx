@@ -152,7 +152,7 @@ export function ProductCarouselForm({
           hasMore = data.hasNextPage
           page++
         } catch (error) {
-          throw error
+          throw new Error(`Failed to fetch ${endpoint} data: ${error instanceof Error ? error.message : 'Unknown error'}`, { cause: error })
         }
       }
 
