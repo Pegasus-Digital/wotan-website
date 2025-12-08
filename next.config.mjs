@@ -17,17 +17,19 @@ const nextConfig = {
   // Externalize Payload CMS and its Node.js dependencies for server components
   // These packages use Node.js-specific features (like require.extensions) 
   // that cannot be bundled by webpack
-  serverComponentsExternalPackages: [
-    'payload',
-    'express',
-    '@payloadcms/bundler-webpack',
-    '@payloadcms/db-mongodb',
-    '@payloadcms/plugin-nested-docs',
-    '@payloadcms/plugin-search',
-    '@payloadcms/plugin-seo',
-    '@payloadcms/richtext-lexical',
-    '@payloadcms/richtext-slate',
-  ],
+  experimental: {
+    serverComponentsExternalPackages: [
+      'payload',
+      'express',
+      '@payloadcms/bundler-webpack',
+      '@payloadcms/db-mongodb',
+      '@payloadcms/plugin-nested-docs',
+      '@payloadcms/plugin-search',
+      '@payloadcms/plugin-seo',
+      '@payloadcms/richtext-lexical',
+      '@payloadcms/richtext-slate',
+    ],
+  },
   webpack: (config, { isServer }) => {
     // Additional webpack configuration for server-side builds
     if (isServer) {
