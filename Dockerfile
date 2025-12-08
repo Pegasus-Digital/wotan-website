@@ -52,6 +52,7 @@ COPY --from=builder /home/node/app/build ./build
 COPY --from=builder /home/node/app/.next ./.next
 COPY --from=builder /home/node/app/public ./public
 COPY --from=builder /home/node/app/next.config.mjs ./next.config.mjs
+COPY --from=builder /home/node/app/media ./media
 
 EXPOSE 3000
 
