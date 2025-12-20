@@ -44,14 +44,15 @@ services:
     depends_on:
       - mongo
 
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
 
     volumes:
       - media:/home/node/app/media
 
     networks:
       - app_network
+      - web
 
     restart: unless-stopped
 
@@ -69,6 +70,33 @@ services:
       - app_network
     restart: unless-stopped
 
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/sites:/etc/nginx/conf.d:ro
+      - ./nginx/certbot/www:/var/www/certbot
+      - ./nginx/certbot/conf:/etc/letsencrypt
+    depends_on:
+      - payload
+    networks:
+      - web
+    restart: unless-stopped
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+    entrypoint: ""
+    command: sleep infinity
+    networks:
+      - web  
+
 
 volumes:
   data:
@@ -76,4 +104,6 @@ volumes:
 
 networks:
   app_network:
+    driver: bridge
+  web:
     driver: bridge
