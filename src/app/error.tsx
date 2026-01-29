@@ -25,7 +25,7 @@ export default function Error({
         <p className='text-gray-600'>
           Ocorreu um erro inesperado. Por favor, tente novamente.
         </p>
-        {process.env.NODE_ENV === 'development' && (
+        {process.env.NODE_ENV === 'development' && error && (
           <div className='mt-4 rounded-lg bg-red-50 p-4 text-left'>
             <p className='font-mono text-sm text-red-800'>
               {error.message}
