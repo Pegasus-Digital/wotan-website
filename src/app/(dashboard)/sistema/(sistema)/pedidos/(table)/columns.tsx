@@ -80,6 +80,11 @@ export const filterFields: DataTableFilterField<Order>[] = [
     value: 'client',
     placeholder: 'Filtrar por cliente...',
   },
+  {
+    label: 'Código (SKU)',
+    value: 'sku' as keyof Order,
+    placeholder: 'Filtrar por SKU do produto...',
+  },
 ]
 
 export function getColumns(): ColumnDef<Order>[] {
@@ -145,6 +150,14 @@ export function getColumns(): ColumnDef<Order>[] {
       filterFn: () => {
         return true
       },
+    },
+    {
+      id: 'sku',
+      header: () => null,
+      cell: () => null,
+      enableSorting: false,
+      enableHiding: true,
+      filterFn: () => true,
     },
     {
       id: 'salesperson',

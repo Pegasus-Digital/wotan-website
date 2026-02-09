@@ -14,7 +14,7 @@ export async function getOrders(
   noStore()
 
   try {
-    const { page, per_page, sort, client, incrementalId } = searchParams
+    const { page, per_page, sort, client, incrementalId, sku } = searchParams
 
     let whereOr = []
 
@@ -31,6 +31,27 @@ export async function getOrders(
           },
         }
       )
+    }
+
+    if (sku !== undefined && sku.trim().length > 0) {
+      const productsRes = await payload.find({
+        collection: 'products',
+        where: {
+          sku: {
+            contains: sku.trim(),
+          },
+        },
+        limit: 100,
+        pagination: false,
+      })
+      const productIds = productsRes.docs.map((p) => p.id)
+      if (productIds.length > 0) {
+        whereOr.push({
+          'itens.product': {
+            in: productIds,
+          },
+        })
+      }
     }
 
     if (incrementalId !== undefined) {
@@ -72,9 +93,7 @@ export async function getOrders(
       collection: 'order',
       page,
       limit: per_page,
-      where: {
-        or: whereOr,
-      },
+      ...(whereOr.length > 0 ? { where: { or: whereOr } } : {}),
       sort,
     })
 

@@ -82,6 +82,13 @@ interface UseDataTableProps<TData, TValue> {
    * @type boolean
    */
   enableAdvancedFilter?: boolean
+
+  /**
+   * Initial column visibility state (e.g. for filter-only columns that should be hidden).
+   * @default {}
+   * @type VisibilityState
+   */
+  initialColumnVisibility?: VisibilityState
 }
 
 import { FilterFn } from '@tanstack/react-table'
@@ -104,6 +111,7 @@ export function useDataTable<TData, TValue>({
   pageCount,
   filterFields = [],
   enableAdvancedFilter = false,
+  initialColumnVisibility = {},
 }: UseDataTableProps<TData, TValue>) {
   const router = useRouter()
   const pathname = usePathname()
@@ -173,7 +181,7 @@ export function useDataTable<TData, TValue>({
   // Table states
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+    React.useState<VisibilityState>(initialColumnVisibility)
   const [columnFilters, setColumnFilters] =
     React.useState<ColumnFiltersState>(initialColumnFilters)
 
@@ -255,17 +263,26 @@ export function useDataTable<TData, TValue>({
       return
     }
 
-    // Initialize new params
-    const newParamsObject = {
+    // Initialize new params (preserve sort and per_page from current URL)
+    const currentPage = searchParams?.get('page')
+    const currentPerPage = searchParams?.get('per_page')
+    const currentSort = searchParams?.get('sort')
+    const newParamsObject: Record<string, string | number | null> = {
       page: 1,
+      ...(currentPerPage ? { per_page: Number(currentPerPage) } : {}),
+      ...(currentSort ? { sort: currentSort } : {}),
     }
 
     // Handle debounced searchable column filters
     for (const column of debouncedSearchableColumnFilters) {
-      if (typeof column.value === 'string') {
-        Object.assign(newParamsObject, {
-          [column.id]: typeof column.value === 'string' ? column.value : null,
-        })
+      const value =
+        typeof column.value === 'string'
+          ? column.value
+          : Array.isArray(column.value) && column.value[0]
+            ? column.value[0]
+            : null
+      if (value != null && value !== '') {
+        Object.assign(newParamsObject, { [column.id]: value })
       }
     }
 

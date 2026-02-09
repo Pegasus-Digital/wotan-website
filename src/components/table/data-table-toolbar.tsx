@@ -51,11 +51,14 @@ export function DataTableToolbar<TData>({
                   <Input
                     key={String(column.value)}
                     placeholder={column.placeholder}
-                    value={
-                      (table
+                    value={(() => {
+                      const raw = table
                         .getColumn(String(column.value))
-                        ?.getFilterValue() as string) ?? ''
-                    }
+                        ?.getFilterValue()
+                      if (typeof raw === 'string') return raw
+                      if (Array.isArray(raw) && raw[0]) return String(raw[0])
+                      return ''
+                    })()}
                     onChange={(event) =>
                       table
                         .getColumn(String(column.value))

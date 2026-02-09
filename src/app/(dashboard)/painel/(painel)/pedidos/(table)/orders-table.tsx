@@ -32,6 +32,7 @@ export function OrdersTable({ ordersPromise }: OrdersTableProps) {
     columns,
     pageCount,
     filterFields,
+    initialColumnVisibility: { sku: true },
   })
 
   return (
