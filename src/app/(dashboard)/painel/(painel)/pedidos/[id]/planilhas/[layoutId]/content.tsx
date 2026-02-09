@@ -107,11 +107,15 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
 
   const agencyComissionPercent = watch('commisions.agency.value')
   const salespersonComissionPercent = watch('commisions.salesperson.value')
+  const deliveryCost = watch('delivery.cost') ?? 0
+  const delivery2Cost = watch('delivery2.cost') ?? 0
 
   const totalValue = (layoutItem.quantity * layoutItem.price) / 100
+  const deliveryTotalReais = (deliveryCost + delivery2Cost) / 100
+  const totalWithDelivery = totalValue + deliveryTotalReais
 
-  const agencyComission = (totalValue * agencyComissionPercent) / 100
-  const salespersonComission = (totalValue * salespersonComissionPercent) / 100
+  const agencyComission = (totalWithDelivery * agencyComissionPercent) / 100
+  const salespersonComission = (totalWithDelivery * salespersonComissionPercent) / 100
 
   async function onSubmit(values: LayoutProps) {
     console.log('Layout submitted:', values)
@@ -768,6 +772,29 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
               </Heading>
             </CardHeader>
             <CardContent className='space-y-2'>
+              <div className='space-y-1.5 border-b border-border pb-4'>
+                <FormLabel>Base de cálculo</FormLabel>
+                <div className='flex flex-wrap gap-x-6 gap-y-0.5 text-sm'>
+                  <span className='text-muted-foreground'>
+                    Valor do pedido{' '}
+                    <span className='font-medium text-foreground'>
+                      {formatBRL(totalValue)}
+                    </span>
+                  </span>
+                  <span className='text-muted-foreground'>
+                    Frete{' '}
+                    <span className='font-medium text-foreground'>
+                      {formatBRL(deliveryTotalReais)}
+                    </span>
+                  </span>
+                  <span className='text-muted-foreground'>
+                    Total (com frete){' '}
+                    <span className='font-medium text-foreground'>
+                      {formatBRL(totalWithDelivery)}
+                    </span>
+                  </span>
+                </div>
+              </div>
               <div className='grid grid-cols-1  gap-4 tablet:grid-cols-3'>
                 <FormField
                   control={form.control}
