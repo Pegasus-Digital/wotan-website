@@ -59,11 +59,18 @@ export function ProductionDocument({
     typeof layoutItem.layout === 'object' ? layoutItem.layout : null
 
   const totalValue = (layoutItem.quantity * layoutItem.price) / 100
+  const deliveryCost = layoutValues.delivery?.cost ?? 0
+  const delivery2Cost = layoutValues.delivery2?.cost ?? 0
+  const deliveryTotalReais = (deliveryCost + delivery2Cost) / 100
+  const totalWithDelivery = totalValue + deliveryTotalReais
 
   const agencyComission =
-    (totalValue * Number(layoutValues.commisions.agency.value)) / 100
+    (totalWithDelivery * Number(layoutValues.commisions?.agency?.value ?? 0)) /
+    100
   const salespersonComission =
-    (totalValue * Number(layoutValues.commisions.salesperson.value)) / 100
+    (totalWithDelivery *
+      Number(layoutValues.commisions?.salesperson?.value ?? 0)) /
+    100
 
   const productUnitCost =
     layoutValues.printing.price +
@@ -306,21 +313,23 @@ export function ProductionDocument({
             )}
 
           {/* Fretes */}
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              marginBottom: 16,
-              marginTop: 16,
-            }}
-          >
-            <View style={{ display: 'flex', width: '85%' }}>
-              <Text>Frete: {layoutValues.delivery.company}</Text>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                marginBottom: 16,
+                marginTop: 16,
+              }}
+            >
+              <View style={{ display: 'flex', width: '85%' }}>
+                <Text>Frete: {layoutValues.delivery.company}</Text>
+              </View>
+              <View style={{ display: 'flex', width: '15%' }}>
+                <Text>
+                  Custo: {formatBRL((layoutValues.delivery.cost ?? 0) / 100)}
+                </Text>
+              </View>
             </View>
-            <View style={{ display: 'flex', width: '15%' }}>
-              <Text>Custo: {formatBRL(layoutValues.delivery.cost / 100)}</Text>
-            </View>
-          </View>
           {layoutValues.delivery2 && layoutValues.delivery2.cost > 0 && (
             <View
               style={{
@@ -340,47 +349,54 @@ export function ProductionDocument({
             </View>
           )}
           {/* Comissões  */}
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              marginBottom: 16,
-              marginTop: 16,
-            }}
-          >
-            <View style={{ display: 'flex', width: '65%' }}>
-              <Text>
-                Comissão Agência: {layoutValues.commisions.agency.name}
-              </Text>
-            </View>
-            <View style={{ display: 'flex', width: '20%' }}>
-              <Text>Porcentagem: {layoutValues.commisions.agency.value}%</Text>
-            </View>
-            <View style={{ display: 'flex', width: '15%' }}>
-              <Text>Valor: {formatBRL(agencyComission)}</Text>
-            </View>
-          </View>
-          <View
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              marginBottom: 16,
-            }}
-          >
-            <View style={{ display: 'flex', width: '65%' }}>
-              <Text>
-                Comissão Vendedor: {layoutValues.commisions.salesperson.name}
-              </Text>
-            </View>
-            <View style={{ display: 'flex', width: '20%' }}>
-              <Text>
-                Porcentagem: {layoutValues.commisions.salesperson.value}%
-              </Text>
-            </View>
-            <View style={{ display: 'flex', width: '15%' }}>
-              <Text>Valor: {formatBRL(salespersonComission)}</Text>
-            </View>
-          </View>
+            <>
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  marginBottom: 16,
+                  marginTop: 16,
+                }}
+              >
+                <View style={{ display: 'flex', width: '65%' }}>
+                  <Text>
+                    Comissão Agência:{' '}
+                    {layoutValues.commisions.agency?.name ?? '—'}
+                  </Text>
+                </View>
+                <View style={{ display: 'flex', width: '20%' }}>
+                  <Text>
+                    Porcentagem: {layoutValues.commisions.agency?.value ?? 0}%
+                  </Text>
+                </View>
+                <View style={{ display: 'flex', width: '15%' }}>
+                  <Text>Valor: {formatBRL(agencyComission)}</Text>
+                </View>
+              </View>
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  marginBottom: 16,
+                }}
+              >
+                <View style={{ display: 'flex', width: '65%' }}>
+                  <Text>
+                    Comissão Vendedor:{' '}
+                    {layoutValues.commisions.salesperson?.name ?? '—'}
+                  </Text>
+                </View>
+                <View style={{ display: 'flex', width: '20%' }}>
+                  <Text>
+                    Porcentagem:{' '}
+                    {layoutValues.commisions.salesperson?.value ?? 0}%
+                  </Text>
+                </View>
+                <View style={{ display: 'flex', width: '15%' }}>
+                  <Text>Valor: {formatBRL(salespersonComission)}</Text>
+                </View>
+              </View>
+            </>
 
           {/* Layout/Amostra */}
           <View>
@@ -436,6 +452,7 @@ export function ProductionDocument({
                 )}
               </Text>
               <Text>Valor da venda: {formatBRL(totalValue)}</Text>
+              <Text>Base de cálculo (com frete): {formatBRL(totalWithDelivery)}</Text>
               <Text>Custo de produção: {formatBRL(productionCost)}</Text>
               <Text>Resultado: {formatBRL(totalValue - productionCost)}</Text>
             </View>
