@@ -462,7 +462,7 @@ export function ProductionDocument({
               <Text>Tipo de pagamento: {layoutValues.paymentType}</Text>
               <Text>Nota fiscal nº: {layoutValues.invoice.number}</Text>
               <Text>Vencimento: {layoutValues.invoice.due}</Text>
-              <Text>Valor: {layoutValues.invoice.value}</Text>
+              <Text>Valor: {formatBRL(layoutValues.invoice.value / 100)}</Text>
               <Text>NCM:{layoutValues.ncm}</Text>
             </View>
           </View>
