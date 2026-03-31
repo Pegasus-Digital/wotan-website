@@ -6,6 +6,7 @@ import { Company, Header as HeaderType } from '@/payload/payload-types'
 import { Media } from './media'
 import { HeaderNavigation } from './header-navigation'
 import { Icons } from './icons'
+import { FavoritesCartActions } from './favorites-cart-actions'
 
 type Props = HeaderType & {
   staticImage?: StaticImageData
@@ -16,7 +17,7 @@ export function Header({ logo, navigation, staticImage, id, phone }: Props) {
   return (
     <header className='h-20 w-full bg-background'>
       <div className='container flex h-full items-center gap-4'>
-        <div className='flex-1 justify-start'>
+        <div className='flex min-w-0 flex-1 justify-start'>
           <Link
             href='/'
             className='flex h-16 w-48 items-center overflow-hidden desktop:h-20 desktop:w-60'
@@ -24,6 +25,8 @@ export function Header({ logo, navigation, staticImage, id, phone }: Props) {
             <Media priority resource={logo} src={staticImage} />
           </Link>
         </div>
+
+        <FavoritesCartActions className='flex shrink-0 tablet:hidden' />
 
         <div className='hidden tablet:block'>
           <HeaderNavigation {...navigation} />

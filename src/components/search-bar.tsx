@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { FormEvent } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 
@@ -11,16 +10,13 @@ import { NestedCategory } from '@/lib/category-hierarchy'
 import { Icons } from './icons'
 import { Input } from './ui/input'
 import { CategoriesMenu } from './categories-menu'
-import { FavoritesDrawer } from './favorites-drawer'
-import { Button, buttonVariants } from './ui/button'
-import { useCartStore } from './cart-store-provider'
+import { FavoritesCartActions } from './favorites-cart-actions'
+import { Button } from './ui/button'
 
 export function SearchBar({ categories }: { categories: NestedCategory[] }) {
   const searchParams = useSearchParams()
 
   const router = useRouter()
-
-  const { cart } = useCartStore((state) => state)
 
   function handleSearch(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -68,30 +64,7 @@ export function SearchBar({ categories }: { categories: NestedCategory[] }) {
           </Button>
         </form>
 
-        {/* Actions */}
-        <div className='hidden gap-2 text-primary-foreground tablet:flex'>
-          <FavoritesDrawer />
-
-          {/* Redirect to shopping cart */}
-          <Link
-            href='/carrinho'
-            prefetch={true}
-            className={buttonVariants({
-              size: 'icon',
-              variant: 'ghost',
-              className:
-                'relative hover:bg-primary hover:text-primary-foreground',
-            })}
-          >
-            <Icons.Cart className='h-6 w-6' />
-
-            {cart.length > 0 && (
-              <span className='absolute -right-2 -top-2 flex aspect-square min-h-5 w-fit items-center justify-center rounded-full bg-wotanRed-400 text-center leading-none'>
-                {cart.length}
-              </span>
-            )}
-          </Link>
-        </div>
+        <FavoritesCartActions className='hidden text-primary-foreground tablet:flex' />
       </div>
     </div>
   )
