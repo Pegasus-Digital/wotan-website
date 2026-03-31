@@ -1,6 +1,7 @@
 import './globals.css'
 
 import { Metadata } from 'next'
+import { GoogleAnalytics } from '@/components/google-analytics'
 import { cn } from '@/lib/utils'
 import { Inter } from 'next/font/google'
 
@@ -36,6 +37,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           'min-w-96 bg-background text-foreground antialiased',
         )}
       >
+        <GoogleAnalytics />
         {children}
       </body>
     </html>
