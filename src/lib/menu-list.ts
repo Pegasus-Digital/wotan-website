@@ -16,6 +16,7 @@ import {
   SquarePen,
   LucideIcon,
   Clock,
+  Send,
 } from 'lucide-react'
 
 type Submenu = {
@@ -141,6 +142,7 @@ const menusConfig: Record<string, Group[]> = {
           label: 'Configurações',
           icon: Settings,
         },
+        { href: '/painel/email', label: 'E-mail (SMTP)', icon: Send },
       ],
     },
   ],
