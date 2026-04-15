@@ -35,6 +35,9 @@ export function SearchBar({ categories }: { categories: NestedCategory[] }) {
   return (
     <div className='flex h-16 w-full items-center justify-between bg-wotan'>
       <div className='container flex items-center justify-between'>
+        <div className='shrink-0 tablet:hidden'>
+          <CategoriesMenu categories={categories} compact />
+        </div>
         <div className='hidden tablet:block'>
           <CategoriesMenu categories={categories} />
         </div>
