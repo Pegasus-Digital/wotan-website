@@ -36,6 +36,23 @@ import {
 
 import { useCartStore } from '@/components/cart-store-provider'
 
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void
+  }
+}
+
+function trackGoogleAdsBudgetConversion(value = 1.0, currency: 'BRL' | string = 'BRL') {
+  if (typeof window === 'undefined') return
+
+  // gtag is initialized by `src/components/google-analytics.tsx` in `src/app/layout.tsx`
+  window.gtag?.('event', 'conversion', {
+    send_to: 'AW-18054521654/XBYtCMm-pZMcELbGiKFD',
+    value,
+    currency,
+  })
+}
+
 const cartSchema = z.array(
   z.object({
     id: z.string().uuid(),
@@ -97,6 +114,8 @@ export function FinishEstimateForm() {
       })
 
       if (response.ok) {
+        trackGoogleAdsBudgetConversion(1.0, 'BRL')
+
         toast.success(
           'O orçamento enviado com sucesso. Você será redirecionado.',
         )
