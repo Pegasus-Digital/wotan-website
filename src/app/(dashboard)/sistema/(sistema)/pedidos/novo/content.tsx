@@ -194,7 +194,7 @@ export function NewOrderContent({
   >(undefined)
 
   function handleSameAddress() {
-    const { cep, city, neighborhood, number, state, street } =
+    const { cep, city, neighborhood, number, state: clientState, street } =
       selectedClient.adress
 
     form.setValue('adress', {
@@ -202,10 +202,12 @@ export function NewOrderContent({
       number: number ?? '',
       neighborhood: neighborhood ?? '',
       city: city ?? '',
+      state: clientState ?? undefined,
       zipCode: cep ?? '',
     })
 
-    setState(state)
+    setState(clientState ?? '')
+    setSelectedState(clientState ?? null)
   }
 
   function resetContactForm() {
@@ -215,6 +217,7 @@ export function NewOrderContent({
   function resetAddressForm() {
     form.resetField('adress')
     setState('')
+    setSelectedState(null)
   }
 
   return (

@@ -248,7 +248,7 @@ export function SeeOrderContent({
   >('same')
 
   function handleSameAddress() {
-    const { cep, city, neighborhood, number, state, street } =
+    const { cep, city, neighborhood, number, state: clientState, street } =
       selectedClient.adress
 
     form.setValue('adress', {
@@ -256,10 +256,11 @@ export function SeeOrderContent({
       number: number ?? '',
       neighborhood: neighborhood ?? '',
       city: city ?? '',
+      state: clientState ?? undefined,
       zipCode: cep ?? '',
     })
 
-    setState(state)
+    setState(clientState ?? '')
   }
 
   function resetContactForm() {
