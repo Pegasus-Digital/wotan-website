@@ -87,3 +87,35 @@ export const headerSchema = z.object({
   // logo: z.union([z.string(), mediaSchema]),
   navigation: navigationSchema,
 })
+
+export const printingTypeSchema = z.object({
+  value: z
+    .string()
+    .min(1, 'Identificador obrigatório')
+    .regex(
+      /^[a-z0-9_-]+$/,
+      'Use apenas letras minúsculas, números, hífen ou underscore (ex.: impressao_uv)',
+    ),
+  label: z.string().min(1, 'Nome exibido obrigatório'),
+})
+
+export const printingTypesSettingsSchema = z.object({
+  printingTypes: z
+    .array(printingTypeSchema)
+    .min(1, 'Adicione pelo menos um tipo de impressão')
+    .superRefine((items, ctx) => {
+      const seen = new Set<string>()
+
+      items.forEach((item, index) => {
+        const value = item.value.trim()
+        if (seen.has(value)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Este identificador já está em uso',
+            path: [index, 'value'],
+          })
+        }
+        seen.add(value)
+      })
+    }),
+})

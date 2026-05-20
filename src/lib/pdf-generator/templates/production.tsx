@@ -5,10 +5,16 @@ import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer'
 import {
   DocumentFiller,
   DocumentSeparator,
+  DocumentVerticalSeparator,
 } from '../components/document-separator'
 import { DocumentHeader } from '../components/document-header'
 import { AttributeType, Order } from '@/payload/payload-types'
 import { formatBRL } from '@/lib/format'
+import {
+  DEFAULT_PRINTING_TYPES,
+  formatPrintingTypeLabel,
+  PrintingTypeOption,
+} from '@/lib/printing-types'
 
 const styles = StyleSheet.create({
   page: {
@@ -23,6 +29,7 @@ const styles = StyleSheet.create({
   footer: {
     display: 'flex',
     flexDirection: 'row',
+    // alignItems: 'stretch',
     justifyContent: 'space-between',
     fontSize: 10,
   },
@@ -36,11 +43,13 @@ const styles = StyleSheet.create({
 interface ProductionDocumentProps {
   order: Order
   layoutItem: Order['itens'][number]
+  printingTypes?: PrintingTypeOption[]
 }
 
 export function ProductionDocument({
   layoutItem,
   order,
+  printingTypes = DEFAULT_PRINTING_TYPES,
 }: ProductionDocumentProps) {
   const client = typeof order.client === 'object' ? order.client : null
 
@@ -180,7 +189,13 @@ export function ProductionDocument({
             }}
           >
             <View style={{ display: 'flex', width: '33%' }}>
-              <Text>Tipo de Impressão: {layoutValues.printing.type}</Text>
+              <Text>
+                Tipo de Impressão:{' '}
+                {formatPrintingTypeLabel(
+                  layoutValues.printing.type,
+                  printingTypes,
+                )}
+              </Text>
             </View>
             <View style={{ display: 'flex', width: '12%' }}>
               <Text>
@@ -213,7 +228,13 @@ export function ProductionDocument({
               }}
             >
               <View style={{ display: 'flex', width: '33%' }}>
-                <Text>Tipo de Impressão: {layoutValues.printing2.type}</Text>
+                <Text>
+                  Tipo de Impressão:{' '}
+                  {formatPrintingTypeLabel(
+                    layoutValues.printing2.type,
+                    printingTypes,
+                  )}
+                </Text>
               </View>
               <View style={{ display: 'flex', width: '12%' }}>
                 <Text>
@@ -456,6 +477,7 @@ export function ProductionDocument({
               <Text>Custo de produção: {formatBRL(productionCost)}</Text>
               <Text>Resultado: {formatBRL(totalValue - productionCost)}</Text>
             </View>
+            <DocumentVerticalSeparator />
             <View style={styles.footer_column}>
               <Text>
                 Frete:{' '}
@@ -474,6 +496,7 @@ export function ProductionDocument({
               <Text>Cotação: {layoutValues.quote}</Text>
               <Text>Volumes: {layoutValues.volumeNumber}</Text>
             </View>
+            <DocumentVerticalSeparator />
             <View style={styles.footer_column}>
               <Text>Data remessa: {layoutValues.shipmentDate}</Text>
               <Text>Tipo de pagamento: {layoutValues.paymentType}</Text>

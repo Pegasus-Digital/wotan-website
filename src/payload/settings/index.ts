@@ -3,6 +3,7 @@ import { anyone, isAdmin } from '../access'
 import { header } from '../fields/header'
 import { footer } from '../fields/footer'
 import { company } from '../fields/company'
+import { printingTypesField } from '../fields/printing-types'
 
 const Settings: GlobalConfig = {
   slug: 'settings',
@@ -38,6 +39,11 @@ const Settings: GlobalConfig = {
         {
           label: 'Company',
           fields: company,
+        },
+        {
+          name: 'production',
+          label: 'Produção',
+          fields: [printingTypesField],
         },
       ],
     },

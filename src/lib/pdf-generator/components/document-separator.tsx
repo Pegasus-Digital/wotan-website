@@ -14,6 +14,20 @@ export function DocumentSeparator() {
   return <View style={styles.separator} />
 }
 
+const verticalStyles = StyleSheet.create({
+  separator: {
+    width: 1,
+    backgroundColor: 'gray',
+    opacity: 0.5,
+    // alignSelf: 'stretch',
+    marginHorizontal: 2,
+  },
+})
+
+export function DocumentVerticalSeparator() {
+  return <View style={verticalStyles.separator} />
+}
+
 export function DocumentFiller() {
   return <View style={{ flex: 1 }} />
 }

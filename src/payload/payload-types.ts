@@ -848,6 +848,15 @@ export interface Setting {
   header: Header;
   footer: Footer;
   company: Company;
+  production?: {
+    printingTypes?:
+      | {
+          value?: string | null;
+          label?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  } | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }

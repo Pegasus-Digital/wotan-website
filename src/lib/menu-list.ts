@@ -141,6 +141,17 @@ const menusConfig: Record<string, Group[]> = {
           href: '/painel/configuracoes',
           label: 'Configurações',
           icon: Settings,
+          submenus: [
+            { href: '/painel/configuracoes', label: 'Geral' },
+            {
+              href: '/painel/configuracoes/producao',
+              label: 'Produção',
+            },
+            {
+              href: '/painel/configuracoes/preferencias',
+              label: 'Preferências de Usuário',
+            },
+          ],
         },
         { href: '/painel/email', label: 'E-mail (SMTP)', icon: Send },
       ],
