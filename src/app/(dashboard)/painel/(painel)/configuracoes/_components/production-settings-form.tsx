@@ -51,7 +51,14 @@ export function ProductionSettingsForm({
   })
 
   async function onSubmit(values: ProductionSettingsFormValues) {
-    const response = await updateProductionSettings(values.printingTypes)
+    const printingTypes: PrintingTypeOption[] = values.printingTypes.map(
+      (item) => ({
+        value: item.value.trim(),
+        label: item.label.trim(),
+      }),
+    )
+
+    const response = await updateProductionSettings(printingTypes)
 
     if (response.status === true) {
       invalidatePrintingTypesCache()
