@@ -43,6 +43,9 @@ import {
   SelectContent,
 } from '@/components/ui/select'
 
+import { PrintingTypeSelect } from '@/components/planilha/printing-type-select'
+import { PrintingTypeOption } from '@/lib/printing-types'
+
 import { updateLayout } from '../../../_logic/actions'
 import { layoutSchema } from '../../../_logic/validation'
 
@@ -52,9 +55,15 @@ interface SeeOrderContentProps {
   order: Order
   layout: Layout
   edit: boolean
+  printingTypes: PrintingTypeOption[]
 }
 
-export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
+export function LayoutContent({
+  order,
+  edit,
+  layout,
+  printingTypes,
+}: SeeOrderContentProps) {
   const router = useRouter()
 
   const form = useForm<LayoutProps>({
@@ -221,40 +230,11 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                 </Heading>
               </CardHeader>
               <CardContent className='space-y-2'>
-                <FormField
+                <PrintingTypeSelect
                   control={form.control}
                   name='printing.type'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tipo de Impressão</FormLabel>
-                      <FormControl>
-                        <Select
-                          {...field}
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder='Selecione...' />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value={null}>Selecione...</SelectItem>
-                            <SelectItem value='serigrafia'>
-                              Serigrafia
-                            </SelectItem>
-                            <SelectItem value='laser'>Laser</SelectItem>
-                            <SelectItem value='bordado'>Bordado</SelectItem>
-                            <SelectItem value='adesivo'>
-                              Aplicação de Adesivo
-                            </SelectItem>
-                            <SelectItem value='madeira'>
-                              Gravação em Madeira
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  printingTypes={printingTypes}
+                  disabled={editMode}
                 />
                 <FormField
                   control={form.control}
@@ -338,40 +318,11 @@ export function LayoutContent({ order, edit, layout }: SeeOrderContentProps) {
                 </Heading>
               </CardHeader>
               <CardContent className='space-y-2'>
-                <FormField
+                <PrintingTypeSelect
                   control={form.control}
                   name='printing2.type'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Tipo de Impressão</FormLabel>
-                      <FormControl>
-                        <Select
-                          {...field}
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder='Selecione...' />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value={null}>Selecione...</SelectItem>
-                            <SelectItem value='serigrafia'>
-                              Serigrafia
-                            </SelectItem>
-                            <SelectItem value='laser'>Laser</SelectItem>
-                            <SelectItem value='bordado'>Bordado</SelectItem>
-                            <SelectItem value='adesivo'>
-                              Aplicação de Adesivo
-                            </SelectItem>
-                            <SelectItem value='madeira'>
-                              Gravação em Madeira
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  printingTypes={printingTypes}
+                  disabled={editMode}
                 />
                 <FormField
                   control={form.control}

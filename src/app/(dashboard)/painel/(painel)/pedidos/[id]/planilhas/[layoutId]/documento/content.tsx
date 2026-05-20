@@ -6,6 +6,7 @@ import { Layout, Order } from '@/payload/payload-types'
 
 import { LoadingSpinner } from '@/components/spinner'
 import { ContentLayout } from '@/components/painel-sistema/content-layout'
+import { PrintingTypeOption } from '@/lib/printing-types'
 import { ProductionDocument } from '@/lib/pdf-generator/templates/production'
 
 const PDFViewer = dynamic(
@@ -19,11 +20,13 @@ const PDFViewer = dynamic(
 interface LayoutDocumentContentProps {
   order: Order
   layoutId: Layout['id']
+  printingTypes: PrintingTypeOption[]
 }
 
 export function LayoutDocumentContent({
   order,
   layoutId,
+  printingTypes,
 }: LayoutDocumentContentProps) {
   const item = order.itens.find((item) => {
     if (
@@ -42,7 +45,11 @@ export function LayoutDocumentContent({
         className='min-h-[90vh] w-full flex-1 animate-fade-in'
         showToolbar={false}
       >
-        <ProductionDocument layoutItem={item} order={order} />
+        <ProductionDocument
+          layoutItem={item}
+          order={order}
+          printingTypes={printingTypes}
+        />
       </PDFViewer>
     </ContentLayout>
   )

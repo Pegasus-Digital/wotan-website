@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { usePrintingTypes } from '@/hooks/use-printing-types'
 import { ProductionDocument } from '@/lib/pdf-generator/templates/production'
 
 const PDFDownloadLink = dynamic(
@@ -39,6 +40,8 @@ export function LayoutDocumentDownloader({
   order,
   layoutId,
 }: LayoutDocumentDownloaderProps) {
+  const printingTypes = usePrintingTypes()
+
   const item = order.itens.find((item) => {
     if (
       (typeof item.layout === 'object' ? item.layout.id : item.layout) ===
@@ -54,7 +57,13 @@ export function LayoutDocumentDownloader({
   return (
     <>
       <PDFDownloadLink
-        document={<ProductionDocument layoutItem={item} order={order} />}
+        document={
+          <ProductionDocument
+            layoutItem={item}
+            order={order}
+            printingTypes={printingTypes}
+          />
+        }
         fileName={`Planilha_producao_pedido_n${order.incrementalId}_produto_${item && typeof item.product === 'object' ? item.product.sku : item.product}.pdf`}
       >
         {({ url, loading }) =>
