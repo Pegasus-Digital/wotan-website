@@ -9,7 +9,7 @@ import {
 } from '../components/document-separator'
 import { DocumentHeader } from '../components/document-header'
 import { AttributeType, Order } from '@/payload/payload-types'
-import { formatBRL } from '@/lib/format'
+import { formatBRL, formatCNPJ } from '@/lib/format'
 import {
   DEFAULT_PRINTING_TYPES,
   formatPrintingTypeLabel,
@@ -114,19 +114,27 @@ export function ProductionDocument({
               marginBottom: 16,
             }}
           >
-            <Text>Pedido n°:{order.incrementalId}</Text>
+            <Text>Pedido n°: {order.incrementalId}</Text>
             <Text>Data: {getDDMMYYDate(new Date(order.updatedAt))}</Text>
           </View>
           <View
             style={{
               display: 'flex',
               flexDirection: 'row',
-              justifyContent: 'space-between',
+              width: '100%',
               fontSize: 10,
             }}
           >
-            <View style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Text style={{ fontWeight: 'medium', fontSize: 12 }}>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 4,
+                width: '50%',
+                paddingRight: 4,
+              }}
+            >
+              <Text style={{ fontWeight: 'medium', fontSize: 10 }}>
                 Produto:{' '}
                 {typeof layoutItem.product === 'string'
                   ? layoutItem.product
@@ -145,13 +153,21 @@ export function ProductionDocument({
                   })}
               </View>
             </View>
-            <View style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <Text style={{ fontWeight: 'medium', fontSize: 11 }}>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 4,
+                width: '50%',
+                paddingLeft: 4,
+              }}
+            >
+              <Text style={{ fontWeight: 'medium', fontSize: 10 }}>
                 Razão social:{' '}
                 {typeof client === 'object' ? client.razaosocial : client}
               </Text>
               <Text>
-                CNPJ: {typeof client === 'object' ? client.document : client}
+                CNPJ: {typeof client === 'object' ? formatCNPJ(client.document ?? '') : client}
               </Text>
               <Text>
                 Contato:{' '}
