@@ -82,31 +82,50 @@ export function ProductionDocument({
   const layoutValues =
     typeof layoutItem.layout === 'object' ? layoutItem.layout : null
 
-  const totalValue = (layoutItem.quantity * layoutItem.price) / 100
-  const deliveryCost = layoutValues.delivery?.cost ?? 0
-  const delivery2Cost = layoutValues.delivery2?.cost ?? 0
-  const deliveryTotalReais = (deliveryCost + delivery2Cost) / 100
-  const totalWithDelivery = totalValue + deliveryTotalReais
+  const valorDaVenda = (layoutItem.quantity * layoutItem.price) / 100
+
+  const outrasDespesas =
+    ((layoutValues.delivery?.cost ?? 0) + (layoutValues.delivery2?.cost ?? 0)) /
+    100
+
+  const frete =
+    ((layoutValues.additionalCosts?.cost ?? 0) +
+      (layoutValues.additionalCosts2?.cost ?? 0)) /
+    100
+
+  const baseDeCalculo = valorDaVenda + outrasDespesas
 
   const agencyComission =
-    (totalWithDelivery * Number(layoutValues.commisions?.agency?.value ?? 0)) /
-    100
+    (baseDeCalculo * Number(layoutValues.commisions?.agency?.value ?? 0)) / 100
   const salespersonComission =
-    (totalWithDelivery *
-      Number(layoutValues.commisions?.salesperson?.value ?? 0)) /
+    (baseDeCalculo * Number(layoutValues.commisions?.salesperson?.value ?? 0)) /
     100
 
-  const productUnitCost =
-    layoutValues.printing.price +
-    layoutValues.printing2.price +
-    layoutValues.supplyer.reduce((acc, curr) => acc + curr.custo_material, 0)
+  const custoImpressaoCentavos =
+    (layoutValues.printing?.price ?? 0) *
+      (layoutValues.printing?.quantity ?? 0) +
+    (layoutValues.printing2?.price ?? 0) *
+      (layoutValues.printing2?.quantity ?? 0)
 
-  const productionCost =
-    (productUnitCost * layoutItem.quantity) / 100 +
-    (layoutValues.additionalCosts.cost + layoutValues.additionalCosts2.cost) /
-      100 +
+  const custoMateriaisCentavos = (layoutValues.supplyer ?? []).reduce(
+    (acc, s) => {
+      const custo = s.custo_material ?? 0
+      const qtd = s.quantidade_material ?? 1
+      return acc + custo * qtd
+    },
+    0,
+  )
+
+  const custoImpressaoEMateriais =
+    (custoImpressaoCentavos + custoMateriaisCentavos) / 100
+
+  const custoDeProducao =
+    custoImpressaoEMateriais +
+    outrasDespesas +
     agencyComission +
     salespersonComission
+
+  const resultado = valorDaVenda - custoDeProducao - frete
 
   return (
     <Document>
@@ -323,7 +342,7 @@ export function ProductionDocument({
             )
           })}
 
-          {/* Observações */}
+          {/* Frete (additionalCosts) */}
           <View
             style={{
               display: 'flex',
@@ -333,7 +352,7 @@ export function ProductionDocument({
             }}
           >
             <View style={{ display: 'flex', width: '85%' }}>
-              <Text>Observações: {layoutValues.additionalCosts.obs}</Text>
+              <Text>Frete: {layoutValues.additionalCosts.obs}</Text>
             </View>
             <View style={{ display: 'flex', width: '15%' }}>
               <Text>
@@ -352,9 +371,7 @@ export function ProductionDocument({
                 }}
               >
                 <View style={{ display: 'flex', width: '85%' }}>
-                  <Text>
-                    Observações 2: {layoutValues.additionalCosts2.obs}
-                  </Text>
+                  <Text>Frete 2: {layoutValues.additionalCosts2.obs}</Text>
                 </View>
                 <View style={{ display: 'flex', width: '15%' }}>
                   <Text>
@@ -364,7 +381,7 @@ export function ProductionDocument({
               </View>
             )}
 
-          {/* Fretes */}
+          {/* Outras despesas (delivery) */}
             <View
               style={{
                 display: 'flex',
@@ -374,7 +391,7 @@ export function ProductionDocument({
               }}
             >
               <View style={{ display: 'flex', width: '85%' }}>
-                <Text>Frete: {layoutValues.delivery.company}</Text>
+                <Text>Outras Despesas: {layoutValues.delivery.company}</Text>
               </View>
               <View style={{ display: 'flex', width: '15%' }}>
                 <Text>
@@ -391,7 +408,7 @@ export function ProductionDocument({
               }}
             >
               <View style={{ display: 'flex', width: '85%' }}>
-                <Text>Frete 2: {layoutValues.delivery2.company}</Text>
+                <Text>Outras Despesas 2: {layoutValues.delivery2.company}</Text>
               </View>
               <View style={{ display: 'flex', width: '15%' }}>
                 <Text>
@@ -495,18 +512,14 @@ export function ProductionDocument({
           <View style={styles.footer}>
             <View style={styles.footer_column}>
               <Text>Valor unitário: {formatBRL(layoutItem.price / 100)}</Text>
+              <Text>Frete: {formatBRL(frete)}</Text>
+              <Text>Valor da venda: {formatBRL(valorDaVenda)}</Text>
               <Text>
-                Custo adicional:{' '}
-                {formatBRL(
-                  (layoutValues.additionalCosts.cost +
-                    layoutValues.additionalCosts2.cost) /
-                    100,
-                )}
+                Base de cálculo (Outras despesas):{' '}
+                {formatBRL(baseDeCalculo)}
               </Text>
-              <Text>Valor da venda: {formatBRL(totalValue)}</Text>
-              <Text>Base de cálculo (com frete): {formatBRL(totalWithDelivery)}</Text>
-              <Text>Custo de produção: {formatBRL(productionCost)}</Text>
-              <Text>Resultado: {formatBRL(totalValue - productionCost)}</Text>
+              <Text>Custo de produção: {formatBRL(custoDeProducao)}</Text>
+              <Text>Resultado: {formatBRL(resultado)}</Text>
             </View>
             <DocumentVerticalSeparator />
             <View style={styles.footer_column}>
@@ -515,13 +528,7 @@ export function ProductionDocument({
                 {layoutValues.shipmentType &&
                   layoutValues.shipmentType.toUpperCase()}
               </Text>
-              <Text>
-                Valor do frete:{' '}
-                {formatBRL(
-                  (layoutValues.delivery.cost + layoutValues.delivery2.cost) /
-                    100,
-                )}
-              </Text>
+              <Text>Outras despesas: {formatBRL(outrasDespesas)}</Text>
               <Text>Transportadora: {layoutValues.transp}</Text>
               <Text>Prazo de entrega: {layoutValues.prazoentrega}</Text>
               <Text>Cotação: {layoutValues.quote}</Text>

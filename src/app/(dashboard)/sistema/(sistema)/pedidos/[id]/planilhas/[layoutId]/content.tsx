@@ -167,11 +167,11 @@ export function LayoutContent({
     : []
 
   const totalValue = (item.quantity * item.price) / 100
-  const deliveryTotalReais = (deliveryCost + delivery2Cost) / 100
-  const totalWithDelivery = totalValue + deliveryTotalReais
+  const outrasDespesas = (deliveryCost + delivery2Cost) / 100
+  const baseDeCalculo = totalValue + outrasDespesas
 
-  const agencyComission = (totalWithDelivery * agencyComissionPercent) / 100
-  const salespersonComission = (totalWithDelivery * salespersonComissionPercent) / 100
+  const agencyComission = (baseDeCalculo * agencyComissionPercent) / 100
+  const salespersonComission = (baseDeCalculo * salespersonComissionPercent) / 100
 
   async function onSubmit(values: LayoutProps) {
     console.log('Layout submitted:', values)
@@ -561,7 +561,7 @@ export function LayoutContent({
             <Card>
               <CardHeader>
                 <Heading variant={'h6'} className='text-black'>
-                  Observações
+                  Frete
                 </Heading>
               </CardHeader>
               <CardContent className='space-y-2'>
@@ -613,7 +613,7 @@ export function LayoutContent({
             <Card>
               <CardHeader>
                 <Heading variant={'h6'} className='text-black'>
-                  Observações adicionais
+                  Frete 2
                 </Heading>
               </CardHeader>
               <CardContent className='space-y-2'>
@@ -668,7 +668,7 @@ export function LayoutContent({
             <Card>
               <CardHeader>
                 <Heading variant={'h6'} className='text-black'>
-                  Frete
+                  Outras Despesas
                 </Heading>
               </CardHeader>
               <CardContent className='space-y-2'>
@@ -716,7 +716,7 @@ export function LayoutContent({
             <Card>
               <CardHeader>
                 <Heading variant={'h6'} className='text-black'>
-                  Frete 2 (Opcional)
+                  Outras Despesas 2 (Opcional)
                 </Heading>
               </CardHeader>
               <CardContent className='space-y-2'>
@@ -780,15 +780,15 @@ export function LayoutContent({
                     </span>
                   </span>
                   <span className='text-muted-foreground'>
-                    Frete{' '}
+                    Outras despesas{' '}
                     <span className='font-medium text-foreground'>
-                      {formatBRL(deliveryTotalReais)}
+                      {formatBRL(outrasDespesas)}
                     </span>
                   </span>
                   <span className='text-muted-foreground'>
-                    Total (com frete){' '}
+                    Total (com outras despesas){' '}
                     <span className='font-medium text-foreground'>
-                      {formatBRL(totalWithDelivery)}
+                      {formatBRL(baseDeCalculo)}
                     </span>
                   </span>
                 </div>
