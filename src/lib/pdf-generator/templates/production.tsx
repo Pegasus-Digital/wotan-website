@@ -23,8 +23,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   section: {
-    marginHorizontal: 10,
-    padding: 10,
+    marginHorizontal: 8,
+    padding: 8,
   },
   footer: {
     display: 'flex',
@@ -37,6 +37,9 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     gap: 2,
+    flex: 1,
+    alignItems: 'flex-start',
+    paddingHorizontal: 8,
   },
 })
 
