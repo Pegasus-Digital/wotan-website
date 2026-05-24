@@ -8,7 +8,7 @@ import {
   DocumentVerticalSeparator,
 } from '../components/document-separator'
 import { DocumentHeader } from '../components/document-header'
-import { AttributeType, Order } from '@/payload/payload-types'
+import { AttributeType, Layout, Order } from '@/payload/payload-types'
 import { formatBRL, formatCNPJ } from '@/lib/format'
 import {
   DEFAULT_PRINTING_TYPES,
@@ -44,6 +44,18 @@ interface ProductionDocumentProps {
   order: Order
   layoutItem: Order['itens'][number]
   printingTypes?: PrintingTypeOption[]
+}
+
+function hasPrinting2Content(printing2?: Layout['printing2']): boolean {
+  if (!printing2) return false
+
+  return Boolean(
+    printing2.type ||
+      printing2.colors ||
+      printing2.supplyer ||
+      (printing2.quantity ?? 0) > 0 ||
+      (printing2.price ?? 0) > 0,
+  )
 }
 
 export function ProductionDocument({
@@ -235,7 +247,7 @@ export function ProductionDocument({
               </Text>
             </View>
           </View>
-          {layoutValues.printing2 && (
+          {hasPrinting2Content(layoutValues.printing2) && (
             <View
               style={{
                 display: 'flex',
