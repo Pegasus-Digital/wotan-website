@@ -1025,9 +1025,11 @@ export function LayoutContent({
                       <FormLabel>Amostra</FormLabel>
                       <FormControl>
                         <RadioGroup
-                          onValueChange={field.onChange}
+                          onValueChange={(value) =>
+                            field.onChange(value === 'true')
+                          }
                           disabled={editMode}
-                          value={field.value ? 'true' : 'false'}
+                          value={field.value === true ? 'true' : 'false'}
                           className='mr-6 flex flex-row gap-2'
                         >
                           <div className='flex items-center space-x-2'>
@@ -1052,9 +1054,11 @@ export function LayoutContent({
                       <FormLabel>Aprovado</FormLabel>
                       <FormControl>
                         <RadioGroup
-                          onValueChange={field.onChange}
+                          onValueChange={(value) =>
+                            field.onChange(value === 'true')
+                          }
                           disabled={editMode}
-                          value={field.value ? 'true' : 'false'}
+                          value={field.value === true ? 'true' : 'false'}
                           className='mr-6 flex flex-row gap-2'
                         >
                           <div className='flex items-center space-x-2'>
@@ -1079,9 +1083,11 @@ export function LayoutContent({
                       <FormLabel>Nova amostra</FormLabel>
                       <FormControl>
                         <RadioGroup
-                          onValueChange={field.onChange}
+                          onValueChange={(value) =>
+                            field.onChange(value === 'true')
+                          }
                           disabled={editMode}
-                          value={field.value ? 'true' : 'false'}
+                          value={field.value === true ? 'true' : 'false'}
                           className='mr-6 flex flex-row gap-2'
                         >
                           <div className='flex items-center space-x-2'>
