@@ -98,7 +98,7 @@ export function ProductionDocument({
   const agencyComission =
     (baseDeCalculo * Number(layoutValues.commisions?.agency?.value ?? 0)) / 100
   const salespersonComission =
-    (baseDeCalculo * Number(layoutValues.commisions?.salesperson?.value ?? 0)) /
+    (valorDaVenda * Number(layoutValues.commisions?.salesperson?.value ?? 0)) /
     100
 
   const custoImpressaoCentavos =
@@ -121,11 +121,11 @@ export function ProductionDocument({
 
   const custoDeProducao =
     custoImpressaoEMateriais +
-    outrasDespesas +
+    frete +
     agencyComission +
     salespersonComission
 
-  const resultado = valorDaVenda - custoDeProducao - frete
+  const resultado = baseDeCalculo - custoDeProducao
 
   return (
     <Document>
@@ -512,7 +512,6 @@ export function ProductionDocument({
           <View style={styles.footer}>
             <View style={styles.footer_column}>
               <Text>Valor unitário: {formatBRL(layoutItem.price / 100)}</Text>
-              <Text>Frete: {formatBRL(frete)}</Text>
               <Text>Valor da venda: {formatBRL(valorDaVenda)}</Text>
               <Text>
                 Base de cálculo (Outras despesas):{' '}
