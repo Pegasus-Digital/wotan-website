@@ -124,7 +124,7 @@ export function LayoutContent({
   const baseDeCalculo = totalValue + outrasDespesas
 
   const agencyComission = (baseDeCalculo * agencyComissionPercent) / 100
-  const salespersonComission = (baseDeCalculo * salespersonComissionPercent) / 100
+  const salespersonComission = (totalValue * salespersonComissionPercent) / 100
 
   async function onSubmit(values: LayoutProps) {
     console.log('Layout submitted:', values)
