@@ -6,6 +6,7 @@ import payload from 'payload'
 import { Client } from '@/payload/payload-types'
 
 import { ActionResponse } from '@/lib/actions'
+import { preserveClientContactIds, reconcileOrderContactReferences } from '@/lib/order-contact'
 
 type SafeClient = Omit<Client, 'createdAt' | 'sizes' | 'updatedAt' | 'id'>
 
@@ -69,10 +70,20 @@ export async function updateClient(
   id: string,
 ): Promise<ActionResponse<UpdateActionResponseData>> {
   try {
+    const existingClient = await payload.findByID({
+      collection: 'clients',
+      id,
+    })
+
+    const contacts = preserveClientContactIds(
+      existingClient.contacts,
+      client.contacts ?? [],
+    )
+
     const updatedClient = await payload.update({
       id,
       collection: 'clients',
-      data: { ...client },
+      data: { ...client, contacts },
     })
 
     if (!updatedClient) {
@@ -85,8 +96,28 @@ export async function updateClient(
       }
     }
 
+    await reconcileOrderContactReferences(
+      async () => {
+        const orders = await payload.find({
+          collection: 'order',
+          where: { client: { equals: id } },
+          limit: 1000,
+        })
+        return orders.docs
+      },
+      async (orderId, contactId) => {
+        await payload.update({
+          collection: 'order',
+          id: orderId,
+          data: { contact: contactId },
+        })
+      },
+      contacts,
+    )
+
     revalidatePath('/sistema/clientes')
     revalidatePath('/sistema/orcamentos')
+    revalidatePath('/sistema/pedidos')
 
     return {
       data: { client: updatedClient },

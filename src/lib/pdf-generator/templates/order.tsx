@@ -14,6 +14,7 @@ import {
   Product,
 } from '@/payload/payload-types'
 import { formatBRL, formatPhoneNumber } from '@/lib/format'
+import { resolveOrderContact } from '@/lib/order-contact'
 
 const styles = StyleSheet.create({
   page: {
@@ -99,9 +100,8 @@ export function OrderDocument({ order }: OrderDocumentProps) {
 
   const isCompany = client.type === 'company'
 
-  const contact = client.contacts.filter(
-    (contact) => contact.id === order.contact,
-  )
+  const resolvedContact = resolveOrderContact(order, client)
+  const contact = resolvedContact ? [resolvedContact] : []
 
   const totalValue = calculateTotal(order)
 

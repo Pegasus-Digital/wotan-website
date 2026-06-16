@@ -91,6 +91,7 @@ import update from 'payload/dist/collections/operations/update'
 import { updateLayout } from '../../../_logic/actions'
 import { formatBRL, formatBRLWithoutPrefix, parseValue } from '@/lib/format'
 import { calculateProductionSheet } from '@/lib/production-sheet-calculations'
+import { resolveOrderContact } from '@/lib/order-contact'
 import { getDDMMYYDate } from '@/lib/date'
 import { ContentLayoutSales } from '@/components/painel-sistema/content-layout'
 import { AttributeType } from '@/payload/payload-types'
@@ -138,9 +139,7 @@ export function LayoutContent({
 
   const client = typeof order.client === 'object' ? order.client : null
 
-  const contact = client.contacts.filter(
-    (contact) => contact.id === order.contact,
-  )[0]
+  const contact = resolveOrderContact(order, client)
 
   // console.log(item)
   // console.log('Order default:', order)

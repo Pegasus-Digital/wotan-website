@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { getDDMMYYDate } from '@/lib/date'
 import { formatBRL, formatBRLWithoutPrefix, parseValue } from '@/lib/format'
 import { calculateProductionSheet } from '@/lib/production-sheet-calculations'
+import { resolveOrderContact } from '@/lib/order-contact'
 
 import { Order, Layout, AttributeType } from '@/payload/payload-types'
 
@@ -88,9 +89,7 @@ export function LayoutContent({
 
   const client = typeof order.client === 'object' ? order.client : null
 
-  const contact = client.contacts.filter(
-    (contact) => contact.id === order.contact,
-  )[0]
+  const contact = resolveOrderContact(order, client)
   const { control, handleSubmit, formState, watch } = form
   const { fields, append } = useFieldArray({
     control,

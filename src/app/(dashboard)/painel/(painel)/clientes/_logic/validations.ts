@@ -19,6 +19,7 @@ export const clientSchema = z.object({
   document: z.string().min(1, { message: 'Documento é obrigatório' }),
   contacts: z.array(
     z.object({
+      id: z.string().optional().nullable(),
       name: z.string().optional().nullable(),
       email: z.string().optional().nullable(),
       phone: optionalPhone,

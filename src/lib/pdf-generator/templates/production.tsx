@@ -16,6 +16,7 @@ import {
   PrintingTypeOption,
 } from '@/lib/printing-types'
 import { calculateProductionSheet } from '@/lib/production-sheet-calculations'
+import { resolveOrderContact } from '@/lib/order-contact'
 
 const styles = StyleSheet.create({
   page: {
@@ -69,9 +70,7 @@ export function ProductionDocument({
 }: ProductionDocumentProps) {
   const client = typeof order.client === 'object' ? order.client : null
 
-  const contact = client.contacts.filter(
-    (contact) => contact.id === order.contact,
-  )[0]
+  const contact = resolveOrderContact(order, client)
 
   const attributes =
     typeof layoutItem.attributes === 'object'
