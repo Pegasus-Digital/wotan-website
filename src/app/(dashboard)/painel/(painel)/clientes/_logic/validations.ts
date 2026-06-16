@@ -1,7 +1,16 @@
+import { brazilianPhoneRegex } from '@/lib/format'
 import { z } from 'zod'
 
 const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/
 const cnpjRegex = /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/
+
+const optionalPhone = z
+  .string()
+  .optional()
+  .nullable()
+  .refine((val) => !val || brazilianPhoneRegex.test(val), {
+    message: 'Use o formato (xx) xxxx-xxxx ou (xx) xxxxx-xxxx',
+  })
 
 export const clientSchema = z.object({
   name: z.string().nullable(),
@@ -12,8 +21,8 @@ export const clientSchema = z.object({
     z.object({
       name: z.string().optional().nullable(),
       email: z.string().optional().nullable(),
-      phone: z.string().optional().nullable(),
-      whatsapp: z.string().optional().nullable(),
+      phone: optionalPhone,
+      whatsapp: optionalPhone,
     }),
   ),
   adress: z

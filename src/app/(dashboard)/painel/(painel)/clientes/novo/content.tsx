@@ -50,6 +50,7 @@ import { toast } from 'sonner'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
+import { formatPhoneNumber } from '@/lib/format'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 
@@ -469,11 +470,22 @@ export function NewClientContent({ salespeople }: NewClientContentProps) {
                   <FormField
                     control={control}
                     name={`contacts.${index}.whatsapp`}
-                    render={({ field }) => (
+                    render={({ field: { onChange, ...props } }) => (
                       <FormItem>
                         <FormLabel>WhatsApp</FormLabel>
                         <FormControl>
-                          <Input {...field} />
+                          <Input
+                            autoComplete='tel'
+                            maxLength={15}
+                            placeholder='(00) 00000-0000'
+                            type='text'
+                            onChange={(e) => {
+                              const { value } = e.target
+                              e.target.value = formatPhoneNumber(value)
+                              onChange(e)
+                            }}
+                            {...props}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -483,11 +495,22 @@ export function NewClientContent({ salespeople }: NewClientContentProps) {
                   <FormField
                     control={control}
                     name={`contacts.${index}.phone`}
-                    render={({ field }) => (
+                    render={({ field: { onChange, ...props } }) => (
                       <FormItem>
                         <FormLabel>Telefone</FormLabel>
                         <FormControl>
-                          <Input {...field} />
+                          <Input
+                            autoComplete='tel'
+                            maxLength={15}
+                            placeholder='(00) 0000-0000'
+                            type='text'
+                            onChange={(e) => {
+                              const { value } = e.target
+                              e.target.value = formatPhoneNumber(value)
+                              onChange(e)
+                            }}
+                            {...props}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

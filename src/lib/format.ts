@@ -65,13 +65,12 @@ export function formatCPF(value: string) {
     .slice(0, 14)
 }
 
-export function formatPhoneNumber(value: string) {
-  const phoneNumber = value // <-- nº de celular não formatado
+export const brazilianPhoneRegex = /^\(\d{2}\) \d{4,5}-\d{4}$/
 
-  const formattedPhoneNumber = phoneNumber
+export function formatPhoneNumber(value: string) {
+  return value
     .replace(/\D/g, '')
+    .slice(0, 11)
     .replace(/(\d{2})(\d)/, '($1) $2')
     .replace(/(\d)(\d{4})$/, '$1-$2')
-
-  return formattedPhoneNumber
 }

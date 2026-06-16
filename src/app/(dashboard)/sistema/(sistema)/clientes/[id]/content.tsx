@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { formatPhoneNumber } from '@/lib/format'
 import { formatCNPJ, formatCPF } from '@/lib/format'
 
 import { z } from 'zod'
@@ -603,11 +604,23 @@ export function SeeClientContent({
                   <FormField
                     control={control}
                     name={`contacts.${index}.whatsapp`}
-                    render={({ field }) => (
+                    render={({ field: { onChange, ...props } }) => (
                       <FormItem>
                         <FormLabel>WhatsApp</FormLabel>
                         <FormControl>
-                          <Input {...field} disabled={editMode} />
+                          <Input
+                            autoComplete='tel'
+                            disabled={editMode}
+                            maxLength={15}
+                            placeholder='(00) 00000-0000'
+                            type='text'
+                            onChange={(e) => {
+                              const { value } = e.target
+                              e.target.value = formatPhoneNumber(value)
+                              onChange(e)
+                            }}
+                            {...props}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -617,11 +630,23 @@ export function SeeClientContent({
                   <FormField
                     control={control}
                     name={`contacts.${index}.phone`}
-                    render={({ field }) => (
+                    render={({ field: { onChange, ...props } }) => (
                       <FormItem>
                         <FormLabel>Telefone</FormLabel>
                         <FormControl>
-                          <Input {...field} disabled={editMode} />
+                          <Input
+                            autoComplete='tel'
+                            disabled={editMode}
+                            maxLength={15}
+                            placeholder='(00) 0000-0000'
+                            type='text'
+                            onChange={(e) => {
+                              const { value } = e.target
+                              e.target.value = formatPhoneNumber(value)
+                              onChange(e)
+                            }}
+                            {...props}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
