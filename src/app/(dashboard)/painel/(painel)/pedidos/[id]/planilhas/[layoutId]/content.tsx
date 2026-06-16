@@ -121,13 +121,13 @@ export function LayoutContent({
 
   const {
     valorDaVenda,
-    outrasDespesas,
-    baseDeCalculo,
+    deliveryTotal: outrasDespesas,
     agencyComission,
     salespersonComission,
   } = calculateProductionSheet({
     quantity: layoutItem.quantity,
     price: layoutItem.price,
+    additionals: (order.additionals ?? 0) / 100,
     layout: {
       delivery: { cost: deliveryCost },
       delivery2: { cost: delivery2Cost },
@@ -137,6 +137,8 @@ export function LayoutContent({
       },
     },
   })
+
+  const baseDeCalculo = valorDaVenda + outrasDespesas
 
   async function onSubmit(values: LayoutProps) {
     console.log('Layout submitted:', values)
@@ -1188,6 +1190,23 @@ export function LayoutContent({
                   </FormItem>
                 )}
               />
+              <FormField
+                name={'volumeWeight'}
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Peso</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        disabled={editMode}
+                        className='disabled:opacity-100'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </CardContent>
           </Card>
 
@@ -1199,6 +1218,23 @@ export function LayoutContent({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Data Remessa/Entrega</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        disabled={editMode}
+                        className='disabled:opacity-100'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                name={'orderN'}
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nº pedido</FormLabel>
                     <FormControl>
                       <Input
                         {...field}

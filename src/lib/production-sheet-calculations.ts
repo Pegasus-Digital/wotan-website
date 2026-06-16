@@ -16,14 +16,15 @@ export interface ProductionSheetCalculationInput {
   quantity: number
   /** Preço unitário em centavos */
   price: number
+  additionals:number,
   layout: ProductionSheetLayout
 }
 
 export interface ProductionSheetCalculations {
   valorDaVenda: number
-  outrasDespesas: number
-  frete: number
-  baseDeCalculo: number
+  valorTotal: number
+  deliveryTotal: number
+  additionalCostsTotal: number
   agencyComission: number
   salespersonComission: number
   custoImpressaoEMateriais: number
@@ -34,24 +35,26 @@ export interface ProductionSheetCalculations {
 export function calculateProductionSheet({
   quantity,
   price,
+  additionals,
   layout,
 }: ProductionSheetCalculationInput): ProductionSheetCalculations {
   const valorDaVenda = (quantity * price) / 100
+  const valorTotal = valorDaVenda + additionals
 
-  const outrasDespesas =
+  const deliveryTotal =
     ((layout.delivery?.cost ?? 0) + (layout.delivery2?.cost ?? 0)) / 100
 
-  const frete =
+  const additionalCostsTotal =
     ((layout.additionalCosts?.cost ?? 0) +
       (layout.additionalCosts2?.cost ?? 0)) /
     100
 
-  const baseDeCalculo = valorDaVenda + outrasDespesas
+  // const baseDeCalculo = valorDaVenda + outrasDespesas
 
   const agencyComission =
-    (baseDeCalculo * Number(layout.commisions?.agency?.value ?? 0)) / 100
+    (valorDaVenda * Number(layout.commisions?.agency?.value ?? 0)) / 100
   const salespersonComission =
-    (valorDaVenda * Number(layout.commisions?.salesperson?.value ?? 0)) / 100
+    ((valorDaVenda - agencyComission)* Number(layout.commisions?.salesperson?.value ?? 0)) / 100
 
   const custoImpressaoCentavos =
     (layout.printing?.price ?? 0) * (layout.printing?.quantity ?? 0) +
@@ -68,17 +71,18 @@ export function calculateProductionSheet({
 
   const custoDeProducao =
     custoImpressaoEMateriais +
-    frete +
+    deliveryTotal +
+    additionalCostsTotal +
     agencyComission +
     salespersonComission
 
-  const resultado = baseDeCalculo - custoDeProducao
+  const resultado = valorTotal - custoDeProducao
 
   return {
     valorDaVenda,
-    outrasDespesas,
-    frete,
-    baseDeCalculo,
+valorTotal,
+    deliveryTotal,
+    additionalCostsTotal,
     agencyComission,
     salespersonComission,
     custoImpressaoEMateriais,

@@ -133,6 +133,7 @@ export function SeeOrderContent({
       paymentType: order.paymentType,
       agency: order.agency,
       commission: order.commission,
+      additionals: order.additionals ?? 0,
       notes: order.notes,
       status: order.status,
       itens: order.itens.map((item) => ({
@@ -1083,6 +1084,32 @@ export function SeeOrderContent({
             </TableBody>
           </Table>
           <Separator className='my-4' />
+          <FormField
+            control={form.control}
+            name='additionals'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Outros</FormLabel>
+                <FormControl>
+                  <div className='flex items-center gap-2 font-medium'>
+                    <Label>R$</Label>
+                    <Input
+                      {...field}
+                      disabled={editMode}
+                      value={formatValue(field.value ?? 0)}
+                      onChange={(e) => {
+                        field.onChange(parseValue(e.target.value))
+                      }}
+                      inputMode='numeric'
+                      placeholder='0,00'
+                      className='disabled:opacity-100'
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name='notes'

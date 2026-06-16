@@ -82,18 +82,21 @@ export function ProductionDocument({
   const layoutValues =
     typeof layoutItem.layout === 'object' ? layoutItem.layout : null
 
+  const additionals = (order.additionals ?? 0) / 100
+
   const {
     valorDaVenda,
-    outrasDespesas,
-    frete,
-    baseDeCalculo,
+    deliveryTotal,
+    additionalCostsTotal,
     agencyComission,
     salespersonComission,
+    valorTotal,
     custoDeProducao,
     resultado,
   } = calculateProductionSheet({
     quantity: layoutItem.quantity,
     price: layoutItem.price,
+    additionals,
     layout: layoutValues ?? {},
   })
 
@@ -104,7 +107,7 @@ export function ProductionDocument({
 
         <View style={styles.section}>
           <Text
-            style={{ fontSize: 22, fontWeight: 'bold', textAlign: 'center' }}
+            style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}
           >
             PLANILHA DE PRODUÇÃO
           </Text>
@@ -134,7 +137,7 @@ export function ProductionDocument({
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 4,
-                width: '50%',
+                width: '35%',
                 paddingRight: 4,
               }}
             >
@@ -162,7 +165,7 @@ export function ProductionDocument({
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 4,
-                width: '50%',
+                width: '65%',
                 paddingLeft: 4,
               }}
             >
@@ -182,8 +185,8 @@ export function ProductionDocument({
                   ? `(${contact.email})`
                   : ''}
               </Text>
-              <Text>Condição de pagamento: {order.paymentConditions}</Text>
-              <Text>Prazo de entrega: {order.shippingTime}</Text>
+              <Text>Tel: {contact.phone}  {'   '}  Wh: {contact.whatsapp} </Text>
+              <Text>Pz entrega: {order.shippingTime} {'   '} Pgto: {order.paymentConditions}</Text>
             </View>
           </View>
         </View>
@@ -312,8 +315,7 @@ export function ProductionDocument({
             )
           })}
 
-          {/* Frete (additionalCosts) */}
-          <View
+          {/* <View
             style={{
               display: 'flex',
               flexDirection: 'row',
@@ -322,7 +324,7 @@ export function ProductionDocument({
             }}
           >
             <View style={{ display: 'flex', width: '85%' }}>
-              <Text>Frete: {layoutValues.additionalCosts.obs}</Text>
+              <Text>Observações: {layoutValues.additionalCosts.obs}</Text>
             </View>
             <View style={{ display: 'flex', width: '15%' }}>
               <Text>
@@ -341,7 +343,7 @@ export function ProductionDocument({
                 }}
               >
                 <View style={{ display: 'flex', width: '85%' }}>
-                  <Text>Frete 2: {layoutValues.additionalCosts2.obs}</Text>
+                  <Text> Observações 2: {layoutValues.additionalCosts2.obs}</Text>
                 </View>
                 <View style={{ display: 'flex', width: '15%' }}>
                   <Text>
@@ -349,9 +351,8 @@ export function ProductionDocument({
                   </Text>
                 </View>
               </View>
-            )}
+            )} */}
 
-          {/* Outras despesas (delivery) */}
             <View
               style={{
                 display: 'flex',
@@ -361,7 +362,7 @@ export function ProductionDocument({
               }}
             >
               <View style={{ display: 'flex', width: '85%' }}>
-                <Text>Outras Despesas: {layoutValues.delivery.company}</Text>
+                <Text>Frete: {layoutValues.delivery.company}</Text>
               </View>
               <View style={{ display: 'flex', width: '15%' }}>
                 <Text>
@@ -378,7 +379,7 @@ export function ProductionDocument({
               }}
             >
               <View style={{ display: 'flex', width: '85%' }}>
-                <Text>Outras Despesas 2: {layoutValues.delivery2.company}</Text>
+                <Text>Frete 2: {layoutValues.delivery2.company}</Text>
               </View>
               <View style={{ display: 'flex', width: '15%' }}>
                 <Text>
@@ -475,7 +476,6 @@ export function ProductionDocument({
             </View>
           </View>
         </View>
-        <DocumentFiller />
         <DocumentSeparator />
 
         <View style={styles.section}>
@@ -483,9 +483,10 @@ export function ProductionDocument({
             <View style={styles.footer_column}>
               <Text>Valor unitário: {formatBRL(layoutItem.price / 100)}</Text>
               <Text>Valor da venda: {formatBRL(valorDaVenda)}</Text>
+              <Text>Outros: {formatBRL(additionals)}</Text>
               <Text>
-                Base de cálculo (Outras despesas):{' '}
-                {formatBRL(baseDeCalculo)}
+                Valor total:
+                {formatBRL(valorTotal)}
               </Text>
               <Text>Custo de produção: {formatBRL(custoDeProducao)}</Text>
               <Text>Resultado: {formatBRL(resultado)}</Text>
@@ -497,15 +498,15 @@ export function ProductionDocument({
                 {layoutValues.shipmentType &&
                   layoutValues.shipmentType.toUpperCase()}
               </Text>
-              <Text>Outras despesas: {formatBRL(outrasDespesas)}</Text>
               <Text>Transportadora: {layoutValues.transp}</Text>
               <Text>Prazo de entrega: {layoutValues.prazoentrega}</Text>
               <Text>Cotação: {layoutValues.quote}</Text>
               <Text>Volumes: {layoutValues.volumeNumber}</Text>
+              <Text>Peso: {layoutValues.volumeWeight}</Text>
             </View>
             <DocumentVerticalSeparator />
             <View style={styles.footer_column}>
-              <Text>Data remessa: {layoutValues.shipmentDate}</Text>
+              <Text>N pedido: {layoutValues.orderN}</Text>
               <Text>Tipo de pagamento: {layoutValues.paymentType}</Text>
               <Text>Nota fiscal nº: {layoutValues.invoice.number}</Text>
               <Text>Vencimento: {layoutValues.invoice.due}</Text>
@@ -514,12 +515,15 @@ export function ProductionDocument({
             </View>
           </View>
         </View>
+        <DocumentSeparator />
+
         <View style={[styles.section, { gap: 2, fontSize: 10 }]}>
           {layoutValues.obs_final && <DocumentSeparator />}
           {layoutValues.obs_final && <Text>Observações:</Text>}
 
           {layoutValues.obs_final && <Text>{layoutValues.obs_final}</Text>}
         </View>
+        <DocumentFiller />
       </Page>
     </Document>
   )

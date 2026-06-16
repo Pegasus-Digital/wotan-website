@@ -110,6 +110,7 @@ export function NewOrderContent({
       contact: '',
       salesperson: '',
       commission: 0,
+      additionals: 0,
 
       paymentConditions: '',
       shippingCompany: '',
@@ -419,6 +420,32 @@ export function NewOrderContent({
                           type='number'
                         />
                         <Label>%</Label>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name={'additionals'}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Outros</FormLabel>
+                    <FormControl>
+                      <div className='flex items-center gap-2 font-medium'>
+                        <Label>R$</Label>
+                        <Input
+                          {...field}
+                          value={formatValue(field.value ?? 0)}
+                          onChange={(e) => {
+                            field.onChange(parseValue(e.target.value))
+                          }}
+                          inputMode='numeric'
+                          placeholder='0,00'
+                          className='disabled:opacity-100'
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />

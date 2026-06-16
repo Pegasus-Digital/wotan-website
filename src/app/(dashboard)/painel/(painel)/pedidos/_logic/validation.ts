@@ -104,6 +104,8 @@ export const layoutSchema = z.object({
   shipmentCost: z.string().optional().nullable(),
   quote: z.string().optional().nullable(),
   volumeNumber: z.string().optional().nullable(),
+  volumeWeight: z.string().optional().nullable(),
+  orderN: z.string().optional().nullable(),
   shipmentDate: z.string().optional().nullable(),
   paymentType: z
     .union([z.literal('boleto'), z.literal('pix'), z.literal('deposito')])
@@ -223,6 +225,10 @@ export const orderSchema = z.object({
     )
     .optional(),
   agency: z.string().optional(),
+  additionals: z.coerce
+    .number()
+    .nonnegative({ message: 'Outros não pode ser negativo.' })
+    .optional(),
   notes: z.string().optional(),
   status: z.enum(['pending', 'completed', 'cancelled']).optional(),
 })

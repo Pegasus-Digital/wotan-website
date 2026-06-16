@@ -4,7 +4,7 @@ import Logo from '../wotan.png'
 const styles = StyleSheet.create({
   section: {
     marginHorizontal: 10,
-    padding: 10,
+    padding: 8,
   },
   logo: {
     width: '100%',
