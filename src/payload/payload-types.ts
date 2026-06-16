@@ -448,6 +448,8 @@ export interface Layout {
   shipmentCost?: string | null;
   quote?: string | null;
   volumeNumber?: string | null;
+  volumeWeight?: string | null;
+  orderN?: string | null;
   shipmentDate?: string | null;
   paymentType?: ('boleto' | 'pix' | 'deposito') | null;
   invoice?: {
@@ -510,6 +512,7 @@ export interface Order {
   paymentType?: ('boleto' | 'pix' | 'deposito') | null;
   agency?: string | null;
   commission?: number | null;
+  additionals?: number | null;
   notes?: string | null;
   status?: ('pending' | 'completed' | 'cancelled') | null;
   updatedAt: string;
@@ -848,15 +851,15 @@ export interface Setting {
   header: Header;
   footer: Footer;
   company: Company;
-  production?: {
+  production: {
     printingTypes?:
       | {
-          value?: string | null;
-          label?: string | null;
+          value: string;
+          label: string;
           id?: string | null;
         }[]
       | null;
-  } | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }

@@ -153,6 +153,18 @@ const Layout: CollectionConfig = {
       required: false,
     },
     {
+      name: 'volumeWeight',
+      label: 'Peso',
+      type: 'text',
+      required: false,
+    },
+    {
+      name: 'orderN',
+      label: 'Nº pedido',
+      type: 'text',
+      required: false,
+    },
+    {
       name: 'shipmentDate',
       type: 'text',
       required: false,

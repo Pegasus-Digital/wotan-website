@@ -148,6 +148,12 @@ const Order: CollectionConfig = {
     },
     { name: 'agency', type: 'text' },
     { name: 'commission', type: 'number' },
+    {
+      name: 'additionals',
+      label: 'Outros',
+      type: 'number',
+      defaultValue: 0,
+    },
     { name: 'notes', type: 'textarea' },
 
     {
