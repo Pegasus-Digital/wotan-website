@@ -15,6 +15,7 @@ import {
   formatPrintingTypeLabel,
   PrintingTypeOption,
 } from '@/lib/printing-types'
+import { calculateProductionSheet } from '@/lib/production-sheet-calculations'
 
 const styles = StyleSheet.create({
   page: {
@@ -82,50 +83,20 @@ export function ProductionDocument({
   const layoutValues =
     typeof layoutItem.layout === 'object' ? layoutItem.layout : null
 
-  const valorDaVenda = (layoutItem.quantity * layoutItem.price) / 100
-
-  const outrasDespesas =
-    ((layoutValues.delivery?.cost ?? 0) + (layoutValues.delivery2?.cost ?? 0)) /
-    100
-
-  const frete =
-    ((layoutValues.additionalCosts?.cost ?? 0) +
-      (layoutValues.additionalCosts2?.cost ?? 0)) /
-    100
-
-  const baseDeCalculo = valorDaVenda + outrasDespesas
-
-  const agencyComission =
-    (baseDeCalculo * Number(layoutValues.commisions?.agency?.value ?? 0)) / 100
-  const salespersonComission =
-    (valorDaVenda * Number(layoutValues.commisions?.salesperson?.value ?? 0)) /
-    100
-
-  const custoImpressaoCentavos =
-    (layoutValues.printing?.price ?? 0) *
-      (layoutValues.printing?.quantity ?? 0) +
-    (layoutValues.printing2?.price ?? 0) *
-      (layoutValues.printing2?.quantity ?? 0)
-
-  const custoMateriaisCentavos = (layoutValues.supplyer ?? []).reduce(
-    (acc, s) => {
-      const custo = s.custo_material ?? 0
-      const qtd = s.quantidade_material ?? 1
-      return acc + custo * qtd
-    },
-    0,
-  )
-
-  const custoImpressaoEMateriais =
-    (custoImpressaoCentavos + custoMateriaisCentavos) / 100
-
-  const custoDeProducao =
-    custoImpressaoEMateriais +
-    frete +
-    agencyComission +
-    salespersonComission
-
-  const resultado = baseDeCalculo - custoDeProducao
+  const {
+    valorDaVenda,
+    outrasDespesas,
+    frete,
+    baseDeCalculo,
+    agencyComission,
+    salespersonComission,
+    custoDeProducao,
+    resultado,
+  } = calculateProductionSheet({
+    quantity: layoutItem.quantity,
+    price: layoutItem.price,
+    layout: layoutValues ?? {},
+  })
 
   return (
     <Document>

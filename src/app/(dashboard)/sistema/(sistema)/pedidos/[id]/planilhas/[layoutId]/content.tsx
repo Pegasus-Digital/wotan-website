@@ -90,6 +90,7 @@ import { layoutSchema } from '../../../_logic/validation'
 import update from 'payload/dist/collections/operations/update'
 import { updateLayout } from '../../../_logic/actions'
 import { formatBRL, formatBRLWithoutPrefix, parseValue } from '@/lib/format'
+import { calculateProductionSheet } from '@/lib/production-sheet-calculations'
 import { getDDMMYYDate } from '@/lib/date'
 import { ContentLayoutSales } from '@/components/painel-sistema/content-layout'
 import { AttributeType } from '@/payload/payload-types'
@@ -166,12 +167,24 @@ export function LayoutContent({
     })
     : []
 
-  const totalValue = (item.quantity * item.price) / 100
-  const outrasDespesas = (deliveryCost + delivery2Cost) / 100
-  const baseDeCalculo = totalValue + outrasDespesas
-
-  const agencyComission = (baseDeCalculo * agencyComissionPercent) / 100
-  const salespersonComission = (totalValue * salespersonComissionPercent) / 100
+  const {
+    valorDaVenda,
+    outrasDespesas,
+    baseDeCalculo,
+    agencyComission,
+    salespersonComission,
+  } = calculateProductionSheet({
+    quantity: item.quantity,
+    price: item.price,
+    layout: {
+      delivery: { cost: deliveryCost },
+      delivery2: { cost: delivery2Cost },
+      commisions: {
+        agency: { value: agencyComissionPercent },
+        salesperson: { value: salespersonComissionPercent },
+      },
+    },
+  })
 
   async function onSubmit(values: LayoutProps) {
     console.log('Layout submitted:', values)
@@ -776,7 +789,7 @@ export function LayoutContent({
                   <span className='text-muted-foreground'>
                     Valor do pedido{' '}
                     <span className='font-medium text-foreground'>
-                      {formatBRL(totalValue)}
+                      {formatBRL(valorDaVenda)}
                     </span>
                   </span>
                   <span className='text-muted-foreground'>
