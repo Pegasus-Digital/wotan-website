@@ -83,6 +83,7 @@ export function ProductionDocument({
     typeof layoutItem.layout === 'object' ? layoutItem.layout : null
 
   const additionals = (order.additionals ?? 0) / 100
+  const includeAdditionals = layoutValues?.includeAdditionals ?? true
 
   const {
     valorDaVenda,
@@ -97,6 +98,7 @@ export function ProductionDocument({
     quantity: layoutItem.quantity,
     price: layoutItem.price,
     additionals,
+    includeAdditionals,
     layout: layoutValues ?? {},
   })
 
@@ -483,7 +485,7 @@ export function ProductionDocument({
             <View style={styles.footer_column}>
               <Text>Valor unitário: {formatBRL(layoutItem.price / 100)}</Text>
               <Text>Valor da venda: {formatBRL(valorDaVenda)}</Text>
-              <Text>Outros: {formatBRL(additionals)}</Text>
+              <Text>Outros: {formatBRL(additionals)}{includeAdditionals ? '' : ' (não incluído no cálculo)'}</Text>
               <Text>
                 Valor total:
                 {formatBRL(valorTotal)}

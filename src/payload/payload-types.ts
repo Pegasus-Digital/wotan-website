@@ -469,6 +469,7 @@ export interface Layout {
   };
   ncm?: string | null;
   obs_final?: string | null;
+  includeAdditionals?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }

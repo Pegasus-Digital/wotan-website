@@ -216,6 +216,13 @@ const Layout: CollectionConfig = {
       type: 'text',
       required: false,
     },
+    {
+      name: 'includeAdditionals',
+      label: 'Incluir outros no cálculo',
+      type: 'checkbox',
+      defaultValue: true,
+      required: false,
+    },
   ],
 }
 

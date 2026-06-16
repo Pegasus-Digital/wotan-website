@@ -118,7 +118,10 @@ export function LayoutContent({
   const router = useRouter()
   const form = useForm<LayoutProps>({
     resolver: zodResolver(layoutSchema),
-    defaultValues: { ...layout },
+    defaultValues: {
+      ...layout,
+      includeAdditionals: layout.includeAdditionals ?? true,
+    },
   })
 
   const [editMode, toggleEditMode] = useState<boolean>(!edit)
@@ -158,13 +161,16 @@ export function LayoutContent({
   const salespersonComissionPercent = watch('commisions.salesperson.value')
   const deliveryCost = watch('delivery.cost') ?? 0
   const delivery2Cost = watch('delivery2.cost') ?? 0
+  const includeAdditionals = watch('includeAdditionals')
+
+  const orderAdditionals = (order.additionals ?? 0) / 100
 
   const itemAttributes =
-  typeof item.attributes === 'object'
-    ? item.attributes.map((attr) => {
-      return typeof attr === 'object' ? attr : null
-    })
-    : []
+    typeof item.attributes === 'object'
+      ? item.attributes.map((attr) => {
+          return typeof attr === 'object' ? attr : null
+        })
+      : []
 
   const {
     valorDaVenda,
@@ -174,7 +180,8 @@ export function LayoutContent({
   } = calculateProductionSheet({
     quantity: item.quantity,
     price: item.price,
-    additionals: (order.additionals ?? 0) / 100,
+    additionals: orderAdditionals,
+    includeAdditionals,
     layout: {
       delivery: { cost: deliveryCost },
       delivery2: { cost: delivery2Cost },
@@ -678,7 +685,7 @@ export function LayoutContent({
             </Card>
           </div>
 
-          <div className='grid grid-cols-1 gap-4 tablet:grid-cols-2'>
+          {/* <div className='grid grid-cols-1 gap-4 tablet:grid-cols-2'>
             <Card>
               <CardHeader>
                 <Heading variant={'h6'} className='text-black'>
@@ -775,7 +782,7 @@ export function LayoutContent({
                 />
               </CardContent>
             </Card>
-          </div>
+          </div> */}
 
           <Card>
             <CardHeader>
@@ -805,6 +812,33 @@ export function LayoutContent({
                       {formatBRL(baseDeCalculo)}
                     </span>
                   </span>
+                </div>
+                <div className='flex flex-wrap items-center gap-x-6 gap-y-2 pt-2 text-sm'>
+                  <span className='text-muted-foreground'>
+                    Outros (pedido){' '}
+                    <span className='font-medium text-foreground'>
+                      {formatBRL(orderAdditionals)}
+                    </span>
+                  </span>
+                  <FormField
+                    control={form.control}
+                    name='includeAdditionals'
+                    render={({ field }) => (
+                      <FormItem className='flex items-center gap-2.5 space-y-0'>
+                        <FormControl>
+                          <Checkbox
+                            className='disabled:opacity-100 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground'
+                            checked={field.value ?? true}
+                            onCheckedChange={field.onChange}
+                            disabled={editMode}
+                          />
+                        </FormControl>
+                        <FormLabel className='cursor-pointer font-normal hover:underline'>
+                          Incluir outros no cálculo
+                        </FormLabel>
+                      </FormItem>
+                    )}
+                  />
                 </div>
               </div>
               <div className='grid grid-cols-1  gap-4 tablet:grid-cols-3'>

@@ -16,7 +16,9 @@ export interface ProductionSheetCalculationInput {
   quantity: number
   /** Preço unitário em centavos */
   price: number
-  additionals:number,
+  additionals: number
+  /** Quando false, ignora additionals no valor total e no resultado */
+  includeAdditionals?: boolean | null
   layout: ProductionSheetLayout
 }
 
@@ -36,10 +38,12 @@ export function calculateProductionSheet({
   quantity,
   price,
   additionals,
+  includeAdditionals = true,
   layout,
 }: ProductionSheetCalculationInput): ProductionSheetCalculations {
   const valorDaVenda = (quantity * price) / 100
-  const valorTotal = valorDaVenda + additionals
+  const outrosNoCalculo = includeAdditionals !== false ? additionals : 0
+  const valorTotal = valorDaVenda + outrosNoCalculo
 
   const deliveryTotal =
     ((layout.delivery?.cost ?? 0) + (layout.delivery2?.cost ?? 0)) / 100

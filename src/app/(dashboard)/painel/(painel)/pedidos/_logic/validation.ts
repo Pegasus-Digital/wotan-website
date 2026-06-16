@@ -133,6 +133,7 @@ export const layoutSchema = z.object({
     .optional(),
   ncm: z.string().optional().nullable(),
   obs_final: z.string().optional().nullable(),
+  includeAdditionals: z.boolean().optional().nullable(),
 })
 
 export const orderSchema = z.object({
