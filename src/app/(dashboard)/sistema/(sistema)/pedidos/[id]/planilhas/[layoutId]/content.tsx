@@ -157,11 +157,7 @@ export function LayoutContent({
   })
 
 
-  const agencyComissionPercent = watch('commisions.agency.value')
-  const salespersonComissionPercent = watch('commisions.salesperson.value')
-  const deliveryCost = watch('delivery.cost') ?? 0
-  const delivery2Cost = watch('delivery2.cost') ?? 0
-  const includeAdditionals = watch('includeAdditionals')
+  const layoutValues = watch()
 
   const orderAdditionals = (order.additionals ?? 0) / 100
 
@@ -174,25 +170,18 @@ export function LayoutContent({
 
   const {
     valorDaVenda,
-    deliveryTotal: outrasDespesas,
+    valorTotal,
+    custoDeProducao,
+    resultado,
     agencyComission,
     salespersonComission,
   } = calculateProductionSheet({
     quantity: item.quantity,
     price: item.price,
     additionals: orderAdditionals,
-    includeAdditionals,
-    layout: {
-      delivery: { cost: deliveryCost },
-      delivery2: { cost: delivery2Cost },
-      commisions: {
-        agency: { value: agencyComissionPercent },
-        salesperson: { value: salespersonComissionPercent },
-      },
-    },
+    includeAdditionals: layoutValues.includeAdditionals,
+    layout: layoutValues,
   })
-
-  const baseDeCalculo = valorDaVenda + outrasDespesas
 
   async function onSubmit(values: LayoutProps) {
     console.log('Layout submitted:', values)
@@ -801,15 +790,21 @@ export function LayoutContent({
                     </span>
                   </span>
                   <span className='text-muted-foreground'>
-                    Outras despesas{' '}
+                    Valor total{' '}
                     <span className='font-medium text-foreground'>
-                      {formatBRL(outrasDespesas)}
+                      {formatBRL(valorTotal)}
                     </span>
                   </span>
                   <span className='text-muted-foreground'>
-                    Total (com outras despesas){' '}
+                    Custo de produção{' '}
                     <span className='font-medium text-foreground'>
-                      {formatBRL(baseDeCalculo)}
+                      {formatBRL(custoDeProducao)}
+                    </span>
+                  </span>
+                  <span className='text-muted-foreground'>
+                    Resultado{' '}
+                    <span className='font-medium text-foreground'>
+                      {formatBRL(resultado)}
                     </span>
                   </span>
                 </div>
