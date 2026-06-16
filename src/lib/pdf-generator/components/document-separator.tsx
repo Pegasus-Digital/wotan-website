@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '1px',
     backgroundColor: 'gray',
-    marginVertical: 2,
+    marginVertical: 0,
     opacity: 0.5,
   },
 })

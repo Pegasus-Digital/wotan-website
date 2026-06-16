@@ -106,21 +106,17 @@ export function ProductionDocument({
     <Document>
       <Page size='A4' style={styles.page}>
         <DocumentHeader />
-
+        <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}>
+          PLANILHA DE PRODUÇÃO
+        </Text>
         <View style={styles.section}>
-          <Text
-            style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center' }}
-          >
-            PLANILHA DE PRODUÇÃO
-          </Text>
-
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'center',
               gap: 120,
-              marginTop: 10,
-              marginBottom: 16,
+              marginTop: 8,
+              marginBottom: 12,
             }}
           >
             <Text>Pedido n°: {order.incrementalId}</Text>
@@ -149,18 +145,16 @@ export function ProductionDocument({
                   ? layoutItem.product
                   : layoutItem.product.sku + ' - ' + layoutItem.product.title}
               </Text>
-              <View style={{ marginLeft: 10, fontSize: 11 }}>
-                <Text>Quantidade: {layoutItem.quantity}</Text>
-                {attributes &&
-                  attributes.map((attr) => {
-                    const attributeType = attr.type as AttributeType
-                    return (
-                      <Text key={attr.id}>
-                        {attributeType.name}: {attr.name}
-                      </Text>
-                    )
-                  })}
-              </View>
+              <Text>Quantidade: {layoutItem.quantity}</Text>
+              {attributes &&
+                attributes.map((attr) => {
+                  const attributeType = attr.type as AttributeType
+                  return (
+                    <Text key={attr.id}>
+                      {attributeType.name}: {attr.name}
+                    </Text>
+                  )
+                })}
             </View>
             <View
               style={{
@@ -176,7 +170,10 @@ export function ProductionDocument({
                 {typeof client === 'object' ? client.razaosocial : client}
               </Text>
               <Text>
-                CNPJ: {typeof client === 'object' ? formatCNPJ(client.document ?? '') : client}
+                CNPJ:{' '}
+                {typeof client === 'object'
+                  ? formatCNPJ(client.document ?? '')
+                  : client}
               </Text>
               <Text>
                 Contato:{' '}
@@ -187,8 +184,13 @@ export function ProductionDocument({
                   ? `(${contact.email})`
                   : ''}
               </Text>
-              <Text>Tel: {contact.phone}  {'   '}  Wh: {contact.whatsapp} </Text>
-              <Text>Pz entrega: {order.shippingTime} {'   '} Pgto: {order.paymentConditions}</Text>
+              <Text>
+                Tel: {contact.phone} {'   '} Wh: {contact.whatsapp}{' '}
+              </Text>
+              <Text>
+                Pz entrega: {order.shippingTime} {'   '} Pgto:{' '}
+                {order.paymentConditions}
+              </Text>
             </View>
           </View>
         </View>
@@ -202,6 +204,7 @@ export function ProductionDocument({
             flexDirection: 'column',
             display: 'flex',
             paddingHorizontal: 16,
+            paddingVertical: 8,
           }}
         >
           {/* Impressoes */}
@@ -355,23 +358,23 @@ export function ProductionDocument({
               </View>
             )} */}
 
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                marginBottom: 16,
-                marginTop: 16,
-              }}
-            >
-              <View style={{ display: 'flex', width: '85%' }}>
-                <Text>Frete: {layoutValues.delivery.company}</Text>
-              </View>
-              <View style={{ display: 'flex', width: '15%' }}>
-                <Text>
-                  Custo: {formatBRL((layoutValues.delivery.cost ?? 0) / 100)}
-                </Text>
-              </View>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              marginBottom: 16,
+              marginTop: 16,
+            }}
+          >
+            <View style={{ display: 'flex', width: '85%' }}>
+              <Text>Frete: {layoutValues.additionalCosts.obs}</Text>
             </View>
+            <View style={{ display: 'flex', width: '15%' }}>
+              <Text>
+                Custo: {formatBRL(layoutValues.additionalCosts.cost / 100)}
+              </Text>
+            </View>
+          </View>
           {layoutValues.delivery2 && layoutValues.delivery2.cost > 0 && (
             <View
               style={{
@@ -381,64 +384,64 @@ export function ProductionDocument({
               }}
             >
               <View style={{ display: 'flex', width: '85%' }}>
-                <Text>Frete 2: {layoutValues.delivery2.company}</Text>
+                <Text>Frete 2: {layoutValues.additionalCosts2.obs}</Text>
               </View>
               <View style={{ display: 'flex', width: '15%' }}>
                 <Text>
-                  Custo: {formatBRL(layoutValues.delivery2.cost / 100)}
+                  Custo: {formatBRL(layoutValues.additionalCosts2.cost / 100)}
                 </Text>
               </View>
             </View>
           )}
           {/* Comissões  */}
-            <>
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  marginBottom: 16,
-                  marginTop: 16,
-                }}
-              >
-                <View style={{ display: 'flex', width: '65%' }}>
-                  <Text>
-                    Comissão Agência:{' '}
-                    {layoutValues.commisions.agency?.name ?? '—'}
-                  </Text>
-                </View>
-                <View style={{ display: 'flex', width: '20%' }}>
-                  <Text>
-                    Porcentagem: {layoutValues.commisions.agency?.value ?? 0}%
-                  </Text>
-                </View>
-                <View style={{ display: 'flex', width: '15%' }}>
-                  <Text>Valor: {formatBRL(agencyComission)}</Text>
-                </View>
+          <>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                marginBottom: 16,
+                marginTop: 16,
+              }}
+            >
+              <View style={{ display: 'flex', width: '65%' }}>
+                <Text>
+                  Comissão Agência:{' '}
+                  {layoutValues.commisions.agency?.name ?? '—'}
+                </Text>
               </View>
-              <View
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  marginBottom: 16,
-                }}
-              >
-                <View style={{ display: 'flex', width: '65%' }}>
-                  <Text>
-                    Comissão Vendedor:{' '}
-                    {layoutValues.commisions.salesperson?.name ?? '—'}
-                  </Text>
-                </View>
-                <View style={{ display: 'flex', width: '20%' }}>
-                  <Text>
-                    Porcentagem:{' '}
-                    {layoutValues.commisions.salesperson?.value ?? 0}%
-                  </Text>
-                </View>
-                <View style={{ display: 'flex', width: '15%' }}>
-                  <Text>Valor: {formatBRL(salespersonComission)}</Text>
-                </View>
+              <View style={{ display: 'flex', width: '20%' }}>
+                <Text>
+                  Porcentagem: {layoutValues.commisions.agency?.value ?? 0}%
+                </Text>
               </View>
-            </>
+              <View style={{ display: 'flex', width: '15%' }}>
+                <Text>Valor: {formatBRL(agencyComission)}</Text>
+              </View>
+            </View>
+            <View
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                marginBottom: 16,
+              }}
+            >
+              <View style={{ display: 'flex', width: '65%' }}>
+                <Text>
+                  Comissão Vendedor:{' '}
+                  {layoutValues.commisions.salesperson?.name ?? '—'}
+                </Text>
+              </View>
+              <View style={{ display: 'flex', width: '20%' }}>
+                <Text>
+                  Porcentagem: {layoutValues.commisions.salesperson?.value ?? 0}
+                  %
+                </Text>
+              </View>
+              <View style={{ display: 'flex', width: '15%' }}>
+                <Text>Valor: {formatBRL(salespersonComission)}</Text>
+              </View>
+            </View>
+          </>
 
           {/* Layout/Amostra */}
           <View>
@@ -485,7 +488,10 @@ export function ProductionDocument({
             <View style={styles.footer_column}>
               <Text>Valor unitário: {formatBRL(layoutItem.price / 100)}</Text>
               <Text>Valor da venda: {formatBRL(valorDaVenda)}</Text>
-              <Text>Outros: {formatBRL(additionals)}{includeAdditionals ? '' : ' (não incluído no cálculo)'}</Text>
+              <Text>
+                Outros: {formatBRL(additionals)}
+                {includeAdditionals ? '' : ' (não incluído no cálculo)'}
+              </Text>
               <Text>
                 Valor total:
                 {formatBRL(valorTotal)}
@@ -508,7 +514,7 @@ export function ProductionDocument({
             </View>
             <DocumentVerticalSeparator />
             <View style={styles.footer_column}>
-              <Text>N pedido: {layoutValues.orderN}</Text>
+              <Text>N° pedido: {layoutValues.orderN}</Text>
               <Text>Tipo de pagamento: {layoutValues.paymentType}</Text>
               <Text>Nota fiscal nº: {layoutValues.invoice.number}</Text>
               <Text>Vencimento: {layoutValues.invoice.due}</Text>
@@ -517,10 +523,9 @@ export function ProductionDocument({
             </View>
           </View>
         </View>
-        <DocumentSeparator />
-
-        <View style={[styles.section, { gap: 2, fontSize: 10 }]}>
           {layoutValues.obs_final && <DocumentSeparator />}
+
+        <View style={[styles.section, { gap: 2, fontSize: 10 , marginTop: 4}]}>
           {layoutValues.obs_final && <Text>Observações:</Text>}
 
           {layoutValues.obs_final && <Text>{layoutValues.obs_final}</Text>}
