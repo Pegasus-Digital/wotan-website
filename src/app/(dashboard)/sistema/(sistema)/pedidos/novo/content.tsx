@@ -61,6 +61,7 @@ import {
   SelectContent,
   SelectSeparator,
 } from '@/components/ui/select'
+import { ItemPrintingTypeSelect } from '@/components/planilha/printing-type-select'
 
 import {
   Dialog,
@@ -823,35 +824,9 @@ export function NewOrderContent({
                       </TableCell>
 
                       <TableCell>
-                        <FormField
-                          name={`itens.${index}.print`}
+                        <ItemPrintingTypeSelect
                           control={form.control}
-                          render={({ field }) => (
-                            <FormControl>
-                              <Select onValueChange={field.onChange}>
-                                <SelectTrigger>
-                                  <SelectValue placeholder='Selecione' />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value='Serigrafia'>
-                                    Serigrafia
-                                  </SelectItem>
-                                  <SelectItem value='Laser'>Laser</SelectItem>
-                                  <SelectItem value='Bordado'>
-                                    Bordado
-                                  </SelectItem>
-                                  <SelectItem value='Adesivo'>
-                                    Adesivo
-                                  </SelectItem>
-                                  <SelectItem value='Gravação	em Madeira'>
-                                    Gravação em Madeira
-                                  </SelectItem>
-                                  <SelectItem value='UV'>UV</SelectItem>
-                                  <SelectItem value='DTF'>DTF</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </FormControl>
-                          )}
+                          name={`itens.${index}.print`}
                         />
                       </TableCell>
 

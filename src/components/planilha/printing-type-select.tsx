@@ -2,6 +2,7 @@
 
 import { Control, FieldPath, FieldValues } from 'react-hook-form'
 
+import { usePrintingTypes } from '@/hooks/use-printing-types'
 import {
   PrintingTypeOption,
   resolvePrintingTypeOptions,
@@ -22,32 +23,38 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-type PrintingTypeSelectProps<T extends FieldValues> = {
+type PrintingTypeSelectBaseProps<T extends FieldValues> = {
   control: Control<T>
   name: FieldPath<T>
-  printingTypes: PrintingTypeOption[]
   disabled?: boolean
+  placeholder?: string
+  printingTypes?: PrintingTypeOption[]
 }
 
-export function PrintingTypeSelect<T extends FieldValues>({
+function PrintingTypeSelectField<T extends FieldValues>({
   control,
   name,
-  printingTypes,
   disabled,
-}: PrintingTypeSelectProps<T>) {
+  placeholder = 'Selecione...',
+  printingTypes,
+  showLabel,
+}: PrintingTypeSelectBaseProps<T> & { showLabel: boolean }) {
+  const fetchedPrintingTypes = usePrintingTypes()
+  const resolvedPrintingTypes = printingTypes ?? fetchedPrintingTypes
+
   return (
     <FormField
       control={control}
       name={name}
       render={({ field }) => {
         const options = resolvePrintingTypeOptions(
-          printingTypes,
+          resolvedPrintingTypes,
           field.value as string | null | undefined,
         )
 
         return (
           <FormItem>
-            <FormLabel>Tipo de Impressão</FormLabel>
+            {showLabel && <FormLabel>Tipo de Impressão</FormLabel>}
             <FormControl>
               <Select
                 value={field.value ?? undefined}
@@ -55,7 +62,7 @@ export function PrintingTypeSelect<T extends FieldValues>({
                 disabled={disabled}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder='Selecione...' />
+                  <SelectValue placeholder={placeholder} />
                 </SelectTrigger>
                 <SelectContent>
                   {options.map((option) => (
@@ -70,6 +77,45 @@ export function PrintingTypeSelect<T extends FieldValues>({
           </FormItem>
         )
       }}
+    />
+  )
+}
+
+type PrintingTypeSelectProps<T extends FieldValues> =
+  PrintingTypeSelectBaseProps<T> & {
+    printingTypes: PrintingTypeOption[]
+  }
+
+export function PrintingTypeSelect<T extends FieldValues>({
+  control,
+  name,
+  printingTypes,
+  disabled,
+}: PrintingTypeSelectProps<T>) {
+  return (
+    <PrintingTypeSelectField
+      control={control}
+      name={name}
+      printingTypes={printingTypes}
+      disabled={disabled}
+      showLabel
+    />
+  )
+}
+
+export function ItemPrintingTypeSelect<T extends FieldValues>({
+  control,
+  name,
+  disabled,
+  placeholder = 'Selecione',
+}: PrintingTypeSelectBaseProps<T>) {
+  return (
+    <PrintingTypeSelectField
+      control={control}
+      name={name}
+      disabled={disabled}
+      placeholder={placeholder}
+      showLabel={false}
     />
   )
 }
