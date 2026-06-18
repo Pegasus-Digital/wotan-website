@@ -374,7 +374,7 @@ export function ProductionDocument({
               </Text>
             </View>
           </View>
-          {layoutValues.delivery2 && layoutValues.delivery2.cost > 0 && (
+          {layoutValues.additionalCosts2 && layoutValues.additionalCosts2.cost > 0 && (
             <View
               style={{
                 display: 'flex',

@@ -58,7 +58,9 @@ export function calculateProductionSheet({
   const agencyComission =
     (valorDaVenda * Number(layout.commisions?.agency?.value ?? 0)) / 100
   const salespersonComission =
-    ((valorDaVenda - agencyComission)* Number(layout.commisions?.salesperson?.value ?? 0)) / 100
+    ((valorDaVenda - agencyComission) *
+      Number(layout.commisions?.salesperson?.value ?? 0)) /
+    100
 
   const custoImpressaoCentavos =
     (layout.printing?.price ?? 0) * (layout.printing?.quantity ?? 0) +
@@ -75,7 +77,7 @@ export function calculateProductionSheet({
 
   const custoDeProducao =
     custoImpressaoEMateriais +
-    deliveryTotal +
+    // deliveryTotal +
     additionalCostsTotal +
     agencyComission +
     salespersonComission
@@ -84,7 +86,7 @@ export function calculateProductionSheet({
 
   return {
     valorDaVenda,
-valorTotal,
+    valorTotal,
     deliveryTotal,
     additionalCostsTotal,
     agencyComission,
