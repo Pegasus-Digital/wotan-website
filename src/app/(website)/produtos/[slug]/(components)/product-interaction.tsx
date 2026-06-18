@@ -54,6 +54,18 @@ interface ProductInteractionProps {
 
 const favoriteIconStyles = `stroke-white fill-white group-hover/favorite:fill-primary group-hover/favorite:stroke-primary`
 
+function formatProductSize(product: Product): string | null {
+  const dimensions = [
+    product.sizeWidth,
+    product.sizeHeight,
+    product.sizeDepth,
+  ].filter((value): value is string => Boolean(value?.trim()))
+
+  if (dimensions.length === 0) return null
+
+  return dimensions.join(' x ')
+}
+
 export function ProductInteraction({
   product,
   biggerQuantity,
@@ -71,6 +83,7 @@ export function ProductInteraction({
   )
 
   const isFavorite = favorites.some((id) => id === product.id)
+  const productSize = formatProductSize(product)
 
   const attributes = product ? getProductAttributes(product) : null
   const colors = attributes ? filterAttributesByType(attributes, 'color') : null
@@ -235,6 +248,8 @@ export function ProductInteraction({
       {product.description && (
         <Large className='py-4 leading-snug'>{product.description}</Large>
       )}
+
+      {productSize && <Large>Tamanho: {productSize}</Large>}
 
       <div>
         {colors && colors.length > 0 && (
