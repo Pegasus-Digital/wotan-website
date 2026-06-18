@@ -155,6 +155,10 @@ export function ProductionDocument({
                     </Text>
                   )
                 })}
+              <Text>
+                Pz entrega: {order.shippingTime} {'   '} Pgto:{' '}
+                {order.paymentConditions}
+              </Text>
             </View>
             <View
               style={{
@@ -180,16 +184,11 @@ export function ProductionDocument({
                 {typeof contact === 'object' && contact
                   ? contact.name
                   : 'Não cadastrado.'}{' '}
-                {typeof contact === 'object' && contact
-                  ? `(${contact.email})`
-                  : ''}
               </Text>
+              <Text>Email: {contact.email}</Text>
               <Text>
-                Tel: {contact.phone} {'   '} Wh: {contact.whatsapp}{' '}
-              </Text>
-              <Text>
-                Pz entrega: {order.shippingTime} {'   '} Pgto:{' '}
-                {order.paymentConditions}
+                Tel: {contact?.phone ?? 'N/A.'} {'   '} Wh:{' '}
+                {contact?.whatsapp ?? 'N/A.'}{' '}
               </Text>
             </View>
           </View>
@@ -523,9 +522,9 @@ export function ProductionDocument({
             </View>
           </View>
         </View>
-          {layoutValues.obs_final && <DocumentSeparator />}
+        {layoutValues.obs_final && <DocumentSeparator />}
 
-        <View style={[styles.section, { gap: 2, fontSize: 10 , marginTop: 4}]}>
+        <View style={[styles.section, { gap: 2, fontSize: 10, marginTop: 4 }]}>
           {layoutValues.obs_final && <Text>Observações:</Text>}
 
           {layoutValues.obs_final && <Text>{layoutValues.obs_final}</Text>}
