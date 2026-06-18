@@ -87,9 +87,11 @@ interface OrderDocumentProps {
 }
 
 function calculateTotal(order: Order): number {
-  return order.itens.reduce((total, item) => {
+  const itemsTotal = order.itens.reduce((total, item) => {
     return total + (item.quantity * item.price) / 100
   }, 0)
+  const additionals = (order.additionals ?? 0) / 100
+  return itemsTotal + additionals
 }
 
 export function OrderDocument({ order }: OrderDocumentProps) {
@@ -103,6 +105,7 @@ export function OrderDocument({ order }: OrderDocumentProps) {
   const resolvedContact = resolveOrderContact(order, client)
   const contact = resolvedContact ? [resolvedContact] : []
 
+  const additionals = (order.additionals ?? 0) / 100
   const totalValue = calculateTotal(order)
 
   return (
@@ -371,6 +374,11 @@ export function OrderDocument({ order }: OrderDocumentProps) {
         <DocumentSeparator />
         {/* Footer - total + details */}
         <View style={[styles.section, { gap: 2, fontSize: 10 }]}>
+          {(order.additionals ?? 0) > 0 && (
+            <Text style={{ alignSelf: 'flex-end' }}>
+              Outros: {formatBRL(additionals)}
+            </Text>
+          )}
           <Text style={{ alignSelf: 'flex-end' }}>
             Valor total do pedido: {formatBRL(totalValue)}
           </Text>
