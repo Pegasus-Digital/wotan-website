@@ -120,7 +120,7 @@ export function ProductionDocument({
             }}
           >
             <Text>Pedido n°: {order.incrementalId}</Text>
-            <Text>Data: {getDDMMYYDate(new Date(order.updatedAt))}</Text>
+            <Text>Data: {getDDMMYYDate(new Date(order.createdAt))}</Text>
           </View>
           <View
             style={{
@@ -374,24 +374,25 @@ export function ProductionDocument({
               </Text>
             </View>
           </View>
-          {layoutValues.additionalCosts2 && layoutValues.additionalCosts2.cost > 0 && (
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                marginBottom: 16,
-              }}
-            >
-              <View style={{ display: 'flex', width: '85%' }}>
-                <Text>Frete 2: {layoutValues.additionalCosts2.obs}</Text>
+          {layoutValues.additionalCosts2 &&
+            layoutValues.additionalCosts2.cost > 0 && (
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  marginBottom: 16,
+                }}
+              >
+                <View style={{ display: 'flex', width: '85%' }}>
+                  <Text>Frete 2: {layoutValues.additionalCosts2.obs}</Text>
+                </View>
+                <View style={{ display: 'flex', width: '15%' }}>
+                  <Text>
+                    Custo: {formatBRL(layoutValues.additionalCosts2.cost / 100)}
+                  </Text>
+                </View>
               </View>
-              <View style={{ display: 'flex', width: '15%' }}>
-                <Text>
-                  Custo: {formatBRL(layoutValues.additionalCosts2.cost / 100)}
-                </Text>
-              </View>
-            </View>
-          )}
+            )}
           {/* Comissões  */}
           <>
             <View
@@ -487,9 +488,7 @@ export function ProductionDocument({
             <View style={styles.footer_column}>
               <Text>Valor unitário: {formatBRL(layoutItem.price / 100)}</Text>
               <Text>Valor da venda: {formatBRL(valorDaVenda)}</Text>
-              <Text>
-                Outros: {formatBRL(additionals)}
-              </Text>
+              <Text>Outros: {formatBRL(additionals)}</Text>
               <Text>
                 Valor total:
                 {formatBRL(valorTotal)}
