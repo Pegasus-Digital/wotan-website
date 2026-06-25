@@ -14,7 +14,8 @@
 /out/
 
 # payload
-/media
+/media/*
+!/media/pegasus_icon.png
 /dump
 public/sistema
 
