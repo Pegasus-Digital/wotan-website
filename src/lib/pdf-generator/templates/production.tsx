@@ -489,7 +489,6 @@ export function ProductionDocument({
               <Text>Valor da venda: {formatBRL(valorDaVenda)}</Text>
               <Text>
                 Outros: {formatBRL(additionals)}
-                {includeAdditionals ? '' : ' (não incluído no cálculo)'}
               </Text>
               <Text>
                 Valor total:
