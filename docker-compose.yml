@@ -56,6 +56,39 @@ services:
 
     restart: unless-stopped
 
+  payload-dev:
+    image: wotan-website:latest
+
+    env_file:
+      - .env
+
+    environment:
+      NODE_ENV: production
+      DATABASE_URI: ${DATABASE_URI:-mongodb://mongo:27017/wotan}
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET}
+      PAYLOAD_CONFIG_PATH: dist/payload/payload.config.js
+      PAYLOAD_PUBLIC_SERVER_URL: ${PAYLOAD_DEV_PUBLIC_SERVER_URL:-https://testes.wotanbrindes.com.br}
+      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_DEV_SERVER_URL:-https://testes.wotanbrindes.com.br}
+      SMTP_EMAIL: ${SMTP_EMAIL}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      SMTP_PORT: ${SMTP_PORT}
+
+    depends_on:
+      - mongo
+
+    expose:
+      - "3000"
+
+    volumes:
+      - media:/home/node/app/media
+
+    networks:
+      - app_network
+      - web
+
+    restart: unless-stopped
 
   mongo:
     image: mongo:latest
@@ -82,6 +115,7 @@ services:
       - ./nginx/certbot/conf:/etc/letsencrypt
     depends_on:
       - payload
+      - payload-dev
     networks:
       - web
     restart: unless-stopped
