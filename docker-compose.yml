@@ -127,7 +127,9 @@ services:
       - ./nginx/certbot/conf:/etc/letsencrypt
       - ./nginx/certbot/www:/var/www/certbot
     entrypoint: ""
-    command: sleep infinity
+    # Auto-renew certs twice a day. nginx must be reloaded after a renewal:
+    # a host cron running `docker exec nginx nginx -s reload` daily handles that.
+    command: sh -c "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h & wait $${!}; done"
     networks:
       - web  
 
