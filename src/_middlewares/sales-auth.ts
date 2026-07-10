@@ -9,7 +9,7 @@ async function isSalesAuthenticated(req) {
 
   try {
     const meUserReq = await fetch(
-      `/api/salespersons/me`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/salespersons/me`,
       {
         headers: {
           Authorization: `JWT ${token}`,

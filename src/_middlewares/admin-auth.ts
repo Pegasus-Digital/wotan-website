@@ -9,7 +9,7 @@ async function isAdminAuthenticated(req) {
 
   try {
     const meUserReq = await fetch(
-      `/api/users/me`,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/me`,
       {
         headers: {
           Authorization: `JWT ${token}`,
