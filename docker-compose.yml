@@ -57,11 +57,11 @@ services:
       - .env
     environment:
       NODE_ENV: production
-      DATABASE_URI: ${DATABASE_URI:-mongodb://mongo:27017/wotan}
+      DATABASE_URI: ${DEV_DATABASE_URI:-mongodb://mongo:27017/wotan-dev}
       PAYLOAD_SECRET: ${PAYLOAD_SECRET}
       PAYLOAD_CONFIG_PATH: dist/payload/payload.config.js
-      PAYLOAD_PUBLIC_SERVER_URL: ${PAYLOAD_DEV_PUBLIC_SERVER_URL:-https://testes.wotanbrindes.com.br}
-      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_DEV_SERVER_URL:-https://testes.wotanbrindes.com.br}
+      PAYLOAD_PUBLIC_SERVER_URL: ${PAYLOAD_DEV_SERVER_URL:-https://testes.wotanbrindes.com.br}
+      NEXT_PUBLIC_SERVER_URL: ${NEXT_DEV_SERVER_URL:-https://testes.wotanbrindes.com.br}
       SMTP_EMAIL: ${SMTP_EMAIL}
       SMTP_HOST: ${SMTP_HOST}
       SMTP_USER: ${SMTP_USER}
