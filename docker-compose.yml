@@ -101,8 +101,12 @@ services:
     restart: unless-stopped
 
   traefik:
-    image: traefik:v3.3
+    image: traefik:v3
     container_name: traefik
+    environment:
+      # Newer Docker engines require API >= 1.44, but Traefik's docker
+      # provider negotiates the legacy 1.24 by default — pin it explicitly.
+      DOCKER_API_VERSION: "1.44"
     command:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
