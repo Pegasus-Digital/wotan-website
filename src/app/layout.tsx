@@ -3,6 +3,7 @@ import './globals.css'
 import { Metadata } from 'next'
 import { GoogleAnalytics } from '@/components/google-analytics'
 import { cn } from '@/lib/utils'
+import { getServerURL } from '@/lib/server-url'
 import { Inter } from 'next/font/google'
 
 export const metadata: Metadata = {
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
     template: '%s | Wotan Brindes',
     default: 'Wotan Brindes', // a default is required when creating a template
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SERVER_URL),
+  metadataBase: new URL(getServerURL()),
   alternates: {
     canonical: '/',
   },
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
     title: 'Wotan Brindes',
     description:
       'Wotan Brindes. Brindes personalizados e presentes corporativos.',
-    url: new URL(process.env.NEXT_PUBLIC_SERVER_URL),
+    url: new URL(getServerURL()),
   },
 }
 

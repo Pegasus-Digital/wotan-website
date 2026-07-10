@@ -1,12 +1,10 @@
 import type { Setting } from '../../payload/payload-types'
 import { SETTINGS_QUERY } from '../_graphql/globals'
+import { getServerURL } from '@/lib/server-url'
 
 export async function fetchSettings(): Promise<Setting> {
-  if (!process.env.NEXT_PUBLIC_SERVER_URL)
-    throw new Error('NEXT_PUBLIC_SERVER_URL not found')
-
   const settings = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/graphql`,
+    `${getServerURL()}/api/graphql`,
     {
       method: 'POST',
       headers: {
