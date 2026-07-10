@@ -1,7 +1,6 @@
 import { query } from 'express'
 import type { Config } from '../../payload/payload-types'
 import { PAGES } from '../_graphql/pages'
-import { getServerURL } from '@/lib/server-url'
 
 const querys = {
   pages: {
@@ -20,7 +19,7 @@ export const fetchDocs = async <T>(
   if (!querys[collection]) throw new Error(`Collection ${collection} not found`)
 
   const docs: T[] = await fetch(
-    `${getServerURL()}/api/graphql`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/graphql`,
     {
       method: 'POST',
       headers: {

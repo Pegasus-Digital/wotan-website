@@ -2,7 +2,6 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 import type { Salesperson } from '../../payload/payload-types'
-import { getServerURL } from '@/lib/server-url'
 
 export const getSalesUser = async (args?: {
   nullUserRedirect?: string
@@ -24,7 +23,7 @@ export const getSalesUser = async (args?: {
   }
 
   const meUserReq = await fetch(
-    `${getServerURL()}/api/salespersons/me`,
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/api/salespersons/me`,
     {
       headers: {
         Authorization: `JWT ${token}`,

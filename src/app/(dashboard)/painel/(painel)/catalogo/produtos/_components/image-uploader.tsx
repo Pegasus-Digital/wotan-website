@@ -33,7 +33,7 @@ export function ImageUploader({
   const [filesToUpload, setFilesToUpload] = useState<FileUploadProgress[]>([])
 
   const uploadImageToPayload = async (formData: FormData) => {
-    return fetch(`/api/media`, {
+    return fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/media`, {
       method: 'POST',
       body: formData,
     })

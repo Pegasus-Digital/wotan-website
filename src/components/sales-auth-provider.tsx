@@ -53,7 +53,7 @@ export const SalesAuthProvider: React.FC<{ children: React.ReactNode }> = ({
       if (!args.password) throw new Error('Senha obrigatória')
 
       const res = await fetch(
-        `/api/salespersons/login`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/salespersons/login`,
         {
           method: 'POST',
           credentials: 'include',
@@ -84,7 +84,7 @@ export const SalesAuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const logout = useCallback<Logout>(async () => {
     try {
       const res = await fetch(
-        `/api/salespersons/logout`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/salespersons/logout`,
         {
           method: 'POST',
           credentials: 'include',
@@ -109,7 +109,7 @@ export const SalesAuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const logoutUser = async () => {
       try {
         const res = await fetch(
-          `/api/users/logout`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/logout`,
           {
             method: 'POST',
             credentials: 'include',
@@ -133,7 +133,7 @@ export const SalesAuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const fetchMe = async () => {
       try {
         const res = await fetch(
-          `/api/salespersons/me`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/salespersons/me`,
           {
             method: 'GET',
             credentials: 'include',
@@ -159,7 +159,7 @@ export const SalesAuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const checkKind = async () => {
       try {
         const res = await fetch(
-          `/api/user-salesperson`,
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/api/user-salesperson`,
           {
             method: 'GET',
             credentials: 'include',
@@ -192,7 +192,7 @@ export const SalesAuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const forgotPassword = useCallback<ForgotPassword>(async (args) => {
     try {
       const res = await fetch(
-        `/api/salespersons/forgot-password`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/salespersons/forgot-password`,
         {
           method: 'POST',
           credentials: 'include',
@@ -220,7 +220,7 @@ export const SalesAuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const resetPassword = useCallback<ResetPassword>(async (args) => {
     try {
       const res = await fetch(
-        `/api/salespersons/reset-password`,
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/salespersons/reset-password`,
         {
           method: 'POST',
           credentials: 'include',

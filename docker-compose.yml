@@ -56,7 +56,7 @@ services:
     env_file:
       - .env
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
       DATABASE_URI: ${DEV_DATABASE_URI:-mongodb://mongo:27017/wotan-dev}
       PAYLOAD_SECRET: ${PAYLOAD_SECRET}
       PAYLOAD_CONFIG_PATH: dist/payload/payload.config.js

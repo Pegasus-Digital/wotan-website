@@ -4,7 +4,6 @@ import { notFound } from 'next/navigation'
 import { Page as PayloadPage } from '../../../payload/payload-types'
 import { fetchDoc } from '@/app/_api/fetchDoc'
 import { fetchDocs } from '@/app/_api/fetchDocs'
-import { getServerURL } from '@/lib/server-url'
 
 import { Heading } from '@/pegasus/heading'
 import { Sections } from '@/components/sections'
@@ -81,7 +80,7 @@ export async function generateMetadata({
       description: page.description,
       images: [
         {
-          url: new URL(`${getServerURL()}/wotan.png`),
+          url: new URL(`${process.env.NEXT_PUBLIC_SERVER_URL}/wotan.png`),
           width: 800,
           height: 600,
         },

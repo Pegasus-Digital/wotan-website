@@ -3,7 +3,6 @@
 import { revalidatePath } from 'next/cache'
 
 import { ActionResponse } from '@/lib/actions'
-import { getServerURL } from '@/lib/server-url'
 
 import payload from 'payload'
 import { Budget, Salesperson } from '@/payload/payload-types'
@@ -37,7 +36,7 @@ export async function emailBudgetToCustomer({
             <table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" style="max-width: 600px; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
               <tr>
                 <td style="background-color: #CC0F4B; padding: 20px; text-align: center; color: #ffffff;">
-                  <img src="${getServerURL()}/media/logo2017.png" alt="Wotan Brindes Logo" style="width: 320px; height: auto; margin-bottom: 10px;" />
+                  <img src="${process.env.NEXT_PUBLIC_SERVER_URL}/media/logo2017.png" alt="Wotan Brindes Logo" style="width: 320px; height: auto; margin-bottom: 10px;" />
                   <p style="margin: 5px 0; font-size: 16px;">Soluções personalizadas para a sua marca</p>
                 </td>
               </tr>
@@ -48,7 +47,7 @@ export async function emailBudgetToCustomer({
                     Temos novidades sobre o seu orçamento! Para visualizar os detalhes e acompanhar as informações, clique no botão abaixo:
                   </p>
                   <p style="text-align: center; margin: 30px 0;">
-                    <a href="${getServerURL()}/orcamento/${budget.id}" target="_blank" style="display: inline-block; background-color: #CC0F4B; color: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; font-size: 16px;">
+                    <a href="${process.env.NEXT_PUBLIC_SERVER_URL}/orcamento/${budget.id}" target="_blank" style="display: inline-block; background-color: #CC0F4B; color: #ffffff; text-decoration: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; font-size: 16px;">
                       Ver Detalhes do Orçamento
                     </a>
                   </p>
