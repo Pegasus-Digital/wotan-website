@@ -2,6 +2,10 @@ import './globals.css'
 
 import { Metadata } from 'next'
 import { GoogleAnalytics } from '@/components/google-analytics'
+import {
+  GoogleTagManager,
+  GoogleTagManagerNoScript,
+} from '@/components/google-tag-manager'
 import { cn } from '@/lib/utils'
 import { Inter } from 'next/font/google'
 
@@ -31,12 +35,14 @@ const inter = Inter({ subsets: ['latin'] })
 export default async function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang='pt-BR' suppressHydrationWarning>
+      <GoogleTagManager />
       <body
         className={cn(
           inter.className,
           'min-w-96 bg-background text-foreground antialiased',
         )}
       >
+        <GoogleTagManagerNoScript />
         <GoogleAnalytics />
         {children}
       </body>
