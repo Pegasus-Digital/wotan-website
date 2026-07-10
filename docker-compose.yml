@@ -1,11 +1,8 @@
 version: '3'
 
-# Traefik variant of the stack: replaces the nginx + certbot services.
+# Traefik-based stack: replaced nginx + certbot (see docs/DEPLOY-TRAEFIK.md).
 # Certs are issued and renewed automatically — no init script, no renew loop,
 # no reload cron. Routing lives in labels on each app service.
-#
-# Try it with:  docker compose -f docker-compose.traefik.yml up -d
-# (See docs/DEPLOY-NGINX.md for the nginx version and migration notes.)
 
 services:
   payload:
@@ -110,6 +107,9 @@ services:
     command:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
+      # containers are on multiple networks; force traefik to connect via
+      # the one it shares with them (otherwise it may pick an unreachable IP)
+      - "--providers.docker.network=wotan-website_web"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       # global HTTP -> HTTPS redirect
