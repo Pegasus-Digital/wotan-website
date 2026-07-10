@@ -1,6 +1,11 @@
 version: '3'
 
-
+# Traefik variant of the stack: replaces the nginx + certbot services.
+# Certs are issued and renewed automatically — no init script, no renew loop,
+# no reload cron. Routing lives in labels on each app service.
+#
+# Try it with:  docker compose -f docker-compose.traefik.yml up -d
+# (See docs/DEPLOY-NGINX.md for the nginx version and migration notes.)
 
 services:
   payload:
@@ -8,26 +13,18 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        # NEXT BUILD REQUIRES THESE AT BUILD TIME
         PAYLOAD_SECRET: ${PAYLOAD_SECRET}
         DATABASE_URI: ${DATABASE_URI:-mongodb://mongo:27017/wotan}
-
-        # Next-only public envs (safe for build)
         NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL}
         PAYLOAD_PUBLIC_SERVER_URL: ${PAYLOAD_PUBLIC_SERVER_URL}
-
-        # SMTP config (needed during build when Payload initializes)
         SMTP_EMAIL: ${SMTP_EMAIL}
         SMTP_HOST: ${SMTP_HOST}
         SMTP_USER: ${SMTP_USER}
         SMTP_PASS: ${SMTP_PASS}
         SMTP_PORT: ${SMTP_PORT}
-
     image: wotan-website:latest
-
     env_file:
       - .env
-
     environment:
       NODE_ENV: production
       DATABASE_URI: ${DATABASE_URI:-mongodb://mongo:27017/wotan}
@@ -40,28 +37,27 @@ services:
       SMTP_USER: ${SMTP_USER}
       SMTP_PASS: ${SMTP_PASS}
       SMTP_PORT: ${SMTP_PORT}
-
     depends_on:
       - mongo
-
     expose:
       - "3000"
-
     volumes:
       - media:/home/node/app/media
-
     networks:
       - app_network
       - web
-
     restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.payload.rule=Host(`wotanbrindes.com.br`) || Host(`www.wotanbrindes.com.br`)"
+      - "traefik.http.routers.payload.entrypoints=websecure"
+      - "traefik.http.routers.payload.tls.certresolver=letsencrypt"
+      - "traefik.http.services.payload.loadbalancer.server.port=3000"
 
   payload-dev:
     image: wotan-website:latest
-
     env_file:
       - .env
-
     environment:
       NODE_ENV: production
       DATABASE_URI: ${DATABASE_URI:-mongodb://mongo:27017/wotan}
@@ -74,21 +70,22 @@ services:
       SMTP_USER: ${SMTP_USER}
       SMTP_PASS: ${SMTP_PASS}
       SMTP_PORT: ${SMTP_PORT}
-
     depends_on:
       - mongo
-
     expose:
       - "3000"
-
     volumes:
       - media:/home/node/app/media
-
     networks:
       - app_network
       - web
-
     restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.payload-dev.rule=Host(`testes.wotanbrindes.com.br`)"
+      - "traefik.http.routers.payload-dev.entrypoints=websecure"
+      - "traefik.http.routers.payload-dev.tls.certresolver=letsencrypt"
+      - "traefik.http.services.payload-dev.loadbalancer.server.port=3000"
 
   mongo:
     image: mongo:latest
@@ -103,36 +100,31 @@ services:
       - app_network
     restart: unless-stopped
 
-  nginx:
-    image: nginx:stable-alpine
-    container_name: nginx
+  traefik:
+    image: traefik:v3.3
+    container_name: traefik
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # global HTTP -> HTTPS redirect
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      # Let's Encrypt (HTTP-01 challenge on port 80)
+      - "--certificatesresolvers.letsencrypt.acme.email=joaobertottoneto@gmail.com"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/sites:/etc/nginx/conf.d:ro
-      - ./nginx/certbot/www:/var/www/certbot
-      - ./nginx/certbot/conf:/etc/letsencrypt
-    depends_on:
-      - payload
-      - payload-dev
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/letsencrypt:/letsencrypt
     networks:
       - web
     restart: unless-stopped
-
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - ./nginx/certbot/conf:/etc/letsencrypt
-      - ./nginx/certbot/www:/var/www/certbot
-    entrypoint: ""
-    # Auto-renew certs twice a day. nginx must be reloaded after a renewal:
-    # a host cron running `docker exec nginx nginx -s reload` daily handles that.
-    command: sh -c "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h & wait $${!}; done"
-    networks:
-      - web  
-
 
 volumes:
   data:

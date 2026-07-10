@@ -27,6 +27,10 @@ public/sistema
 .DS_Store
 *.pem
 
+# TLS material (private keys — never commit)
+/traefik/letsencrypt/
+/nginx/certbot/conf/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
