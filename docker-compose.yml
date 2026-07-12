@@ -52,7 +52,21 @@ services:
       - "traefik.http.services.payload.loadbalancer.server.port=3000"
 
   payload-dev:
-    image: wotan-website:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PAYLOAD_SECRET: ${PAYLOAD_SECRET}
+        DATABASE_URI: ${DEV_DATABASE_URI:-mongodb://mongo:27017/wotan-dev}
+        # baked into the client bundle at build time — must be the testes URLs
+        NEXT_PUBLIC_SERVER_URL: ${NEXT_DEV_SERVER_URL:-https://testes.wotanbrindes.com.br}
+        PAYLOAD_PUBLIC_SERVER_URL: ${PAYLOAD_DEV_SERVER_URL:-https://testes.wotanbrindes.com.br}
+        SMTP_EMAIL: ${SMTP_EMAIL}
+        SMTP_HOST: ${SMTP_HOST}
+        SMTP_USER: ${SMTP_USER}
+        SMTP_PASS: ${SMTP_PASS}
+        SMTP_PORT: ${SMTP_PORT}
+    image: wotan-website:dev
     env_file:
       - .env
     environment:
