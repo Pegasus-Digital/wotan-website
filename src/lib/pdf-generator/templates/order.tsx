@@ -102,11 +102,13 @@ export function OrderDocument({ order }: OrderDocumentProps) {
 
   const isCompany = client.type === 'company'
 
-  const resolvedContact = resolveOrderContact(order, client)
-  const contact = resolvedContact ? [resolvedContact] : []
+  const contact = resolveOrderContact(order, client)
 
   const additionals = (order.additionals ?? 0) / 100
   const totalValue = calculateTotal(order)
+
+  const formatContactPhone = (value?: string | null) =>
+    value ? formatPhoneNumber(value) : 'N/A.'
 
   return (
     <Document>
@@ -156,9 +158,10 @@ export function OrderDocument({ order }: OrderDocumentProps) {
                 <Text>{isCompany ? 'Razão Social' : 'Nome'}: {client.razaosocial ? client.razaosocial : client.name}</Text>
                 <Text>{isCompany ? 'CNPJ' : 'CPF'}: {isCompany ? formatCNPJ(client.document) : formatCPF(client.document)}</Text>
                 <Text>Inscrição Estadual: {client.stateIncription? client.stateIncription : 'Não informado'}</Text>
-                <Text>Contato: {contact[0].name}</Text>
-                <Text>Telefone: {formatPhoneNumber(contact[0].phone)}</Text>
-                {contact[0].email && <Text>Email: {contact[0].email}</Text>}
+                <Text>Contato: {contact?.name ?? 'Não cadastrado.'}</Text>
+                <Text>Telefone: {formatContactPhone(contact?.phone)}</Text>
+                <Text>WhatsApp: {formatContactPhone(contact?.whatsapp)}</Text>
+                <Text>Email: {contact.email}</Text>
               </View>
 
               <View
