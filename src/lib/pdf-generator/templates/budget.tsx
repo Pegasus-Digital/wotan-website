@@ -236,11 +236,24 @@ export function BudgetDocument({ budget }: BudgetDocumentProps) {
 
         <DocumentFiller />
 
-        <View style={[styles.section, { marginBottom: 10 }]}>
-          <Text>Observações:</Text>
-          <Text style={{ fontSize: 10, marginTop: 4 }}>
-            {budget.conditions}
-          </Text>
+        <View style={[styles.section, { marginBottom: 10, gap: 8 }]}>
+          {budget.contact?.details ? (
+            <View>
+              <Text>Observações:</Text>
+              <Text style={{ fontSize: 10, marginTop: 4 }}>
+                {budget.contact.details}
+              </Text>
+            </View>
+          ) : null}
+
+          {budget.conditions ? (
+            <View>
+              <Text>Condições:</Text>
+              <Text style={{ fontSize: 10, marginTop: 4 }}>
+                {budget.conditions}
+              </Text>
+            </View>
+          ) : null}
         </View>
       </Page>
     </Document>
