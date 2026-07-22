@@ -13,7 +13,7 @@ import {
   Order,
   Product,
 } from '@/payload/payload-types'
-import { formatBRL, formatPhoneNumber } from '@/lib/format'
+import { formatBRL, formatCNPJ, formatCPF, formatPhoneNumber } from '@/lib/format'
 import { resolveOrderContact } from '@/lib/order-contact'
 
 const styles = StyleSheet.create({
@@ -154,8 +154,8 @@ export function OrderDocument({ order }: OrderDocumentProps) {
                 }}
               >
                 <Text>{isCompany ? 'Razão Social' : 'Nome'}: {client.razaosocial ? client.razaosocial : client.name}</Text>
-                <Text>{isCompany ? 'CNPJ' : 'CPF'}: {client.document}</Text>
-                <Text>Inscrição Estadual: {client.document}</Text>
+                <Text>{isCompany ? 'CNPJ' : 'CPF'}: {isCompany ? formatCNPJ(client.document) : formatCPF(client.document)}</Text>
+                <Text>Inscrição Estadual: {client.stateIncription? client.stateIncription : 'Não informado'}</Text>
                 <Text>Contato: {contact[0].name}</Text>
                 <Text>Telefone: {formatPhoneNumber(contact[0].phone)}</Text>
                 {contact[0].email && <Text>Email: {contact[0].email}</Text>}
