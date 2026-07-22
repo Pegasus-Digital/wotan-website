@@ -1,6 +1,7 @@
 import { Client } from "@/payload/payload-types";
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { deaccent } from "@/lib/accent-insensitive"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -46,19 +47,18 @@ export function filterClients(
 ): Client[] {
   if (!query) return clients;
 
-  const cleanQuery = query.replace(/[^0-9a-zA-Z ]/g, '').toLowerCase();
+  const cleanQuery = deaccent(query).replace(/[^0-9a-z ]/g, '');
   if (cleanQuery.length <= 3) return clients;
 
-
   return clients.filter(client => {
-    const doc = client.document?.toLowerCase();
-    const razao = client.razaosocial?.toLowerCase();
-    const name = client.name?.toLowerCase();
+    const doc = deaccent(client.document ?? '');
+    const razao = deaccent(client.razaosocial ?? '');
+    const name = deaccent(client.name ?? '');
 
     return (
-      (doc && doc.includes(cleanQuery)) ||
-      (razao && razao.includes(cleanQuery)) ||
-      (name && name.includes(cleanQuery))
+      doc.includes(cleanQuery) ||
+      razao.includes(cleanQuery) ||
+      name.includes(cleanQuery)
     );
   });
 }

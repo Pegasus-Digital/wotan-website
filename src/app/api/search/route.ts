@@ -1,4 +1,5 @@
 import { getSingular } from '@/lib/singular'
+import { toAccentInsensitivePattern } from '@/lib/accent-insensitive'
 import { NextRequest, NextResponse } from 'next/server'
 import payload from 'payload'
 
@@ -13,16 +14,17 @@ export async function POST(request: NextRequest, response: NextResponse) {
 
     words.forEach((word, index) => {
       if (index > 0) {
+        const pattern = toAccentInsensitivePattern(getSingular(word))
         objects.push({
           or: [
             {
               title: {
-                contains: getSingular(word),
+                contains: pattern,
               },
             },
             {
               description: {
-                contains: getSingular(word),
+                contains: pattern,
               },
             },
           ],
@@ -42,9 +44,10 @@ export async function POST(request: NextRequest, response: NextResponse) {
 
   // Define a function to generate conditions for a single word
   const generateWordConditions = (word) => {
+    const pattern = toAccentInsensitivePattern(getSingular(word))
     return searchFields.map((field) => ({
       [field]: {
-        contains: getSingular(word),
+        contains: pattern,
       },
     }))
   }

@@ -3,6 +3,7 @@ import payload from 'payload'
 import { SearchPageContent } from './content'
 
 import { getSingular } from './../../../lib/singular'
+import { toAccentInsensitivePattern } from '@/lib/accent-insensitive'
 
 export default async function PesquisaPage({ params, searchParams }) {
   const page: number = searchParams ? Number(searchParams.page) : 1
@@ -15,16 +16,17 @@ export default async function PesquisaPage({ params, searchParams }) {
 
     words.forEach((word, index) => {
       if (index > 0) {
+        const pattern = toAccentInsensitivePattern(getSingular(word))
         objects.push({
           or: [
             {
               title: {
-                contains: getSingular(word),
+                contains: pattern,
               },
             },
             {
               description: {
-                contains: getSingular(word),
+                contains: pattern,
               },
             },
           ],
@@ -44,9 +46,10 @@ export default async function PesquisaPage({ params, searchParams }) {
 
   // Define a function to generate conditions for a single word
   const generateWordConditions = (word) => {
+    const pattern = toAccentInsensitivePattern(getSingular(word))
     return searchFields.map((field) => ({
       [field]: {
-        contains: getSingular(word),
+        contains: pattern,
       },
     }))
   }

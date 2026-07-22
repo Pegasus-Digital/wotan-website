@@ -4,6 +4,7 @@ import payload from 'payload'
 
 import { z } from 'zod'
 import { budgetsParamsSchema, searchParamsSchema } from '@/lib/validations'
+import { toAccentInsensitivePattern } from '@/lib/accent-insensitive'
 
 import { unstable_noStore as noStore } from 'next/cache'
 
@@ -20,17 +21,13 @@ export async function getEstimates(
     let whereOr = []
 
     if (contact !== undefined && contact.length >= 3) {
+      const contactPattern = toAccentInsensitivePattern(contact)
       whereOr.push(
         {
           'contact.companyName': {
-            contains: contact ? contact : '',
+            contains: contactPattern,
           },
         },
-        {
-          'contact.companyName': {
-            contains: contact ? contact : '',
-          },
-        }
       )
     }
     const response = await payload.find({
