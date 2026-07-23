@@ -7,7 +7,7 @@ import payload from 'payload'
 import { z } from 'zod'
 
 import { searchParamsSchema } from '@/lib/validations'
-import { toAccentInsensitivePattern } from '@/lib/accent-insensitive'
+import { accentInsensitiveContainsClauses } from '@/lib/accent-insensitive'
 
 export async function getContactMessages(
   searchParams: z.infer<typeof searchParamsSchema>,
@@ -26,7 +26,9 @@ export async function getContactMessages(
       limit: per_page,
       where: {
         and: [
-          { name: { contains: name ? toAccentInsensitivePattern(name) : '' } },
+          ...(name
+            ? [{ or: accentInsensitiveContainsClauses(['name'], name) }]
+            : [{ name: { contains: '' } }]),
           { email: { contains: email ? email : '' } },
           { archived: { equals: false } },
         ],

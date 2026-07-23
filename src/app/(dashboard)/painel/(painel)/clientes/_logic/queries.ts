@@ -4,7 +4,7 @@ import payload from 'payload'
 
 import { z } from 'zod'
 import { clientParamsSchema } from '@/lib/validations'
-import { toAccentInsensitivePattern } from '@/lib/accent-insensitive'
+import { accentInsensitiveContainsClauses } from '@/lib/accent-insensitive'
 
 import { unstable_noStore as noStore } from 'next/cache'
 
@@ -86,18 +86,11 @@ export async function getClients(
     // console.log('razao:', razaosocial)
 
     if (razaosocial !== undefined && razaosocial.length > 3) {
-      const namePattern = toAccentInsensitivePattern(razaosocial)
       whereOr.push(
-        {
-          razaosocial: {
-            contains: namePattern,
-          },
-        },
-        {
-          name: {
-            contains: namePattern,
-          },
-        }
+        ...accentInsensitiveContainsClauses(
+          ['razaosocial', 'name'],
+          razaosocial,
+        ),
       )
     }
 

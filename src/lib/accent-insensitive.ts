@@ -1,7 +1,12 @@
 /**
  * Accent-insensitive helpers for Portuguese search (´ ` ^ ~ ç).
- * Payload `contains` maps to MongoDB `$regex` without escaping, so we can
- * expand base letters into character classes that match accented variants.
+ *
+ * Payload `@payloadcms/db-mongodb` ≥1.5 escapes regex metacharacters in
+ * `contains` (including `[` `]` `|` `()`), so character-class patterns like
+ * `[aáàãâä]` become literals and match nothing in production.
+ *
+ * Instead we expand the query into plain-string variants and OR them via
+ * Payload `contains` (substring, case-insensitive).
  */
 
 export function deaccent(value: string): string {
@@ -11,23 +16,59 @@ export function deaccent(value: string): string {
     .toLowerCase()
 }
 
-const ACCENT_CLASSES: Record<string, string> = {
-  a: '[aáàãâä]',
-  e: '[eéèêë]',
-  i: '[iíìîï]',
-  o: '[oóòõôö]',
-  u: '[uúùûü]',
-  c: '[cç]',
-  n: '[nñ]',
+/** Common PT-BR diacritics only — keeps OR expansion small enough for long words. */
+const ACCENT_VARIANTS: Record<string, string[]> = {
+  a: ['a', 'á', 'à', 'ã', 'â'],
+  e: ['e', 'é', 'ê'],
+  i: ['i', 'í'],
+  o: ['o', 'ó', 'õ', 'ô'],
+  u: ['u', 'ú'],
+  c: ['c', 'ç'],
 }
 
-/** Pattern for Payload `contains` that matches with or without diacritics. */
-export function toAccentInsensitivePattern(value: string): string {
-  if (!value) return ''
+const DEFAULT_MAX_VARIANTS = 64
 
-  const escaped = deaccent(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+/** Full-length accent spellings of `value`, capped so OR clauses stay bounded. */
+export function expandAccentVariants(
+  value: string,
+  maxVariants = DEFAULT_MAX_VARIANTS,
+): string[] {
+  if (!value) return []
 
-  return Array.from(escaped)
-    .map((char) => ACCENT_CLASSES[char] ?? char)
-    .join('')
+  const chars = Array.from(deaccent(value))
+  let variants = ['']
+
+  for (const char of chars) {
+    const allOptions = ACCENT_VARIANTS[char] ?? [char]
+    const options =
+      variants.length * allOptions.length <= maxVariants ? allOptions : [char]
+
+    const next: string[] = []
+    for (const prefix of variants) {
+      for (const option of options) {
+        next.push(prefix + option)
+      }
+    }
+    variants = next
+  }
+
+  const base = chars.join('')
+  return [...new Set(base ? [base, ...variants] : variants)]
+}
+
+/**
+ * Payload `or` clauses: each field × each accent variant with `contains`.
+ * Safe with db-mongodb regex escaping.
+ */
+export function accentInsensitiveContainsClauses(
+  fields: string[],
+  value: string,
+): Array<Record<string, { contains: string }>> {
+  if (!value || fields.length === 0) return []
+
+  return expandAccentVariants(value).flatMap((variant) =>
+    fields.map((field) => ({
+      [field]: { contains: variant },
+    })),
+  )
 }

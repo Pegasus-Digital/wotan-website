@@ -4,7 +4,7 @@ import payload from 'payload'
 
 import { z } from 'zod'
 import { searchParamsSchema } from '@/lib/validations'
-import { toAccentInsensitivePattern } from '@/lib/accent-insensitive'
+import { accentInsensitiveContainsClauses } from '@/lib/accent-insensitive'
 
 import { unstable_noStore as noStore } from 'next/cache'
 
@@ -45,7 +45,9 @@ export async function getProducts(
       limit: per_page,
       where: {
         and: [
-          { title: { contains: title ? toAccentInsensitivePattern(title) : '' } },
+          ...(title
+            ? [{ or: accentInsensitiveContainsClauses(['title'], title) }]
+            : [{ title: { contains: '' } }]),
           { sku: { contains: sku ? sku : '' } },
           { _status: { equals: 'published' } },
         ],

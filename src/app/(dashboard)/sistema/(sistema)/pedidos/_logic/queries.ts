@@ -4,7 +4,7 @@ import payload from 'payload'
 
 import { z } from 'zod'
 import { ordersParamsSchema, searchParamsSchema } from '@/lib/validations'
-import { toAccentInsensitivePattern } from '@/lib/accent-insensitive'
+import { accentInsensitiveContainsClauses } from '@/lib/accent-insensitive'
 
 import { unstable_noStore as noStore } from 'next/cache'
 
@@ -20,18 +20,11 @@ export async function getOrders(
     let whereOr = []
 
     if (client !== undefined && client.length >= 3) {
-      const clientPattern = toAccentInsensitivePattern(client)
       whereOr.push(
-        {
-          'client.razaosocial': {
-            contains: clientPattern,
-          },
-        },
-        {
-          'client.name': {
-            contains: clientPattern,
-          },
-        }
+        ...accentInsensitiveContainsClauses(
+          ['client.razaosocial', 'client.name'],
+          client,
+        ),
       )
     }
 
